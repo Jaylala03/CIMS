@@ -1,0 +1,4 @@
+G:\TFS-CIMS\CIMS\CIMS\CIMS.DbServices\bin\Release\CIMS.DbServices.dll
+G:\TFS-CIMS\CIMS\CIMS\CIMS.DbServices\bin\Release\CIMS.DbServices.pdb
+G:\TFS-CIMS\CIMS\CIMS\CIMS.DbServices\obj\Release\CIMS.DbServices.dll
+G:\TFS-CIMS\CIMS\CIMS\CIMS.DbServices\obj\Release\CIMS.DbServices.pdb

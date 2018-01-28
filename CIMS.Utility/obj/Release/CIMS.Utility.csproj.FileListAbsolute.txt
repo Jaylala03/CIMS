@@ -1,0 +1,4 @@
+G:\TFS-CIMS\CIMS\CIMS\CIMS.Utility\bin\Release\CIMS.Utility.dll
+G:\TFS-CIMS\CIMS\CIMS\CIMS.Utility\bin\Release\CIMS.Utility.pdb
+G:\TFS-CIMS\CIMS\CIMS\CIMS.Utility\obj\Release\CIMS.Utility.dll
+G:\TFS-CIMS\CIMS\CIMS\CIMS.Utility\obj\Release\CIMS.Utility.pdb

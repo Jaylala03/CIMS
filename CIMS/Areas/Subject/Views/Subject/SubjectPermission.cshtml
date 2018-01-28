@@ -1,0 +1,1007 @@
+﻿@model CIMS.Models.SubjectPermissionModel
+@{
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+    ViewBag.Title = "Subject";
+}
+
+
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Subject</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Subject</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+
+<div class="row">
+    @if (Model.SubjectID > 0)
+    {
+        <div class="col-md-12 enablebtn btn-enable-main">
+            <h3 class="box-title inline-head">@Model.LogoFirstName @Model.LogoMiddleName @Model.LogoLastName</h3>
+
+            @*<a href='@Url.Content("~/Subject/Subject/SubjectAddress?Type=Subject&Id=" + Model.SubjectID + "")' id="permission" class="btn btn-info edit" title="Edit Subject">
+                <i class="fa fa-pencil"></i> Edit
+            </a>*@
+            <a class="btn btn-danger" href='javascript:;' onclick='DeleteSubject(@Model.SubjectID, this);' title="Delete Subject">
+                <i class='fa fa-trash'></i> Delete
+            </a>
+            <a class="btn btn-primary" href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))">
+                <i class="fa fa-plus"></i> Add Reports
+            </a>
+            <a class="btn btn-primary" href='@Url.Content("~/Subject/Subject/SubjectIncidentsList?SubId=" + Model.SubjectID + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))">
+                <i class="fa fa-eye"></i> View Reports
+            </a>
+
+            <a class="btn btn-info" href='@Url.Content("~/Subject/Subject/SearchSubject/" + Model.SubjectID + "")'>
+                <i class="fa fa-plus"></i>
+                Combine Subject
+            </a>
+        </div>
+    }
+
+    <div class="col-md-12">
+
+        <div class="white-box clearfix">
+            <ul class="nav nav-pills custom-tabs" id="myTab">
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li>
+                    <a href='@Url.Content("~/Subject/Subject/AddSubject?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                        <span>Subject</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Addresses", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li class="">
+                    <a href='@Url.Content("~/Subject/Subject/SubjectAddress?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                        <span>Addresses</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Aliases", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li class="">
+                    <a href='@Url.Content("~/Subject/Subject/SubjectAlias?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                        <span>Aliases</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Features", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li class="">
+                    <a href='@Url.Content("~/Subject/Subject/SubjectFeatures?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                        <span>Features</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Identification", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li class="">
+                    <a href='@Url.Content("~/Subject/Subject/SubjectIdentification?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                        <span>Identification</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject LCT Totals", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li class="">
+                    <a style="display:none;" href='@Url.Content("~/Subject/Subject/SubjectLCTTotals?" + (Request.QueryString["Show"] == "View" ? "Show=View&" : "") + "Type=Subject&Id=" + Model.SubjectID + "")'>
+                        <span>LCT Totals</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Watch List", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li class="">
+                    <a href='@Url.Content("~/Subject/Subject/SubjectWatchList?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                        <span>Watch List</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Linked", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+
+                <li class="">
+                    <a href='@Url.Content("~/Subject/Subject/SubjectLinked?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                        <span>Linked</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Permission", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                    {
+                <li class="active">
+                    <a href="javascript:;">
+                        <span>Permission</span>
+                    </a>
+                </li>
+                }
+            </ul>
+        </div>
+
+        <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+        <input type="hidden" id="hdType" name="hdType" value='@(Request.QueryString["Type"])' />
+        <div class="full-width">
+            <div class="tab-pane" id="Permissions" >
+                <div class="large-title">Subject - Access Permission </div>
+                <div class="col-md-12">
+                    <div class="panel-body all-box" style="padding:0px;">
+                        <div class="white-box clearfix">
+                            <div class="table-responsive">
+                                <h3> Subject Creator Details </h3>
+                                <table id="tblReportCreatorDetails" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>User Name</th>
+                                            <th>Date Created</th>
+                                           
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class='has-sub'>
+                                            <td>@Model.ReportCreatorFirstName</td>
+                                            <td>@Model.ReportCreatorLastName</td>
+                                            <td>@Model.ReportCreatorUser</td>
+                                            <td>@Model.ReportCreateDate</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="white-box clearfix">
+                            <div class="col-md-12">
+                                <h3>User Base Permission </h3>
+                                <div class="box-bg">
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">
+                                            <h3> Users</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <select name="listUsers" id="listUsers" class="form-control" size="5" style="width: 411px; height: 316px;"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-1 text-center">
+                                        <div class="custom-top-margin">
+                                            <button type="button" class="btn btn-success btnwidh" id="btnadduser" onclick="AddUsersInList(this.id);">></button>
+                                            <br />
+                                            <button type="button" class="btn btn-success btnwidh" id="btnaddalluser" onclick="AddUsersInList(this.id);">>></button>
+                                            <br />
+                                            <button type="button" class="btn btn-danger btnwidh" id="btnremoveuser" onclick="RemoveUsersInList(this.id);"><</button>
+                                            <br />
+                                            <button type="button" class="btn btn-danger btnwidh" id="btnremovealluser" onclick="RemoveUsersInList(this.id);"><<</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">
+                                            <h3> Subject Access Users</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <select name="listReportAccessUsers" id="listReportAccessUsers" size="5" class="form-control" style="width: 411px; height: 316px;"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <h3 class="check-space">Permissions</h3>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="1" name="View" class="ByUsers" id="ByUserReportView" />
+                                            <label>View</label>
+                                        </div>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="2" name="Edit" class="ByUsers" id="ByUserReportEdit" />
+                                            <label>Edit</label>
+                                        </div>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="3" name="Delete" class="ByUsers" id="ByUserReportDelete" />
+                                            <label>Delete</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="white-box clearfix">
+                            <div class="col-md-12">
+                                <h3>Role Base Permission </h3>
+                                <div class="box-bg">
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">
+                                            <h3> Roles</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <select name="listRoles" id="listRoles" class="form-control" size="5" style="width: 411px; height: 200px;"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-1 text-center">
+                                        <div class="custom-top-margin">
+                                            <button type="button" class="btn btn-success btnwidh" id="btnaddrole" onclick="AddRoleInList(this.id);"> > </button>
+                                            <br />
+                                            <button type="button" class="btn btn-success btnwidh" id="btnaddallrole" onclick="AddRoleInList(this.id);"> >> </button>
+                                            <br />
+                                            <button type="button" class="btn btn-danger btnwidh" id="btnremoverole" onclick="RemoveRoleInList(this.id);"> < </button>
+                                            <br />
+                                            <button type="button" class="btn btn-danger btnwidh" id="btnremoveallrole" onclick="RemoveRoleInList(this.id);"> << </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">
+                                            <h3> Subject Access Roles</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <select name="listReportAccessRoles" id="listReportAccessRoles" size="5" class="form-control" style="width: 411px; height: 200px;"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <h3 class="check-space"> Permissions</h3>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="4" name="View" class="ByRoles" id="ByRoleReportView" />
+                                            <label>View</label>
+                                        </div>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="5" name="Edit" class="ByRoles" id="ByRoleReportEdit" />
+                                            <label>Edit</label>
+                                        </div>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="6" name="Delete" class="ByRoles" id="ByRoleReportDelete" />
+                                            <label>Delete</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+
+        if ($('#hdShow').val() == 'View') {
+            $(".form-control").attr("disabled", "disabled");
+            $(".btn").hide(true);
+            $(document).find('.enablebtn>a').removeAttr("style");
+        }
+        else {
+            $(".form-control").attr("disabled", false);
+            $(document).find('#permission').hide(true);
+        }
+
+        UsersList(); // Users List
+        SubjectAccessUsers(); // SubjectAccess Users List
+        RolesList(); // Roles List
+        SubjectAccessRoles(); // SubjectAccess Roles List
+    });
+
+    function DeleteSubject(id) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/DeleteSubject")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Subject has been deleted Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                        location.replace('@Url.Content("~/Subject/Subject/Index")');
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    $("#permission").click(function () {
+        if (EditConfirm('@ViewBag.Action')) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+
+    // Submit form on tab change Script
+    function formSubmitByTab(valueChanged) {
+        if (valueChanged == true) {
+            var r = confirm("Do you want to save changes?");
+            if (r == true) {
+                $('#btnSubmit').click();
+            }
+        }
+
+    }
+    // End Submit form on tab change Script
+</script>
+<script>
+
+    // Report Access By User
+    /* -------- UsersList ---------- */
+    function UsersList() {
+        var SubjectID = '@Model.SubjectID';
+        $("#listUsers").html("");
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/UsersListSubjectAccess")',
+            data: JSON.stringify({ 'SubjectID': SubjectID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listUsers').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- SubjectAccess Users List ---------- */
+    function SubjectAccessUsers() {
+        var SubjectID = '@Model.SubjectID';
+        $("#listReportAccessUsers").html("");
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/SubjectAccessUsers_Bind")',
+            data: JSON.stringify({ 'SubjectID': SubjectID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listReportAccessUsers').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- Add Users in List ---------- */
+    function AddUsersInList(btnid) {
+        var SubjectID = '@Model.SubjectID';
+        //var UserId = $("#listUsers").val();
+        var values = [];
+        var datacolumn = '';
+        if (btnid == 'btnadduser') {
+            values.push($("#listUsers").val());
+        }
+        else {
+            $("#listUsers > option").each(function () {
+                values.push(this.value);
+            });
+        }
+        //alert(values.join(','));
+        datacolumn = values.join(',');
+        if (datacolumn == '') {
+            alert("Please select a user");
+            return false;
+        }
+        else {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/AddUsersSubjectAccess")',
+                data: JSON.stringify({ 'UserID': datacolumn, 'SubjectID': SubjectID}),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Users has been added Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        UsersList(); // Users List
+                        SubjectAccessUsers(); // SubjectAccess Users List
+                    }
+                    else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                    }
+                }
+            });
+        }
+    }
+
+    /* -------- Remove Users in List ---------- */
+    function RemoveUsersInList(btnid) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            var values = [];
+            var datacolumn = '';
+            if (btnid == 'btnremoveuser') {
+                values.push($("#listReportAccessUsers").val());
+            }
+            else {
+                $("#listReportAccessUsers > option").each(function () {
+                    values.push(this.value);
+                });
+            }
+            //alert(values.join(','));
+            datacolumn = values.join(',');
+            if (datacolumn == '') {
+                alert("Please select a Subject Access user");
+                return false;
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Content("~/Subject/Subject/RemoveUsersSubjectAccess")',
+                    data: JSON.stringify({ 'ID': datacolumn }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data == "success") {
+                            $('#msgDiv').html('<div class="alert alert-success">User has been removed Suceesfully.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                            UsersList(); // Users List
+                            SubjectAccessUsers(); // SubjectAccess Users List
+                        }
+                        else {
+                            $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                        }
+                    }
+                });
+            }
+        }
+    }
+    /* -------- SavePermission By User ---------- */
+    $('#ByUserReportView').click(function () {
+        if ($(this).is(':checked')) {
+            var id = $("#listReportAccessUsers").val();
+            var RepId = '@Model.SubjectID';
+            var type = 'View';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access User.");
+                return false;
+            } else {
+                SavePermission(id, RepId, type, permission);
+            }
+        }
+        else {
+            if ($('#ByUserReportEdit').is(':checked')) {
+                alert("First to Remove Edit Permission");
+                return false;
+            }
+            if ($('#ByUserReportDelete').is(':checked')) {
+                alert("First to Remove Delete Permission");
+                return false;
+            }
+            if (!$(this).is(':checked')) {
+                var id = $("#listReportAccessUsers").val();
+                var RepId = '@Model.SubjectID';
+                var type = 'View';
+                var permission = 'false';
+                if ($(this).is(':checked')) {
+                    permission = 'true';
+                }
+                else {
+                    permission = 'false';
+                }
+                if (id == '' || id == null) {
+                    alert("Please select a Report Access User.");
+                    return false;
+                } else {
+                    SavePermission(id, RepId, type, permission);
+                }
+            }
+        }
+    });
+    $('#ByUserReportEdit').click(function () {
+        if (!$('#ByUserReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessUsers").val();
+            var RepId = '@Model.SubjectID';
+            var type = 'Edit';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access User.");
+                return false;
+            } else {
+                SavePermission(id, RepId, type, permission);
+            }
+        }
+    });
+
+    $('#ByUserReportDelete').click(function () {
+        if (!$('#ByUserReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessUsers").val();
+            var RepId = '@Model.SubjectID';
+            var type = 'Delete';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access User.");
+                return false;
+            } else {
+                SavePermission(id, RepId, type, permission);
+            }
+        }
+    });
+    function SavePermission(id, RepId, type, permission) {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/SubjectAccessPermission")',
+            data: JSON.stringify({ 'ID': id, 'SubjectID': RepId, 'Type': type, 'Permission': permission }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Subject Access Permission Successfully Saved.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+                SubjectAccessPermission(id);
+            }
+        });
+    }
+    function checkuserViewRights() {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/SubjectAccessPermission_ByUser")',
+            data: JSON.stringify({ 'ID': $("#listReportAccessUsers").val(), 'SubjectID': '@Model.SubjectID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var ReportPermission = data.split(',');
+
+                    if (ReportPermission[0] == "True") {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+
+                }
+                else {
+                    return true;
+                }
+            }
+        });
+    }
+    function checkuserEditRights() {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/SubjectAccessPermission_ByUser")',
+            data: JSON.stringify({ 'ID': $("#listReportAccessUsers").val(), 'SubjectID': '@Model.SubjectID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var ReportPermission = data.split(',');
+
+                    if (ReportPermission[1] == "True") {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+
+                }
+                else {
+                    return true;
+                }
+            }
+        });
+    }
+    /* -------- Subject Access Permission By User ---------- */
+    function SubjectAccessPermission(id) {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/SubjectAccessPermission_ByUser")',
+            data: JSON.stringify({ 'ID': id, 'SubjectID': '@Model.SubjectID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var ReportPermission = data.split(',');
+                    if (ReportPermission[0] == "True") {
+                        $('#ByUserReportView').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserReportView').prop('checked', false);
+                    }
+                    if (ReportPermission[1] == "True") {
+                        $('#ByUserReportEdit').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserReportEdit').prop('checked', false);
+                    }
+                    if (ReportPermission[2] == "True") {
+                        $('#ByUserReportDelete').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserReportDelete').prop('checked', false);
+                    }
+                }
+                else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+            }
+        });
+    }
+    //End Report Access Users End
+
+    // Report Access By Role
+    /* -------- Roles List ---------- */
+    function RolesList() {
+        var SubjectID = '@Model.SubjectID';
+        $("#listRoles").html("");
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/UsersSubjectAccessRole")',
+            data: JSON.stringify({ 'SubjectID': SubjectID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listRoles').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- SubjectAccess Role List ---------- */
+    function SubjectAccessRoles() {
+        var SubjectID = '@Model.SubjectID';
+        $("#listReportAccessRoles").html("");
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/SubjectAccessRoles_Bind")',
+            data: JSON.stringify({ 'SubjectID': SubjectID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listReportAccessRoles').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- Add Role in List ---------- */
+    function AddRoleInList(btnid) {
+        var SubjectID = '@Model.SubjectID';
+        var SubjectID = '@Model.SubjectID';
+        //var RoleId = $("#listRoles").val();
+        var values = [];
+        var datacolumn = '';
+        if (btnid == 'btnaddrole') {
+            values.push($("#listRoles").val());
+        }
+        else {
+            $("#listRoles > option").each(function () {
+                values.push(this.value);
+            });
+        }
+        datacolumn = values.join(',');
+        if (datacolumn == '') {
+            alert("Please select a Role");
+            return false;
+        }
+        else {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/AddRolesSubjectAccess")',
+                data: JSON.stringify({ 'RoleID': datacolumn, 'SubjectID': SubjectID}),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Role has been added Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        RolesList(); // Roles List
+                        SubjectAccessRoles(); // SubjectAccess Roles List
+                    }
+                    else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                    }
+                }
+            });
+        }
+    }
+
+    /* -------- Remove Role in List ---------- */
+    function RemoveRoleInList(btnid) {
+        //var ID = $("#listReportAccessRoles").val();
+        //if (ID == "" || ID == null) {
+        //    alert("Please select a Subject Access Role");
+        //    return false;
+        //}
+        //else
+        //{
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            var values = [];
+            var datacolumn = '';
+            if (btnid == 'btnremoverole') {
+                values.push($("#listReportAccessRoles").val());
+            }
+            else {
+                $("#listReportAccessRoles > option").each(function () {
+                    values.push(this.value);
+                });
+            }
+            datacolumn = values.join(',');
+            if (datacolumn == '') {
+                alert("Please select a Subject Access Role");
+                return false;
+            }
+            else {
+                $.ajax(
+                    {
+                        url: '@Url.Content("~/Subject/Subject/RemoveRolesSubjectAccess")',
+                        data: JSON.stringify({ 'ID': datacolumn }),
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            if (data == "success") {
+                                $('#msgDiv').html('<div class="alert alert-success">Role has been remove Suceesfully.</div>');
+                                setTimeout(function () {
+                                    $('#msgDiv').fadeOut();
+                                }, 5000);
+                                RolesList(); // Roles List
+                                SubjectAccessRoles(); // SubjectAccess Roles List
+                            }
+                            else {
+                                $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                                setTimeout(function () {
+                                    $('#msgDiv').fadeOut();
+                                }, 5000);
+                            }
+                        }
+                    });
+            }
+        }
+        //}
+    }
+    /* -------- SavePermission By Role ---------- */
+    $('#ByRoleReportView').click(function () {
+        if ($(this).is(':checked')) {
+            var id = $("#listReportAccessRoles").val();
+            var RepId = '@Model.SubjectID';
+            var type = 'View';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, RepId, type, permission);
+            }
+        } else {
+            if ($('#ByRoleReportEdit').is(':checked')) {
+                alert("First to Remove Edit Permission");
+                return false;
+            }
+            if ($('#ByRoleReportDelete').is(':checked')) {
+                alert("First to Remove Delete Permission");
+                return false;
+            }
+            if (!$(this).is(':checked')) {
+                var id = $("#listReportAccessRoles").val();
+                var RepId = '@Model.SubjectID';
+                var type = 'View';
+                var permission = 'false';
+                if (id == '' || id == null) {
+                    alert("Please select a Report Access Role.");
+                    return false;
+                } else {
+                    SavePermissionByRole(id, RepId, type, permission);
+                }
+            }
+        }
+    });
+    $('#ByRoleReportEdit').click(function () {
+        if (!$('#ByRoleReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessRoles").val();
+            var RepId = '@Model.SubjectID';
+            var type = 'Edit';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, RepId, type, permission);
+            }
+        }
+    });
+
+    $('#ByRoleReportDelete').click(function () {
+        if (!$('#ByRoleReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessRoles").val();
+            var RepId = '@Model.SubjectID';
+            var type = 'Delete';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, RepId, type, permission);
+            }
+        }
+    });
+    function SavePermissionByRole(id, RepId, type, permission) {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/SubjectAccessPermissionByRole")',
+            data: JSON.stringify({ 'ID': id, 'SubjectID': RepId, 'Type': type, 'Permission': permission }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Subject Access Permission Successfully Saved.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+                SubjectAccessPermission(id);
+            }
+        });
+    }
+    /* -------- Subject Access Permission By Role ---------- */
+    function SubjectAccessPermissionByRole(id) {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/SubjectAccessPermission_ByRole")',
+            data: JSON.stringify({ 'ID': id, 'SubjectID': '@Model.SubjectID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var ReportPermission = data.split(',');
+                    if (ReportPermission[0] == "True") {
+                        $('#ByRoleReportView').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleReportView').prop('checked', false);
+                    }
+                    if (ReportPermission[1] == "True") {
+                        $('#ByRoleReportEdit').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleReportEdit').prop('checked', false);
+                    }
+                    if (ReportPermission[2] == "True") {
+                        $('#ByRoleReportDelete').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleReportDelete').prop('checked', false);
+                    }
+                }
+                else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+            }
+        });
+    }
+    //End Report Access Role End
+
+
+</script>
+<style>
+    .btnwidh {
+        width: 44px;
+    }
+</style>

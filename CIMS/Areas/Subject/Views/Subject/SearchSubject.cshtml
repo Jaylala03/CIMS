@@ -1,0 +1,310 @@
+﻿@model CIMS.Models.SubjectModel
+@{
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+    ViewBag.Title = "Search";
+}
+
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Subject</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Subject</li>
+        </ol>
+    </div>
+
+</div>
+
+
+
+@*<div class="page-title">
+
+        <div class="title-env">
+            <h1 class="title">Subject</h1>
+
+        </div>
+
+        <div class="breadcrumb-env">
+
+            <ol class="breadcrumb bc-1">
+                <li>
+                    <a href='@Url.Content("~/Home/Index")'><i class="fa-home"></i>Home</a>
+                </li>
+
+                <li class="active">
+
+                    <strong>Subject</strong>
+                </li>
+            </ol>
+
+        </div>
+
+    </div>*@
+
+
+
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="white-box" style="padding: 5px 15px;">
+            <h2 class=" box-title m-b-0" style="font-weight:600;color:#666;">
+            Search</h2>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="white-box">
+            <div class="form-group">
+                @Html.LabelFor(m => m.FirstName, new { @class = "control-label" })
+                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.FirstName)
+
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.LastName)
+                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.LastName)
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Sex)
+                @Html.TextBoxFor(m => m.Sex, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Sex)
+            </div>
+
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Race)
+                @Html.TextBoxFor(m => m.Race, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Race)
+            </div>
+
+
+
+            <div class="form-group  has-feedback">
+                @Html.LabelFor(m => m.DateOfBirth)
+                @Html.TextBoxFor(m => m.DateOfBirth, new { @class = "form-control" })
+                <span class="fa fa-calendar form-control-feedback"></span>
+                @Html.ValidationMessageFor(m => m.DateOfBirth)
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="white-box" style="min-height:490px;">
+            <div class="form-group  has-feedback">
+                @Html.LabelFor(m => m.IncidentDate)
+                @Html.TextBoxFor(m => m.IncidentDate, new { @class = "form-control" })
+                <span class="fa fa-calendar form-control-feedback"></span>
+                @Html.ValidationMessageFor(m => m.IncidentDate)
+            </div>
+
+            <div class="form-group">
+                <h2 class="innner-head">Incident Type for overall Subject Status</h2>
+                @Html.LabelFor(m => m.NatureOfincident)
+                @Html.DropDownListFor(m => m.NatureOfincident, ViewBag.NOIList as List<SelectListItem>, "Select", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.NatureOfincident)
+            </div>
+
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.ShortDescription)
+                @Html.DropDownListFor(m => m.ShortDescription, ViewBag.DescriptionList as List<SelectListItem>, "Select", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.ShortDescription)
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.OverallStatus)
+                @Html.DropDownListFor(m => m.OverallStatus, ViewBag.StatusList as List<SelectListItem>, "Select", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.OverallStatus)
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 clearfix">
+        <div class="white-box clearfix">
+            <div class="form-group clearfix col-md-12">
+                <div class="btn-right-align1">
+                    <input type="submit" id="btnSearch" value="Search" class="btn btn-success" />
+                    <input type="button" class="btn btn-blue" id="clearBtn" value="Clear" />
+                </div>
+            </div>
+
+            @using (Html.BeginForm("SearchSubject", "Subject", FormMethod.Post, new { area = "Subject" }))
+                            {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" id="hdnSubjectID" name="hdnSubjectID" />
+                            <input type="hidden" id="hdnCurrentSubjectID" name="hdnCurrentSubjectID" />
+                            <div class="col-md-12">
+                                <div class="table-list">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="subjectTable"></tbody>
+                                        </table>
+                                    </div>
+                                    <a class="btn btn-info" id="combineBtn" href="javascript:;">Combine with current</a>
+                                    @*<a class="btn btn-danger " href="javascript:;">Cancel</a>  *@
+                                </div>
+                            </div>
+                            }
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        //$('#NatureOfincident').editableSelect({ effects: 'default' });
+        // $('#ShortDescription').editableSelect({ effects: 'default' });
+        // $('#OverallStatus').editableSelect({ effects: 'default' });
+
+        $('#DateOfBirth').datepicker();
+        $('#IncidentDate').datepicker();
+        $('#FirstName').attr('data-val', false);
+        $('#LastName').attr('data-val', false);
+        $('#hdnCurrentSubjectID').val('@ViewBag.SubjectID');
+
+        $('#NatureOfincident').on('change', function () {
+            var Id = $(this).val();
+            GetDescription(Id);
+        });
+
+        $('#clearBtn').on('click', function () {
+            Reset();
+        });
+        $('#btnSearch').on('click', function () {
+            var FirstName = $('#FirstName').val();
+            var LastName = $('#LastName').val();
+            var Sex = $('#Sex').val();
+            var Race = $('#Race').val();
+            var DateOfBirth = $('#DateOfBirth').val();
+            var IncidentDate = $('#IncidentDate').val();
+            var NatureOfIncident = $('#NatureOfIncident').val();
+            var Description = $('#Description').val();
+            var OverallStatus = $('#OverallStatus').val();
+            var CurrentSubjectId = $('#hdnCurrentSubjectID').val();
+            GetSearchResult(FirstName, LastName, Sex, Race, DateOfBirth, IncidentDate, NatureOfIncident, Description, OverallStatus, CurrentSubjectId);
+        });
+
+        $('#combineBtn').on('click', function () {
+            if (AddConfirm('@ViewBag.Action')) {
+                var subjectIds = [];
+                var AllUnchecked = true;
+                $(".subjectChk:checked").each(function () {
+                    var selectedSubjectId = $(this).attr('id').split('chk_')[1];
+                    subjectIds.push(selectedSubjectId);
+                    AllUnchecked = false;
+                });
+                subjectIds = subjectIds.join();
+                $('#hdnSubjectID').val(subjectIds);
+                if (AllUnchecked) {
+                    $('#msgDiv').html('<div class="alert alert-danger">Please select any Subject to Combine.</div>');
+                } else {
+                    $('form').submit();
+                }
+            }
+            else {
+                return false;
+            }
+        });
+
+    });
+
+    function GetSearchResult(FirstName, LastName, Sex, Race, DateOfBirth, IncidentDate, NatureOfIncident, Description, OverallStatus, CurrentSubjectId) {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/GetSubjectSearchResult")',
+            data: { FirstName: FirstName, LastName: LastName, Sex: Sex, Race: Race, DateOfBirth: DateOfBirth, IncidentDate: IncidentDate, NatureOfIncident: NatureOfIncident, Description: Description, OverallStatus: OverallStatus, CurrentSubjectId: CurrentSubjectId },
+            type: 'get',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                var temphtml = '';
+                if (data.length > 0) {
+                    var jsondata = JSON.parse(data);
+                    if (jsondata.length > 0) {
+                        for (i = 0 ; i < jsondata.length ; i++) {
+                            temphtml += '<tr>';
+                            temphtml += '<td><input type="checkbox" class="subjectChk" id="chk_' + jsondata[i].SubjectID + '"></td>';
+                            temphtml += '<td>' + jsondata[i].FirstName + '</td>';
+                            temphtml += '<td>' + jsondata[i].LastName + '</td>';
+                            if (jsondata[i].OverallStatus == null) {
+                                temphtml += '<td></td>';
+                            } else {
+                                temphtml += '<td>' + jsondata[i].OverallStatus + '</td>';
+                            }
+                            temphtml += '</tr>';
+                        }
+                    }
+                }
+                $('#subjectTable').html(temphtml);
+                //$('.subjectChk').on('click', function () {
+                //    var AllUnchecked = true;
+                //    $(".subjectChk:checked").each(function () {
+                //        AllUnchecked = false;
+                //    });
+                //    if (AllUnchecked) {
+                //        $('#combineBtn').prop("disabled", true);
+                //    } else {
+                //        $('#combineBtn').prop("disabled", false);
+                //    }
+                //});
+
+            }
+        });
+    }
+
+    function GetDescription(event) {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/GetIncidentDescriptionByNOIId")',
+            data: { Event: event },
+            type: 'get',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                var temphtml = '<option>Select</option>';
+                if (data.length > 0) {
+                    var jsondata = JSON.parse(data);
+                    if (jsondata.length > 0) {
+                        for (i = 0 ; i < jsondata.length ; i++) {
+                            temphtml += '<option ' + jsondata[i].Value + '>' + jsondata[i].Text + '</option>';
+                        }
+                    }
+                }
+                $('#ShortDescription').html(temphtml);
+            }
+        });
+    }
+
+    function Reset() {
+
+    }
+</script>

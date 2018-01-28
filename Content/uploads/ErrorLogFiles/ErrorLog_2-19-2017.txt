@@ -1,0 +1,41 @@
+
+ ----------------------------------------------------------------------------- 
+ An error ocurred at 2/19/2017 2:26:27 AM
+  Error Message: Column 'MiddleName' does not belong to table Subjects_AdvancedSearch_Result.
+  Stack Trace:    at System.Data.DataRow.GetDataColumn(String columnName)
+   at System.Data.DataRow.get_Item(String columnName)
+   at CIMS.Areas.Subject.Controllers.SubjectController.<>c.<SearchInSubject>b__102_0(DataRow row) in G:\CIMS\BackCIMS\CIMS\Areas\Subject\Controllers\SubjectController.cs:line 4426
+   at System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at CIMS.Areas.Subject.Controllers.SubjectController.SearchInSubject(SubjectModel model) in G:\CIMS\BackCIMS\CIMS\Areas\Subject\Controllers\SubjectController.cs:line 4425
+ ----------------------------------------------------------------------------- 
+ An error ocurred at 2/19/2017 2:30:38 AM
+  Error Message: Column 'MiddleName' does not belong to table Subjects_AdvancedSearch_Result.
+  Stack Trace:    at System.Data.DataRow.GetDataColumn(String columnName)
+   at System.Data.DataRow.get_Item(String columnName)
+   at CIMS.Areas.Subject.Controllers.SubjectController.<>c.<SearchInSubject>b__102_0(DataRow row) in G:\CIMS\BackCIMS\CIMS\Areas\Subject\Controllers\SubjectController.cs:line 4426
+   at System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at CIMS.Areas.Subject.Controllers.SubjectController.SearchInSubject(SubjectModel model) in G:\CIMS\BackCIMS\CIMS\Areas\Subject\Controllers\SubjectController.cs:line 4425
+ ----------------------------------------------------------------------------- 
+ An error ocurred at 2/19/2017 2:33:13 AM
+  Error Message: Column 'MiddleName' does not belong to table Subjects_AdvancedSearch_Result.
+  Stack Trace:    at System.Data.DataRow.GetDataColumn(String columnName)
+   at System.Data.DataRow.get_Item(String columnName)
+   at CIMS.Areas.Subject.Controllers.SubjectController.<>c.<SearchInSubject>b__102_0(DataRow row) in G:\CIMS\BackCIMS\CIMS\Areas\Subject\Controllers\SubjectController.cs:line 4426
+   at System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at CIMS.Areas.Subject.Controllers.SubjectController.SearchInSubject(SubjectModel model) in G:\CIMS\BackCIMS\CIMS\Areas\Subject\Controllers\SubjectController.cs:line 4425
+ ----------------------------------------------------------------------------- 
+ An error ocurred at 2/19/2017 2:42:14 AM
+  Error Message: Column 'MiddleName' does not belong to table Subjects_AdvancedSearch_Result.
+  Stack Trace:    at System.Data.DataRow.GetDataColumn(String columnName)
+   at System.Data.DataRow.get_Item(String columnName)
+   at CIMS.Areas.Subject.Controllers.SubjectController.<>c.<SearchInSubject>b__102_0(DataRow row) in G:\CIMS\BackCIMS\CIMS\Areas\Subject\Controllers\SubjectController.cs:line 4426
+   at System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+   at System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   at System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   at CIMS.Areas.Subject.Controllers.SubjectController.SearchInSubject(SubjectModel model) in G:\CIMS\BackCIMS\CIMS\Areas\Subject\Controllers\SubjectController.cs:line 4425

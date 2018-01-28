@@ -1,0 +1,452 @@
+﻿@model CIMS.Models.EmployeeIncidentModel
+<div class="col-md-4">
+     <div class="box1"> 
+   <div class="form-group clearfix">
+        @Html.HiddenFor(model => model.PaceStartTime)
+        @Html.HiddenFor(model => model.PaceEndTime)
+        @Html.HiddenFor(model => model.TimeTaken)
+        <label class="control-label col-md-8"># of Positions Played </label>
+    <div class="col-md-4"> 
+        @Html.TextBoxFor(model => model.PaceAuditPositionsPlayed, new { @class = "form-control", @disabled = "disabled" })
+   </div>
+    </div> 
+    <div class="form-group clearfix">
+
+        <label class="control-label col-md-8"># of Hands Dealt</label>
+      <div class="col-md-4"> 
+        @Html.TextBoxFor(model => model.PaceAuditHandsPlayed, new { @class = "form-control", @disabled = "disabled" })
+         </div>
+    </div>
+</div>
+</div>
+
+<div class="col-md-8">
+ <div class="box-all"> 
+    <h5 class="main-head">Time</h5>
+    <div class="col-md-5">
+      <div class="box-manual"> 
+        <h5 class="small-head">Manual Time</h5>
+        <div class="form-group clearfix">
+            <label class="control-label col-md-7">Start Time</label>
+               <div class="col-md-5"> 
+            <input type="text" class="form-control" id="paceStart"/>
+            @*@Html.TextBoxFor(model => model.PaceStartTime, new { @class = "form-control" })*@
+           </div>
+        </div>
+        <div class="form-group clearfix">
+            <label class="control-label col-md-7">End Time</label>
+            <div class="col-md-5"> 
+            <input type="text" class="form-control" id="paceEnd" />
+            
+            @*@Html.TextBoxFor(model => model.PaceEndTime, new { @class = "form-control" })*@
+            </div>
+        </div>
+       <div class="form-group clearfix">
+            <button type="button" onclick="setTime()"  class="btn btn-success">Add</button>
+        </div>
+       </div>
+    </div>
+    <div class="col-md-4">
+        <div class="mid-text"> 
+        -OR-
+    </div>
+    </div>
+    <div class="col-md-3">
+       
+     <div class="box-manual"> 
+    <h5 class="small-head">Live Time</h5>
+        <div class="form-group">
+            <label id="liveHours">00</label>:
+            <label id="liveMinutes">00</label>:
+            <label id="liveSeconds">00</label>
+        </div>
+        <div class="form-group cmargin">
+            <button type="button" id="startTimer" class="btn btn-info custom-width">Start</button>
+        </div>
+       <div class="form-group cmargin">
+            <button type="button" id="stopTimer"  class="btn btn-info custom-width" disabled="disabled">Stop/Add</button>
+        </div>
+        <div class="form-group cmargin">
+            <button type="button" id="pauseTimer"  class="btn btn-info  custom-width" disabled="disabled">Pause</button>
+        </div>
+       <div class="form-group cmargin">
+            <button type="button" id="continueTimer"  class="btn btn-info  custom-width" style="display:none">Continue</button>
+        </div>
+       </div>
+    </div>
+</div>
+</div>
+<div class="col-md-12">
+     <div class="show-text"> 
+    <div class="col-md-12"> 
+    <label>Start Time:</label>
+    <label id="StartTimeVal">@Model.PaceStartTime</label>
+</div>
+
+ <div class="col-md-12"> 
+    <label>End Time:</label>
+    <label id="EndTimeVal">@Model.PaceEndTime</label>
+</div>
+
+ 
+
+<div class="col-md-4"> 
+    <div id="shuffleDiv" style="display:none">
+        <label>Average Time:</label>
+        <label id="averageTime"></label>
+    </div>
+</div>
+
+<div class="col-md-4"> 
+    <label>Time Taken:</label>
+    <label id="TimeTakenVal">@Model.TimeTaken</label>
+</div>
+
+<div class="clear"></div>
+
+    <div id="HandsDiv" style="display:none">
+        <label>@ViewBag.Label per Hour:</label>
+        <label id="handsPerHour"></label>
+        <label>Average @ViewBag.Label per Hour:</label>
+        <label id="averagehandsPerHour"></label>
+    </div>
+</div>
+</div>
+<div class="col-md-12 form-group clearfix">
+    <label class="control-label">Description</label>
+    @Html.TextAreaFor(m => m.PaceDescription, new { @class = "form-control", @id = "PaceDescription" })
+    @Html.ValidationMessageFor(m => m.PaceDescription, "", new { @class = "text-danger" })
+
+</div>
+<script src="~/assets/js/ckeditor/adapters/jquery.js"></script>
+<script src="~/assets/js/ckeditor/ckeditor.js"></script>
+<script src="~/assets/js/jquery.maskedinput.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#paceStart").mask("99:99:99");
+        $("#paceEnd").mask("99:99:99");
+        $("input[name=ShuffleShoe][value=" + '@Model.ShuffleShoe' + "]").prop('checked', true);
+
+        if ('@Model.ShuffleShoe' == 'Hands') {
+            $('#PaceAuditPositionsPlayed').removeAttr('disabled');
+            $('#PaceAuditHandsPlayed').removeAttr('disabled');
+            $('#HandsDiv').show();
+            $('#shuffleDiv').hide();
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/CalculateAverageHandsTime")',
+                type: 'Post',
+                data: { IncidentId: '@Model.IncidentID', Game: '@Model.Game', Shuffle: '@Model.ShuffleShoe', TimeTaken: '@Model.TimeTaken', HandsDealt: $('#PaceAuditHandsPlayed').val(), DisplayName: '@Model.DisplayName' },
+                dataType: 'json',
+                success: function (data) {
+                    var newData = data.split('|');
+                    $('#handsPerHour').html(newData[1]);
+                    $('#averagehandsPerHour').html(newData[0]);
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+
+        }
+        else if ('@Model.ShuffleShoe' == 'Shoe') {
+            $('#PaceAuditPositionsPlayed').removeAttr('disabled');
+            $('#PaceAuditHandsPlayed').attr('disabled', 'disabled');
+            $('#HandsDiv').hide();
+            $('#shuffleDiv').show();
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/CalculateAverageTime")',
+                type: 'Post',
+                data: { IncidentId: '@Model.IncidentID', Game: '@Model.Game', Shuffle: '@Model.ShuffleShoe', TimeTakenCurrent: '@Model.TimeTaken', HandsDealt: $('#PaceAuditHandsPlayed').val(), DisplayName: '@Model.DisplayName' },
+                dataType: 'json',
+                success: function (data) {
+                  
+                    $('#averageTime').html(data);
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+        else {
+            $('#PaceAuditPositionsPlayed').attr('disabled', 'disabled');
+            $('#PaceAuditHandsPlayed').attr('disabled', 'disabled');
+            $('#HandsDiv').hide();
+            $('#shuffleDiv').show();
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/CalculateAverageTime")',
+                type: 'Post',
+                data: { IncidentId: '@Model.IncidentID', Game: '@Model.Game', Shuffle: '@Model.ShuffleShoe' },
+                dataType: 'json',
+                success: function (data) {
+                    $('#averageTime').html(data);
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+        var seconds = 00;
+        var minutes = 00;
+        var hours = 00;
+        var formattedStart = 00;
+        var start = "";
+        var formattedEnd = 00;
+        var end = "";
+        var secondInterval;
+        var minuteInterval;
+        var hoursInterval;
+
+  
+
+      
+        $('#PaceDescription').ckeditor();
+        $('#startTimer').click(function () {
+            start = new Date(Date.now());
+            formattedStart = start.getHours() + ":" + start.getMinutes() + ":" + start.getSeconds();
+            $(this).attr('disabled', 'disabled');
+            $('#stopTimer').removeAttr('disabled');
+            $('#pauseTimer').removeAttr('disabled');
+            secondInterval = setInterval(function () {
+                seconds++;
+
+                if (seconds == 60)
+                    seconds = 00;
+
+                if (seconds < 10)
+                    $('#liveSeconds').html('0' + seconds);
+                else
+                    $('#liveSeconds').html(seconds);
+
+            }, 1000);
+            minuteInterval = setInterval(function () {
+                minutes++;
+                if (minutes == 60)
+                    minutes = 00;
+
+                if (minutes < 10)
+                    $('#liveMinutes').html('0' + minutes);
+                else
+                    $('#liveMinutes').html(minutes);
+            }, 60000);
+            hoursInterval = setInterval(function () {
+                hours++;
+
+                if (hours < 10)
+                    $('#liveHours').html('0' + hours);
+                else
+                    $('#liveHours').html(hours);
+            }, 600000);
+        });
+
+        $('#stopTimer').click(function () {
+
+            clearInterval(secondInterval);
+            clearInterval(minuteInterval);
+            clearInterval(hoursInterval);
+            $(this).attr('disabled', 'disabled');
+            $('#pauseTimer').show();
+            $('#continueTimer').hide();
+            $('#pauseTimer').attr('disabled', 'disabled');
+            $('#startTimer').removeAttr('disabled');
+
+            //end = new Date(Date.now());
+            //formattedEnd = end.getHours() + ":" + end.getMinutes() + ":" + end.getSeconds();
+            var startdate = new Date(start)
+            var enddate = new Date(start);
+            //
+            //alert($('#liveSeconds')[0].innerText);
+            enddate.setMinutes(startdate.getMinutes() + parseInt($('#liveMinutes')[0].innerText));
+            enddate.setHours(startdate.getHours() + parseInt($('#liveHours')[0].innerText));
+            enddate.setSeconds(startdate.getSeconds() + parseInt($('#liveSeconds')[0].innerText));
+            formattedEnd = enddate.getHours() + ":" + enddate.getMinutes() + ":" + enddate.getSeconds();
+
+            //var difference = new Date(end - start).toUTCString().split(" ")[4];
+            var difference = new Date(enddate - start).toUTCString().split(" ")[4];
+            $('#liveSeconds').html('00');
+            $('#liveMinutes').html('00');
+            $('#liveHours').html('00');
+            seconds = 00;
+            minutes = 00;
+            hours = 00;
+            $('#StartTimeVal').html(formattedStart);
+            $('#EndTimeVal').html(formattedEnd);
+            $('#TimeTakenVal').html(difference);
+            $('#PaceStartTime').val(formattedStart);
+            $('#PaceEndTime').val(formattedEnd);
+            $('#TimeTaken').val(difference);
+            if ('@Model.ShuffleShoe' == 'Hands') {
+                $.ajax({
+                    url: '@Url.Content("~/Employee/Employees/CalculateAverageHandsTime")',
+                    type: 'Post',
+                    data: { IncidentId: '@Model.IncidentID', Game: '@Model.Game', Shuffle: '@Model.ShuffleShoe', TimeTaken: difference, HandsDealt: $('#PaceAuditHandsPlayed').val(), HandsDealt: $('#PaceAuditHandsPlayed').val(), DisplayName: '@Model.DisplayName' },
+                    dataType: 'json',
+                    success: function (data) {
+                        var newData = data.split('|');
+                        $('#handsPerHour').html(newData[1]);
+                        $('#averagehandsPerHour').html(newData[0]);
+                    },
+                    error: function () {
+                        console.log('error');
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Content("~/Employee/Employees/CalculateAverageTime")',
+                    type: 'Post',
+                    data: { IncidentId: '@Model.IncidentID', Game: '@Model.Game', Shuffle: '@Model.ShuffleShoe', TimeTakenCurrent: difference,  DisplayName: '@Model.DisplayName' },                    
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#averageTime').html(data);
+                    },
+                    error: function () {
+                        console.log('error');
+                    }
+                });
+            }
+
+        });
+
+        $('#pauseTimer').click(function () {
+
+            clearInterval(secondInterval);
+            clearInterval(minuteInterval);
+            clearInterval(hoursInterval);
+
+            $('#pauseTimer').hide();
+            $('#continueTimer').show();
+            $('#stopTimer').removeAttr('disabled');
+            $('#startTimer').attr('disabled', 'disabled');
+
+
+        });
+        $('#continueTimer').click(function () {
+            $('#pauseTimer').show();
+            $('#continueTimer').hide();
+            secondInterval = setInterval(function () {
+                seconds++;
+
+                if (seconds == 60)
+                    seconds = 00;
+
+                if (seconds < 10)
+                    $('#liveSeconds').html('0' + seconds);
+                else
+                    $('#liveSeconds').html(seconds);
+
+            }, 1000);
+            minuteInterval = setInterval(function () {
+                minutes++;
+                if (minutes == 60)
+                    minutes = 00;
+
+                if (minutes < 10)
+                    $('#liveMinutes').html('0' + minutes);
+                else
+                    $('#liveMinutes').html(minutes);
+            }, 60000);
+            hoursInterval = setInterval(function () {
+                hours++;
+
+                if (hours < 10)
+                    $('#liveHours').html('0' + hours);
+                else
+                    $('#liveHours').html(hours);
+            }, 600000);
+        });
+    });
+
+    function setTime()
+    {
+        if ($('#paceStart').val() == '') {
+            alert('Start Time can not be left blank');
+        }
+        else
+        {
+            var startpace = $('#paceStart').val().split(":");
+            if(startpace[0]>24)
+            {
+                alert("Start Hourse must be between 00 and 23");
+                return false;
+            }
+            else if (startpace[1] > 60)
+            {
+                alert("Start Minutes must be between 00 and 59");
+                return false;
+            }
+            else if (startpace[2] > 60)
+            {
+                alert("Start Seconds must be between 00 and 59");
+                return false;
+            }
+        }
+        if ($('#paceEnd').val() == '') {
+            alert('End Time can not be left blank');
+        }
+        else
+        {
+            var Endpace = $('#paceEnd').val().split(":");
+            if(Endpace[0]>24)
+            {
+                alert("End Hourse must be between 00 and 23");
+                return false;
+            }
+            else if (Endpace[1] > 60)
+            {
+                alert("End Minutes must be between 00 and 59");
+                return false;
+            }
+            else if (Endpace[2] > 60)
+            {
+                alert("End Seconds must be between 00 and 59");
+                return false;
+            }
+        }
+        if (new Date("1/1/1900 " + $('#paceStart').val())> new Date("1/1/1900 " + $('#paceEnd').val())) {
+            alert('Start time must be less than end time.');
+            return false;
+        }
+        else {
+            var differenceManual = new Date(new Date("1/1/1900 " + $('#paceEnd').val()) - new Date("1/1/1900 " + $('#paceStart').val())).toUTCString().split(" ")[4];
+            $('#StartTimeVal').html($('#paceStart').val());
+            $('#EndTimeVal').html($('#paceEnd').val());
+            $('#TimeTakenVal').html(differenceManual);
+            $('#PaceStartTime').val($('#paceStart').val());
+            $('#PaceEndTime').val($('#paceEnd').val());
+            $('#TimeTaken').val(differenceManual);
+            $('#paceStart').val('');
+            $('#paceEnd').val('');
+            if ('@Model.ShuffleShoe' == 'Hands') {
+                $.ajax({
+                    url: '@Url.Content("~/Employee/Employees/CalculateAverageHandsTime")',
+                    type: 'Post',
+                    data: { IncidentId: '@Model.IncidentID', Game: '@Model.Game', Shuffle: '@Model.ShuffleShoe', TimeTaken: differenceManual, HandsDealt: $('#PaceAuditHandsPlayed').val() ,DisplayName:'@Model.DisplayName'},
+                    dataType: 'json',
+                    success: function (data) {
+                        var newData = data.split('|');
+                        $('#handsPerHour').html(newData[1]);
+                        $('#averagehandsPerHour').html(newData[0]);
+                    },
+                    error: function () {
+                        console.log('error');
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Content("~/Employee/Employees/CalculateAverageTime")',
+                    type: 'Post',
+                    data: { IncidentId: '@Model.IncidentID', Game: '@Model.Game', Shuffle: '@Model.ShuffleShoe', TimeTakenCurrent: differenceManual,  DisplayName: '@Model.DisplayName' },
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#averageTime').html(data);
+                    },
+                    error: function () {
+                        console.log('error');
+                    }
+                });
+            }
+
+        }
+    }
+</script>

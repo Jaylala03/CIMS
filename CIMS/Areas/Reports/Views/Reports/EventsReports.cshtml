@@ -1,0 +1,916 @@
+﻿@model CIMS.Models.ReportsModel
+@{
+    ViewBag.Title = "EventsReports";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+@*<h2>EventsReports</h2>*@
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+<script src="~/assets/js/Jspdf/FileSaver.js"></script>
+<script src="~/assets/js/Jspdf/jspdf.js"></script>
+<script src="~/assets/js/Jspdf/jspdfplugintable.js"></script>
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Events Reports</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Events Reports</li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="col-md-12">
+            <div class="white-box clearfix">
+                <div class="col-md-8">
+                    <fieldset>
+                        <legend>Select Items to Print</legend>
+                        <div class="col-md-4">
+                            <div class="form-group col-md-12">
+                                <input type="checkbox" class="selected" value="EventDate" checked="checked">
+                                @Html.Label("Date")
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <input type="checkbox" class="" value="EventNumber" name="EventCheck">
+                                @Html.Label("Event Number")
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <input type="checkbox" class="" value="AttachedEvent" name="EventCheck">
+                                @Html.Label("Attached Event")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="checkbox" class="" value="EventTime" name="EventCheck">
+                                @Html.Label("Start")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="checkbox" class="" value="EndTime" name="EventCheck">
+                                @Html.Label("End")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="checkbox" class="" value="FromCode" name="EventCheck">
+                                @Html.Label("Initiated By")
+
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <input type="checkbox" class="" value="NatureDesc" name="EventCheck">
+                                @Html.Label("Nature Of Event")
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group col-md-12">
+                                <input type="checkbox" class="" value="DutyDesc" name="EventCheck">
+                                @Html.Label("Action Taken")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="checkbox" class="" value="Camera" name="EventCheck">
+                                @Html.Label("Camera")
+
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <input type="checkbox" class="" value="KeyEvent" name="EventCheck">
+                                @Html.Label("Key Event")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="checkbox" class="" value="UserID" name="EventCheck">
+                                @Html.Label("User Name")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="checkbox" class="" value="Location" name="EventCheck">
+                                @Html.Label("Location")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="checkbox" class="" value="Site" name="EventCheck">
+                                @Html.Label("Site")
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <input type="checkbox" id="selectall" onClick="selectAll(this)" />
+                                @Html.Label("Select All")
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="col-md-8">
+                    <fieldset>
+                        <legend>Sort By</legend>
+                        <div class="col-md-4">
+                            <div class="form-group col-md-12">
+                                <input type="radio" name="Radio1" value="EventDate" checked="checked" class="active">
+                                @Html.Label("Date & Time")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="radio" name="Radio1" value="EventNumber">
+                                @Html.Label("Event Number")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="radio" name="Radio1" value="AttachedEvent">
+                                @Html.Label("Attached Event")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="radio" name="Radio1" value="EventTime">
+                                @Html.Label("Event Time")
+
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <input type="radio" name="Radio1" value="FromCode">
+                                @Html.Label("Initiated By")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="radio" name="Radio1" value="NatureDesc">
+                                @Html.Label("Nature Of Event")
+
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group col-md-12">
+                                <input type="radio" name="Radio1" value="DutyDesc">
+                                @Html.Label("Action Taken")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="radio" name="Radio1" value="Camera">
+                                @Html.Label("Camera")
+
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <input type="radio" name="Radio1" value="KeyEvent">
+                                @Html.Label("Key Event")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="radio" name="Radio1" value="UserID">
+                                @Html.Label("User Name")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="radio" name="Radio1" value="Location">
+                                @Html.Label("Location")
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <input type="radio" name="Radio1" value="Site">
+                                @Html.Label("Site")
+
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="col-md-12 top-10">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success" id="PrintSubmitEvent">Print</button>
+                        <button type="button" class="btn btn-primary" id="PreviewSubmitEvent">Preview</button>
+                        <a href="#myModal1" data-toggle="modal" class="btn btn-info" style="padding: 7px 8px;" id="SendEmailEvent">Send Email</a>
+                        <button type="button" class="btn btn-warning" id="PdfSubmitEvent">Save As Pdf</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Send Email</h4>
+            </div>
+
+            <div class="modal-body row">
+                <div class="col-md-12 right-label">
+                    <div class="form-group clearfix">
+                        @Html.Label("To", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="To" id="To" class="form-control">
+                            <label id="EmailTo" style="color:red;"></label>
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Subject", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Subject" id="Subject" class="form-control">
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Desciption", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Desciption" id="Desciption" class="form-control">
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group col-md-12 text-right">
+
+                        <button type="submit" class="btn btn-success" id="SendEmailData">Send Email</button>
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-12">
+                    <div class="visitor-log">
+
+                        <div class="table-responsive">
+                            <div id="Attachment"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+    $('input:checkbox').change(function () {
+        if ($(this).is(':checked'))
+            $(this).addClass('selected');
+        else
+            $(this).removeClass('selected');
+
+    });
+    $('input:radio').click(function () {
+        $('input:radio:checked').addClass('active');
+        $('input:radio:not(:checked)').removeClass('active');
+
+    });
+
+    function selectAll(source) {
+        checkboxes = document.getElementsByName('EventCheck');
+        $("input[type='checkbox']").removeClass("selected");
+        for (var i = 0, n = checkboxes.length; i < n; i++) {
+            checkboxes[i].checked = source.checked;
+            if (checkboxes[i].checked) {
+                $(checkboxes[i]).addClass("selected");
+            }
+            else {
+                $(checkboxes[i]).removeClass("selected");
+            }
+        }
+    }
+
+    //print--
+    $('#PrintSubmitEvent').click(function () {
+        var values = [];
+        $('.selected').each(function () {
+            values.push($(this).val());
+
+        });
+        var datacolumn = values.join(',');
+        var result1 = datacolumn.search(',on');
+        if (result1 > -1) {
+            datacolumn = datacolumn.replace(',on', '');
+        }
+        var sortValue = $('input[type=radio][name=Radio1].active').val();
+
+
+        $.ajax({
+            url: '@Url.Content("~/Events/Event/Events_print")',
+            data: JSON.stringify({ 'datacolumn': datacolumn, 'sortValue': sortValue }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var Column = datacolumn.split(',');
+
+                var sOut = '<table id="dynamicTable" style="border-collapse:collapse"><thead><tr class="head-bg">';
+
+                sOut += '<th class="EventDate td-border">EventDate</th><th class="EventNumber td-border">EventNumber</th><th class="AttachedEvent td-border">AttachedEvent</th><th class="EventTime td-border">EventTime</th><th class="EndTime td-border">EndTime</th><th class="FromCode td-border">FromCode</th><th class="NatureDesc td-border">NatureDesc</th><th class="DutyDesc td-border">DutyDesc</th><th class="Camera td-border">Camera</th><th class="KeyEvent td-border">KeyEvent</th><th class="UserID td-border">UserID</th><th class="Location">Location</th><th class="Site td-border">Site</th>';
+
+                sOut += '</tr><thead><tbody>';
+
+                for (var i = 0; i < data.length; i += 1) {
+
+                    console.log(data[i]);
+                    sOut += '<tr><td class="EventDate td-border">' + data[i]["EventDate"] + '</td><td class="EventNumber td-border">' + data[i]["EventNumber"] + '</td><td class="AttachedEvent td-border">' + data[i]["AttachedEvent"] + '</td><td class="EventTime td-border">' + data[i]["EventTime"] + '</td><td class="EndTime td-border">' + data[i]["EndTime td-border"] + '</td><td class="FromCode td-border">' + data[i]["FromCode"] + '</td><td class="NatureDesc td-border">' + data[i]["NatureDesc"] + '</td><td class="DutyDesc td-border">' + data[i]["DutyDesc"] + '</td><td class="Camera td-border">' + data[i]["Camera"] + '</td><td class="KeyEvent td-border">' + data[i]["KeyEvent"] + '</td><td class="UserID td-border">' + data[i]["UserID"] + '</td><td class="Location td-border">' + data[i]["Location"] + '</td><td class="Site td-border">' + data[i]["Site"] + '</td></tr>';
+                }
+                sOut += '<tbody></table>';
+
+                $('#Printdiv').html(sOut);
+
+                var data = $('#Printdiv .EventDate').html();
+                if (datacolumn.indexOf(data) > -1) {
+                    $('#Printdiv .EventDate').show();
+                }
+                else {
+                    $('#Printdiv .EventDate').hide();
+                }
+                var data1 = $('#Printdiv .EventNumber').html();
+                if (datacolumn.indexOf(data1) > -1) {
+                    $('#Printdiv .EventNumber').show();
+                }
+                else {
+                    $('#Printdiv .EventNumber').hide();
+                }
+                var data2 = $('#Printdiv .AttachedEvent').html();
+                if (datacolumn.indexOf(data2) > -1) {
+                    $('#Printdiv .AttachedEvent').show();
+                }
+                else {
+                    $('#Printdiv .AttachedEvent').hide();
+                }
+                var data3 = $('#Printdiv .EventTime').html();
+                if (datacolumn.indexOf(data3) > -1) {
+                    $('#Printdiv .EventTime').show();
+                }
+                else {
+                    $('#Printdiv .EventTime').hide();
+                }
+                var data4 = $('#Printdiv .EndTime').html();
+                if (datacolumn.indexOf(data4) > -1) {
+                    $('#Printdiv .EndTime').show();
+                }
+                else {
+                    $('#Printdiv .EndTime').hide();
+                }
+                var data5 = $('#Printdiv .FromCode').html();
+                if (datacolumn.indexOf(data5) > -1) {
+                    $('#Printdiv .FromCode').show();
+                }
+                else {
+                    $('#Printdiv .FromCode').hide();
+                }
+                var data6 = $('#Printdiv .NatureDesc').html();
+                if (datacolumn.indexOf(data6) > -1) {
+                    $('#Printdiv .NatureDesc').show();
+                }
+                else {
+                    $('#Printdiv .NatureDesc').hide();
+                }
+                var data7 = $('#Printdiv .DutyDesc').html();
+                if (datacolumn.indexOf(data7) > -1) {
+                    $('#Printdiv .DutyDesc').show();
+                }
+                else {
+                    $('#Printdiv .DutyDesc').hide();
+                }
+                var data8 = $('#Printdiv .Camera').html();
+                if (datacolumn.indexOf(data8) > -1) {
+                    $('#Printdiv .Camera').show();
+                }
+                else {
+                    $('#Printdiv .Camera').hide();
+                }
+                var data9 = $('#Printdiv .KeyEvent').html();
+                if (datacolumn.indexOf(data9) > -1) {
+                    $('#Printdiv .KeyEvent').show();
+                }
+                else {
+                    $('#Printdiv .KeyEvent').hide();
+                }
+                var data10 = $('#Printdiv .UserID').html();
+                if (datacolumn.indexOf(data10) > -1) {
+                    $('#Printdiv .UserID').show();
+                }
+                else {
+                    $('#Printdiv .UserID').hide();
+                }
+                var data11 = $('#Printdiv .Location').html();
+                if (datacolumn.indexOf(data11) > -1) {
+                    $('#Printdiv .Location').show();
+                }
+                else {
+                    $('#Printdiv .Location').hide();
+                }
+                var data12 = $('#Printdiv .Site').html();
+                if (datacolumn.indexOf(data12) > -1) {
+                    $('#Printdiv .Site').show();
+                }
+                else {
+                    $('#Printdiv .Site').hide();
+                }
+                var divContents = $('#Printdiv').html();
+
+                var printWindow = window.open('', '_blank', 'width=350,height=150,location=no,left=200px');
+                printWindow.document.open();
+                printWindow.document.write('<html><head><title></title>');
+                printWindow.document.write('</head><body >');
+                printWindow.document.write('<style>.head-bg{background:#f2f2f2}.td-border{outline:1px solid #ccc;padding:5px}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+                printWindow.document.write(divContents);
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.print();
+
+                printWindow.close();
+            }
+        });
+
+    });
+
+    //Preview
+    $('#PreviewSubmitEvent').click(function () {
+        var values = [];
+        $('.selected').each(function () {
+            values.push($(this).val());
+
+        });
+        var sortValue = $('input[type=radio][name=Radio1].active').val();
+
+        var datacolumn = values.join(',');
+        var result1 = datacolumn.search(',on');
+        if (result1 > -1) {
+            datacolumn = datacolumn.replace(',on', '');
+        }
+        $.ajax({
+            url: '@Url.Content("~/Events/Event/Events_print")',
+            data: JSON.stringify({ 'datacolumn': datacolumn, 'sortValue': sortValue }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                var sOut = '<table id="dynamicTable border-merge" style="border-collapse:collapse"><thead><tr class="head-bg">';
+
+                sOut += '<th class="EventDate td-border">EventDate</th><th class="EventNumber td-border">EventNumber</th><th class="AttachedEvent td-border">AttachedEvent</th><th class="EventTime td-border">EventTime</th><th class="EndTime td-border">EndTime</th><th class="FromCode td-border">FromCode</th><th class="NatureDesc td-border">NatureDesc</th><th class="DutyDesc td-border">DutyDesc</th><th class="Camera td-border">Camera</th><th class="KeyEvent td-border">KeyEvent</th><th class="UserID td-border">UserID</th><th class="Location td-border">Location</th><th class="Site">Site</th>';
+
+                sOut += '</tr><thead><tbody>';
+
+                for (var i = 0; i < data.length; i += 1) {
+
+                    console.log(data[i]);
+                    sOut += '<tr><td class="EventDate td-border">' + data[i]["EventDate"] + '</td><td class="EventNumber td-border">' + data[i]["EventNumber"] + '</td><td class="AttachedEvent td-border">' + data[i]["AttachedEvent"] + '</td><td class="EventTime td-border">' + data[i]["EventTime"] + '</td><td class="EndTime td-border">' + data[i]["EndTime"] + '</td><td class="FromCode td-border">' + data[i]["FromCode"] + '</td><td class="NatureDesc td-border">' + data[i]["NatureDesc"] + '</td><td class="DutyDesc td-border">' + data[i]["DutyDesc"] + '</td><td class="Camera td-border">' + data[i]["Camera"] + '</td><td class="KeyEvent td-border">' + data[i]["KeyEvent"] + '</td><td class="UserID td-border">' + data[i]["UserID"] + '</td><td class="Location td-border">' + data[i]["Location"] + '</td><td class="Site td-border">' + data[i]["Site"] + '</td></tr>';
+                }
+                sOut += '<tbody></table>';
+
+                $('#Printdiv').html(sOut);
+
+                var data = $('#Printdiv .EventDate').html();
+                if (datacolumn.indexOf(data) > -1) {
+                    $('#Printdiv .EventDate').show();
+                }
+                else {
+                    $('#Printdiv .EventDate').hide();
+                }
+                var data1 = $('#Printdiv .EventNumber').html();
+                if (datacolumn.indexOf(data1) > -1) {
+                    $('#Printdiv .EventNumber').show();
+                }
+                else {
+                    $('#Printdiv .EventNumber').hide();
+                }
+                var data2 = $('#Printdiv .AttachedEvent').html();
+                if (datacolumn.indexOf(data2) > -1) {
+                    $('#Printdiv .AttachedEvent').show();
+                }
+                else {
+                    $('#Printdiv .AttachedEvent').hide();
+                }
+                var data3 = $('#Printdiv .EventTime').html();
+                if (datacolumn.indexOf(data3) > -1) {
+                    $('#Printdiv .EventTime').show();
+                }
+                else {
+                    $('#Printdiv .EventTime').hide();
+                }
+                var data4 = $('#Printdiv .EndTime').html();
+                if (datacolumn.indexOf(data4) > -1) {
+                    $('#Printdiv .EndTime').show();
+                }
+                else {
+                    $('#Printdiv .EndTime').hide();
+                }
+                var data5 = $('#Printdiv .FromCode').html();
+                if (datacolumn.indexOf(data5) > -1) {
+                    $('#Printdiv .FromCode').show();
+                }
+                else {
+                    $('#Printdiv .FromCode').hide();
+                }
+                var data6 = $('#Printdiv .NatureDesc').html();
+                if (datacolumn.indexOf(data6) > -1) {
+                    $('#Printdiv .NatureDesc').show();
+                }
+                else {
+                    $('#Printdiv .NatureDesc').hide();
+                }
+                var data7 = $('#Printdiv .DutyDesc').html();
+                if (datacolumn.indexOf(data7) > -1) {
+                    $('#Printdiv .DutyDesc').show();
+                }
+                else {
+                    $('#Printdiv .DutyDesc').hide();
+                }
+                var data8 = $('#Printdiv .Camera').html();
+                if (datacolumn.indexOf(data8) > -1) {
+                    $('#Printdiv .Camera').show();
+                }
+                else {
+                    $('#Printdiv .Camera').hide();
+                }
+                var data9 = $('#Printdiv .KeyEvent').html();
+                if (datacolumn.indexOf(data9) > -1) {
+                    $('#Printdiv .KeyEvent').show();
+                }
+                else {
+                    $('#Printdiv .KeyEvent').hide();
+                }
+                var data10 = $('#Printdiv .UserID').html();
+                if (datacolumn.indexOf(data10) > -1) {
+                    $('#Printdiv .UserID').show();
+                }
+                else {
+                    $('#Printdiv .UserID').hide();
+                }
+                var data11 = $('#Printdiv .Location').html();
+                if (datacolumn.indexOf(data11) > -1) {
+                    $('#Printdiv .Location').show();
+                }
+                else {
+                    $('#Printdiv .Location').hide();
+                }
+                var data12 = $('#Printdiv .Site').html();
+                if (datacolumn.indexOf(data12) > -1) {
+                    $('#Printdiv .Site').show();
+                }
+                else {
+                    $('#Printdiv .Site').hide();
+                }
+
+
+
+                //$('#Printdiv').html(sOut;)
+                var divContents = $('#Printdiv').html();
+
+                var printWindow = window.open('', '', 'width=1000,height=1000,location=no,left=200px');
+                printWindow.document.open();
+                printWindow.document.write('<html><head><title></title>');
+                printWindow.document.write('</head><body >');
+                printWindow.document.write('<style>.head-bg{background:#f2f2f2}.border-merge{border-collapse:collapse;}.td-border{outline:1px solid #ccc;padding:5px}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+                printWindow.document.write(divContents);
+                printWindow.document.write('</body></html>');
+
+                //printWindow.preview({render:render});
+                //printWindow.document.close();
+
+            }
+        });
+
+    });
+
+    $('#PdfSubmitEvent').click(function () {
+
+        var values = [];
+        $('.selected').each(function () {
+            values.push($(this).val());
+
+        });
+        var sortValue = $('input[type=radio][name=Radio1].active').val();
+
+        var datacolumn = values.join(',');
+        var result1 = datacolumn.search(',on');
+        if (result1 > -1) {
+            datacolumn = datacolumn.replace(',on', '');
+        }
+        $.ajax({
+            url: '@Url.Content("~/Events/Event/Events_print")',
+            data: JSON.stringify({ 'datacolumn': datacolumn, 'sortValue': sortValue }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                var sOut = '<table id="dynamicTable"><thead><tr>';
+
+                sOut += '<th class="EventDate">EventDate</th><th class="EventNumber">EventNumber</th><th class="AttachedEvent">AttachedEvent</th><th class="EventTime">EventTime</th><th class="EndTime">EndTime</th><th class="FromCode">FromCode</th><th class="NatureDesc">NatureDesc</th><th class="DutyDesc">DutyDesc</th><th class="Camera">Camera</th><th class="KeyEvent">KeyEvent</th><th class="UserID">UserID</th><th class="Location">Location</th><th class="Site">Site</th>';
+
+                sOut += '</tr><thead><tbody>';
+
+                for (var i = 0; i < data.length; i += 1) {
+
+                    console.log(data[i]);
+                    sOut += '<tr><td class="EventDate">' + data[i]["EventDate"] + '</td><td class="EventNumber">' + data[i]["EventNumber"] + '</td><td class="AttachedEvent">' + data[i]["AttachedEvent"] + '</td><td class="EventTime">' + data[i]["EventTime"] + '</td><td class="EndTime">' + data[i]["EndTime"] + '</td><td class="FromCode">' + data[i]["FromCode"] + '</td><td class="NatureDesc">' + data[i]["NatureDesc"] + '</td><td class="DutyDesc">' + data[i]["DutyDesc"] + '</td><td class="Camera">' + data[i]["Camera"] + '</td><td class="KeyEvent">' + data[i]["KeyEvent"] + '</td><td class="UserID">' + data[i]["UserID"] + '</td><td class="Location">' + data[i]["Location"] + '</td><td class="Site">' + data[i]["Site"] + '</td></tr>';
+                }
+                sOut += '<tbody></table>';
+
+                $('#Printdiv').html(sOut);
+
+                var data = $('#Printdiv .EventDate').html();
+                if (datacolumn.indexOf(data) > -1) {
+                    $('#Printdiv .EventDate').show();
+                }
+                else {
+                    $('#Printdiv .EventDate').remove();
+                }
+                var data1 = $('#Printdiv .EventNumber').html();
+                if (datacolumn.indexOf(data1) > -1) {
+                    $('#Printdiv .EventNumber').show();
+                }
+                else {
+                    $('#Printdiv .EventNumber').remove();
+                }
+                var data2 = $('#Printdiv .AttachedEvent').html();
+                if (datacolumn.indexOf(data2) > -1) {
+                    $('#Printdiv .AttachedEvent').show();
+                }
+                else {
+                    $('#Printdiv .AttachedEvent').remove();
+                }
+                var data3 = $('#Printdiv .EventTime').html();
+                if (datacolumn.indexOf(data3) > -1) {
+                    $('#Printdiv .EventTime').show();
+                }
+                else {
+                    $('#Printdiv .EventTime').remove();
+                }
+                var data4 = $('#Printdiv .EndTime').html();
+                if (datacolumn.indexOf(data4) > -1) {
+                    $('#Printdiv .EndTime').show();
+                }
+                else {
+                    $('#Printdiv .EndTime').remove();
+                }
+                var data5 = $('#Printdiv .FromCode').html();
+                if (datacolumn.indexOf(data5) > -1) {
+                    $('#Printdiv .FromCode').show();
+                }
+                else {
+                    $('#Printdiv .FromCode').remove();
+                }
+                var data6 = $('#Printdiv .NatureDesc').html();
+                if (datacolumn.indexOf(data6) > -1) {
+                    $('#Printdiv .NatureDesc').show();
+                }
+                else {
+                    $('#Printdiv .NatureDesc').remove();
+                }
+                var data7 = $('#Printdiv .DutyDesc').html();
+                if (datacolumn.indexOf(data7) > -1) {
+                    $('#Printdiv .DutyDesc').show();
+                }
+                else {
+                    $('#Printdiv .DutyDesc').remove();
+                }
+                var data8 = $('#Printdiv .Camera').html();
+                if (datacolumn.indexOf(data8) > -1) {
+                    $('#Printdiv .Camera').show();
+                }
+                else {
+                    $('#Printdiv .Camera').remove();
+                }
+                var data9 = $('#Printdiv .KeyEvent').html();
+                if (datacolumn.indexOf(data9) > -1) {
+                    $('#Printdiv .KeyEvent').show();
+                }
+                else {
+                    $('#Printdiv .KeyEvent').remove();
+                }
+                var data10 = $('#Printdiv .UserID').html();
+                if (datacolumn.indexOf(data10) > -1) {
+                    $('#Printdiv .UserID').show();
+                }
+                else {
+                    $('#Printdiv .UserID').remove();
+                }
+                var data11 = $('#Printdiv .Location').html();
+                if (datacolumn.indexOf(data11) > -1) {
+                    $('#Printdiv .Location').show();
+                }
+                else {
+                    $('#Printdiv .Location').remove();
+                }
+                var data12 = $('#Printdiv .Site').html();
+                if (datacolumn.indexOf(data12) > -1) {
+                    $('#Printdiv .Site').show();
+                }
+                else {
+                    $('#Printdiv .Site').remove();
+                }
+
+                var htmldata = $('#Printdiv').html();
+
+                $('#dynamicTable').html(htmldata);
+
+                var data = [], fontSize = 12, height = 0, doc;
+                doc = new jsPDF('p', 'pt', 'a4', true);
+                doc.setFont("times", "normal");
+                doc.setFontSize(fontSize);
+
+                data = [];
+                data = doc.tableToJson('dynamicTable');
+                height = doc.drawTable(data, {
+                    xstart: 10,
+                    ystart: 10,
+                    tablestart: 40,
+                    marginleft: 10,
+                    xOffset: 10,
+                    yOffset: 15
+                });
+                doc.save("Event.pdf");
+
+            }
+        });
+    });
+    $('#SendEmailEvent').click(function () {
+        var values = [];
+        $('.selected').each(function () {
+            values.push($(this).val());
+
+        });
+        var sortValue = $('input[type=radio][name=Radio1].active').val();
+
+        var datacolumn = values.join(',');
+        var result1 = datacolumn.search(',on');
+        if (result1 > -1) {
+            datacolumn = datacolumn.replace(',on', '');
+        }
+        $.ajax({
+            url: '@Url.Content("~/Events/Event/Events_print")',
+            data: JSON.stringify({ 'datacolumn': datacolumn, 'sortValue': sortValue }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+
+
+                var sOut = '<table id="dynamicTable" style="text-align: center;border-collapse:collapse"><thead><tr>';
+
+                sOut += '<th class="EventDate">EventDate</th><th class="EventNumber">EventNumber</th><th class="AttachedEvent">AttachedEvent</th><th class="EventTime">EventTime</th><th class="EndTime">EndTime</th><th class="FromCode">FromCode</th><th class="NatureDesc">NatureDesc</th><th class="DutyDesc">DutyDesc</th><th class="Camera">Camera</th><th class="KeyEvent">KeyEvent</th><th class="UserID">UserID</th><th class="Location">Location</th><th class="Site">Site</th>';
+
+                sOut += '</tr><thead><tbody>';
+
+                for (var i = 0; i < data.length; i += 1) {
+
+                    console.log(data[i]);
+                    sOut += '<tr><td class="EventDate">' + data[i]["EventDate"] + '</td><td class="EventNumber">' + data[i]["EventNumber"] + '</td><td class="AttachedEvent">' + data[i]["AttachedEvent"] + '</td><td class="EventTime">' + data[i]["EventTime"] + '</td><td class="EndTime">' + data[i]["EndTime"] + '</td><td class="FromCode">' + data[i]["FromCode"] + '</td><td class="NatureDesc">' + data[i]["NatureDesc"] + '</td><td class="DutyDesc">' + data[i]["DutyDesc"] + '</td><td class="Camera">' + data[i]["Camera"] + '</td><td class="KeyEvent">' + data[i]["KeyEvent"] + '</td><td class="UserID">' + data[i]["UserID"] + '</td><td class="Location">' + data[i]["Location"] + '</td><td class="Site">' + data[i]["Site"] + '</td></tr>';
+                }
+                sOut += '<tbody></table>';
+
+                $('#Printdiv').html(sOut);
+
+                var data = $('#Printdiv .EventDate').html();
+                if (datacolumn.indexOf(data) > -1) {
+                    $('#Printdiv .EventDate').show();
+                }
+                else {
+                    $('#Printdiv .EventDate').hide();
+                }
+                var data1 = $('#Printdiv .EventNumber').html();
+                if (datacolumn.indexOf(data1) > -1) {
+                    $('#Printdiv .EventNumber').show();
+                }
+                else {
+                    $('#Printdiv .EventNumber').hide();
+                }
+                var data2 = $('#Printdiv .AttachedEvent').html();
+                if (datacolumn.indexOf(data2) > -1) {
+                    $('#Printdiv .AttachedEvent').show();
+                }
+                else {
+                    $('#Printdiv .AttachedEvent').hide();
+                }
+                var data3 = $('#Printdiv .EventTime').html();
+                if (datacolumn.indexOf(data3) > -1) {
+                    $('#Printdiv .EventTime').show();
+                }
+                else {
+                    $('#Printdiv .EventTime').hide();
+                }
+                var data4 = $('#Printdiv .EndTime').html();
+                if (datacolumn.indexOf(data4) > -1) {
+                    $('#Printdiv .EndTime').show();
+                }
+                else {
+                    $('#Printdiv .EndTime').hide();
+                }
+                var data5 = $('#Printdiv .FromCode').html();
+                if (datacolumn.indexOf(data5) > -1) {
+                    $('#Printdiv .FromCode').show();
+                }
+                else {
+                    $('#Printdiv .FromCode').hide();
+                }
+                var data6 = $('#Printdiv .NatureDesc').html();
+                if (datacolumn.indexOf(data6) > -1) {
+                    $('#Printdiv .NatureDesc').show();
+                }
+                else {
+                    $('#Printdiv .NatureDesc').hide();
+                }
+                var data7 = $('#Printdiv .DutyDesc').html();
+                if (datacolumn.indexOf(data7) > -1) {
+                    $('#Printdiv .DutyDesc').show();
+                }
+                else {
+                    $('#Printdiv .DutyDesc').hide();
+                }
+                var data8 = $('#Printdiv .Camera').html();
+                if (datacolumn.indexOf(data8) > -1) {
+                    $('#Printdiv .Camera').show();
+                }
+                else {
+                    $('#Printdiv .Camera').hide();
+                }
+                var data9 = $('#Printdiv .KeyEvent').html();
+                if (datacolumn.indexOf(data9) > -1) {
+                    $('#Printdiv .KeyEvent').show();
+                }
+                else {
+                    $('#Printdiv .KeyEvent').hide();
+                }
+                var data10 = $('#Printdiv .UserID').html();
+                if (datacolumn.indexOf(data10) > -1) {
+                    $('#Printdiv .UserID').show();
+                }
+                else {
+                    $('#Printdiv .UserID').hide();
+                }
+                var data11 = $('#Printdiv .Location').html();
+                if (datacolumn.indexOf(data11) > -1) {
+                    $('#Printdiv .Location').show();
+                }
+                else {
+                    $('#Printdiv .Location').hide();
+                }
+                var data12 = $('#Printdiv .Site').html();
+                if (datacolumn.indexOf(data12) > -1) {
+                    $('#Printdiv .Site').show();
+                }
+                else {
+                    $('#Printdiv .Site').hide();
+                }
+
+                var divContents = $('#Printdiv').html();
+                $('#Attachment').html(divContents);
+
+            }
+        });
+
+
+    });
+    $('#SendEmailData').click(function () {
+        if ($("#To").val() == "") {
+            alert("Enter email address.");
+        }
+        else {
+            if (!ValidateEmail($("#To").val())) {
+                alert("Invalid email address.");
+            }
+            else {
+                html2canvas($("#Attachment"), {
+                    onrendered: function (canvas) {
+                        var myImage = canvas.toDataURL("img/png");
+
+                        var Subject = $('#Subject').val();
+                        var Desciption = $('#Desciption').val();
+                        var To = $('#To').val();
+                        var pic = myImage.replace(/^data:image\/png;base64,/, "")
+                        var Attachment = pic;
+                        $.ajax({
+                            url: '@Url.Content("~/Events/Event/SendEmailData")',
+                            data: JSON.stringify({ 'Attachment': Attachment, 'Subject': Subject, 'Desciption': Desciption, 'To': To }),
+                            type: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (data) {
+                                $('.close').click();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+
+    function ValidateEmail(email) {
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        return expr.test(email);
+    };
+
+</script>
+<div id="Printdiv" style="text-align: center; border: 1px solid #ccc;display:none;">
+</div>
+<div id="editor"></div>
+<table id="newtable" style="display: none;"></table>

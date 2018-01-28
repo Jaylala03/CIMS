@@ -1,0 +1,578 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <script src="~/JavaScriptSpellCheck/extensions/jquery-1.6.4.min.js"></script>
+        <script src="~/JavaScriptSpellCheck/extensions/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+        <link href="~/JavaScriptSpellCheck/extensions/fancybox/jquery.fancybox-1.3.4.css" rel="stylesheet" />
+        <script src="~/JavaScriptSpellCheck/include.js"></script>
+    <link rel="icon" type="image/png" sizes="16x16" href="../plugins/images/favicon.png">
+    <title>@ViewBag.Title</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="~/asset/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" rel="stylesheet" type="text/css" />
+    <link rel="icon" href="~/assets/images/favicon.png" type="image/png" sizes="16x16">
+    <!-- animation CSS -->
+    <link href='@Url.Content("~/asset/css/animate.css")' rel="stylesheet">
+    <!-- Menu CSS -->
+    <link href='@Url.Content("~/asset/plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.css")' rel="stylesheet">
+    <!-- animation CSS -->
+    <link href='@Url.Content("~/asset/css/animate.css")' rel="stylesheet">
+   
+    <link href='@Url.Content("~/asset/plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css")' rel="stylesheet" />
+    <link href='@Url.Content("~/assets/js/bootstrap-timepicker/compiled/timepicker.css")' rel="stylesheet" />
+
+    <link href='@Url.Content("~/asset/plugins/bower_components/toast-master/css/jquery.toast.css")' rel="stylesheet">
+    <!-- morris CSS -->
+    <link href='@Url.Content("~/asset/plugins/bower_components/morrisjs/morris.css")' rel="stylesheet">
+    <link href='@Url.Content("~/asset/css/font-awesome.css")' rel="stylesheet" />
+
+    @*<link rel="stylesheet" href='@Url.Content("~/assets/css/custom.css")'>*@
+    <!-- Custom CSS -->
+    <link href='@Url.Content("~/asset/css/style.css")' rel="stylesheet">
+    <link href='@Url.Content("~/asset/css/responsive.css")' rel="stylesheet">
+
+    <link href='@Url.Content("~/assets/js/editableSelect/jquery-editable-select.min.css")' rel="stylesheet" />
+    <script src='@Url.Content("~/assets/js/jquery-1.11.1.min.js")'></script>
+    <!-- color CSS -->
+    <link href='@Url.Content("~/asset/css/colors/gray-dark.css")' id="theme" rel="stylesheet">
+
+
+    <script src='@Url.Content("~/assets/js/ckeditor/ckeditor.js")'></script>
+
+    <script src='@Url.Content("~/assets/js/ckeditor/adapters/jquery.js")'></script>
+    <script src="~/JavaScriptSpellCheck/include.js"></script>
+        <script src="~/JavaScriptSpellCheck/extensions/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+        <link href="~/JavaScriptSpellCheck/extensions/fancybox/jquery.fancybox-1.3.4.css" rel="stylesheet" />
+    @*< !-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->*@
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->s
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+                .dropdown-submenu {
+                    position: relative;
+                }
+
+                    /*.dropdown-submenu > .dropdown-menu {
+            top: 0;
+            right: 100%;
+            margin-top: -6px;
+            margin-left: -1px;
+            -webkit-border-radius: 0 6px 6px 6px;
+            -moz-border-radius: 0 6px 6px;
+            border-radius: 0 6px 6px 6px;
+        }*/
+
+                    .dropdown-submenu > .dropdown-menu {
+                        top: 0;
+                        left: 100%;
+                        margin-top: -6px;
+                        margin-left: -1px;
+                        -webkit-border-radius: 0 6px 6px 6px;
+                        -moz-border-radius: 0 6px 6px;
+                        border-radius: 0 6px 6px 6px;
+                        min-width: 263px;
+                    }
+
+                .navbar-top-links.custom-left-menu .dropdown-user {
+                    right: 0;
+                    right: auto;
+                }
+
+
+                .dropdown-submenu:hover > .dropdown-menu {
+                    display: block;
+                }
+
+                .dropdown-submenu > a:after {
+                    display: block;
+                    content: " ";
+                    float: right;
+                    width: 0;
+                    height: 0;
+                    border-color: transparent;
+                    border-style: solid;
+                    border-width: 5px 0 5px 5px;
+                    border-left-color: #ccc;
+                    margin-top: 5px;
+                    margin-right: -10px;
+                }
+
+                .dropdown-submenu:hover > a:after {
+                    border-left-color: #fff;
+                }
+
+                .dropdown-submenu.pull-left {
+                    float: none;
+                }
+
+                    .dropdown-submenu.pull-left > .dropdown-menu {
+                        left: -100%;
+                        margin-left: 10px;
+                        -webkit-border-radius: 6px 0 6px 6px;
+                        -moz-border-radius: 6px 0 6px 6px;
+                        border-radius: 6px 0 6px 6px;
+                    }
+    </style>
+</head>
+
+<body class="fix-sidebar fix-header">
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="cssload-speeding-wheel"></div>
+    </div>
+    <div id="wrapper">
+        <!-- Top Navigation -->
+        <nav class="navbar navbar-default navbar-static-top m-b-0">
+            <div class="navbar-header">
+                <a class="navbar-toggle hidden-sm hidden-md hidden-lg " href="javascript:void(0)" data-toggle="collapse" data-target=".navbar-collapse"><i class="ti-menu"></i></a>
+
+                <ul class="nav navbar-top-links navbar-left hidden-xs">
+                    <li><a href="javascript:void(0)" class="open-close hidden-xs waves-effect waves-light"><i class="fa fa-arrow-left ti-menu"></i></a></li>
+                    <li style="display:none;">
+                        <form role="search" class="app-search hidden-xs">
+                            <input type="text" placeholder="Search..." class="form-control">
+                            <a href="#"><i class="fa fa-search"></i></a>
+                        </form>
+                    </li>
+                </ul>
+               <!--<ul class="nav navbar-top-links custom-left-menu navbar-right pull-left" style="margin-left:120px;">
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Reports</a>
+                        <ul class="dropdown-menu dropdown-user">
+
+                            <li><a href='@Url.Content("~/Reports/Reports/EventsReports")' class="waves-effect">Events</a></li>
+                            <li><a a href='@Url.Content("~/Reports/Reports/BannedPictures")' class="waves-effect">Banned Pictures</a></li>
+                            <li><a a href='@Url.Content("~/Reports/Reports/EmailLog")' class="waves-effect">E-mail Log</a></li>
+                            <li><a a href='@Url.Content("~/Reports/Reports/WatchList")' class="waves-effect">Watch List</a></li>
+                            <li><a a href='@Url.Content("~/Reports/Reports/Dispatch")' class="waves-effect">Dispatch</a></li>
+                            <li><a a href='@Url.Content("~/Reports/Reports/LicenseExpiry")' class="waves-effect">License Expiry</a></li>
+                            <li>
+                                <a href="~/Reports/Reports/PaceAudit">Pace Audit</a>
+                            </li>
+
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Statistics</a>
+                                <ul class="dropdown-menu">
+                                    <li><a href='@Url.Content("~/Reports/Reports/ShortDescriptionCount")' class="waves-effect">Short Description Count</a></li>
+                                    <li><a href='@Url.Content("~/Reports/Reports/LocationCount")' class="waves-effect">Location Count</a></li>
+
+                                    <li><a href='@Url.Content("~/Reports/Reports/IncidentCount")' class="waves-effect">Incident Count By Location</a></li>
+                                    <li><a href='@Url.Content("~/Reports/Reports/MoneyRecovered")' class="waves-effect">Money Recovered By Location</a></li>
+                                    <li><a href='@Url.Content("~/Reports/Reports/VarianceByLocation")' class="waves-effect">Employee Variance By Location</a></li>
+                                    <li><a href='@Url.Content("~/Reports/Reports/EmployeeVariance")' class="waves-effect">Employee Variance By Employee</a></li>
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools</a>
+                        <ul class="dropdown-menu dropdown-user">
+                            @*  <ul class="dropdown-menu dropdown-user animated flipInY">*@
+
+                            <li class="custom-btn-menu">
+                                <input type="button" value="Spelling" id="helloNew">
+                            </li>
+                            <li><a href='#' data-toggle="modal" data-target="#imageCount">@*<i class="right-space fa fa-picture-o" aria-hidden="true"></i>*@Image Count</a></li>
+                            <li><a href='@Url.Content("~/Tools/Tools/ReportDesign")' class="waves-effect">@*<i data-icon="P" class="right-space linea-icon linea-software fa-fw"></i>*@<span class="hide-menu">Report Design</span></a> </li>
+                            <li><a href='@Url.Content("~/Tools/Tools/BadgeDesign")' class="waves-effect">@*<i data-icon="P" class="right-space linea-icon linea-software fa-fw"></i>*@<span class="hide-menu">Badge Design</span></a> </li>
+
+                        </ul>
+                    </li>
+
+                    <li><a href='@Url.Content("~/IncidentList/IncidentList/Index")' class="waves-effect">IncidentList</a></li>
+
+                    
+                </ul>-->
+
+                <ul class="nav navbar-top-links navbar-right pull-right">
+
+
+
+                    <!-- /.dropdown -->
+                    <li class="dropdown">                       
+                        <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#">
+                            @*
+                                <img src="/asset/plugins/images/users/varun.jpg" alt="user-img" width="36" class="img-circle">*@
+                            <b class="">
+                                @if (Session["RoleName"] == "Super Admin")
+                                {
+                                    <span>Hi, Administrator</span>
+                                }
+                                else if (Session["Admin"] != null)
+                                {
+                                    <span>Hi, Admin</span>
+                                }
+                                else
+                                {
+                                    <span>Hi, User</span>
+                                }
+                                <i class="fa fa-sign-out" aria-hidden="true"></i> @Session["UserName"]
+                            </b>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user animated flipInY">
+
+                            <li><a href='@Url.Content("~/Account/LogOff")'> <i class="fa fa-power-off"></i> Logout</a></li>
+                        </ul>
+                        <!-- /.dropdown-user -->
+                    </li>
+
+                    <!-- /.dropdown -->
+                </ul>
+
+                <div class="top-left-part">
+                    <a class="logo" href='@Url.Content("~/Home/Index")' style="float:left;width:50px;">
+                        <b>
+                            <img src="~/assets/images/admin-logo.png" class="CIMS" id="logo" />
+                        </b>
+                    </a>
+                    @*AB New*@
+                    <a class="logo" href='@Url.Content("~/Home/Index")' style="margin-left:10px;float:right;width:50px;">
+                        <b>
+                            <img src="" class="CIMS" id="logoCustomer" />
+                        </b>
+                    </a>
+                </div>
+            </div>
+            <!-- /.navbar-header -->
+            <!-- /.navbar-top-links -->
+            <!-- /.navbar-static-side -->
+        </nav>
+        <!-- End Top Navigation -->
+        <!-- Left navbar-header -->
+
+        <div class="navbar-default sidebar" role="navigation">
+            <div class="sidebar-nav navbar-collapse slimscrollsidebar">
+                <ul class="nav" id="side-menu">
+                    <li class="sidebar-search hidden-sm hidden-md hidden-lg">
+                        <!-- input-group -->
+                        <div class="input-group custom-search-form">
+                            <input type="text" class="form-control" placeholder="Search...">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                        <!-- /input-group -->
+                    </li>
+
+                    @if (Session["RoleName"] == "Super Admin")
+                    {
+                        <li><a href='@Url.Content("~/Home/RegisterCustomer")' class="waves-effect"><i data-icon="P" class="linea-icon linea-software fa-fw"></i><span class="hide-menu">Manage Application Administrator</span></a> </li>
+                    }
+                    else
+                    {
+                        <li><a href='@Url.Content("~/Home/Index")' class="waves-effect"><i data-icon="P" class="linea-icon linea-software fa-fw"></i><span class="hide-menu">Dashboard</span></a> </li>
+                        if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employees", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                        {
+                            <li><a href='@Url.Content("~/Employee/Employees/EmployeeList")' class="waves-effect"><i data-icon="P" class="ti-user fa-fw"></i><span class="hide-menu">Employees</span></a> </li>
+                        }
+                        if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+                            <li><a href='@Url.Content("~/Subject/Subject/Index")' class="waves-effect"><i data-icon="P" class="linea-icon linea-basic fa-fw"></i><span class="hide-menu">Subjects</span></a> </li>
+                        }
+                        if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Manage Roles", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Manage Roles")))
+                        {
+                            <li><a href='@Url.Content("~/Admin/RolePermissions")' class="waves-effect"><i data-icon="P" class="linea-icon linea-software fa-fw"></i><span class="hide-menu">Manage User Roles</span></a> </li>
+                        }
+                        if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Manage Users", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Manage Users")))
+                        {
+                            <li><a href='@Url.Content("~/Admin/Users")' class="waves-effect"><i data-icon="P" class="ti-user fa-fw"></i><span class="hide-menu">Manage Users</span></a> </li>
+                        }
+
+                        if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Equipment", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Equipment")))
+                        {
+                            <li><a href='@Url.Content("~/Equipment/Equipment/Index")' class="waves-effect"><i data-icon="P" class="ti-map  fa-fw"></i><span class="hide-menu">Equipment</span></a> </li>
+                        }
+                        if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Event", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Event")))
+                        {
+                            <li><a href='@Url.Content("~/Events/Event/EventList")' class="waves-effect"><i data-icon="P" class="ti-layout-media-right-alt  fa-fw"></i><span class="hide-menu">Events</span></a> </li>
+                        }
+                        if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Visitor", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Visitor")))
+                        {
+                            <li><a href='@Url.Content("~/Visitor/Visitor/Index")' class="waves-effect"><i data-icon="P" class="ti-pencil-alt  fa-fw"></i><span class="hide-menu">Visitor</span></a> </li>
+                        }
+                        if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Messages", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Messages")))
+                        {
+                            <li><a href='@Url.Content("~/Messages/Messages/MessageReceive")' class="waves-effect"><i data-icon="P" class="ti-email  fa-fw"></i><span class="hide-menu">Messages</span></a> </li>
+                        }                        
+                        if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("GeneralReports", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("GeneralReports")))
+                        {
+                            <li><a href='@Url.Content("~/GeneralReports/GeneralReports/GeneralReportsList")' class="waves-effect"><i data-icon="P" class="ti-files  fa-fw"></i><span class="hide-menu">General Reports</span></a> </li>
+                        }
+                        if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Setting", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Setting")))
+                        {
+                             <li><a href="javascript:;" class="waves-effect"><i data-icon=")" class="linea-icon linea-basic fa-fw"></i> <span class="hide-menu">Setting <span class="fa arrow"></span></span></a>
+                              <ul class="nav nav-second-level">
+                                <li> <a href='@Url.Content("~/Setting/Setting/Index")'>General Setting</a></li>
+                                <li> <a href='@Url.Content("~/Setting/Setting/ReportSetting")'>Report Setting</a></li>
+                              </ul>
+                            </li>
+                            @*<li><a href='@Url.Content("~/Setting/Setting/Index")' class="waves-effect"><i data-icon="P" class="ti-brush-alt  fa-fw"></i><span class="hide-menu">Setting</span></a> </li>
+                            <li><a href='@Url.Content("~/Setting/Setting/ReportSetting")' class="waves-effect"><i data-icon="P" class="ti-brush-alt  fa-fw"></i><span class="hide-menu">Report Setting</span></a> </li>*@
+                        }
+                        if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Media", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Media")))
+                        {
+                            <li><a href='@Url.Content("~/Media/Media/Index?Type=Media")' class="waves-effect"><i data-icon="P" class="ti-camera  fa-fw"></i><span class="hide-menu">View General Media Gallery</span></a> </li>
+                        }
+                    }
+
+
+
+                </ul>
+            </div>
+        </div>
+
+        <!-- Left navbar-header end -->
+        <!-- Page Content -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+
+                @RenderBody()
+
+                <!-- Image Count Modal -->
+                <div id="imageCount" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Image Count</h4>
+                            </div>
+                            <div class="modal-body">
+                                <table id="imageCountTable" class="table table-bordered dataTable no-footer">
+                                    <tbody>
+                                        <tr></tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- /.ImageCount Model -->
+                <!-- /.right-sidebar -->
+            </div>
+            <!-- /.container-fluid -->
+            <footer class="footer text-center">© 2016 CIMS</footer>
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+    <!-- jQuery -->
+    @* <script src='@Url.Content("~/asset/plugins/bower_components/jquery/dist/jquery.min.js")'></script>*@
+    <!-- Bootstrap Core JavaScript -->
+    <script src='@Url.Content("~/asset/bootstrap/dist/js/bootstrap.min.js")'></script>
+    <!-- Menu Plugin JavaScript -->
+    <script src='@Url.Content("~/asset/plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.js")'></script>
+
+    <!--slimscroll JavaScript -->
+    <script src='@Url.Content("~/asset/js/jquery.slimscroll.js")'></script>
+    <!--Wave Effects -->
+    <script src='@Url.Content("~/asset/js/waves.js")'></script>
+    <!-- Custom Theme JavaScript -->
+    <script src='@Url.Content("~/asset/js/custom.js")'></script>
+    <!--Style Switcher -->
+    <script src='@Url.Content("~/asset/plugins/bower_components/styleswitcher/jQuery.style.switcher.js")'></script>
+
+
+    <script src='@Url.Content("~/asset/plugins/bower_components/waypoints/lib/jquery.waypoints.js")'></script>
+    <script src='@Url.Content("~/asset/plugins/bower_components/counterup/jquery.counterup.min.js")'></script>
+    <!--Morris JavaScript -->
+    <script src='@Url.Content("~/asset/plugins/bower_components/raphael/raphael-min.js")'></script>
+    <script src='@Url.Content("~/asset/plugins/bower_components/morrisjs/morris.js")'></script>
+
+
+    <script src='@Url.Content("~/asset/js/dashboard1.js")'></script>
+    <!-- Sparkline chart JavaScript -->
+    <script src='@Url.Content("~/asset/plugins/bower_components/jquery-sparkline/jquery.sparkline.min.js")'></script>
+    <script src='@Url.Content("~/asset/plugins/bower_components/jquery-sparkline/jquery.charts-sparkline.js")'></script>
+    <script src='@Url.Content("~/asset/plugins/bower_components/toast-master/js/jquery.toast.js")'></script>
+
+
+
+    <script src='@Url.Content("~/assets/js/datepicker/bootstrap-datepicker.js")'></script>
+    <script src='@Url.Content("~/assets/js/bootstrap-timepicker/js/bootstrap-timepicker.js")'></script>
+
+    <script src='@Url.Content("~/assets/js/editableSelect/jquery-editable-select.min.js")'></script>
+    <!-- Imported scripts on this page -->
+    <script src='@Url.Content("~/assets/js/jquery.validate.min.js")'></script>
+    <script src='@Url.Content("~/assets/js/jquery.validate.unobtrusive.min.js")'></script>
+
+    @*<script src='@Url.Content("~/assets/js/datatables/js/jquery.dataTables.js")'></script>*@
+    <link href='@Url.Content("~/assets/js/datatables/css/jquery.dataTables.css")' rel="stylesheet" />
+    <link href='@Url.Content("~/assets/js/datatables/css/jquery.dataTables.min.css")' rel="stylesheet" />
+    <script src='@Url.Content("~/assets/js/datatables/tabletools/dataTables.tableTools.min.js")'></script>
+
+
+    <link href="" rel="stylesheet" />
+
+
+    @* <script type="text/javascript">
+
+            $(document).ready(function () {
+                $.toast({
+                    heading: 'Welcome to Elite admin',
+                    text: 'Use the predefined ones, or specify a custom position object.',
+                    position: 'top-right',
+                    loaderBg: '#ff6849',
+                    icon: 'info',
+                    hideAfter: 3500,
+
+                    stack: 6
+                })
+            });
+        </script>*@
+
+
+    @RenderSection("Scripts", required: false)
+    <script src="~/assets/js/Permission.js"></script>
+    <script>
+        $(document).ready(function () {
+         
+
+            ImageCount();
+            $('.add').click(function () {
+                return AddConfirm('@ViewBag.Action');
+            });
+            $('.edit').click(function () {
+
+                return EditConfirm('@ViewBag.Action');
+            });
+            $('.delete').click(function () {
+
+                return DeleteConfirm('@ViewBag.Action');
+            });
+
+        });
+
+        function ImageCount() {
+
+            $("#imageCountTable").find("tr:not(:first)").remove();
+            $.ajax({
+                url: '@Url.Content("~/Home/ImageCount")',
+                data: JSON.stringify({}),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    $('#imageCountTable tbody').append(data);
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+
+        $('#helloNew').click(function () {
+            var $ = jQuery.noConflict();
+            $('input[type=text], textarea').spellCheckInDialog({ popUpStyle: 'fancybox', theme: 'clean' })
+
+        });
+
+    </script>
+
+    <script language="JavaScript">
+        $(document).ready(function () {
+
+
+            $.ajax({
+                url: '@Url.Content("~/Home/GetAction")',
+                type: 'Post',
+                data: {},
+                dataType: 'json',
+                success: function (data) {
+
+                    var data1 = data.split("/");
+
+                    setlogo(data1[0], data1[1]);
+                    setback(data1[2], data1[3]);
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+
+            function setlogo(Corporate_logo, Customer_logo) {
+
+
+                $('#logo').attr("src", "/assets/images/" + Corporate_logo);
+                $('#logo2').attr("src", "/assets/images/" + Corporate_logo);
+
+                if (Customer_logo != null) {
+                    $('#logoCustomer').attr("src", "/assets/images/" + Customer_logo);
+                } else {
+                    $('#logoCustomer').attr("style","display:none");
+                }
+            }
+
+            function setback(Corporate_background, Corporate_back_type) {
+
+                var backValue = Corporate_background;
+                var back_type = Corporate_back_type;
+
+
+                var chkYes = document.getElementById("chkYes");
+
+                var dvPassport = document.getElementById("palette");
+
+                var dvImage = document.getElementById("Image");
+
+
+
+                if (back_type == "palette") {
+
+                    $('#transColor').val(backValue);
+
+                    $("#chkYes").prop("checked", true);
+                    $("#chkNo").prop("checked", false);
+
+                    dvImage.style.display = "none";
+                    dvPassport.style.display = "block";
+
+                    $('.evo-colorind').attr("style", "background-color:" + backValue);
+
+
+
+                } else {
+
+                    $('#logo1').attr("src", "/assets/images/" + backValue);
+
+                    $("#chkYes").prop("checked", false);
+                    $("#chkNo").prop("checked", true);
+
+                    dvImage.style.display = "block";
+                    dvPassport.style.display = "none";
+
+                }
+
+            }
+
+
+        });
+
+
+
+    </script>
+
+    
+
+</body>
+
+
+</html>

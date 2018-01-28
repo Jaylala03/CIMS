@@ -1,0 +1,217 @@
+﻿@model CIMS.Models.SubjectIncidentsModel
+<style>
+    .cmdSub {
+        pointer-events: none;
+        opacity: 0.65;
+    }
+    
+</style>
+
+@*<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Subject Reports List</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12 pull-right">
+        <button type="submit" class="btn btn-success" id="submit_button">Link Reports</button>
+    </div>
+</div>*@
+
+<div class="panel panel-default">
+    @*<div class="preloader">
+        <div class="cssload-speeding-wheel"></div>
+    </div>*@
+    <div class="panel-heading  custom-head">
+        <h3 class="box-title m-b-0">Subject Reports List</h3>
+        <button type="submit" class="btn btn-success pull-right" id="submit_button">Link Reports</button>
+    </div>
+    <div id="msgDiv">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+        }
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="subjectTable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="desktop" style="text-align:center;">Select</th>
+                        <th>
+                            Image
+                        </th>
+                        <th>
+                            Subject
+                        </th>
+                        <th>
+                            Nature of incident
+                        </th>
+                        <th>
+                            Report Number
+                        </th>
+                        <th>
+                            Short Description
+                        </th>
+                        <th>
+                            Short description text
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                        @*<th>
+                                Reports CreatedBy (UserName)
+                            </th>
+                            <th>
+                                Creation Date
+                            </th>*@
+                    </tr>
+                </thead>
+                @if (Model.SubjectIncidentList.Count() > 0)
+                {
+                    foreach (var items in Model.SubjectIncidentList)
+                    {
+                        <tr class="subTR" data-id="@items.SubjectID" style="cursor:pointer">
+                            @*<td>
+                                    @if (ViewBag.Action == 4 || ViewBag.Action == 5 || ViewBag.Action == 6 || ViewBag.Action == 7 || ViewBag.Action == 12 || ViewBag.Action == 13 || ViewBag.Action == 14 || ViewBag.Action == 15)
+                                    {
+                                        <a href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")' title="View Subject Incident">
+                                            <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.DefaultImage) ? Url.Content("~/assets/images/"+items.DefaultImage+"") : Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")' title="View Subject Incident">
+                                            <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.DefaultImage) ? Url.Content("~/assets/images/"+items.DefaultImage+"") : Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                        </a>
+                                    }
+                                </td>*@
+                            @if (ViewBag.Action == 4 || ViewBag.Action == 5 || ViewBag.Action == 6 || ViewBag.Action == 7 || ViewBag.Action == 12 || ViewBag.Action == 13 || ViewBag.Action == 14 || ViewBag.Action == 15)
+                            {
+                                <td style="text-align:center;">
+                                    <input type="checkbox" name="chksubjectreports" id="chk'@items.IncidentID'" class="bigCheckbox" 
+                                           data-subjectid="@items.SubjectID" data-incidentid="@items.IncidentID" checked="@items.isLinkedEvent"/>
+                                </td>
+                                <td>
+                                    <a href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + items.SubjectID + "&Id=" + items.IncidentID + "")' title="View Subject Incident">
+                                        <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.DefaultImage) ? Url.Content("~/assets/images/"+items.DefaultImage+"") : Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                    </a>
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + items.SubjectID + "&Id=" + items.IncidentID + "")'">@items.FirstName @items.LastName</td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + items.SubjectID + "&Id=" + items.IncidentID + "")'">
+                                    @items.NatureOfEvent
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + items.SubjectID + "&Id=" + items.IncidentID + "")'">
+                                    @items.IncidentNumber
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + items.SubjectID + "&Id=" + items.IncidentID + "")'">@items.ShortDescriptionName</td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + items.SubjectID + "&Id=" + items.IncidentID + "")'">@Html.Raw(@items.Description) </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + items.SubjectID + "&Id=" + items.IncidentID + "")'"> @items.StatusName </td>
+                                @*<td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">@items.ReportCreatorUser</td>
+                                    <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">@items.ReportCreateDate</td>*@
+                            }
+                            else
+                            {
+                                <td style="text-align:center;">
+                                    <input type="checkbox" name="chksubjectreports" id="chk'@items.IncidentID'" class="bigCheckbox" checked="@items.isLinkedEvent" disabled/>
+                                </td>
+                                <td>
+                                    <a href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + items.SubjectID + "&Id=" + items.IncidentID + "")' title="View Subject Incident">
+                                        <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.DefaultImage) ? Url.Content("~/assets/images/"+items.DefaultImage+"") : Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                    </a>
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + items.SubjectID + "&Id=" + items.IncidentID + "")'">@items.FirstName @items.LastName</td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + items.SubjectID + "&Id=" + items.IncidentID + "")'">
+                                    @items.NatureOfEvent
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + items.SubjectID + "&Id=" + items.IncidentID + "")'">
+                                    @items.IncidentNumber
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + items.SubjectID + "&Id=" + items.IncidentID + "")'">@items.ShortDescriptionName</td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + items.SubjectID + "&Id=" + items.IncidentID + "")'">@Html.Raw(@items.Description) </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + items.SubjectID + "&Id=" + items.IncidentID + "")'"> @items.StatusName </td>
+                                @*<td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">@items.ReportCreatorUser</td>
+                                    <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">@items.ReportCreateDate</td>*@
+                            }
+                        </tr>
+                    }
+                }
+
+            </table>
+
+        </div>
+    </div>
+</div>
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#subjectTable").dataTable();
+        SetFormView();
+    });
+    container = $('#msgDiv');
+    $('#submit_button').click(function (e)
+    {
+        var tableControl = document.getElementById('subjectTable');
+        var arrayOfValues = [];
+        var isSubRptSelected = false;
+        var arr = [];
+
+        $('input:checkbox[name="chksubjectreports"]:checked', tableControl).each(function ()
+        {
+            isSubRptSelected = true;
+            arr.push({
+                subjectid: this.dataset.subjectid,
+                incidentid: this.dataset.incidentid
+            });
+
+        });
+        //if (!isSubRptSelected) {
+        //    alert('Please select subject reports.');
+        //    return false;
+        //}
+
+        e.preventDefault();
+
+        objs = JSON.stringify({ 'eventid': $('#EventID').val(), 'subjectreports': arr });
+        //alert(objs);
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: '/Event/LinkSubjectReports',
+            data: objs,
+            cache: false,
+            async: false,
+            beforeSend: function ()
+            {
+                // cog placed
+                container.html('<h1><i class="fa fa-cog fa-spin"></i> Loading...</h1>');
+            },
+            success: function (data)
+            {
+                // update hash and avoid a third request since i already have 2 request
+                // i'm updating the content!
+                container.css({
+                    opacity: '0.0'
+                }).html('<div class="alert alert-success">' + JSON.parse(data) + '</div>').delay(50).animate({
+                    opacity: '1.0'
+                }, 300);
+
+            },
+            error: function (xhr, ajaxOptions, thrownError)
+            {
+                //var obj = JSON.parse(xhr.responseText);
+                //if (obj.error)
+                //{
+                container.html('<div class="alert alert-error">' + JSON.parse(data) + '</div>');
+                //}
+            }
+        });
+
+        return false; // keeps the page from not refreshing
+    });
+
+</script>
+

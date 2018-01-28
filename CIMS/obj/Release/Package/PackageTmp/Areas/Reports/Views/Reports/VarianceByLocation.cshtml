@@ -1,0 +1,597 @@
+﻿@model CIMS.Models.ReportsStatisticsModel
+@{
+    ViewBag.Title = "VarianceByLocation";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+@*<h2>VarianceByLocation</h2>*@
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+<script src="~/assets/js/Jspdf/FileSaver.js"></script>
+<script src="~/assets/js/Jspdf/jspdf.js"></script>
+<script src="~/assets/js/Jspdf/jspdfplugintable.js"></script>
+
+
+<div class="row bg-title">
+    <div class="col-lg-6 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Employee Variance By Location</h4>
+    </div>
+    <div class="col-lg-6 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Employee Variance By Location</li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="col-md-12">
+            <div class="white-box clearfix">
+
+                <div class="col-md-9">
+                    <fieldset>
+                        <legend>Amount</legend>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input type="radio" name="Radio1" value="Short" id="rbShort" checked="checked" class="active">
+                                <label class="control-label" for="rbShort">Short</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="radio" name="Radio1" value="Over" id="rbOver">
+                                <label class="control-label" for="rbOver">Over</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="col-md-9 top-10">
+                    <fieldset>
+                        <legend>Group By</legend>
+                        <div class="row">
+                            <div class="form-group col-md-12 no-margin-bottom">
+                                <input type="radio" name="Radio2" value="EmployeeIncidents.ShortDescriptor, EmployeeIncidents.Location" id="rbShortLocation" checked="checked" class="active">
+                                <label class="control-label" for="rbShortLocation">Short Description then Location</label>
+                            </div>
+                            <div class="form-group col-md-12 no-margin-bottom">
+                                <input type="radio" name="Radio2" value="EmployeeIncidents.Location, EmployeeIncidents.ShortDescriptor" id="rbLocationShort">
+                                <label class="control-label" for="rbLocationShort">Location then Short Description</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="col-md-9 top-10">
+                    <fieldset>
+                        <legend>Incident Date Range</legend>
+                        <div class="form-group clearfix">
+                            <label class="control-label col-md-3">Start Date </label>
+                            <div class="col-md-5">
+                            <input type="text" id="startDate" name="startDate" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group clearfix">
+                            <label class="control-label col-md-3">End Date </label>
+                              <div class="col-md-5"> 
+                            <input type="text" id="endDate" name="endDate" class="form-control" />
+                        </div>
+                          </div>
+                    </fieldset>
+                </div>
+
+                <div class="col-md-12 top-10">
+                    <div class="form-group no-margin-bottom">
+                        <button type="button" class="btn btn-success" id="PrintSubmit">Print</button>
+                        <button type="button" class="btn btn-primary" id="PreviewSubmit">Preview</button>
+                        <a href="#myModalSendEmail" data-toggle="modal" class="btn btn-info" style="padding: 7px 8px;" id="SendEmail">Send Email</a>
+                        <button type="button" class="btn btn-warning" id="PdfSubmit">Save As Pdf</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Send Email Model-->
+<div class="modal fade" id="myModalSendEmail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Send Email</h4>
+            </div>
+
+            <div class="modal-body row">
+                <div class="col-md-12 right-label">
+                    <div class="form-group clearfix">
+                        @Html.Label("To", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="To" id="To" class="form-control">
+                            <label id="EmailTo" style="color:red;"></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Subject", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Subject" id="Subject" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Desciption", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Desciption" id="Desciption" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12 text-right">
+                        <button type="submit" class="btn btn-success" id="SendEmailData">Send Email</button>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="Picture-log">
+
+                        <div class="table-responsive">
+                            <div id="Attachment"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.Send Email Model-->
+
+
+<div id="Printdiv" style="text-align: center; display:none;">
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#startDate').datepicker();
+        $('#endDate').datepicker();
+    });
+
+    $('input:radio').click(function () {
+        $('input:radio:checked').addClass('active');
+        $('input:radio:not(:checked)').removeClass('active');
+
+    });
+
+    //print--
+    $('#PrintSubmit').click(function () {
+        var type = $('input[type=radio][name=Radio1].active').val();
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        var shortLocation = $('input[type=radio][name=Radio2].active').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Reports/Reports/VarianceByLocation_print")',
+            data: JSON.stringify({ 'type': type, 'startDate': startDate, 'endDate': endDate, 'shortLocation': shortLocation }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var sOut = '<table id="dynamicTable" style="border-collapse: collapse;" ><thead><tr class="head-bg">';
+
+                sOut += '<th class="">Short Descriptor</th><th class="">Location</th><th class="">Number of Incidents</th><th class="">Amount</th>';
+
+                sOut += '</tr><thead><tbody>';
+
+                var sd = "";
+                var incidentCount = 0;
+                var amount = 0;
+                var amount1 = 0;
+                var incidentCount1 = 0;
+                var grandTotal = 0;
+                var grandAmount = 0;
+                for (var i = 0; i < data.length; i += 1) {
+
+                    var newsd = data[i]["ShortDescriptor"];
+
+                    if (sd == "") {
+                        sd = newsd;
+                        sOut += '<tr><td class="td-border" colspan="4"><b>' + data[i]["ShortDescriptor"] + '</b></td></tr>';
+                    }
+
+                    if (sd == newsd) {
+                        sd = newsd;
+                        sOut += '<tr><td class="td-border"></td><td class="td-border">' + data[i]["Location"] + '</td><td class="td-border">' + data[i]["IncidentCount"] + '</td><td class="td-border">$' + data[i]["SumAmount"] + '</td></tr>';
+
+                        incidentCount += parseInt(data[i]["IncidentCount"]);
+                        amount += parseFloat(data[i]["SumAmount"]);
+
+                        grandTotal += parseInt(data[i]["IncidentCount"]);
+                        grandAmount += parseFloat(data[i]["SumAmount"]);
+
+                        incidentCount1 = incidentCount;
+
+                        amount1 = amount;
+
+                    }
+                    else {
+                        if (sd != newsd) {
+
+                            sd = newsd;
+
+                            incidentCount1 = incidentCount;
+                            incidentCount = 0;
+
+                            amount1 = amount;
+                            amount = 0;
+
+                            sOut += '<tr><td class="td-border"></td><td class="td-border"><b>Total:</b></td><td class="td-border">' + incidentCount1 + '</td><td class="td-border">' + amount1 + '</td></tr>';
+                            sOut += '<tr><td class="td-border" colspan="4"><b>' + data[i]["ShortDescriptor"] + '</b></td></tr>';
+                            sOut += '<tr><td class="td-border"></td><td class="td-border">' + data[i]["Location"] + '</td><td class="td-border">' + data[i]["IncidentCount"] + '</td><td class="td-border">$' + data[i]["SumAmount"] + '</td></tr>';
+
+                            incidentCount += parseInt(data[i]["IncidentCount"]);
+                            amount += parseFloat(data[i]["SumAmount"]);
+
+                            grandTotal += parseInt(data[i]["IncidentCount"]);
+                            grandAmount += parseFloat(data[i]["SumAmount"]);
+
+                        }
+                    }
+                }
+                sOut += '<tr><td class="td-border"></td><td class="td-border"><b>Total:</b></td><td class="td-border">' + incidentCount1 + '</td><td class="td-border">' + amount1 + '</td></tr>';
+                sOut += '<tr><td class="td-border"></td><td class="td-border"><b>Grand Total:</b></td><td class="td-border">' + grandTotal + '</td><td class="td-border">' + grandAmount + '</td></tr>';
+                sOut += '<tbody></table>';
+
+                $('#Printdiv').html(sOut);
+
+                var divContents = $('#Printdiv').html();
+                var printWindow = window.open('', '_blank', 'width=900,height=600,location=no,left=200px,scrollbar=1');
+                printWindow.document.open();
+                printWindow.document.write('<html><head><title></title>');
+                printWindow.document.write('</head><body >');
+                printWindow.document.write('<style>table{border:1px solid #ccc}.head-bg{background:#f2f2f2}.head-bg th{padding:10px;} .right-border{padding:10px;border:1px solid #ccc;} .td-border{padding:10px}.td-border{border-bottom: 1px solid grey;}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+                printWindow.document.write(divContents);
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.print();
+
+                printWindow.close();
+
+            }
+        });
+    });
+
+
+    //Preview
+    $('#PreviewSubmit').click(function () {
+        var type = $('input[type=radio][name=Radio1].active').val();
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        var shortLocation = $('input[type=radio][name=Radio2].active').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Reports/Reports/VarianceByLocation_print")',
+            data: JSON.stringify({ 'type': type, 'startDate': startDate, 'endDate': endDate, 'shortLocation': shortLocation }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var sOut = '<table id="dynamicTable" style="border-collapse: collapse;" ><thead><tr class="head-bg">';
+
+                sOut += '<th class="">Short Descriptor</th><th class="">Location</th><th class="">Number of Incidents</th><th class="">Amount</th>';
+
+                sOut += '</tr><thead><tbody>';
+
+                var sd = "";
+                var incidentCount = 0;
+                var amount = 0;
+                var amount1 = 0;
+                var incidentCount1 = 0;
+                var grandTotal = 0;
+                var grandAmount = 0;
+                for (var i = 0; i < data.length; i += 1) {
+
+                    var newsd = data[i]["ShortDescriptor"];
+
+                    if (sd == "") {
+                        sd = newsd;
+                        sOut += '<tr><td class="td-border" colspan="4"><b>' + data[i]["ShortDescriptor"] + '</b></td></tr>';
+                    }
+
+                    if (sd == newsd) {
+                        sd = newsd;
+                        sOut += '<tr><td class="td-border"></td><td class="td-border">' + data[i]["Location"] + '</td><td class="td-border">' + data[i]["IncidentCount"] + '</td><td class="td-border">$' + data[i]["SumAmount"] + '</td></tr>';
+
+                        incidentCount += parseInt(data[i]["IncidentCount"]);
+                        amount += parseFloat(data[i]["SumAmount"]);
+
+                        grandTotal += parseInt(data[i]["IncidentCount"]);
+                        grandAmount += parseFloat(data[i]["SumAmount"]);
+
+                        incidentCount1 = incidentCount;
+
+                        amount1 = amount;
+
+                    }
+                    else {
+                        if (sd != newsd) {
+
+                            sd = newsd;
+
+                            incidentCount1 = incidentCount;
+                            incidentCount = 0;
+
+                            amount1 = amount;
+                            amount = 0;
+
+                            sOut += '<tr><td class="td-border"></td><td class="td-border"><b>Total:</b></td><td class="td-border">' + incidentCount1 + '</td><td class="td-border">' + amount1 + '</td></tr>';
+                            sOut += '<tr><td class="td-border" colspan="4"><b>' + data[i]["ShortDescriptor"] + '</b></td></tr>';
+                            sOut += '<tr><td class="td-border"></td><td class="td-border">' + data[i]["Location"] + '</td><td class="td-border">' + data[i]["IncidentCount"] + '</td><td class="td-border">$' + data[i]["SumAmount"] + '</td></tr>';
+
+                            incidentCount += parseInt(data[i]["IncidentCount"]);
+                            amount += parseFloat(data[i]["SumAmount"]);
+
+                            grandTotal += parseInt(data[i]["IncidentCount"]);
+                            grandAmount += parseFloat(data[i]["SumAmount"]);
+
+                        }
+                    }
+                }
+                sOut += '<tr><td class="td-border"></td><td class="td-border"><b>Total:</b></td><td class="td-border">' + incidentCount1 + '</td><td class="td-border">' + amount1 + '</td></tr>';
+                sOut += '<tr><td class="td-border"></td><td class="td-border"><b>Grand Total:</b></td><td class="td-border">' + grandTotal + '</td><td class="td-border">' + grandAmount + '</td></tr>';
+                sOut += '<tbody></table>';
+
+                $('#Printdiv').html(sOut);
+
+                var divContents = $('#Printdiv').html();
+
+                var printWindow = window.open('', '_blank', 'width=350,height=150,location=no,left=200px');
+                printWindow.document.open();
+                printWindow.document.write('<html><head><title></title>');
+                printWindow.document.write('</head><body >');
+                printWindow.document.write('<style>.head-bg th{padding:10px;}table{border:1px solid #ccc}.head-bg{background:#f2f2f2}.right-border{padding:10px;border:1px solid #ccc;} .td-border{padding:10px}.td-border{border-bottom: 1px solid grey;}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+                printWindow.document.write(divContents);
+                printWindow.document.write('</body></html>');
+
+            }
+        });
+
+    });
+
+    // Email
+    $('#SendEmail').click(function () {
+        var type = $('input[type=radio][name=Radio1].active').val();
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        var shortLocation = $('input[type=radio][name=Radio2].active').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Reports/Reports/VarianceByLocation_print")',
+            data: JSON.stringify({ 'type': type, 'startDate': startDate, 'endDate': endDate, 'shortLocation': shortLocation }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var sOut = '<table id="dynamicTable" style="border-collapse: collapse;" ><thead><tr class="head-bg">';
+
+                sOut += '<th class="">Short Descriptor</th><th class="">Location</th><th class="">Number of Incidents</th><th class="">Amount</th>';
+
+                sOut += '</tr><thead><tbody>';
+
+                var sd = "";
+                var incidentCount = 0;
+                var amount = 0;
+                var amount1 = 0;
+                var incidentCount1 = 0;
+                var grandTotal = 0;
+                var grandAmount = 0;
+                for (var i = 0; i < data.length; i += 1) {
+
+                    var newsd = data[i]["ShortDescriptor"];
+
+                    if (sd == "") {
+                        sd = newsd;
+                        sOut += '<tr><td class="td-border" colspan="4"><b>' + data[i]["ShortDescriptor"] + '</b></td></tr>';
+                    }
+
+                    if (sd == newsd) {
+                        sd = newsd;
+                        sOut += '<tr><td class="td-border"></td><td class="td-border">' + data[i]["Location"] + '</td><td class="td-border">' + data[i]["IncidentCount"] + '</td><td class="td-border">$' + data[i]["SumAmount"] + '</td></tr>';
+
+                        incidentCount += parseInt(data[i]["IncidentCount"]);
+                        amount += parseFloat(data[i]["SumAmount"]);
+
+                        grandTotal += parseInt(data[i]["IncidentCount"]);
+                        grandAmount += parseFloat(data[i]["SumAmount"]);
+
+                        incidentCount1 = incidentCount;
+
+                        amount1 = amount;
+
+                    }
+                    else {
+                        if (sd != newsd) {
+
+                            sd = newsd;
+
+                            incidentCount1 = incidentCount;
+                            incidentCount = 0;
+
+                            amount1 = amount;
+                            amount = 0;
+
+                            sOut += '<tr><td class="td-border"></td><td class="td-border"><b>Total:</b></td><td class="td-border">' + incidentCount1 + '</td><td class="td-border">' + amount1 + '</td></tr>';
+                            sOut += '<tr><td class="td-border" colspan="4"><b>' + data[i]["ShortDescriptor"] + '</b></td></tr>';
+                            sOut += '<tr><td class="td-border"></td><td class="td-border">' + data[i]["Location"] + '</td><td class="td-border">' + data[i]["IncidentCount"] + '</td><td class="td-border">$' + data[i]["SumAmount"] + '</td></tr>';
+
+                            incidentCount += parseInt(data[i]["IncidentCount"]);
+                            amount += parseFloat(data[i]["SumAmount"]);
+
+                            grandTotal += parseInt(data[i]["IncidentCount"]);
+                            grandAmount += parseFloat(data[i]["SumAmount"]);
+
+                        }
+                    }
+                }
+                sOut += '<tr><td class="td-border"></td><td class="td-border"><b>Total:</b></td><td class="td-border">' + incidentCount1 + '</td><td class="td-border">' + amount1 + '</td></tr>';
+                sOut += '<tr><td class="td-border"></td><td class="td-border"><b>Grand Total:</b></td><td class="td-border">' + grandTotal + '</td><td class="td-border">' + grandAmount + '</td></tr>';
+                sOut += '<tbody></table>';
+
+                $('#Printdiv').html(sOut);
+
+                var divContents = $('#Printdiv').html();
+                $('#Attachment').html(divContents);
+
+            }
+        });
+    });
+
+    $('#SendEmailData').click(function () {
+        if ($("#To").val() == "") {
+            alert("Enter email address.");
+        }
+        else {
+            if (!ValidateEmail($("#To").val())) {
+                alert("Invalid email address.");
+            }
+            else {
+                html2canvas($("#Attachment"), {
+                    onrendered: function (canvas) {
+                        var myImage = canvas.toDataURL("img/png");
+
+                        var Subject = $('#Subject').val();
+                        var Desciption = $('#Desciption').val();
+                        var To = $('#To').val();
+                        var pic = myImage.replace(/^data:image\/png;base64,/, "")
+                        var Attachment = pic;
+                        $.ajax({
+                            url: '@Url.Content("~/Events/Event/SendEmailData")',
+                            data: JSON.stringify({ 'Attachment': Attachment, 'Subject': Subject, 'Desciption': Desciption, 'To': To }),
+                            type: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (data) {
+                                $('.close').click();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+
+    function ValidateEmail(email) {
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        return expr.test(email);
+    };
+
+    //PDF
+    $('#PdfSubmit').click(function () {
+        var type = $('input[type=radio][name=Radio1].active').val();
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        var shortLocation = $('input[type=radio][name=Radio2].active').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Reports/Reports/VarianceByLocation_print")',
+            data: JSON.stringify({ 'type': type, 'startDate': startDate, 'endDate': endDate, 'shortLocation': shortLocation }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var sOut = '<table id="dynamicTable" style="border-collapse: collapse;" ><thead><tr class="head-bg">';
+
+                sOut += '<th class="">Short Descriptor</th><th class="">Location</th><th class="">Number of Incidents</th><th class="">Amount</th>';
+
+                sOut += '</tr><thead><tbody>';
+
+                var sd = "";
+                var incidentCount = 0;
+                var amount = 0;
+                var amount1 = 0;
+                var incidentCount1 = 0;
+                var grandTotal = 0;
+                var grandAmount = 0;
+                for (var i = 0; i < data.length; i += 1) {
+
+                    var newsd = data[i]["ShortDescriptor"];
+
+                    if (sd == "") {
+                        sd = newsd;
+                        sOut += '<tr><td class="td-border" colspan="4"><b>' + data[i]["ShortDescriptor"] + '</b></td></tr>';
+                    }
+
+                    if (sd == newsd) {
+                        sd = newsd;
+                        sOut += '<tr><td class="td-border"></td><td class="td-border">' + data[i]["Location"] + '</td><td class="td-border">' + data[i]["IncidentCount"] + '</td><td class="td-border">$' + data[i]["SumAmount"] + '</td></tr>';
+
+                        incidentCount += parseInt(data[i]["IncidentCount"]);
+                        amount += parseFloat(data[i]["SumAmount"]);
+
+                        grandTotal += parseInt(data[i]["IncidentCount"]);
+                        grandAmount += parseFloat(data[i]["SumAmount"]);
+
+                        incidentCount1 = incidentCount;
+
+                        amount1 = amount;
+
+                    }
+                    else {
+                        if (sd != newsd) {
+
+                            sd = newsd;
+
+                            incidentCount1 = incidentCount;
+                            incidentCount = 0;
+
+                            amount1 = amount;
+                            amount = 0;
+
+                            sOut += '<tr><td class="td-border"></td><td class="td-border"><b>Total:</b></td><td class="td-border">' + incidentCount1 + '</td><td class="td-border">' + amount1 + '</td></tr>';
+                            sOut += '<tr><td class="td-border" colspan="4"><b>' + data[i]["ShortDescriptor"] + '</b></td></tr>';
+                            sOut += '<tr><td class="td-border"></td><td class="td-border">' + data[i]["Location"] + '</td><td class="td-border">' + data[i]["IncidentCount"] + '</td><td class="td-border">$' + data[i]["SumAmount"] + '</td></tr>';
+
+                            incidentCount += parseInt(data[i]["IncidentCount"]);
+                            amount += parseFloat(data[i]["SumAmount"]);
+
+                            grandTotal += parseInt(data[i]["IncidentCount"]);
+                            grandAmount += parseFloat(data[i]["SumAmount"]);
+
+                        }
+                    }
+                }
+                sOut += '<tr><td class="td-border"></td><td class="td-border"><b>Total:</b></td><td class="td-border">' + incidentCount1 + '</td><td class="td-border">' + amount1 + '</td></tr>';
+                sOut += '<tr><td class="td-border"></td><td class="td-border"><b>Grand Total:</b></td><td class="td-border">' + grandTotal + '</td><td class="td-border">' + grandAmount + '</td></tr>';
+                sOut += '<tbody></table>';
+
+                $('#Printdiv').html(sOut);
+
+                var htmldata = $('#Printdiv').html();
+
+                $('#dynamicTable').html(htmldata);
+
+                var data = [], fontSize = 12, height = 0, doc;
+                doc = new jsPDF('p', 'pt', 'a4', true);
+                doc.setFont("times", "normal");
+                doc.setFontSize(fontSize);
+
+                data = [];
+                data = doc.tableToJson('dynamicTable');
+                height = doc.drawTable(data, {
+                    xstart: 10,
+                    ystart: 10,
+                    tablestart: 40,
+                    marginleft: 10,
+                    xOffset: 10,
+                    yOffset: 15
+                });
+                doc.save("VarianceByLocation.pdf");
+
+            }
+        });
+    });
+</script>
+
+

@@ -1,0 +1,485 @@
+﻿@model CIMS.Models.SubjectIdentificationModel
+@{
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+    ViewBag.Title = "Subject Identification";
+}
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Subject</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Subject</li>
+        </ol>
+    </div>
+
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+
+<div class="row">
+    @if (Model.SubjectID > 0)
+    {
+        <div class="col-md-12 enablebtn btn-enable-main">
+            <h3 class="box-title inline-head">@Model.LogoFirstName @Model.LogoMiddleName @Model.LogoLastName</h3>
+
+            <a href='@Url.Content("~/Subject/Subject/SubjectIdentification?Type=Subject&Id=" + Model.SubjectID + "")' id="permission" class="btn btn-info edit" title="Edit Subject">
+                <i class="fa fa-pencil"></i> Edit
+            </a>
+            <a class="btn btn-danger" href='javascript:;' onclick='DeleteSubject(@Model.SubjectID, this);' title="Delete Subject">
+                <i class='fa fa-trash'></i> Delete
+            </a>
+            <a class="btn btn-primary" href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))">
+                <i class="fa fa-plus"></i> Add Reports
+            </a>
+            <a class="btn btn-primary" href='@Url.Content("~/Subject/Subject/SubjectIncidentsList?SubId=" + Model.SubjectID + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))">
+                <i class="fa fa-eye"></i> View Reports
+            </a>
+           
+            <a class="btn btn-info" href='@Url.Content("~/Subject/Subject/SearchSubject/" + Model.SubjectID + "")'>
+                <i class="fa fa-plus"></i>
+                Combine Subject
+            </a>
+        </div>
+    }
+    <div class="col-md-12">
+        <div class="white-box clearfix">
+            <ul class="nav nav-pills custom-tabs">
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li>
+                        <a href='@Url.Content("~/Subject/Subject/AddSubject?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                            <span>Subject</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Addresses", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectAddress?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                            <span>Addresses</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Aliases", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectAlias?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+
+                            <span>Aliases</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Features", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectFeatures?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                            <span>Features</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Identification", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="active">
+                        <a href="javascript:;">
+                            <span>Identification</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject LCT Totals", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a style="display:none;" href='@Url.Content("~/Subject/Subject/SubjectLCTTotals?" + (Request.QueryString["Show"] == "View" ? "Show=View&" : "") + "Type=Subject&Id=" + Model.SubjectID + "")'>
+                            <span>LCT Totals</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Watch List", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectWatchList?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                            <span>Watch List</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Linked", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectLinked?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                            <span>Linked</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+
+
+        <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+
+        <div class="large-title no-margin">Subject Reports </div>
+
+
+
+        @using (Html.BeginForm("SubjectIdentification", "Subject", FormMethod.Post, new { area = "Subject", id = "SubjectIdentification" }))
+        {
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="white-box clearfix">
+                        <div class="row">
+                            <div class="form-group clearfix" style="display:none;">
+                                @Html.LabelFor(m => m.LCTID, new { @class = "col-md-12" })
+                                <div class="col-md-8">
+                                    @Html.TextBoxFor(m => m.LCTID, new { @class = "form-control", @readonly = "readonly",id="txtLCTID" })
+                                    @Html.ValidationMessageFor(m => m.LCTID, "", new { @class = "text-danger" })
+                                    @Html.HiddenFor(m => m.SubjectID)
+                                    @Html.HiddenFor(m => m.Idss)
+                                </div>
+                                <div class="col-md-3">
+                                    <a href="javascript:;" id="generateIcdBtn" class="btn btn-info btn-space">Generate LCT ID</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.Occupation)
+                            @Html.TextBoxFor(m => m.Occupation, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Occupation, "", new { @class = "text-danger" })
+                        </div>
+
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.BusinessName)
+                            @Html.TextBoxFor(m => m.BusinessName, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.BusinessName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <div class="white-box clearfix">
+                        <h4 class="bspace">Identification</h4>
+                        <div class="row">
+
+                            <div class="col-md-4">
+                                <label class="hidden-sm hidden-xs">Type ID </label>
+                            </div>
+
+                            <div class="col-md-5">
+                                <label class="hidden-sm hidden-xs">ID Number </label>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="hidden-sm hidden-xs">Default ID </label>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                @*<div class="form-group clearfix">
+                                    <label class="hidden-lg hidden-md">Type ID </label>
+                                    @Html.TextBoxFor(m => m.IDType1, new { @class = "form-control" })
+                                    
+                                </div>*@
+                                <div class="form-group clearfix">
+                                    <div class="col-md-12">
+                                        @Html.DropDownListFor(m => m.IDType1, ViewBag.lstIdentification1 as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="form-group clearfix">
+                                    <label class="hidden-lg hidden-md">ID Number </label>
+                                    @Html.TextBoxFor(m => m.IDNumber1, new { @class = "form-control" })
+                                    @*@Html.ValidationMessageFor(m => m.IDNumber1, "", new { @class = "text-danger" })*@
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group clearfix radio-center radio-space1">
+                                    <label class="hidden-lg hidden-md">Default ID </label>
+                                    @Html.RadioButtonFor(m => m.IDDefault1, true)
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group clearfix">
+                                    <label class="hidden-lg hidden-md">Type ID </label>
+                                    <div class="col-md-12">
+                                        @Html.DropDownListFor(m => m.IDType2, ViewBag.lstIdentification2 as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                                    </div>
+                            
+                                </div>
+                                
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="form-group clearfix">
+                                    <label class="hidden-lg hidden-md">ID Number </label>
+                                    @Html.TextBoxFor(m => m.IDNumber2, new { @class = "form-control" })
+                                    @*@Html.ValidationMessageFor(m => m.IDNumber2, "", new { @class = "text-danger" })*@
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group clearfix radio-center  radio-space2">
+                                    <label class="hidden-lg hidden-md">Default ID </label>
+                                    @Html.RadioButtonFor(m => m.IDDefault2, true)
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group clearfix">
+                                    <label class="hidden-lg hidden-md">Type ID </label>
+                                    <div class="col-md-12">
+                                        @Html.DropDownListFor(m => m.IDType3, ViewBag.lstIdentification3 as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="form-group clearfix">
+                                    <label class="hidden-lg hidden-md">ID Number </label>
+
+                                    @Html.TextBoxFor(m => m.IDNumber3, new { @class = "form-control" })
+                                    @*@Html.ValidationMessageFor(m => m.IDNumber3, "", new { @class = "text-danger" })*@
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group clearfix radio-center  radio-space3">
+                                    <label class="hidden-lg hidden-md">Default ID </label>
+                                    @Html.RadioButtonFor(m => m.IDDefault3, true)
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="white-box clearfix">
+                        <div class="form-group2">
+                            <input type="submit" id="btnSubmit" value="@(Model.Idss> 0 ? "Update" : "Save")" class="btn btn-success @(Model.Idss> 0 ? " edit" : " add")" />
+                            <input type="button" class="btn btn-blue" id="clearBtn" value="Clear" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        if ($('#hdShow').val() == 'View') {
+            $(".form-control").attr("disabled", "disabled");
+            $(".btn").hide(true);
+            $(document).find('.enablebtn>a').removeAttr("style");
+            $(document).find("input[type=radio]").attr("disabled", "disabled");
+        }
+        else {
+            //$(".btn").removeAttr("style");
+            $(".form-control").attr("disabled", false);
+            //$(".btn").attr("disabled", false);
+            $(document).find('#permission').hide(true);
+        }
+        
+        $('#generateIcdBtn').on('click', function () {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/Get_NextLCTIDSequential")',
+                data: {},
+                type: 'get',
+                datatype: 'json',
+                contenttype: 'application/json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        var jsondata = JSON.parse(data);
+                        var lctid = parseInt(jsondata + 1);
+                        $('#LCTID').val(lctid);
+                    }
+
+                }
+            });
+
+        });
+
+        $('#IDDefault3').click(function () {
+            $(this).val(true);
+            var checked = $(this).attr('checked', true);
+            if (checked) {
+                $('#IDDefault2').attr('checked', false);
+                $('#IDDefault1').attr('checked', false);
+            }
+        });
+
+        $('#IDDefault2').click(function () {
+            $(this).val(true);
+            var checked = $(this).attr('checked', true);
+            if (checked) {
+                $('#IDDefault3').attr('checked', false);
+                $('#IDDefault1').attr('checked', false);
+            }
+        });
+
+        $('#IDDefault1').click(function () {
+            $(this).val(true);
+            var checked = $(this).attr('checked', true);
+            if (checked) {
+                $('#IDDefault2').attr('checked', false);
+                $('#IDDefault3').attr('checked', false);
+            }
+        });
+
+        if ('@Model.Idss' > 0) {
+            $('#generateIcdBtn').attr('disabled', 'disabled');
+        }
+
+        $('#clearBtn').on('click', function () {
+            Reset();
+        });
+
+        // Page Change
+        var somethingChanged = false;
+        var button = $('#btnSubmit');
+        var orig = [];
+
+        $.fn.getType = function () {
+            return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
+        }
+
+        $("#SubjectIdentification :input").each(function () {
+            var type = $(this).getType();
+            var tmp = {
+                'type': type,
+                'value': $(this).val()
+            };
+            if (type == 'radio') {
+                tmp.checked = $(this).is(':checked');
+            }
+            orig[$(this).attr('id')] = tmp;
+        });
+
+        $('#SubjectIdentification').bind('change keyup', function () {
+            var disable = true;
+            somethingChanged = false;
+            $("#SubjectIdentification :input").each(function () {
+                var type = $(this).getType();
+                var id = $(this).attr('id');
+
+                if (type == 'text' || type == 'select') {
+                    disable = (orig[id].value == $(this).val());
+                } else if (type == 'radio') {
+                    disable = (orig[id].checked == $(this).is(':checked'));
+                }
+
+                if (!disable) {
+                    return false; // break out of loop
+
+                }
+            });
+            somethingChanged = true;
+            button.prop('disabled', disable);
+        }); // End Page Change
+
+        // save change script
+        $('#myTab > li > a ').click(function (e) {
+            if ($('#hdShow').val() != 'View') {
+                if (somethingChanged == true) {
+                    formSubmitByTab(somethingChanged);
+                    somethingChanged = false;
+                    return false;
+                }
+            }
+        });
+        // end save change script
+
+    }); // End
+
+    function DeleteSubject(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/DeleteSubject")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Subject has been deleted Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                        location.replace('@Url.Content("~/Subject/Subject/Index")');
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function Reset() {
+        $('#Occupation').val('');
+        $('#BusinessName').val('');
+        $('#IDType1').val('');
+        $('#IDNumber1').val('');
+        $('#IDDefault1').val('');
+        $('#IDType2').val('');
+        $('#IDNumber2').val('');
+        $('#IDDefault2').val('');
+        $('#IDType3').val('');
+        $('#IDNumber3').val('');
+        $('#IDDefault3').val('');
+    }
+    $("#permission").click(function () {
+        if (EditConfirm('@ViewBag.Action')) {
+            return true;
+        }
+        else {
+
+            return false;
+        }
+    });
+
+    // Submit form on tab change Script
+    function formSubmitByTab(valueChanged) {
+        if (valueChanged == true) {
+            var r = confirm("Do you want to save changes?");
+            if (r == true) {
+                $('#btnSubmit').click();
+            }
+        }
+
+    }// End Submit form on tab change Script
+
+</script>
+
+

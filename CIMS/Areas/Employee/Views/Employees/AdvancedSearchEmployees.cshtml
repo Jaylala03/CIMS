@@ -1,0 +1,159 @@
+﻿@model CIMS.Models.EmployeeModel
+@{
+    ViewBag.Title = "AdvancedSearchEmployees";
+  Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+@*<h2>AdvancedSearchEmployees</h2>*@
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Employee</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Advanced Search</li>
+        </ol>
+    </div>
+
+</div>
+
+<div class="row">
+
+    @using (Html.BeginForm("Employees", "Employees", new { Area = "AdvancedSearchEmployees" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+    {
+        <div class="col-md-6">
+            <div class="white-box">
+                <div class="form-group">
+                    <label class="control-label">Employee Number</label>
+                    @Html.TextBoxFor(m => m.EmpNumber, null, new { @class = "form-control", @onkeypress = "return isNumber(event)" })
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">First Name </label>
+                    @Html.TextBoxFor(m => m.FirstName, null, new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Middle Name</label>
+                    @Html.TextBoxFor(m => m.MiddleName, null, new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Last Name</label>
+                    @Html.TextBoxFor(m => m.LastName, null, new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Sex</label>
+                    @Html.DropDownListFor(model => model.Sex, ViewBag.GenderList as List<SelectListItem>, new { @class = "form-control" })
+                </div>                
+            </div>
+        </div>
+
+        <div class="col-md-6" >
+            <div class="white-box" style="min-height:490px;">
+                <div class="form-group">
+                    <label class="control-label">Race </label>
+                    @Html.DropDownListFor(model => model.Race, ViewBag.RaceList as List<SelectListItem>, new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Complexion</label>
+                    @Html.DropDownListFor(model => model.Complexion, ViewBag.ComplexionList as List<SelectListItem>, new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Eyes</label>
+                    @Html.DropDownListFor(model => model.Eyes, ViewBag.EyesStyleList as List<SelectListItem>, new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Build</label>
+                    @Html.DropDownListFor(model => model.Build, ViewBag.BuildList as List<SelectListItem>, new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="white-box clearfix">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-success">Search</button>
+                    <button type="reset" class="btn btn-white">Reset</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+<div class="white-box clearfix">
+    <div class="table-responsive table-fixes col-md-12">
+        <table id="employeeTable" class="table table-bordered dataTable no-footer ">
+            <thead>
+                <tr>
+                    <th>
+                        Media
+                    </th>
+                    <th>
+                        Employee
+                    </th>
+
+                    <th>
+                        First Name
+                    </th>
+                    <th>
+                        Last Name
+                    </th>
+                </tr>
+            </thead>
+            @if (Model.EmployeeList.Count() > 0)
+            {
+                foreach (var items in Model.EmployeeList)
+                {
+
+                    <tr class="empTR" data-id="@items.EmployeeID" style="cursor:pointer">
+                        <td style="width: 100px;">
+                            <a href='@Url.Content("~/Employee/Employees/Employees?Show=View&Type=Employee&Id="+items.EmployeeID+"")' title="View Employee">
+                                <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.FilePath) ? items.FilePath: Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                            </a>
+                        </td>
+                        <td>@items.EmpNumber</td>
+                        <td>@items.FirstName</td>
+                        <td>@items.LastName</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" style="text-align:center;">
+                        No Records Found.
+                    </td>
+                </tr>
+            }
+
+        </table>
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#Sex').editableSelect({ effects: 'default' });
+        $('#Race').editableSelect({ effects: 'default' });
+        $('#Complexion').editableSelect({ effects: 'default' });
+        $('#Eyes').editableSelect({ effects: 'default' });
+        $('#Build').editableSelect({ effects: 'default' });     
+    });
+
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+</script>
+

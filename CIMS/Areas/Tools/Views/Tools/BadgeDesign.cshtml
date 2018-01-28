@@ -1,0 +1,529 @@
+﻿@{
+    ViewBag.Title = "BadgeDesign";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+@*<h2>Badge Design</h2>*@
+<script src="/assets/js/jstree.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Media</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Badge Design</li>
+        </ol>
+    </div>
+
+</div>
+
+<div class="row">
+
+      
+
+            <div class="custom-top-menu">
+                <ul>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">File</a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li><a href='#' class="FileTab">New</a></li>
+                            <li><a href='#' id="OpenTab">Open</a></li>
+                            <li><a href="#myModal" data-toggle="modal" class="btncls btn"><span class="hide-menu" style="display: inline;padding:0px;"> Save </span></a></li>
+
+
+                            <li><span class="hide-menu" id="PreviewClick">Print Preview</span></li>
+                            <li><span class="hide-menu FileTab">Close</span></li>
+
+                        </ul>
+                    </li>
+
+                    <!-- /.dropdown-user -->
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit</a>
+                        <ul class="dropdown-menu dropdown-user EditTab">
+                            <li class="dropdown-submenu">
+                                <a tabindex="-1" href="#">Add Field</a>
+
+                                <ul class="dropdown-menu">
+                                    <li><span class="hide-menu AppendData">Full Name</span></li>
+                                    <li><span class="hide-menu AppendData">First Name</span></li>
+                                    <li><span class="hide-menu AppendData">Last Name</span></li>
+                                    <li><span class="hide-menu AppendData ">Number </span></li>
+                                    <li><span class="hide-menu AppendData">DOB</span></li>
+                                    <li><span class="hide-menu AppendData">Sex</span></li>
+                                    <li><span class="hide-menu AppendData">Race </span></li>
+                                    <li><span class="hide-menu AppendData">Eyes</span></li>
+                                    <li><span class="hide-menu AppendData">Height</span></li>
+                                    <li><span class="hide-menu AppendData">Weight</span> </li>
+                                    <li><span class="hide-menu AppendData">Position</span> </li>
+                                </ul>
+                            </li>
+
+                            <li><a href='#' class="waves-effect"><span class="hide-menu AppendData" style="text-align:left;padding:0px;">Add Static Text</span></a> </li>
+                            @*<li><a href='#' class="waves-effect"><span class="hide-menu">Add Picture</span></a> </li>*@
+                            <li><a href='#' class="waves-effect"><span class="hide-menu" id="DeleteMenu">Delete</span></a></li>
+
+                        </ul>
+                        <!-- /.dropdown-user -->
+                    </li>
+                </ul>
+            </div>
+
+            <ul class="nav nav-pills custom-tabs" id="myTab">
+                <li class="active">
+                    <a href="#FrontDiv" data-toggle="tab">
+
+                        <span>Front</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#BackDiv" data-toggle="tab">
+
+                        <span>Back</span>
+                    </a>
+                </li>
+                <button type="button" class="btn btn-success" onclick="PrintButton();" style="float:right">Print</button>
+               
+            </ul>
+            <div class="col-md-12">
+                <div class="col-md-8">
+                    <div class="tab-content tab-content-bott">
+                        <div class="tab-pane active" id="FrontDiv">
+
+
+                            <div class="white-box pad-10">
+                                <div class="fornt-height NewClassData" id="FrontDivdata" contenteditable="true">
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="BackDiv">
+
+
+
+
+                            <div class="white-box pad-10">
+                                <div class="fornt-height NewClassData" id="BackDivdata" contenteditable="true">
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="JstreeDataBind" class="col-md-4 white-box pad-10" style="height:420px;">
+                    <ul>
+                        <li>
+                            Print Document<ul>
+                                <li onclick="bindData(this);">Parameters<ul><li class="Parameters"></li></ul></li>
+
+                                <li>Contents<ul><li onclick="bindData1(this);">Static Contents<ul><li class="Contents"></li></ul></li></ul></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+
+       
+        
+
+
+
+  
+</div>
+
+<div class="modal fade color-modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group bottom1">
+
+                        <div class="col-sm-8">
+
+                            <input type="text" class="form-control" id="ReportName">
+                        </div>
+
+                    </div>
+
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="SaveReport">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#JstreeDataBind').jstree({});
+        var $dragging = null;
+
+        $('.NewClassData').on("mousemove", function (e) {
+            if ($dragging) {
+                $dragging.offset({
+                    top: e.pageY,
+                    left: e.pageX
+                });
+            }
+        });
+
+        $('.NewClassData').on("mousedown", "div", function (e) {
+            $dragging = $(e.target);
+        });
+
+        $('.NewClassData').on("mouseup", function (e) {
+            $dragging = null;
+        });
+
+
+        $('.FileTab').click(function () {
+            $('#FrontDivdata').html(' ');
+            $('#BackDivdata').html(' ');
+        });
+        $('.AppendData').click(function () {
+            var ckeckclass = $('#BackDiv').hasClass('active');
+
+            if (ckeckclass == true) {
+                $('#BackDivdata').prepend("<div class='moveable resizable' id='" + $(this).html() + "'  style='border: dotted 1px red; height:25px;width:100px; position: absolute;'></div>");
+            }
+            else {
+                $('#FrontDivdata').prepend("<div class='moveable resizable' id='" + $(this).html() + "'  style='border: dotted 1px red; height:25px;width:100px; position: absolute;'></div>");
+
+
+
+
+
+
+
+
+            }
+            $('#JstreeDataBind').jstree(true).refresh();
+        });
+        var openbtn = document.getElementById("openselect");
+        openselect.addEventListener("change", doOpen, false);
+    });
+
+
+
+    $("#SaveReport").click(function () {
+        var xml = "";
+        var ckeckclass = $('#BackDiv').hasClass('active');
+        xml += "<?xml version='1.0'?>"
+        xml += "<Badge papersize='CreditCard' layout='Portrait'>"
+        xml += "<parametersBack>"
+        if (ckeckclass == true) {
+            $("#BackDivdata div ").each(function () {
+
+
+                var cells = $(this);
+                var cells1 = $(this).attr('id');
+                if (cells.length > 0) {
+                    xml += "<parameter name='" + cells1 + "'/>\n";
+
+
+                }
+
+            });
+        }
+        else {
+            $("#FrontDivdata div ").each(function () {
+
+
+                var cells = $(this);
+                var cells1 = $(this).attr('id');
+                if (cells.length > 0) {
+                    xml += "<parameter name='" + cells1 + "'/>\n";
+
+
+                }
+
+            });
+        }
+        xml += "</parametersBack>"
+        xml += "<content>"
+        xml += "<staticContentBack>"
+        if (ckeckclass == true) {
+            $("#BackDivdata div ").each(function () {
+
+
+                var cells = $(this).html();
+
+
+                xml += "<textField>"
+
+                var replaceCells = cells;
+                var regex = new RegExp('<', 'g');
+                replaceCells = replaceCells.replace(regex, '&lt;');
+                var regex1 = new RegExp('>', 'g');
+                replaceCells = replaceCells.replace(regex1, '&gt;');
+
+                xml += "\t<text>" + replaceCells + "</text>\n";
+
+                xml += "</textField>"
+            });
+        }
+        else {
+            $("#FrontDivdata div ").each(function () {
+
+
+                var cells = $(this).html();
+
+
+                xml += "<textField>"
+
+                var replaceCells = cells;
+                var regex = new RegExp('<', 'g');
+                replaceCells = replaceCells.replace(regex, '&lt;');
+                var regex1 = new RegExp('>', 'g');
+                replaceCells = replaceCells.replace(regex1, '&gt;');
+
+                xml += "\t<text>" + replaceCells + "</text>\n";
+
+                xml += "</textField>"
+            });
+        }
+
+        xml += "</staticContentBack>"
+        xml += "</content>"
+
+        xml += "</Badge>";
+        $.ajax({
+
+            contentType: 'application/json; charset=utf-8',
+            url: 'WriteXmlFile',
+            async: false,
+            cache: false,
+            type: 'POST',
+            data: '{ "xmldata" : "' + xml + '"}',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                var ReportName = $('#ReportName').val();
+                $('#downloadXml').attr('href', data);
+                $('#downloadXml').attr('download', ReportName + '.xml');
+                document.getElementById('downloadXml').click();
+                $('.close').click();
+            },
+            error: function () {
+                alert('Request Error, try again');
+            }
+        });
+
+
+
+    });
+
+
+    $('#OpenTab').click(function () {
+        document.getElementById('openselect').click();
+
+    });
+    function doOpen(evt) {
+        var files = evt.target.files,
+            reader = new FileReader();
+        reader.onload = function () {
+            var data = this.result;
+
+            var regex = new RegExp('&lt;', 'g');
+            data = data.replace(regex, '<');
+            var regex1 = new RegExp('&gt;', 'g');
+            data = data.replace(regex1, '>');
+
+
+            var ckeckclass = $('#BackDiv').hasClass('active');
+            if (ckeckclass == true) {
+
+                $('#BackDivdata').html(data);
+            }
+            else {
+                $('#FrontDivdata').html(data);
+            }
+
+        };
+        reader.readAsText(files[0]);
+    }
+
+    $('#PreviewClick').click(function () {
+        var ckeckclass = $('#BackDiv').hasClass('active');
+        if (ckeckclass == true) {
+            var GetPrivewData = $('#BackDivdata').html();
+        }
+        else {
+            var GetPrivewData = $('#FrontDivdata').html();
+        }
+        var printWindow = window.open('', '_blank', 'width=350,height=150,location=no,left=200px,scrollbars=1');
+        printWindow.document.open();
+        printWindow.document.write('<html><head><title></title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write('<style>body{background:#ccc;}.middle {background: #fff none repeat scroll 0 0; height: 100%; margin: 0 auto;margin-top: 38px;width: 600px;}.print-btn{cursor:pointer;position: absolute;right: 10;top: 4;float: right;background: #00c292;border: 1px solid #00c292;color: #fff;padding: 6px 12px;font-size: 14px;font-weight: 400;}.head-bg{background:#f2f2f2}.td-border{outline:1px solid #ccc;padding:5px}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+
+        printWindow.document.write('</body><div class="middle">' + GetPrivewData + ' </div>   </html>');
+        printWindow.document.close();
+    });
+   
+    function PrintButton() {
+      
+        var ckeckclass = $('#BackDiv').hasClass('active');
+        if (ckeckclass == true) {
+            var GetPrivewData = $('#BackDivdata').html();
+        }
+        else {
+            var GetPrivewData = $('#FrontDivdata').html();
+        }
+        var printWindow = window.open('', '_blank', 'width=350,height=150,location=no,left=200px,scrollbars=1');
+        printWindow.document.open();
+        printWindow.document.write('<html><head><title></title>');
+        printWindow.document.write('</head><body  onload="window.print();"  >');
+        printWindow.document.write('<style>.head-bg{background:#f2f2f2}.td-border{outline:1px solid #ccc;padding:5px}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+        printWindow.document.write(GetPrivewData);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+
+
+        printWindow.close();
+    }
+  
+    $('#DeleteMenu').click(function () {
+        var ckeckclass = $('#BackDiv').hasClass('active');
+        if (ckeckclass == true) {
+            $("#BackDivdata div ").each(function () {
+                var gettrue = $(this).attr('_moz_resizing');
+
+                if (gettrue == "true") {
+
+                    $(this).remove();
+                }
+            });
+        }
+        else {
+            $("#FrontDivdata div ").each(function () {
+                var gettrue = $(this).attr('_moz_resizing');
+
+                if (gettrue == "true") {
+
+                    $(this).remove();
+                }
+            });
+        }
+
+    });
+    function bindData(obj) {
+        var values2 = [];
+        var ckeckclass = $('#BackDiv').hasClass('active');
+        if (ckeckclass == true) {
+            $("#BackDivdata div ").each(function () {
+
+
+                values2.push($(this).attr('id'));
+
+            });
+        }
+        else {
+            $("#FrontDivdata div ").each(function () {
+                values2.push($(this).attr('id'));
+
+            });
+
+        }
+        var datacolumn = values2.join(',');
+        var data = datacolumn.split(',');
+
+        var treeId = $(obj).attr('id');
+        $('#JstreeDataBind').jstree("open_all", '#' + treeId);
+        var currentNode = $('#' + treeId).find("ul").children("li:first").attr('id');
+        $('#JstreeDataBind').jstree("select_node", "#" + currentNode, true);
+        var length = $('#' + currentNode).parent().find('li').length;
+
+        if (length == 1) {
+            $.each(data, function (key, i) {
+
+                if (key == 0) {
+                    $('#' + currentNode + '.Parameters').html(' ');
+                    $('#' + currentNode + '.Parameters').html("<i class='jstree-icon jstree-ocl'></i>" + i);
+                }
+                else {
+
+                    $('#' + currentNode + '.Parameters').after("<li class='jstree-node jstree-leaf jstree-last'><i class='jstree-icon jstree-ocl'></i>" + i + "</li>");
+                }
+
+            });
+        }
+
+
+
+    }
+
+    function bindData1(obj) {
+        var values2 = [];
+        var ckeckclass = $('#BackDiv').hasClass('active');
+        if (ckeckclass == true) {
+            $("#BackDivdata div ").each(function () {
+
+
+                values2.push($(this).attr('id'));
+
+            });
+        }
+        else {
+            $("#FrontDivdata div ").each(function () {
+                values2.push($(this).attr('id'));
+
+            });
+
+        }
+
+        var datacolumn = values2.join(',');
+        var data = datacolumn.split(',');
+
+        var treeId = $(obj).attr('id');
+        $('#JstreeDataBind').jstree("open_all", '#' + treeId);
+        var currentNode = $('#' + treeId).find("ul").children("li:first").attr('id');
+        $('#JstreeDataBind').jstree("select_node", "#" + currentNode, true);
+        var length = $('#' + currentNode).parent().find('li').length;
+
+        if (length == 1) {
+            $.each(data, function (key, i) {
+
+                alert(i);
+                if (key == 0) {
+                    alert(key);
+                    $('#' + currentNode + '.Contents').html(' ');
+                    $('#' + currentNode + '.Contents').html("<i class='jstree-icon jstree-ocl'></i>Text[{" + i + "}]");
+                }
+                else {
+                    alert(key);
+                    $('#' + currentNode + '.Contents').after("<li class='jstree-node jstree-leaf jstree-last'><i class='jstree-icon jstree-ocl'></i>Text[{" + i + "}]</li>");
+                }
+
+            });
+        }
+
+
+
+    }
+</script>
+<input type="file" id="openselect" style="display:none;" />
+<a href="" id="downloadXml" download="downloadXml.xml"></a>
+<style>
+    .resizable {
+        resize: both; /* Options: horizontal, vertical, both */
+        overflow: auto; /* fix for Safari */
+    }
+</style>

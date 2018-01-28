@@ -1,0 +1,2935 @@
+﻿@model CIMS.Models.EmployeeModel
+@{
+    ViewBag.Title = "Employees";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+@*<h2>Employees</h2>
+*@
+@*<script src='@Url.Content("~/assets/js/jquery-1.11.1.min.js")'></script>
+    <script src="~/Content/data-tables/Select2.js"></script>*@
+@*<script src="~/Content/data-tables/jquery-1.11.2.min.js"></script>
+    <link href="~/Content/select2/select2.css" rel="stylesheet" />*@
+
+
+<link href="~/Content/crop-avatar/css/cropper.css" rel="stylesheet" />
+<script src="~/Content/crop-avatar/js/cropper.js"></script>
+
+
+<style>
+    .groupOfTexbox {
+    }
+
+    .groupOfTexbox1 {
+    }
+
+
+    .disabled {
+        pointer-events: none;
+        cursor: default;
+    }
+
+    .ShowBorderRed {
+        border: 6px solid blue;
+    }
+</style>
+
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Employee</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Employee</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+
+        @if (Model.EmployeeID > 0)
+        {
+
+            <div class="col-lg-12 enablebtn btn-enable-main ">
+                <h3 class="box-title inline-head">@Model.FirstName @Model.MiddleName @Model.LastName</h3>
+                <a href='@Url.Content("~/Employee/Employees/Employees?Type=Employee&Id=" + Model.EmployeeID + "")' id="permission" style="display:none;" class="btn btn-info edit" title="Edit Employee">
+                    <i class="fa fa-pencil"></i> Edit
+                </a>
+
+                <a class="btn btn-danger btndelete disableClick" href='javascript:;' onclick='DeleteEmployee(@Model.EmployeeID,this);' title="Delete Employee">
+                    <i class='fa fa-trash'></i> Delete
+                </a>
+
+                <a class="btn btn-primary btnaddrep" href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeID + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))">
+                    <i class="fa fa-plus"></i> Add Reports
+                </a>
+
+                <a class="btn btn-primary btnviewrep" href='@Url.Content("~/Employee/Employees/EmployeeIncidentList?EmpId=" + Model.EmployeeID + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))">
+                    <i class="fa fa-eye"></i> View Reports
+                </a>
+
+                @*<div id="combineEmployee"  class="btn-main-align">*@
+                <a class="btn btn-info" href='@Url.Content("~/Employee/Employees/SearchEmployee/" + Model.EmployeeID + "")'>
+                    Combine Employee
+                </a>
+                @*</div>*@
+
+                <div id="convertSubject" class="btn-main-align">
+                    @if (Model.ConvertSubject == true)
+                    {
+                        <a class="btn btn-success" href='javascript:;' title="Already Convert">
+                            Subject Profile
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-success" href='javascript:;' onclick='ConvertToSubjct(@Model.EmployeeID,this);' title="Convert to Subject">
+                            Convert
+                        </a>
+                    }
+                </div>
+
+            </div>
+        }
+
+        <div class="right-tab row">
+
+            <div class="col-md-12">
+                <div class="white-box">
+                    <ul class="nav nav-pills custom-tabs" id="myTab">
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employees", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                        {
+                            <li>
+                                <a href="#Details" id="#Details" data-toggle="tab">
+
+                                    <span>Details</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Address", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                        {
+                            <li>
+                                <a href="@(Model.EmployeeID > 0 ? "#addresses" : "javascript:;")" id="#addresses" data-toggle="tab" class="@(Model.EmployeeID > 0 ? "" : "checkAlert")">
+
+                                    <span>Addresses</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee License", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                        {
+                            <li>
+                                <a href="@(Model.EmployeeID > 0 ? "#License" : "javascript:;")" id="#License" data-toggle="tab" class="@(Model.EmployeeID > 0 ? "" : "checkAlert")">
+
+                                    <span>License</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Personal", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                        {
+                            <li>
+                                <a href="@(Model.EmployeeID > 0 ? "#Employees" : "javascript:;")" id="#Employees" data-toggle="tab" class="@(Model.EmployeeID > 0 ? "" : "checkAlert")">
+
+                                    <span>Employees</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Linked", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                        {
+                            <li>
+                                <a href="@(Model.EmployeeID > 0 ? "#Links" : "javascript:;")" id="#Links" data-toggle="tab" class="@(Model.EmployeeID > 0 ? "" : "checkAlert")">
+
+                                    <span>Links</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ?
+                            (CIMS.Models.CheckPermissions.permissionMenu("Employee Permission", Convert.ToInt32(Session["UserId"])) && Model.EmployeeID > 0 && (Model.UserID == Convert.ToInt32(Session["UserID"]))) 
+                            : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                        {
+                        <li>
+                            <a href="@(Model.EmployeeID > 0 && (Model.UserID == Convert.ToInt32(Session["UserID"])) ? "#Permissions" : "javascript:;")" id="#Permissions" data-toggle="tab" class="@(Model.EmployeeID > 0 ? "" : "checkAlert")">
+
+                                <span>Permissions</span>
+                            </a>
+                        </li>
+                        }
+
+                    </ul>
+                </div>
+            </div>
+
+            <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+            <input type="hidden" id="hdType" name="hdType" value='@(Request.QueryString["Type"])' />
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="Details">
+                    <div class="large-title">Details </div>
+                    @using (Html.BeginForm("Employees", "Employees", new { Area = "Employee" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                    {
+                        <div class="col-md-6">
+                            <div class="white-box">
+                                <div class="form-group">
+                                    <label class="control-label">Employee Number</label>
+                                    @Html.HiddenFor(m => m.EmployeeID)
+                                    @Html.TextBoxFor(m => m.EmpNumber, null, new { @class = "form-control", @readonly = "readonly" })
+                                    @*@Html.ValidationMessageFor(m => m.EmpNumber, "", new { @class = "text-danger" })*@
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">First Name </label>
+
+                                    @Html.TextBoxFor(m => m.FirstName, null, new { @class = "form-control" })
+                                    @*@Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })*@
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Middle Name</label>
+
+                                    @Html.TextBoxFor(m => m.MiddleName, null, new { @class = "form-control" })
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Last Name</label>
+
+                                    @Html.TextBoxFor(m => m.LastName, null, new { @class = "form-control" })
+                                    @*@Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })*@
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Sex</label>
+                                    @Html.DropDownListFor(model => model.Sex, ViewBag.GenderList as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Race </label>
+                                    @Html.DropDownListFor(model => model.Race, ViewBag.RaceList as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Complexion</label>
+                                    @Html.DropDownListFor(model => model.Complexion, ViewBag.ComplexionList as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="white-box" style="min-height:665px;">
+
+                                @*<div class="form-group">
+                                        <label class="control-label">Date Of Birth</label>
+
+                                        @Html.TextBoxFor(m => m.DateOfBirth, null, new { @class = "form-control" })
+                                    </div>*@
+                                @*<div class="form-group">
+                                        <label class="control-label">Age</label>
+
+                                        @Html.TextBoxFor(m => m.Age, null, new { @class = "form-control groupOfTexbox" })
+                                    </div>*@
+
+                                <div class="form-group">
+                                    <label class="control-label">Height</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">@ViewBag.ActiveMetricsHeight</span>
+                                        @*<span class="input-group-addon">@ViewBag.ActiveDefaultHeight</span>*@
+                                        @Html.TextBoxFor(m => m.Height, null, new { @class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Weight</label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">@ViewBag.ActiveMetricsWeight</span>
+                                        @*<span class="input-group-addon">@ViewBag.ActiveDefaultWeight</span>*@
+                                        @Html.TextBoxFor(m => m.Weight, null, new { @class = "form-control", @maxlength = "3" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Eyes</label>
+                                    @Html.DropDownListFor(model => model.Eyes, ViewBag.EyesStyleList as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Build</label>
+                                    @Html.DropDownListFor(model => model.Build, ViewBag.BuildList as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="control-label">Glasses</label>
+                                    @Html.DropDownListFor(model => model.Glasses, ViewBag.GlassesList as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Position</label>
+                                    @Html.DropDownListFor(model => model.StaffPosition, ViewBag.EmployeePosition as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="white-box clearfix">
+                                @*<div class="form-group">
+                                        <textarea class="form-control" rows="4"> </textarea>
+                                    </div>*@
+
+                                <div class="col-md-12">
+                                    <input type="submit" class="btn btn-success@(Model.EmployeeID > 0 ? " edit" : " add")" value="@(Model.EmployeeID > 0 ? "Update" :"Create")" id="fromEmployee" />
+                                    <button type="reset" class="btn btn-white">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (Model.EmployeeID > 0)
+                    {
+                        <div class="col-md-12">
+                            <div class="white-box clearfix">
+
+                                <div class="col-md-12 media-main" style="padding-bottom: 8px;">
+                                    <div class="col-md-2">
+                                        <div class="large-title no-padding">Media</div>
+                                    </div>
+
+                                    @*<div class="col-md-2">
+                                            <a href='@Url.Content("~/Media/Media/Index?Type=Employee&typeid=" + Model.EmployeeID + "")' class="btn btn-info small btn-sm btn-icon" title="Media"><i class="fa fa-camera fa-2x"></i></a>
+                                        </div>
+                                        <div class="pull-right">
+                                            <label class="large-title no-padding">View General Media Gallery :</label>
+                                            <input type="checkbox" id="something" />
+                                        </div>*@
+
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="large-title no-padding">Employee Gallery</div>
+                                    <div id="pictureTable">
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12" id="MediaGallery" style="display: none;">
+                                    <div class="large-title no-padding">
+                                        <div class="col-md-12">
+                                            General media galary
+                                        </div>
+                                        <div class="col-md-3" style="display:none;">
+                                            <input type="checkbox" title="select all" id="chkall" name="select all" class="checkbox-info pull-left" onclick="selectall();">&nbsp;select all
+                                            <script type="text/javascript">
+                                                function selectall()
+                                                {
+                                                    if($('input#chkall').prop("checked") == true){
+                                                        $('input.chkall').prop('checked',true);
+                                                    }
+                                                    else{
+                                                        $('input.chkall').prop('checked',false);
+                                                    }
+
+                                                }
+                                            </script>
+
+                                        </div>
+                                        <input type="button" value="Move To Employee Gallery" id="btnMoveImage" class="btn btn-info pull-right" onclick="MoveToPic();">
+                                    </div>
+                                    <div id="mediaTable" class="col-md-12">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+                <div class="tab-pane" id="addresses">
+
+                    <div class="col-md-7">
+                        <div class="white-box clearfix address-box-height ">
+                            <h3 class="box-title m-b-15">Address List </h3>
+                            <div class="table-responsive  list-table">
+                                <table class="scroll table table-bordered" id="sample_2">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:100px;">
+                                                Date
+                                            </th>
+                                            <th style="width: 250px;" class="break-text">
+                                                Address
+                                            </th>
+                                            <th>
+                                                Apartment
+                                            </th>
+                                            <th>
+                                                Type
+                                            </th>
+                                            <th>
+                                                Action
+                                            </th>
+
+                                        </tr>
+                                    </thead>
+                                    @*@if (Model.EmployeeList.Count() > 0)
+                                        {
+                                        foreach (var items in Model.EmployeeList)
+                                        {*@
+                                    <tbody>
+                                        <tr>
+                                            <td>shoaib</td>
+                                            <td>test</td>
+                                            <td>mohd</td>
+                                            <td>Type</td>
+                                            <td>
+                                                <a href="/Employee/Employees/Employees?Id=1" class="btn btn-info btn-sm btn-icon">Edit</a>
+                                                <a href="/Employee/Employees/Employees?Id=1" class="btn btn-info btn-sm btn-icon">Edit</a>
+                                                <a href="/Employee/Employees/Employees?Id=1" class="btn btn-danger btn-sm delete-sm">Delete</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    @*}
+                                        }*@
+
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="white-box clearfix">
+                            <h3 class="box-title m-b-15">Add Address</h3>
+                            <form role="form" id="form1" method="post" class="validate">
+                                <input type="hidden" id="addressIdHdn" value="0" />
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">Address Type</label>
+                                        @Html.DropDownListFor(m => m.AddressType, Model.AddressTypeList as List<SelectListItem>, "-- Select Address Type --", new { @class = "form-control" })
+                                        @*<input type="text" class="form-control" name="addressType" id="addressType" data-validate="required" data-message-required="User Name is required field." />*@
+                                        <span id="addTypeSpan" class="text-danger" style="display: none;">Address Type is required.</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Address </label>
+
+                                        <input type="text" class="form-control" name="Address" id="Address" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Apartment/Unit# </label>
+
+                                        <input type="text" class="form-control" name="Apartment" id="Apartment" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Country</label>
+                                        <div class="row" id="radio_div">
+                                            <div class="col-md-6">
+                                                <input type="radio" name="Radio1" value="231" id="rbUS" checked="checked" class="active">US
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="radio" name="Radio1" value="38" id="rbCanada" class="">Canada
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Province/State</label>
+                                        <select id="State" name="State" class="form-control" onchange="GetCities(this.value)"></select>
+                                        @*<input type="text" class="form-control" name="State" id="State" data-validate="required" data-message-required="User Name is required field." />*@
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">City </label>
+                                        <select id="City" name="City" class="form-control"></select>
+                                        @*<input type="text" class="form-control" name="City" id="City" data-validate="required" data-message-required="password is required field." />*@
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Postal /ZipCode</label>
+
+                                        <input type="text" class="form-control" name="ZipCode" id="ZipCode" onkeyup="ValidateZipCode(this)" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Phone</label>
+
+                                        <input type="text" class="form-control" name="Phone" id="Phone" />
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="control-label">&nbsp;</label>
+                                        <button type="button" id="addAddressBtn" class="btn btn-success">Add Address</button>
+                                        <button type="reset" class="btn btn-white" onclick="resetData();">Reset</button>
+
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="License">
+
+                    <div class="large-title">License </div>
+
+
+                    <form role="form" id="form2" method="post" class="validate">
+
+                        <div class="col-md-6">
+                            <div class="white-box clearfix">
+                                <input type="hidden" id="LicenseIdHdn" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">Date of Hire</label>
+
+                                    <input type="text" class="form-control" name="DateOfhire" id="DateOfhire" data-validate="required" data-message-required="User Name is required field." />
+                                    <span id="dateOfHireSpan" class="text-danger" style="display: none;">Date of Hire is required.</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Termination Date </label>
+
+                                    <input type="text" class="form-control" name="TerminationDate" id="TerminationDate" data-validate="required" data-message-required="password is required field." />
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">License Expiration Date </label>
+
+                                    <input type="text" class="form-control" name="LicenseExpirationDate" id="LicenseExpirationDate" data-validate="required" data-message-required="password is required field." />
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="white-box clearfix">
+                                <div class="form-group">
+                                    <label class="control-label">Department Type</label>
+                                    @Html.DropDownListFor(m => m.Department, Model.DepartmentTypeList as List<SelectListItem>, "Select Department Type", new { @class = "form-control" })
+                                    @*<input type="text" class="form-control" name="DepartmentType" id="DepartmentType" data-validate="required" data-message-required="User Name is required field." />*@
+                                    <span id="departmentSpan" class="text-danger" style="display: none;">Department Type is required.</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">License Type</label>
+                                    @Html.DropDownListFor(m => m.LicenseType, Model.LicenseTypeList as List<SelectListItem>, "Select License Type", new { @class = "form-control" })
+                                    @*<input type="text" class="form-control" name="LicenseType" id="LicenseType" data-validate="required" data-message-required="User Name is required field." />*@
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">License Status</label>
+                                    @Html.DropDownListFor(m => m.LicenseStatus, Model.LicenseStatusList as List<SelectListItem>, "Select License Status", new { @class = "form-control" })
+                                    @*<input type="text" class="form-control" name="LicenseStatus" id="LicenseStatus" data-validate="required" data-message-required="User Name is required field." />*@
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="white-box clearfix">
+                                <div class="form-group">
+                                    <label class="control-label">Reason For Leaving</label>
+                                    <textarea name="ReasonForLeaving" id="ReasonForLeaving" class="form-control" rows="4"> </textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <button type="button" id="addLicenseBtn" class="btn btn-success">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetData();">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <div class="tab-pane" id="Employees">
+                    @using (Html.BeginForm("EmployeesPersonal", "Employees", FormMethod.Post, new { @id = "EmployeesPersonal" }))
+                    {
+                    <div class="row">
+                        <div class="col-md-12">
+                            @Html.HiddenFor(m => m.EmployeeID)
+                            @*<div class="col-md-6">
+
+                                    <div class="form-group">
+
+                                        <label>User-Defined 10</label>
+                                        @Html.TextBoxFor(m => m.UD10, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.UD10)
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label>User-Defined 11</label>
+                                        @Html.TextBoxFor(m => m.UD11, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.UD11)
+                                    </div>
+                                    <div class="form-group">
+                                        <label>User-Defined 12</label>
+                                        @Html.TextBoxFor(m => m.UD12, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.UD12)
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>User-Defined 13</label>
+                                        @Html.TextBoxFor(m => m.UD13, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.UD13)
+                                    </div>
+                                    <div class="form-group">
+                                        <label>User-Defined 14</label>
+                                        @Html.TextBoxFor(m => m.UD14, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.UD14)
+                                    </div>
+                                    <div class="form-group">
+                                        <label>User-Defined 15</label>
+                                        @Html.TextBoxFor(m => m.UD15, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.UD15)
+                                    </div>
+                                </div>*@
+
+
+
+                            <div class="col-md-12">
+                                <div class="large-title no-margin">Employee-Personal </div>
+                                <div class="white-box clearfix">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label>Date of Birth</label>
+                                                <div class="col-md-12">
+                                                    <div class="form-group col-md-4">
+                                                        <label>Year</label>
+                                                        <select id="years" class="form-control"></select>
+                                                    </div>
+                                                    <div class="form-group col-md-4">
+                                                        <label>Month</label>
+                                                        <select id="months" class="form-control"></select>
+                                                    </div>
+                                                    <div class="form-group col-md-4">
+                                                        <label>Day</label>
+                                                        <select id="days" class="form-control"></select>
+                                                    </div>
+                                                    @Html.HiddenFor(m => m.Day)
+                                                    @Html.HiddenFor(m => m.Month)
+                                                    @Html.HiddenFor(m => m.Year)
+                                                    @*@Html.TextBoxFor(m => m.DateOfBirth, new { @class = "form-control" })*@
+                                                    @*@Html.ValidationMessageFor(m => m.DateOfBirth)*@
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-4">
+
+                                        <div class="form-group">
+                                            <label>Type of ID:</label>
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(m => m.IDType1, new { @class = "form-control" })
+
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(m => m.IDType2, new { @class = "form-control" })
+
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(m => m.IDType3, new { @class = "form-control" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>ID Number:</label>
+                                        </div>
+
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(m => m.IDNumber1, new { @class = "form-control" })
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(m => m.IDNumber2, new { @class = "form-control" })
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(m => m.IDNumber3, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Default ID</label>
+                                        </div>
+
+                                        <div class="form-group">
+                                            @Html.RadioButtonFor(m => m.IDDefault1, 1)
+                                        </div>
+
+                                        <div class="form-group">
+                                            @Html.RadioButtonFor(m => m.IDDefault1, 2)
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.RadioButtonFor(m => m.IDDefault1, 3)
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-12 clearfix no-margin-bottom">
+                                        <input type="submit" value="@(Model.EmployeeID > 0 ? "Update" :"Create")" class="btn btn-success@(Model.EmployeeID>0?" edit":" add")" id="formEmployeesPersonal" />
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+                    </div>
+                    }
+
+                </div>
+
+                <div class="tab-pane" id="Links">
+                    <div class="row">
+                        <div class="large-title">Employee- Linked Files</div>
+                        @using (Html.BeginForm("EmployeesLInkedFiles", "Employees", FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off", @id = "EmployeesLInkedFiles" }))
+                        {
+                        @Html.HiddenFor(m => m.EmployeeID)
+                        <input type="hidden" id="LinkedId" name="LinkedId" value="0" />
+                        <div class="col-md-6">
+                            <div class="white-box clearfix">
+                                <div class="form-group clearfix">
+                                    <label>Description</label>
+                                    <input type="text" class="form-control" id="Description" name="Description" />
+                                    <span style="color: red" id="spanDesc"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="white-box clearfix" style="min-height:138px;">
+                                <div class="form-group clearfix">
+                                    <input type="file" id="fileUpload" name="fileUpload" class="flubtn" />
+                                    <span style="color: red" id="spanUpload"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group clearfix">
+                                <input type="submit" value="Save" id="LinkedButton" class="btn btn-success" />
+                                <input type="button" value="Cancel" id="ResetButton" class="btn btn-white" />
+                            </div>
+                        </div>
+                        }
+
+                    </div>
+
+                    <div class="row">
+                        <div class="white-box clearfix">
+                            <div class="table-responsive">
+                                <table id="employeeTable" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Description
+                                            </th>
+                                            <th>
+                                                File Path
+                                            </th>
+                                            <th style="width:111px">Action</th>
+
+                                        </tr>
+                                    </thead>
+                                    @if (Model.EmployeeLinkedList.Count() > 0)
+                                    {
+                                        foreach (var items in Model.EmployeeLinkedList)
+                                        {
+                                    <tr id="Linked@(items.Id)">
+                                        <td>@items.Description</td>
+                                        <td><a href="@items.FilePath" download="@items.FilePath.Split('/').Last()" class="product-item">@items.FilePath.Split('/').Last()</a></td>
+                                        <td>
+                                            <a href="javascript:;" class="btn small btn-info btn-sm btn-icon newbtncls" onclick="bindLinkedData('@items.Id','@HttpUtility.JavaScriptStringEncode(items.Description)','@HttpUtility.JavaScriptStringEncode(items.FilePath)')"><i class="fa fa-pencil"></i></a>
+                                            <a href="javascript:;" class="btn small btn-danger btn-sm delete-sm newbtncls" onclick="DeleteLinkedItem(@items.Id)"><i class="fa fa-trash"></i></a>
+                                        </td>
+                                    </tr>
+                                        }
+                                    }
+
+
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+               @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Permission", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+               {
+
+                <div class="tab-pane" id="Permissions">
+                    <div class="large-title">Employee Access Permission </div>
+                    <div class="col-md-12">
+                        <div class="panel-body all-box" style="padding:0px;">
+                            <div class="white-box clearfix">
+                                <div class="table-responsive">
+                                    <h3> Employee Creator Details </h3>
+                                    <table id="tblReportCreatorDetails" class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>First Name</th>
+                                                <th>Last Name</th>
+                                                <th>User Name</th>
+                                                <th>Date Created</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class='has-sub'>
+                                                <td>@Model.CreatorFirstName</td>
+                                                <td>@Model.CreatorLastName</td>
+                                                <td>@Model.CreatedByUser</td>
+                                                <td>@Model.CreatedDate</td>
+
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="white-box clearfix">
+                                <div class="col-md-12">
+                                    <h3>User Base Permission </h3>
+                                    <div class="box-bg">
+                                        <div class="col-md-3">
+                                            <div class="col-md-12">
+                                                <h3> Users</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <select name="listUsers" id="listUsers" class="form-control" size="5" style="width: 411px; height: 316px;"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-1 text-center">
+                                            <div class="custom-top-margin">
+                                                <button type="button" class="btn btn-success btnwidh" id="btnadduser" onclick="AddUsersInList(this.id);">></button>
+                                                <br />
+                                                <button type="button" class="btn btn-success btnwidh" id="btnaddalluser" onclick="AddUsersInList(this.id);">>></button>
+                                                <br />
+                                                <button type="button" class="btn btn-danger btnwidh" id="btnremoveuser" onclick="RemoveUsersInList(this.id);"><</button>
+                                                <br />
+                                                <button type="button" class="btn btn-danger btnwidh" id="btnremovealluser" onclick="RemoveUsersInList(this.id);"><<</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="col-md-12">
+                                                <h3> Access Users</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <select name="listReportAccessUsers" id="listReportAccessUsers" size="5" class="form-control" style="width: 411px; height: 316px;"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-5">
+                                            <h3 class="check-space">Permissions</h3>
+                                            <div class="checkbox-inline">
+                                                <input type="checkbox" value="1" name="View" class="ByUsers" id="ByUserReportView" />
+                                                <label>View</label>
+                                            </div>
+                                            <div class="checkbox-inline">
+                                                <input type="checkbox" value="2" name="Edit" class="ByUsers" id="ByUserReportEdit" />
+                                                <label>Edit</label>
+                                            </div>
+                                            <div class="checkbox-inline">
+                                                <input type="checkbox" value="3" name="Delete" class="ByUsers" id="ByUserReportDelete" />
+                                                <label>Delete</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="white-box clearfix">
+                                <div class="col-md-12">
+                                    <h3>Role Base Permission </h3>
+                                    <div class="box-bg">
+                                        <div class="col-md-3">
+                                            <div class="col-md-12">
+                                                <h3> Roles</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <select name="listRoles" id="listRoles" class="form-control" size="5" style="width: 411px; height: 200px;"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-1 text-center">
+                                            <div class="custom-top-margin">
+                                                <button type="button" class="btn btn-success btnwidh" id="btnaddrole" onclick="AddRoleInList(this.id);"> > </button>
+                                                <br />
+                                                <button type="button" class="btn btn-success btnwidh" id="btnaddallrole" onclick="AddRoleInList(this.id);"> >> </button>
+                                                <br />
+                                                <button type="button" class="btn btn-danger btnwidh" id="btnremoverole" onclick="RemoveRoleInList(this.id);"> < </button>
+                                                <br />
+                                                <button type="button" class="btn btn-danger btnwidh" id="btnremoveallrole" onclick="RemoveRoleInList(this.id);"> << </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="col-md-12">
+                                                <h3> Access Roles</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <select name="listReportAccessRoles" id="listReportAccessRoles" size="5" class="form-control" style="width: 411px; height: 200px;"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-5">
+                                            <h3 class="check-space"> Permissions</h3>
+                                            <div class="checkbox-inline">
+                                                <input type="checkbox" value="4" name="View" class="ByRoles" id="ByRoleReportView" />
+                                                <label>View</label>
+                                            </div>
+                                            <div class="checkbox-inline">
+                                                <input type="checkbox" value="5" name="Edit" class="ByRoles" id="ByRoleReportEdit" />
+                                                <label>Edit</label>
+                                            </div>
+                                            <div class="checkbox-inline">
+                                                <input type="checkbox" value="6" name="Delete" class="ByRoles" id="ByRoleReportDelete" />
+                                                <label>Delete</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+    </div>
+</div>
+
+<div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            @*<form class="avatar-form" action="Update_Picture" enctype="multipart/form-data" method="post">*@
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="avatar-modal-label">Change Profile Picture</h4>
+            </div>
+            <div class="modal-body">
+                <div class="avatar-body">
+
+                    <!-- Upload image and data -->
+                    <div class="avatar-upload">
+                        <input type="hidden" class="avatar-src" name="avatar_src">
+                        <input type="hidden" class="avatar-data" name="avatar_data">
+                        <input type="hidden" class="dataId" name="dataId">
+                        @*<label for="avatarInput">Select an Image</label>
+                            <input type="file" class="avatar-input" id="avatarInput" name="avatar_file">*@
+                    </div>
+
+                    <!-- Crop and preview -->
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="img-container">
+                                <img id="image" src="" alt="Picture" height="500" width="500">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-9 docs-buttons">
+                            <!-- <h3 class="page-header">Toolbar:</h3> -->
+
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" data-method="zoom" data-option="0.1" title="Zoom In">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;zoom&quot;, 0.1)">
+                                        <span class="fa fa-search-plus"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="zoom" data-option="-0.1" title="Zoom Out">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;zoom&quot;, -0.1)">
+                                        <span class="fa fa-search-minus"></span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" data-method="move" data-option="-10" data-second-option="0" title="Move Left">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, -10, 0)">
+                                        <span class="fa fa-arrow-left"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="move" data-option="10" data-second-option="0" title="Move Right">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, 10, 0)">
+                                        <span class="fa fa-arrow-right"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="-10" title="Move Up">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, 0, -10)">
+                                        <span class="fa fa-arrow-up"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="10" title="Move Down">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, 0, 10)">
+                                        <span class="fa fa-arrow-down"></span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" data-method="rotate" data-option="-45" title="Rotate Left">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;rotate&quot;, -45)">
+                                        <span class="fa fa-rotate-left"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="rotate" data-option="45" title="Rotate Right">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;rotate&quot;, 45)">
+                                        <span class="fa fa-rotate-right"></span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" data-method="scaleX" data-option="-1" title="Flip Horizontal">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;scaleX&quot;, -1)">
+                                        <span class="fa fa-arrows-h"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="scaleY" data-option="-1" title="Flip Vertical">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;scaleY&quot;-1)">
+                                        <span class="fa fa-arrows-v"></span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div class="btn-group btn-group-crop">
+                                <button type="button" class="btn btn-primary" data-method="getCroppedCanvas">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;getCroppedCanvas&quot;)">
+                                        Done
+                                    </span>
+                                </button>
+
+                            </div>
+
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div> -->
+            @*</form>*@
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+    .dataTables_filter {
+        display: block;
+    }
+</style>
+
+
+<script src="~/assets/js/jquery.maskedinput.min.js"></script>
+@*<script src="~/Content/data-tables/jquery.dataTables.js"></script>
+    <script src="~/Content/data-tables/tabletools/js/dataTables.tableTools.js"></script>
+    <script src="~/Content/data-tables/DT_bootstrap.js"></script>
+    <script src="~/Content/data-tables/table-advanced.js"></script>*@
+
+
+<script>
+
+    $(document).ready(function ()
+    {
+        var somethingChanged = false;
+        // Bind Year,Month and Days Script
+        var $form1 = $('#form1'),
+        origForm = $form1.serialize();
+
+        $(function() {
+
+            //populate our years select box
+            for (i = 1900; i <=new Date().getFullYear(); i++){
+                $('#years').append($('<option />').val(i).html(i));
+            }
+            $("#years > [value='1998']").attr("selected", "true");
+
+            //populate our months select box
+            for (i = 1; i < 13; i++){
+                $('#months').append($('<option />').val(i).html(i));
+            }
+            //populate our Days select box
+            updateNumberOfDays();
+
+            //"listen" for change events
+            $('#years, #months').change(function(){
+                updateNumberOfDays();
+            });
+
+        });
+
+        //function to update the days based on the current values of month and year
+        function updateNumberOfDays(){
+            $('#days').html('');
+            month = $('#months').val();
+            year = $('#years').val();
+            days = daysInMonth(month, year);
+
+            for(i=1; i < days+1 ; i++){
+                $('#days').append($('<option />').val(i).html(i));
+            }
+        }
+
+        //helper function
+        function daysInMonth(month, year) {
+            return new Date(year, month, 0).getDate();
+        }
+        //------------------ End Bind Year,Month and Days Script -------------------------
+
+
+        var type=$('#hdType').val();
+        var id=$('#EmployeeID').val();
+        var subFeatureid = "0";
+
+        //$("#Phone").mask("(99) 9999-9999");
+        $("#Phone").mask("(999) 999-9999");
+
+        BindPictureList(type, id, subFeatureid);
+        GetStates();
+
+        if($('#hdShow').val()=='View')
+        {
+            $(".form-control").attr("disabled","disabled");
+            $(".btn").hide(true);
+            $(".flubtn").attr("disabled","disabled");
+            $(document).find("input[type=checkbox]").attr("disabled","disabled");
+            $(document).find("input[type=radio]").attr("disabled","disabled");
+            $(document).find('.enablebtn>a').removeAttr("style");
+
+            $(document).find('.newbtncls').addClass('disabled');
+            $('.disabled').click(function(e){
+                e.preventDefault();
+            });
+
+            $(document).find('#permission').hide(true);
+        }
+        else
+        {
+            //$(".btn").removeAttr("style");
+            $(".form-control").attr("disabled",false);
+            //$(".btn").attr("disabled",false);
+            $(document).find('.newbtncls').removeClass('disabled');
+            $(document).find('#permission').hide(true);
+        }
+
+        $('input:radio').click(function () {
+            $('input:radio:checked').addClass('active');
+            $('input:radio:not(:checked)').removeClass('active');
+
+        });
+
+        $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
+            //var active=localStorage.getItem('activeTab');
+            //if(localStorage.getItem('activeTab')!="javascript:;")
+            //{
+            //    localStorage.setItem('activeTab',active );
+            //}
+            //else{
+            localStorage.setItem('activeTab', $(e.target).attr('href'));
+            //}
+        });
+
+        $('.checkAlert').on('click', function () {
+
+            var firstname= "";
+            firstname=$("input#FirstName").val();
+            if(firstname=="")
+            {
+                firstname="Unknown";
+            }
+            var r = confirm("Are you sure to create "+ firstname +" Employee ?");
+            if (r == true) {
+                //var active=$(this).attr("id");
+                //localStorage.setItem('activeTab',active);
+                $('#fromEmployee').click();
+            }
+            else
+            {
+                $('#msgDiv').show();
+                $('#msgDiv').html("<div class='alert alert-danger'>Please Employee Details First</div>");
+                setTimeout(function () {
+                    $('#msgDiv').fadeOut();
+                }, 5000);
+            }
+        });
+
+        if ('@Model.EditPermission' == 'False')
+        {
+            $(".form-control").attr("disabled", "disabled");
+            //$(".btn").hide(true);
+            $(".btn").attr("disabled", "disabled");
+            //$(".btn").addClass("disableClick");
+
+            //$(".btnview").show();
+            $(".flubtn").attr("disabled", "disabled");
+            $(document).find("input[type=checkbox]").attr("disabled", "disabled");
+            $(document).find("input[type=radio]").attr("disabled", "disabled");
+        }
+
+        //$(".btnaddrep").removeClass("disableClick");
+        //$(".btnviewrep").removeClass("disableClick");
+        $(".btnaddrep").removeAttr("disabled");
+        $(".btnviewrep").removeAttr("disabled");
+
+        if ('@Model.DeletePermission' == 'True') {
+            $(".btndelete").removeClass("disableClick");
+        }
+        var activeTab = localStorage.getItem('activeTab');
+        if(activeTab=="javascript:;")
+        {
+            activeTab="#Details";
+        }
+        if(activeTab)
+        {
+
+            if ('@TempData["SaveSuccess"]' == 'Success' && '@Model.EmployeeID' > 0)
+            {
+                if (confirm("Employee details is accessible to everyone. Would you like to restrict acess to this details ?"))
+                {
+                    $('#myTab a[href="#Permissions"]').tab('show');
+                }
+            }
+            else
+            {
+                if ('@Model.EmployeeID' > 0) 
+                {
+                    $('#myTab a[href="' + activeTab + '"]').tab('show');
+                }
+                else {
+                    $('#myTab a[href="#Details"]').tab('show');
+                }
+            }
+
+
+            //$('#myTab a[href="' + activeTab + '"]').tab('show');
+        }
+
+        //$("#sample_2").dataTable();
+        //$('#Sex').editableSelect({ effects: 'default' });
+        if(('@ViewBag.ActiveMetricsHeight').indexOf("inch") > 0 || ('@ViewBag.ActiveMetricsHeight').indexOf("Inch") > 0)
+        {
+            $("#Height").mask("9'99''");
+        }
+        loadAddress();
+        loadLicense();
+        $('#DateOfBirth').datepicker({ autoclose: true });
+        $('#DateOfhire').datepicker({ autoclose: true });
+        $("#DateOfhire").datepicker().datepicker("setDate", new Date());
+        $('#TerminationDate').datepicker({ autoclose: true });
+        $('#LicenseExpirationDate').datepicker({ autoclose: true });
+
+        $("a.product-item").click(function() {
+            url_to_open = $(this).attr("href");
+            window.open(url_to_open, '_blank');
+            return false;
+        });
+
+
+        $('#fileUpload').on('change', function (event) {
+            //$('#Description').val($(this).val());
+            $('#FilePath').val('/Content/Employee/LinkedFiles/' + $(this).val());
+            $('#spanDesc').html('');
+            $('#spanUpload').html('');
+
+        });
+        $('#Description').keyup(function () {
+            if ($(this).val() == '') {
+                $('#spanDesc').html('Description is required');
+
+            }
+            else {
+                $('#spanDesc').html('');
+            }
+        });
+        $('#ResetButton').click(function () {
+            $('#Description').val('');
+            $('#fileUpload').val('');
+            $('#spanDesc').html('');
+            $('#spanUpload').html('');
+            $('#fileUpload').show();
+            $('#LinkedId').val('');
+        });
+        $('#LinkedButton').click(function () {
+            var x;
+            if(parseInt($('#LinkedId').val())>0)
+            {
+                x=EditConfirm('@ViewBag.Action');
+            }
+            else{
+                x=AddConfirm('@ViewBag.Action');
+            }
+            if(x)
+            {
+                var count = 0;
+                if ($('#Description').val() == '') {
+                    $('#spanDesc').html('Description is required');
+                    count++;
+                }
+                if ($('#fileUpload').val() == '' && $('#LinkedId').val() == 0) {
+                    $('#spanUpload').html('Please select a file');
+                    count++;
+                }
+                if (count > 0) {
+                    return false;
+                }
+                else {
+                    $('#spanDesc').html('');
+                    $('#spanUpload').html('');
+                }
+            }
+            else
+            {
+                return false;
+            }
+        });
+
+        $('.groupOfTexbox').keypress(function (event)
+        {
+            return isNumberAndDecimal(event, this)
+        });
+
+        $('.groupOfTexbox1').keypress(function (event) {
+            return isNumber(event, this)
+        });
+
+        $('#Weight').keyup(function(e)
+        {
+            if (/\D/g.test(this.value))
+            {
+                // Filter non-digits from input value.
+                this.value = this.value.replace(/\D/g, '');
+            }
+            //alert(this.value.length);
+            //if (this.value.length>3)
+            //{
+            //    alert('L');
+            //    // Filter non-digits from input value.
+            //    this.value = this.value.replace(/\D/g, '');
+            //}
+        });
+
+        //$("#radio_div input[type=radio][name=Radio1].active").click(function() {
+        //    GetStates();
+
+        //});
+
+        $("input[name=Radio1]:radio").change(function (){
+
+            GetStates();
+        });
+        //$('#form1 :input').on('change input', function()
+        //{
+        //    if($form1.serialize() !== origForm)
+        //    {
+        //
+        //        alert('change in address');
+        //        somethingChanged = true;
+        //    }
+        //});
+
+        // ddl Change event Year, month, days
+
+        if ('@Model.EmployeeID' > 0) {
+            $('#years').val($('#Year').val());
+            $('#months').val($('#Month').val());
+            $('#days').val($('#Day').val());
+        }
+
+        $('#years').change(function() {
+            $('#Year').val($('#years').val());
+        });
+        $('#months').change(function() {
+            $('#Month').val($('#months').val());
+        });
+        $('#days').change(function() {
+            $('#Day').val($('#days').val());
+        });
+        // End ddl Change event Year, month, days
+
+        //$("#myTab> li > a").click(function(){
+        //    $(this).tab('show');
+        //});
+
+
+        if($('#hdShow').val()!='View')
+        {
+            somethingChanged = false;
+            var submitform="";
+            var activetarget="";
+            var button="";
+            $("#myTab> li > a").on('shown.bs.tab', function(event)
+            {
+                activetarget = $(event.target).attr("href");         // active tab
+                var previoustarget = $(event.relatedTarget).attr("href");  // previous tab
+                if(somethingChanged == true )
+                {
+                    formSubmitByTab(previoustarget,somethingChanged);
+                }
+                activetargets(activetarget);
+                somethingChanged = false;
+            });
+            if(activetarget!="")
+            {
+                activetargets(activetarget);
+            }
+            else
+            {
+                activetarget = $("#myTab li.active a").attr('href');
+                activetargets(activetarget);
+            }
+        }
+
+        function activetargets(target)
+        {
+            if(target=="#Details")
+            {
+                button = $('#fromEmployee');
+            }
+            else if(target=="#addresses")
+            {
+                button = $('#addAddressBtn');
+            }
+            else if(target=="#License")
+            {
+                button = $('#addLicenseBtn');
+            }
+            else if(target=="#Employees")
+            {
+                button = $('#formEmployeesPersonal');
+            }
+            else if(target=="#Links")
+            {
+                button = $('#LinkedButton');
+            }
+        }
+
+        var orig = [];
+
+        $.fn.getType = function () {
+            return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
+        }
+
+
+        $("form :input").each(function () {
+            var type = $(this).getType();
+            var tmp = {
+                'type': type,
+                'value': $(this).val()
+            };
+            if (type == 'radio') {
+                tmp.checked = $(this).is(':checked');
+            }
+            orig[$(this).attr('id')] = tmp;
+        });
+
+        $('form').bind('change keyup', function ()
+        {
+
+            somethingChanged = false;
+            var disable = true;
+            $("form :input").each(function ()
+            {
+                var type = $(this).getType();
+                var id = $(this).attr('id');
+
+                if (type == 'text' || type == 'select') {
+                    disable = (orig[id].value == $(this).val());
+                } else if (type == 'radio') {
+                    disable = (orig[id].checked == $(this).is(':checked'));
+                }
+
+                if (!disable) {
+                    return false; // break out of loop
+                }
+            });
+            somethingChanged = true;
+            button.prop('disabled', disable);
+        });
+
+        UsersList(); // Users List
+        ReportsAccessUsers(); // ReportsAccess Users List
+        RolesList(); // Roles List
+        ReportsAccessRoles(); // ReportsAccess Roles List
+    });
+    // End
+
+
+    function showAlert() {
+        var firstname= "";
+        firstname=$("input#FirstName").val();
+        if(firstname=="")
+        {
+            firstname="Unknown";
+        }
+        var r = confirm("Are you sure to create "+ firstname +" Employee ?");
+        if (r == true) {
+            $('#fromEmployee').click();
+        }
+        else
+        {
+            $('#msgDiv').show();
+            $('#msgDiv').html("<div class='alert alert-danger'>Please Employee Details First</div>");
+            setTimeout(function () {
+                $('#msgDiv').fadeOut();
+            }, 5000);
+        }
+    }
+    //$("#something").click( function(){
+
+    //});
+
+    //$('#something').change(function(){
+    //    if(this.checked)
+    //    {
+    //        $('#MediaGallery').removeAttr("style");
+    //        BindMediaList();
+    //    }
+    //    else
+    //    {
+    //        $('#MediaGallery').hide(true);
+    //    }
+    //});
+
+    $('#MediaGallery').removeAttr("style");
+    BindMediaList();
+
+
+    $('#addAddressBtn').on('click', function (e)
+    {
+        if(ValidateAddress())
+        {
+            var country = $('input[type=radio][name=Radio1].active').val();
+            var x;
+            if(parseInt($('#addressIdHdn').val())>0)
+            {
+                x=EditConfirm('@ViewBag.Action');
+            }
+            else{
+                x=AddConfirm('@ViewBag.Action');
+            }
+            if(x)
+            {
+                $.ajax({
+                    url: '@Url.Content("~/Employee/Employees/AddEditAddress")',
+                    type: 'Post',
+                    data: {EmployeeID: @Model.EmployeeID, addressType: $('#AddressType').val(), apartment: $('#Apartment').val(), address: $('#Address').val(),country: country ,city: $('#City').val(), state: $('#State').val(), addressId: $('#addressIdHdn').val(), zipCode: $('#ZipCode').val(), phone: $('#Phone').val() },
+                    dataType: 'json',
+                    success: function (data)
+                    {
+                        $('#AddressType').val("");
+                        $('#Apartment').val("");
+                        $('#Address').val("");
+                        $('#City').val("");
+                        $('#State').val("");
+                        $('#ZipCode').val("");
+                        $('#Phone').val("");
+                        $('#addressIdHdn').val("0");
+                        loadAddress();
+                        somethingChanged = false;
+                    },
+                    error: function () {
+                        console.log('error');
+                    }
+                });
+            }
+        }
+        else{
+
+        }
+    });
+    function ValidateAddress()
+    {
+        //|| $('#Address').val() == "" ||  $('#City').val() == 0 || $('#State').val() == 0 || $('#ZipCode').val() == ""
+        if($('#AddressType').val() == 0 )
+        {
+            $('#msgDiv').show();
+            $('#msgDiv').html("<div class='alert alert-danger'>Please enter address type.</div>");
+            setTimeout(function () {
+                $('#msgDiv').fadeOut();
+            }, 5000);
+            return false;
+        }
+        else if($('#Address').val() == 0 )
+        {
+            $('#msgDiv').show();
+            $('#msgDiv').html("<div class='alert alert-danger'>Please enter address.</div>");
+            setTimeout(function () {
+                $('#msgDiv').fadeOut();
+            }, 5000);
+            return false;
+        }
+        else if($('#State').val() == 0 )
+        {
+            $('#msgDiv').show();
+            $('#msgDiv').html("<div class='alert alert-danger'>Please select state.</div>");
+            setTimeout(function () {
+                $('#msgDiv').fadeOut();
+            }, 5000);
+            return false;
+        }
+        else
+            return true;
+    }
+    function loadAddress() {
+
+        $("#sample_2").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/GetAddress")',
+            type: 'Post',
+            data: { EmployeeID: @Model.EmployeeID },
+            dataType: 'json',
+            success: function (data) {
+
+                $('#sample_2 tbody').append(data);
+                if($('#hdShow').val()=='View')
+                {
+                    $(document).find('#sample_2 tbody>tr>td>a').attr("disabled","disabled").addClass('disabled');
+                }
+
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteAddress(addressID) {
+        var x=DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $("#sample_2").find("tr:not(:first)").remove();
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/DeleteAddress")',
+                type: 'Post',
+                data: { addressID: addressID },
+                dataType: 'json',
+                success: function (data) {
+                    $('#AddressType').val("");
+                    $('#Apartment').val("");
+                    $('#Address').val("");
+                    $('#City').val("");
+                    $('#State').val("");
+                    $('#ZipCode').val("");
+                    $('#Phone').val("");
+                    $('#addressIdHdn').val("0");
+                    loadAddress();
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function deleteItem() {
+        var x=DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            return true;
+        }
+        return false;
+    }
+
+    function EditAddress(addressID, addType, apart, add,CountryID, city, state, zip, phone) {
+
+        if(EditConfirm('@ViewBag.Action'))
+        {
+            $('#addressIdHdn').val(addressID);
+            $('#AddressType').val(addType);
+            $('#Apartment').val(apart);
+            $('#Address').val(add);
+
+            if(CountryID=='231')
+            {
+                document.getElementById("rbUS").checked = true;
+                $('#rbUS').addClass('active');
+                $('#rbCanada').removeClass('active');
+                GetStates();
+
+            }
+            else
+            {
+                document.getElementById("rbCanada").checked = true;
+                $('#rbCanada').addClass('active');
+                $('#rbUS').removeClass('active');
+                GetStates();
+            }
+            $('#State').val(state);
+
+            GetCities(state);
+            setTimeout(function(){
+                $('#State').val(state);
+                $('#City').val(city);
+            }, 1000);
+            // alert(state);
+            // $('#City').val(city);
+            $('#ZipCode').val(zip);
+            $('#Phone').val(phone);
+        }
+    }
+
+    function resetData() {
+        $('#addressIdHdn').val("0");
+    }
+
+    $('#addLicenseBtn').on('click', function (e) {
+        var x;
+        if(parseInt($('#LicenseIdHdn').val())>0)
+        {
+            x=EditConfirm('@ViewBag.Action');
+        }
+        else{
+            x=AddConfirm('@ViewBag.Action');
+        }
+        if(x)
+        {
+            $('#dateOfHireSpan').css('display', 'none');
+            //$('#departmentSpan').css('display', 'none');
+            //if ($('#DateOfhire').val().trim() == '') {
+            //    $('#dateOfHireSpan').css('display', 'block');
+            //}
+            //else if ($('#Department').val().trim() == '') {
+            //    $('#departmentSpan').css('display', 'block');
+            //}
+            //else {
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/AddEditLicense")',
+                type: 'Post',
+                data: { EmployeeID:@Model.EmployeeID, dateOfHire: $('#DateOfhire').val(), terminationDate: $('#TerminationDate').val(), licenseExpirationDate: $('#LicenseExpirationDate').val(), department: $('#Department').val(), licenseType: $('#LicenseType').val(), licenseStatus: $('#LicenseStatus').val(), reasonForLeaving: $('#ReasonForLeaving').val(), licenseId: $('#LicenseIdHdn').val() },
+                dataType: 'json',
+                success: function (data)
+                {
+                    //$('#DateOfhire').val("");
+                    //$('#TerminationDate').val("");
+                    //$('#LicenseExpirationDate').val("");
+                    //$('#DepartmentType').val("");
+                    //$('#LicenseType').val("");
+                    //$('#LicenseStatus').val("");
+                    //$('#ReasonForLeaving').val("");
+                    $('#LicenseIdHdn').val("0");
+                    $('#msgDiv').show();
+                    $('#msgDiv').html('<div class="alert alert-success"> License information Save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    $('#myTab a[href="#Employees"]').tab('show');
+                    window.scrollTo(0, 0);
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+            //}
+        }
+    });
+
+    function BindPictureList(type, id, subFeatureid) {
+
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/GetAllPictures")',
+            data: { 'type': type, 'id': id, 'subFeatureid': subFeatureid },
+            type: 'Post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                var temphtml = "";
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    for (i = 0; i < jsonData.length; i++) {
+                        temphtml += ' <div class="col-md-2"> <div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
+                        temphtml += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                        temphtml += '<div class="btn-show">';
+                        temphtml += '<input type="button" value="Assign Picture" id="AssignPicture" class="btn btn-success add" onclick="AssignPictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        temphtml += '<input type="button" value="Edit" id="EditPicture" class="btn btn-primary add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="EditPictur(&#39;' + jsonData[i].FilePath + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        temphtml += '<input type="button" value="Delete" id="DeletePicture" class="btn btn-danger add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="DeletePictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;,&#39;' + subFeatureid + '&#39;);">';
+                        temphtml += '</div></div></div>';
+                    }
+                }
+                $('#pictureTable').html(temphtml);
+
+                $('.pictureTr').hover(function () {
+                    var ImgeSrc = $(this).children('img').attr('src');
+                    var mediaId = $(this).attr('data-id');
+                    $(this).on('click', function () {
+                        $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
+                        $(this).addClass('ShowBorderRed');
+                    });
+                });
+
+            }
+        });
+    }
+
+    function AssignPictures(type, id, mediaId) {
+
+        if (EditConfirmMedia('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/AssignPictures")',
+                data: { MediaType: type, Type: type, ID: id, IncidentID: 0, MediaID: mediaId, QuestionID: 0, Observation: 0 },
+                type: 'post',
+                datatype: 'json',
+
+                contenttype: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        alert('Image Assign successfuly!!');
+                    }
+                    else {
+                        alert(' Error in Request!!');
+                    }
+                }
+            });
+        }
+    }
+    function DeletePictures(type, id, mediaId, subFeatureid) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/DeletePicture")',
+                data: { MediaID: mediaId },
+                type: 'post',
+                datatype: 'json',
+                contenttype: 'application/json',
+                success: function (data) {
+                    if (data == 'success') {
+                        BindPictureList(type, id, subFeatureid)
+                    }
+                    else {
+                        alert(' Error in Request!!');
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+                failure: function (response) {
+                    console.log(response);
+                },
+            });
+        };
+    };
+
+    function DeleteConfirm(action) {
+        //return true;
+        var control = action;
+        if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
+            var a = confirm('Are you sure to delete?');
+            if (a == true) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            var a = alert('You dont have permission to delete');
+            return false;
+        }
+    };
+
+    function EditConfirmMedia(action) {
+
+        var control = action;
+
+        if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
+
+
+            return true;
+
+        }
+        else {
+
+            var a = alert('You dont have permission to assign media');
+
+
+            return false;
+        }
+
+    }
+
+    function MoveToPic() {
+        var subFeatureid='0';
+        var value=$('#EmployeeID').val();
+        $('#mediaTable input[type=checkbox]').each(function () {
+            if (this.checked) {
+                var mediaId=$(this).val();
+                $.ajax({
+                    url: '@Url.Content("~/Media/Media/MoveToPicture")',
+                    data: { type: 'Employee',id: value, MediaID: mediaId },
+                    type: 'post',
+                    datatype: 'json',
+                    contenttype: 'application/json',
+                    success: function (data) {
+                        if (data == 'success') {
+                        }
+                        else {
+                            alert(' Error in Request!!');
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                    failure: function (response) {
+                        console.log(response);
+                    },
+                });
+            }
+            BindPictureList('Employee', value, subFeatureid);
+            BindMediaList();
+        });
+    }
+
+    function EditPictur(ImgeSrc, mediaId) {
+        getDataUri(ImgeSrc, function (dataUri) {
+            $('#image').attr('src', dataUri);
+            $('.cropper-view-box').find('img').attr('src', dataUri);
+            $('.cropper-canvas').find('img').attr('src', dataUri);
+            $('.preview-lg').find('img').attr('src', dataUri);
+            $('.dataId').val(mediaId);
+        });
+
+        $('#avatar-modal').modal('show');
+
+        setTimeout(function () {
+
+            $('script').each(function () {
+
+                if (this.src.split('?') === '/Content/crop-avatar/js/main.js') {
+
+                    $(this).remove();
+                }
+                if (this.src.split('?') === '/Content/crop-avatar/js/cropper.js') {
+
+                    $(this).remove();
+                }
+            });
+            $.getScript('/Content/crop-avatar/js/main.js').done(function () {
+
+
+            });
+            $.getScript('/Content/crop-avatar/js/cropper.js').done(function () {
+
+
+            });
+        }, 100);
+    }
+
+    function getDataUri(url, callback) {
+        var image = new Image();
+
+        image.onload = function () {
+            var canvas = document.createElement('canvas');
+            canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
+            canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
+
+            canvas.getContext('2d').drawImage(this, 0, 0);
+
+            // Get raw image data
+            callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
+
+            // ... or get as Data URI
+            callback(canvas.toDataURL('image/png'));
+        };
+
+        image.src = url;
+    }
+
+    function loadLicense() {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/GetLicense")',
+            data: { EmployeeID: @Model.EmployeeID },
+            type: 'get',
+            dataType: 'json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    $('#DateOfhire').val(jsonData.DateOfHire);
+                    $('#TerminationDate').val(jsonData.TerminationDate);
+                    $('#LicenseExpirationDate').val(jsonData.LicenseExpirationDate)
+                    $('#Department').val(jsonData.Department);
+                    $('#LicenseType').val(jsonData.LicenseType);
+                    $('#LicenseStatus').val(jsonData.LicenseStatus);
+                    $('#ReasonForLeaving').val(jsonData.ReasonForLeaving);
+                    $('#LicenseIdHdn').val(jsonData.LicenseID);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function bindLinkedData(Id, DEscription, FilePath) {
+
+        if(EditConfirm('@ViewBag.Action'))
+        {
+            $('#LinkedId').val(Id);
+            $('#FilePath').val(FilePath);
+            $('#fileUpload').hide();
+
+            $('#Description').val(DEscription);
+            $('#LinkedButton').val('Update');
+            $('#spanDesc').html('');
+            $('#spanUpload').html('');
+        }
+    }
+    function DeleteLinkedItem(id) {
+        var x=DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/DeleteLinkedItem")',
+                type: 'Post',
+                data: { ID: id },
+                dataType: 'json',
+                success: function (data) {
+                    $('#Linked' + id).remove();
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function MoveToPicture(type, id, mediaId) {
+        var subFeatureid='0';
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/MoveToPicture")',
+            data: { type: type,id: id, MediaID: mediaId },
+            type: 'post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                if (data == 'success') {
+                    BindPictureList(type, id, subFeatureid);
+                    BindMediaList();
+
+                }
+                else {
+                    alert(' Error in Request!!');
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            },
+            failure: function (response) {
+                console.log(response);
+            },
+        });
+    };
+
+    function BindMediaList() {
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/GetAllMoveToPicture")',
+            data: { 'type': 'Media', 'id': '0', 'subFeatureid': '0' },
+            type: 'Post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                var types=$('#hdType').val();
+                var value=$('#EmployeeID').val();
+                var subFeatureid = "0";
+                var temph = "";
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    for (i = 0; i < jsonData.length; i++) {
+                        temph += ' <div class="col-md-2">';
+                        temph += '<input id="' + jsonData[i].MediaID + '" value="' + jsonData[i].MediaID + '" type="checkbox" class="chkall">';
+                        temph += '<div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
+                        temph += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                        temph += '<div class="btn-show">';
+                        if ($('#hdType').val() != 'Media') {
+                            temph += '<input type="button" value="MoveTo" id="MoveToPicture" class="btn btn-info add" onclick="MoveToPicture(&#39;' + types + '&#39;,&#39;' + value + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        }
+                        temph += '</div></div></div>';
+                    }
+
+                    $('#btnMoveImage').attr("disabled",false);
+                }
+                else
+                {
+                    $('#btnMoveImage').attr("disabled","disabled");
+                }
+                $('#mediaTable').html(temph);
+                $('.pictureTr').hover(function () {
+                    var ImgeSrc = $(this).children('img').attr('src');
+                    var mediaId = $(this).attr('data-id');
+                    $(this).on('click', function () {
+                        $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
+                        $(this).addClass('ShowBorderRed');
+                    });
+                });
+            }
+        });
+    }
+
+    function isNumberAndDecimal(evt, element) {
+
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        //alert(charCode);
+        if (charCode ==8)
+        {
+            return true;
+        }
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && (charCode != 46 || $(element).val().indexOf('.') != -1))
+        {
+            return false;
+        }
+        else {
+            var len = $('#Age').val().length;
+            var index = $('#Age').val().indexOf('.');
+            //alert(len+' '+index);
+            if (len > 2) {
+                return false;
+            }
+            if (len == 0 && charCode == 46) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function GetStates() {
+        var id = $('input[type=radio][name=Radio1].active').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/GetStates")',
+            type: 'get',
+            data: { ID: id },
+            dataType: 'json',
+            success: function (data) {
+                if (data.length > 0)
+                {
+                    $("#State").html('');
+                    $("#City").html('');
+                    var optionhtml1 = '<option value="' + 0 + '">' + "-- Select State --" + '</option>';
+                    $("#State").append(optionhtml1);
+
+                    $.each(data, function (i) {
+                        var optionhtml = '<option value="' + data[i].Value + '">' +data[i].Text + '</option>';
+                        $("#State").append(optionhtml);
+                    });
+                }
+                else
+                {
+                    $("#State").html('');
+                    $("#City").html('');
+                    var optionhtml1 = '<option value="' + 0 + '">' + "-- Select State --" + '</option>';
+                    $("#State").append(optionhtml1);
+                }
+
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function GetCities(sid) {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/GetCities")',
+            type: 'get',
+            data: { ID: sid },
+            dataType: 'json',
+            success: function (data) {
+                if(data.length>0)
+                {
+                    $("#City").html('');
+                    var optionhtml1 = '<option value="' + 0 + '">' + "-- Select City --" + '</option>';
+                    $("#City").append(optionhtml1);
+
+                    $.each(data, function (i) {
+                        var optionhtml = '<option value="' + data[i].Value + '">' +data[i].Text + '</option>';
+                        $("#City").append(optionhtml);
+                    });
+                }
+                else
+                {
+                    $("#City").html('');
+                    var optionhtml1 = '<option value="' + 0 + '">' + "-- Select City --" + '</option>';
+                    $("#City").append(optionhtml1);
+                }
+
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteEmployee(id, caller) {
+
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/DeleteEmployee")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').show();
+                        $('#msgDiv').html('<div class="alert alert-success">Employee has been deleted Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                        location.replace('@Url.Content("~/Employee/Employees/EmployeeList")');
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function isNumber(evt, element) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode > 47 || charCode < 58) || charCode == 8)
+            return true;
+        return false;
+    }
+
+    function ValidateZipCode(txt) {
+        txt.value = txt.value.replace(/[^a-zA-Z 0-9\n\r]+/g, '');
+    }
+
+    // Check permission
+    $("#permission").click(function(){
+        if(EditConfirm('@ViewBag.Action'))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }); //End Check permission
+
+
+    // Submit form on tab change Script
+    function formSubmitByTab(previoustarget,valueChanged)
+    {
+        var btnsubmit="";
+        if(previoustarget=="#Details")
+        {
+            btnsubmit = $('#fromEmployee');
+        }
+        else if(previoustarget=="#addresses")
+        {
+            btnsubmit = $('#addAddressBtn');
+        }
+        else if(previoustarget=="#License")
+        {
+            btnsubmit = $('#addLicenseBtn');
+        }
+        else if(previoustarget=="#Employees")
+        {
+            btnsubmit = $('#formEmployeesPersonal');
+        }
+        else if(previoustarget=="#Links")
+        {
+            btnsubmit = $('#LinkedButton');
+        }
+
+        if(btnsubmit!='' && valueChanged == true)
+        {
+            var r = confirm("Do you want to save?");
+            if (r == true) {
+                btnsubmit.click();
+            }
+        }
+    }// End Submit form on tab change Script
+
+
+
+    // ddl Change event Year, month, days
+    $(window).load(function () {
+        if($('#Year').val()!='')
+        {
+            $('#years').val($('#Year').val());
+        }
+        if($('#Month').val()!='')
+        {
+            $('#months').val($('#Month').val());
+        }
+        if($('#Day').val()!='')
+        {
+            $('#days').val($('#Day').val());
+        }
+    });
+
+    // Convert to employee to subject
+    function ConvertToSubjct(ConvertEmployeeID, caller) {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/ConvertEmployeeToSubject")',
+            data: JSON.stringify({ 'EmpId': ConvertEmployeeID }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').show();
+                    $('#msgDiv').html('<div class="alert alert-success">Successfully created new subject record.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+
+                    $('#convertSubject').html('');
+                    $('#convertSubject').append('<a class="btn btn-success" href="javascript:;" title="Already Convert">Already Convert</a>');
+                }
+                else {
+                    $('#msgDiv').show();
+                    $('#msgDiv').html('<div class="alert alert-success">Reports not Successfully Saved.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            },
+            failure: function (response) {
+                console.log(response);
+            },
+        });
+    }
+
+</script>
+<script>
+
+    // Report Access By User
+    /* -------- UsersList ---------- */
+    function UsersList() {
+        var EmployeeID = '@Model.EmployeeID';
+        $("#listUsers").html("");
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/UsersListEmployeeAccess")',
+            data: JSON.stringify({ 'EmployeeID': EmployeeID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listUsers').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- ReportsAccess Users List ---------- */
+    function ReportsAccessUsers() {
+        var EmployeeID = '@Model.EmployeeID';
+        $("#listReportAccessUsers").html("");
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/EmployeeAccessUsers_Bind")',
+            data: JSON.stringify({ 'EmployeeID': EmployeeID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listReportAccessUsers').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- Add Users in List ---------- */
+    function AddUsersInList(btnid) {
+        var EmployeeID = '@Model.EmployeeID';
+        var values = [];
+        var datacolumn = '';
+        if (btnid == 'btnadduser') {
+            values.push($("#listUsers").val());
+        }
+        else {
+            $("#listUsers > option").each(function () {
+                values.push(this.value);
+            });
+        }
+        //alert(values.join(','));
+        datacolumn = values.join(',');
+        if (datacolumn == '') {
+            alert("Please select a user");
+            return false;
+        }
+        else {
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/AddUsersEmployeeAccess")',
+                data: JSON.stringify({ 'UserID': datacolumn, 'EmployeeID': EmployeeID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Users has been added Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        UsersList(); // Users List
+                        ReportsAccessUsers(); // ReportsAccess Users List
+                    }
+                    else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                    }
+                }
+            });
+        }
+    }
+
+    /* -------- Remove Users in List ---------- */
+    function RemoveUsersInList(btnid) {
+
+        
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            var values = [];
+            var datacolumn = '';
+            if (btnid == 'btnremoveuser') {
+                values.push($("#listReportAccessUsers").val());
+            }
+            else {
+                $("#listReportAccessUsers > option").each(function () {
+                    values.push(this.value);
+                });
+            }
+            //alert(values.join(','));
+            datacolumn = values.join(',');
+            if (datacolumn == '') {
+                alert("Please select a Reports Access user");
+                return false;
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Content("~/Employee/Employees/RemoveUsersEmployeeAccess")',
+                    data: JSON.stringify({ 'ID': datacolumn }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data == "success") {
+                            $('#msgDiv').html('<div class="alert alert-success">User has been remove Suceesfully.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                            UsersList(); // Users List
+                            ReportsAccessUsers(); // ReportsAccess Users List
+                        }
+                        else {
+                            $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                        }
+                    }
+                });
+            }
+        }
+    }
+    /* -------- SavePermission By User ---------- */
+    $('#ByUserReportView').click(function () {
+        if ($(this).is(':checked')) {
+            var id = $("#listReportAccessUsers").val();
+            var EmployeeID = '@Model.EmployeeID';
+            var type = 'View';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access User.");
+                return false;
+            } else {
+                SavePermission(id, EmployeeID, type, permission);
+            }
+        }
+        else {
+            if ($('#ByUserReportEdit').is(':checked')) {
+                alert("First to Remove Edit Permission");
+                return false;
+            }
+            if ($('#ByUserReportDelete').is(':checked')) {
+                alert("First to Remove Delete Permission");
+                return false;
+            }
+            if (!$(this).is(':checked')) {
+                var id = $("#listReportAccessUsers").val();
+                var EmployeeID = '@Model.EmployeeID';
+                var type = 'View';
+                var permission = 'false';
+                if ($(this).is(':checked')) {
+                    permission = 'true';
+                }
+                else {
+                    permission = 'false';
+                }
+                if (id == '' || id == null) {
+                    alert("Please select a Report Access User.");
+                    return false;
+                } else {
+                    SavePermission(id, EmployeeID, type, permission);
+                }
+            }
+        }
+    });
+    $('#ByUserReportEdit').click(function () {
+        if (!$('#ByUserReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessUsers").val();
+            var EmployeeID = '@Model.EmployeeID';
+            var type = 'Edit';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access User.");
+                return false;
+            } else {
+                SavePermission(id, EmployeeID, type, permission);
+            }
+        }
+    });
+
+    $('#ByUserReportDelete').click(function () {
+        if (!$('#ByUserReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessUsers").val();
+            var EmployeeID = '@Model.EmployeeID';
+            var type = 'Delete';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access User.");
+                return false;
+            } else {
+                SavePermission(id, EmployeeID, type, permission);
+            }
+        }
+    });
+    function SavePermission(id, EmployeeID, type, permission) {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/EmployeeAccessPermission")',
+            data: JSON.stringify({ 'ID': id, 'EmployeeID': EmployeeID, 'Type': type, 'Permission': permission }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Reports Access Permission Successfully Saved.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+                ReportsAccessPermission(id);
+            }
+        });
+    }
+    /* -------- Reports Access Permission By User ---------- */
+    function ReportsAccessPermission(id)
+    {
+        
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/EmployeeAccessPermission_ByUser")',
+            data: JSON.stringify({ 'ID': id, 'EmployeeID': '@Model.EmployeeID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var ReportPermission = data.split(',');
+                    if (ReportPermission[0] == "True") {
+                        $('#ByUserReportView').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserReportView').prop('checked', false);
+                    }
+                    if (ReportPermission[1] == "True") {
+                        $('#ByUserReportEdit').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserReportEdit').prop('checked', false);
+                    }
+                    if (ReportPermission[2] == "True") {
+                        $('#ByUserReportDelete').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserReportDelete').prop('checked', false);
+                    }
+                }
+                else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+            }
+        });
+    }
+    //End Report Access Users End
+
+    // Report Access By Role
+    /* -------- Roles List ---------- */
+    function RolesList() {
+        var EmployeeID = '@Model.EmployeeID';
+        $("#listRoles").html("");
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/UsersEmployeeAccessRole")',
+            data: JSON.stringify({ 'EmployeeID': EmployeeID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listRoles').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- ReportsAccess Role List ---------- */
+    function ReportsAccessRoles() {
+        var EmployeeID = '@Model.EmployeeID';
+        $("#listReportAccessRoles").html("");
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/EmployeeAccessRoles_Bind")',
+            data: JSON.stringify({ 'EmployeeID': EmployeeID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listReportAccessRoles').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- Add Role in List ---------- */
+    function AddRoleInList(btnid) {
+        var EmployeeID = '@Model.EmployeeID';
+        @*var ReportID = '@Model.IncidentID';*@
+        //var RoleId = $("#listRoles").val();
+        var values = [];
+        var datacolumn = '';
+        if (btnid == 'btnaddrole') {
+            values.push($("#listRoles").val());
+        }
+        else {
+            $("#listRoles > option").each(function () {
+                values.push(this.value);
+            });
+        }
+        datacolumn = values.join(',');
+        if (datacolumn == '') {
+            alert("Please select a Role");
+            return false;
+        }
+        else {
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/AddRolesEmployeeAccess")',
+                data: JSON.stringify({ 'RoleID': datacolumn, 'EmployeeID': EmployeeID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Role has been added Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        RolesList(); // Roles List
+                        ReportsAccessRoles(); // ReportsAccess Roles List
+                    }
+                    else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                    }
+                }
+            });
+        }
+    }
+
+    /* -------- Remove Role in List ---------- */
+    function RemoveRoleInList(btnid) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            var values = [];
+            var datacolumn = '';
+            if (btnid == 'btnremoverole') {
+                values.push($("#listReportAccessRoles").val());
+            }
+            else {
+                $("#listReportAccessRoles > option").each(function () {
+                    values.push(this.value);
+                });
+            }
+            datacolumn = values.join(',');
+            if (datacolumn == '') {
+                alert("Please select a Reports Access Role");
+                return false;
+            }
+            else
+                $.ajax({
+                    url: '@Url.Content("~/Employee/Employees/RemoveRolesEmployeeAccess")',
+                    data: JSON.stringify({ 'ID': datacolumn }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data == "success") {
+                            $('#msgDiv').html('<div class="alert alert-success">Role has been remove Suceesfully.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                            RolesList(); // Roles List
+                            ReportsAccessRoles(); // ReportsAccess Roles List
+                        }
+                        else {
+                            $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                        }
+                    }
+                });
+        }
+    }
+    /* -------- SavePermission By Role ---------- */
+    $('#ByRoleReportView').click(function () {
+        if ($(this).is(':checked')) {
+            var id = $("#listReportAccessRoles").val();
+            var EmployeeID = '@Model.EmployeeID';
+            var type = 'View';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, EmployeeID, type, permission);
+            }
+        } else {
+            if ($('#ByRoleReportEdit').is(':checked')) {
+                alert("First to Remove Edit Permission");
+                return false;
+            }
+            if ($('#ByRoleReportDelete').is(':checked')) {
+                alert("First to Remove Delete Permission");
+                return false;
+            }
+            if (!$(this).is(':checked')) {
+                var id = $("#listReportAccessRoles").val();
+                var EmployeeID = '@Model.EmployeeID';
+                var type = 'View';
+                var permission = 'false';
+                if (id == '' || id == null) {
+                    alert("Please select a Report Access Role.");
+                    return false;
+                } else {
+                    SavePermissionByRole(id, EmployeeID, type, permission);
+                }
+            }
+        }
+    });
+    $('#ByRoleReportEdit').click(function () {
+        if (!$('#ByRoleReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessRoles").val();
+            var EmployeeID = '@Model.EmployeeID';
+            var type = 'Edit';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, EmployeeID, type, permission);
+            }
+        }
+    });
+
+    $('#ByRoleReportDelete').click(function () {
+        if (!$('#ByRoleReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessRoles").val();
+            var EmployeeID = '@Model.EmployeeID';
+            var type = 'Delete';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, EmployeeID, type, permission);
+            }
+        }
+    });
+    function SavePermissionByRole(id, EmployeeID, type, permission) {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/EmployeeAccessPermissionByRole")',
+            data: JSON.stringify({ 'ID': id, 'EmployeeID': EmployeeID, 'Type': type, 'Permission': permission }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Reports Access Permission Successfully Saved.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+                ReportsAccessPermission(id);
+            }
+        });
+    }
+    /* -------- Reports Access Permission By Role ---------- */
+    function ReportsAccessPermissionByRole(id) {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/EmployeeAccessPermission_ByRole")',
+            data: JSON.stringify({ 'ID': id, 'EmployeeID': '@Model.EmployeeID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var ReportPermission = data.split(',');
+                    if (ReportPermission[0] == "True") {
+                        $('#ByRoleReportView').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleReportView').prop('checked', false);
+                    }
+                    if (ReportPermission[1] == "True") {
+                        $('#ByRoleReportEdit').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleReportEdit').prop('checked', false);
+                    }
+                    if (ReportPermission[2] == "True") {
+                        $('#ByRoleReportDelete').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleReportDelete').prop('checked', false);
+                    }
+                }
+                else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+            }
+        });
+    }
+    //End Report Access Role End
+</script>
+<style>
+    .btnwidh {
+        width: 44px;
+    }
+    
+</style>
+@*<script src="~/assets/js/jquery.form.js"></script>
+    <script>
+        $('#EmployeesPersonal').ajaxForm({
+
+        });
+        $('#EmployeesLInkedFiles').ajaxForm({
+
+        });
+    </script>
+*@

@@ -1,0 +1,3217 @@
+﻿@model CIMS.Models.EmployeeIncidentModel
+@{
+    ViewBag.Title = "Employees";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+@*<h2>Employees</h2>
+*@
+
+<link href="~/Content/crop-avatar/css/cropper.css" rel="stylesheet" />
+<script src="~/Content/crop-avatar/js/cropper.js"></script>
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Report</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Employees-Report</li>
+        </ol>
+    </div>
+
+</div>
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+
+        @if (Model.IncidentID > 0)
+        {
+            <div class="col-lg-12 enablebtn btn-enable-main">
+                <h3 class="box-title inline-head">@Model.EmployeeModel.LogoFirstName @Model.EmployeeModel.LogoMiddleName @Model.EmployeeModel.LogoLastName</h3>
+                <span> Report CreatedBy: @Model.ReportCreatorUser</span>
+
+                @if (Request.QueryString["Show"] != "Link")
+                {
+                    if (Model.ReportProofread != true)
+                    {
+                        if (Session["ReportProofreadCheck"].ToString() == "1")
+                        {
+                            @*<a style="display:none !important;" href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + Model.IncidentID + "")' class="btn btn-info editpermission" title="Edit Employee Incident">
+                                <i class="fa fa-pencil"></i> Edit
+                            </a>*@
+                            <a class="btn btn-danger" href='javascript:;' onclick='DeleteEmployeeIncident(@Model.IncidentID,this);' title="Delete Employee Incident">
+                                <i class='fa fa-trash'></i> Delete
+                            </a>
+                        }
+                        else
+                        {
+                            if (Model.ReportCreatorUser == Session["UserName"].ToString())
+                            {
+                                @*<a style="display:none !important;" href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + Model.IncidentID + "")' id="ReportsEdit" onclick='return EditEmployeeIncident(@Model.IncidentID,this);' class="btn btn-info editpermission" title="Edit Employee Incident">
+                                    <i class="fa fa-pencil"></i> Edit
+                                </a>*@
+                                <a class="btn btn-danger" href='javascript:;' onclick='DeleteEmployeeIncident(@Model.IncidentID,this);' title="Delete Employee Incident">
+                                    <i class='fa fa-trash'></i> Delete
+                                </a>
+                            }
+                            else
+                            {
+                                @*<a style="display:none !important;" href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + Model.IncidentID + "")' class="btn btn-info edit editpermission" id="@(Model.IncidentID)Edit" onclick='return ReportPermissionCheck(@Model.EmployeeId,@Model.IncidentID,1,this);' title="Edit Employee Incident">
+                                    <i class="fa fa-pencil"></i> Edit
+                                </a>*@
+                                <a class="btn btn-danger" href='javascript:;' onclick='ReportPermissionCheck(@Model.EmployeeId,@Model.IncidentID,2,this);' id="@(Model.IncidentID)Delete" title="Delete Employee Incident">
+                                    <i class='fa fa-trash'></i> Delete
+                                </a>
+                            }
+                        }
+                    }
+                }
+            </div>
+        }
+
+        @*<input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />*@
+        <div class="right-tab">
+            <div class="white-box clearfix" style="float:left;width:100%;">
+                <ul class="nav nav-pills custom-tabs" id="myTab">
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                    {
+                        <li class="active">
+                            <a href="#Details" data-toggle="tab">
+
+                                <span>Details</span>
+                            </a>
+                        </li>
+                    }
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Involved", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                    {
+                        <li>
+                            <a href="#involved" data-toggle="tab">
+
+                                <span>Involved</span>
+                            </a>
+                        </li>
+                    }
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Audit", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                    {
+                        <li>
+                            <a href="#audit" data-toggle="tab">
+
+                                <span>Audit</span>
+                            </a>
+                        </li>
+                    }
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Pace Audit", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                    {
+                        <li>
+                            <a href="#paceAudit" data-toggle="tab">
+
+                                <span>Pace Audit</span>
+                            </a>
+                        </li>
+
+                    }
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Variance", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                    {
+                        <li>
+                            <a href="#variance" data-toggle="tab">
+
+                                <span>Variance</span>
+                            </a>
+                        </li>
+                    }
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee IPVR", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                    {
+                        <li>
+                            <a href="#ipvr" data-toggle="tab">
+
+                                <span>IPVR</span>
+                            </a>
+                        </li>
+                    }
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Notes", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                    {
+                        <li>
+                            <a href="#notes" data-toggle="tab">
+
+                                <span>Notes</span>
+                            </a>
+                        </li>
+                    }
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Linked Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                    {
+                        <li>
+                            <a href="#Links" data-toggle="tab">
+
+                                <span>Linked</span>
+                            </a>
+                        </li>
+                    }
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Incident Permission", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                    {
+                        if (Model.ReportProofread != true)
+                        {
+                            <li>
+                                <a href="@(Model.CheckPermissionID == Convert.ToInt32(Session["UserID"]) ? "#Permission" : ((Session["ReportProofreadCheck"].ToString()=="1")?"#Permission":"#Details"))" data-toggle="tab" style="display:@(Model.CheckPermissionID == Convert.ToInt32(Session["UserID"]) ? "" : ((Session["ReportProofreadCheck"].ToString()=="1")?"":" none"))">
+
+                                    <span>Permission</span>
+                                </a>
+                            </li>
+                        }
+                    }
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                    {
+                        <li>
+                            <a href="#Proofread" data-toggle="tab">
+
+                                <span>Proofread</span>
+                            </a>
+                        </li>
+                    }
+
+
+                </ul>
+            </div>
+            <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+
+            <div class="tab-content row">
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                {
+                    <div class="tab-pane active" id="Details">
+
+                        <div class="large-title">Employee Report -  Details </div>
+                        @*<div class="box-title m-b-15">Employee Incident Details </div>*@
+
+                        @using (Html.BeginForm("EmployeeIncident", "Employees", new { Area = "Employee" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                        {
+
+
+                            <div class="col-md-6">
+                                <div class="white-box clearfix">
+                                    <div class="form-group">
+                                        <label class="control-label">Report Number</label>
+
+                                        @Html.HiddenFor(m => m.IncidentID, new { @id = "IncidentId" })
+                                        @Html.HiddenFor(m => m.EmployeeId)
+                                        @Html.TextBoxFor(m => m.IncidentNumber, null, new { @class = "form-control", @readonly = "readonly" })
+                                        @*@Html.ValidationMessageFor(m => m.IncidentNumber, "", new { @class = "text-danger" })*@
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Report Date </label>
+
+                                        @Html.TextBoxFor(m => m.IncidentDate, null, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.IncidentDate, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Start Time </label>
+                                        <input type="hidden" id="oldStartTime" name="oldStartTime" value="@Model.StartTime" />
+                                        @Html.TextBoxFor(m => m.StartTime, null, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.StartTime, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Location</label>
+                                        @Html.DropDownListFor(m => m.Location, Model.LocationList as List<SelectListItem>, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Location, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group no-margin-bottom">
+                                        @Html.CheckBoxFor(m => m.ActiveStatus)
+                                        <label class="control-label">Active Status</label>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="white-box clearfix" style="min-height:429px;">
+                                    <div class="form-group">
+                                        <label class="control-label">Nature of Report </label>
+
+                                        @*@Html.TextBoxFor(m => m.NatureOfIncident, null, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.NatureOfIncident, "", new { @class = "text-danger" })*@
+                                        @Html.DropDownListFor(m => m.NatureOfIncident, ViewBag.lstNatureOfIncident as List<SelectListItem>, new { @class = "form-control", @id = "ddlNatureOfEvent" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Short Description</label>
+
+                                        @*@Html.TextBoxFor(m => m.ShortDescription, null, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.ShortDescription, "", new { @class = "text-danger" })*@
+                                        @Html.DropDownListFor(m => m.ShortDescription, ViewBag.lstShortDescription as List<SelectListItem>, new { @class = "form-control", @id = "ddlShortDescription" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Status</label>
+
+                                        @Html.TextBoxFor(m => m.Status, null, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Employee’s Involvement</label>
+                                        @Html.DropDownListFor(m => m.IncidentRole, ViewBag.lstRole as List<SelectListItem>, new { @class = "form-control" })
+                                        @*@Html.TextBoxFor(m => m.IncidentRole, null, new { @class = "form-control" })*@
+                                        @Html.ValidationMessageFor(m => m.IncidentRole, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="white-box clearfix">
+                                    <div class="form-group">
+                                        <label class="control-label">Description</label>
+
+                                        @Html.TextAreaFor(m => m.Description, new { @class = "form-control ckeditor" })
+                                        @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group no-margin-bottom">
+                                            <button type="submit" class="btn btn-success @(Model.IncidentID > 0 ? " edit" : " add")" id="btnDetails">Save</button>
+                                            <button type="reset" class="btn btn-white" id="EmployeeIncidentReset">Reset</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @if (Model.IncidentID > 0)
+                        {
+                            <div class="col-md-12">
+                                <div class="white-box clearfix">
+
+                                    <div class="col-md-12 media-main" style="padding-bottom: 8px;">
+                                        <div class="col-md-2">
+                                            <div class="large-title no-padding">Media</div>
+                                        </div>
+
+                                        @*<div class="col-md-2">
+                                            <a href='@Url.Content("~/Media/Media/Index?Type=Employee&SubType=EmpReport&typeid=" + Model.EmployeeId + "&SubFeatureid=" + Model.IncidentID + "")' class="btn btn-info small btn-sm btn-icon" title="Media"><i class="fa fa-camera fa-2x"></i></a>
+                                        </div>
+                                        <div class="pull-right">
+                                            <label class="large-title no-padding">View General Media Gallery :</label>
+                                            <input type="checkbox" id="something" />
+                                        </div>*@
+
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="large-title no-padding">Employee Gallery</div>
+                                        <div id="pictureTable">
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12" id="MediaGallery" style="display: none;">
+                                        <div class="large-title no-padding">Media Gallery</div>
+                                        <div id="mediaTable">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Involved", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                {
+                    <div class="tab-pane" id="involved">
+                        <div class="large-title">Employee Report - Involved </div>
+                        <div class="col-md-8">
+                            <div class="white-box clearfix  Involved-height">
+                                <div class="table-responsive">
+                                    <table id="employeeTable" class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    First Name
+                                                </th>
+                                                <th>
+                                                    Last Name
+                                                </th>
+                                                <th>
+                                                    Role
+                                                </th>
+                                                <th>
+                                                    Action
+                                                </th>
+
+                                            </tr>
+                                        </thead>
+                                        @if (Model.EmployeeList.Count() > 0)
+                                        {
+                                            foreach (var items in Model.EmployeeList)
+                                            {
+
+                                                <tr>
+                                                    <td>@items.FirstName</td>
+                                                    <td>@items.LastName</td>
+                                                    <td>@items.RoleName</td>
+                                                    <td>
+                                                        <a href='javascript:;' class="btn btn-info btn-sm btn-icon" onclick="bindInvolved('@items.EmployeeInvolvedId','@items.InvolvedId','@items.EmployeeID','@HttpUtility.JavaScriptStringEncode(items.FirstName)','@HttpUtility.JavaScriptStringEncode(items.LastName)','@items.Sex','@items.Race','@items.RoleID')"> <i class="fa fa-pencil"></i></a>
+                                                        <a class="btn btn-danger btn-sm delete-sm" href='javascript:;' onclick='DeleteEmployee(@items.EmployeeInvolvedId,this);'><i class='fa fa-trash'></i></a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+
+                                    </table>
+
+                                </div>
+
+                                <a href="#myModal" style="display:none !important;" data-toggle="modal" class="btn btn-primary  @(Model.IncidentID > 0 ? "" : "disabled")" id="FindSubject"> <i class="fa fa-search"></i> Find Subject</a>
+                                <a href="#myModal1" data-toggle="modal" class="btn btn-primary default  @(Model.IncidentID > 0 ? "" : "disabled")" id="FindEmployee"><i class="fa fa-search"></i> Find Employee</a>
+                            </div>
+
+                        </div>
+                        @using (Html.BeginForm("EmployeeInvolved", "Employees", new { Area = "Employee" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                        {
+                            <div class="col-md-4">
+                                <div class="white-box clearfix">
+                                    <div class="form-group">
+                                        @Html.HiddenFor(m => m.EmployeeInvolvedId)
+                                        @Html.HiddenFor(m => m.IncidentID)
+                                        @Html.HiddenFor(m => m.EmployeeId)
+                                        @Html.HiddenFor(m => m.InvolvedId)
+                                        <label class="control-label">First Name </label>
+
+                                        @Html.TextBoxFor(m => m.EmployeeModel.FirstName, null, new { @class = "form-control" })
+                                        @*@Html.ValidationMessageFor(m => m.EmployeeModel.FirstName, "", new { @class = "text-danger" })*@
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Last Name </label>
+
+                                        @Html.TextBoxFor(m => m.EmployeeModel.LastName, null, new { @class = "form-control" })
+                                        @*@Html.ValidationMessageFor(m => m.EmployeeModel.LastName, "", new { @class = "text-danger" })*@
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Sex</label>
+                                        @Html.DropDownListFor(model => model.EmployeeModel.Sex, ViewBag.GenderList as List<SelectListItem>, new { @class = "form-control" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Race </label>
+                                        @Html.DropDownListFor(model => model.EmployeeModel.Race, ViewBag.RaceList as List<SelectListItem>, new { @class = "form-control" })
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Role </label>
+                                        @*@Html.TextBoxFor(m => m.EmployeeModel.RoleName, null, new { @class = "form-control" })*@
+                                        @Html.DropDownListFor(model => model.EmployeeModel.RoleName, ViewBag.lstRole as List<SelectListItem>, new { @class = "form-control" })
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="white-box clearfix">
+                                    <div class="form-group no-margin-bottom">
+                                        <button type="submit" class="btn btn-success" @(Model.IncidentID > 0 ? "" : "disabled") id="employeeInvolvedButton">Save</button>
+                                        <button type="reset" class="btn btn-white" id="employeeInvolvedReset">Reset</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        }
+                    </div>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Audit", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                {
+                    <div class="tab-pane" id="audit">
+                        <div class="large-title no-margin">Employee Report-Audit</div>
+
+                        @using (Html.BeginForm("EmployeeAudit", "Employees", FormMethod.Post))
+                        {
+                            <div class="row">
+
+                                @Html.HiddenFor(m => m.IncidentID)
+                                @Html.HiddenFor(m => m.EmployeeId)
+
+                                <div class="col-md-6">
+                                    <div class="white-box clearfix">
+                                        <div class="form-group no-margin-bottom">
+                                            <label class="control-label">Audit</label>
+                                            @Html.DropDownListFor(model => model.AuditType, Model.AuditTypeList as List<SelectListItem>, "Select", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-6">
+                                    <div class="white-box clearfix">
+                                        <div class="col-md-10">
+                                            <div class="form-group no-margin-bottom">
+                                                <label class="control-label">Observation </label>
+                                                @Html.DropDownListFor(model => model.Observation, Model.DisplayNameList as List<SelectListItem>, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" id="newAudit" class="btn btn-primary btn-top-space">New</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12">
+                                    <div class="white-box clearfix">
+                                        <div class="table-responsive">
+                                            <table id="" class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+
+                                                        </th>
+                                                        <th>
+                                                            Answer(Yes/No) OR Score(1-Low;10-High)
+                                                        </th>
+                                                        @*<th style="display:none">
+                                                            Image
+                                                        </th>*@
+                                                        <th>
+                                                            Comment
+                                                        </th>
+
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="auditBody">
+                                                    <tr>
+                                                        <td colspan="3"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="form-group">
+
+                                            <input type="submit" value="Save" class="btn btn-success edit" @(Model.IncidentID > 0 ? "" : "disabled") id="btnEmpAudit" />
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+
+                    </div>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Pace Audit", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                {
+                    <div class="tab-pane" id="paceAudit">
+
+                        <div class="large-title no-margin">Employee Report-Pace Audit</div>
+
+                        @using (Html.BeginForm("EmployeePaceAudit", "Employees", FormMethod.Post, new { @id = "EmployeesPersonal" }))
+                        {
+                            <div class="row">
+
+                                @Html.HiddenFor(m => m.IncidentID)
+                                @Html.HiddenFor(m => m.EmployeeId)
+
+                                <div class="col-md-6">
+                                    <div class="white-box clearfix">
+                                        <div class="form-group">
+                                            <label class="control-label">Game </label>
+                                            @Html.DropDownListFor(model => model.Game, ViewBag.GameList as List<SelectListItem>, new { @class = "form-control" })
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="white-box clearfix">
+                                        <div class="col-md-10">
+                                            <div class="form-group">
+                                                <label class="control-label">Observation </label>
+                                                @Html.DropDownListFor(model => model.DisplayName, Model.DisplayNameList as List<SelectListItem>, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-primary btn-top-space" id="newPaceAudit"><i class="fa fa-plus"></i> New</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+
+                                    <div class="white-box clearfix">
+                                        <div class="form-group row">
+                                            <div class="checkbox-inline">
+
+                                                @Html.RadioButtonFor(m => m.ShuffleShoe, "Shuffle")
+                                                <label class="control-label">Shuffle</label>
+
+                                            </div>
+
+                                            <div class="checkbox-inline">
+                                                @Html.RadioButtonFor(m => m.ShuffleShoe, "Shoe")
+                                                <label class="control-label">Shoe</label>
+                                            </div>
+
+                                            <div class="checkbox-inline">
+
+                                                <label class="control-label">- OR -</label>
+                                            </div>
+
+                                            <div class="checkbox-inline">
+                                                @Html.RadioButtonFor(m => m.ShuffleShoe, "Hands")
+                                                <label class="control-label" id="HandsLabel">Hands per Hour</label>
+                                            </div>
+                                        </div>
+                                        <div id="paceAuditDiv">
+
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-12">
+                                                <input type="submit" value="Save" class="btn btn-success edit" @(Model.IncidentID > 0 ? "" : "disabled") id="btnEmpPaceAudit" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+
+                    </div>
+                }
+
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Variance", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                {
+                    <div class="tab-pane" id="variance">
+
+                        @using (Html.BeginForm("EmployeeVariance", "Employees", FormMethod.Post, new { @id = "EmployeesPersonal" }))
+                        {
+                            <div class="large-title no-margin">Employee Incident -  Variance </div>
+
+                            <div class="row">
+
+                                @Html.HiddenFor(m => m.IncidentID)
+                                @Html.HiddenFor(m => m.EmployeeId)
+                                <div class="col-md-6">
+                                    <div class="white-box clearfix">
+                                        <div class="form-group">
+                                            <label class="control-label">Variance Type</label>
+                                            @Html.DropDownListFor(m => m.VarianceType, ViewBag.lstVarianceType as List<SelectListItem>, new { @class = "form-control" })
+
+                                            @*@Html.TextBoxFor(m => m.VarianceType, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(m => m.VarianceType, "", new { @class = "text-danger" })*@
+                                        </div>
+
+                                        <div class="form-group margin-bottom-10">
+                                            <label class="control-label">Amount</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon">$</span>
+                                                @Html.TextBoxFor(m => m.Amount, new { @class = "form-control allownumericwithoutdecimal" })
+                                                @*@Html.ValidationMessageFor(m => m.Amount, "", new { @class = "text-danger" })*@
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <div class="white-box clearfix">
+                                        <div class="form-group">
+                                            <label class="control-label">Resolution</label>
+                                            @Html.DropDownListFor(m => m.Resolution, ViewBag.lstVarianceResoluion as List<SelectListItem>, new { @class = "form-control" })
+
+                                            @*@Html.TextBoxFor(m => m.Resolution, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(m => m.Resolution, "", new { @class = "text-danger" })*@
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label">Amount is:</label>
+                                            <br />
+                                            @Html.RadioButtonFor(m => m.AmountType, 1) Short
+                                            @Html.RadioButtonFor(m => m.AmountType, 2) Over
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="white-box clearfix">
+                                        <div class="form-group">
+                                            <label class="control-label">Description</label>
+
+                                            @Html.TextAreaFor(m => m.VarianceDescription, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.VarianceDescription, "", new { @class = "text-danger" })
+                                        </div>
+
+
+                                        <div class="form-group no-margin-bottom">
+                                            <input type="submit" value="Save" class="btn btn-success edit" @(Model.IncidentID > 0 ? "" : "disabled") id="EmpVariance" />
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        }
+
+                    </div>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee IPVR", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                {
+                    <div class="tab-pane" id="ipvr">
+                        @using (Html.BeginForm("EmployeeIncident", "Employees", FormMethod.Post, new { @id = "EmployeesPersonal" }))
+                        {
+
+                            <div class="large-title no-margin">Employee Incident-IPVR</div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="white-box clearfix">
+                                        @Html.HiddenFor(m => m.IncidentID)
+                                        @Html.HiddenFor(m => m.EmployeeId)
+                                        <div class="col-md-12">
+                                            <div class="form-group clearfix">
+                                                @Html.TextAreaFor(m => m.IPVRDescription, new { @class = "form-control ckeditor" })
+                                                @Html.ValidationMessageFor(m => m.IPVRDescription, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="col-md-12 ">
+                                                <input type="submit" value="Save" class="btn btn-success edit" @(Model.IncidentID > 0 ? "" : "disabled") id="btnIpvr" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        }
+                    </div>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Notes", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                {
+                    <div class="tab-pane" id="notes">
+                        @using (Html.BeginForm("EmployeeIncident", "Employees", FormMethod.Post, new { @id = "EmployeesPersonal" }))
+                        {
+
+                            <div class="large-title no-margin">Employee Incident-Notes</div>
+
+                            <div class="">
+                                <div class="white-box clearfix">
+                                    @Html.HiddenFor(m => m.IncidentID)
+                                    @Html.HiddenFor(m => m.EmployeeId)
+                                    <div class="col-md-12 form-group clearfix">
+                                        @Html.TextAreaFor(m => m.Notes, new { @class = "form-control ckeditor" })
+                                        @Html.ValidationMessageFor(m => m.Notes, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group clearfix no-margin-bottom">
+                                            <input type="submit" value="Save" class="btn btn-success edit" @(Model.IncidentID > 0 ? "" : "disabled") id="btnNotes" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        }
+
+                    </div>
+                }
+
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Linked Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                {
+                    <div class="tab-pane" id="Links">
+
+                        <div class="large-title">Employee Reports- Linked Files </div>
+
+
+                        <div class="col-md-8">
+                            <div class="white-box clearfix Files-list-height">
+                                <div class="table-responsive">
+                                    <table id="employeeTable" class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    Description
+                                                </th>
+                                                <th>
+                                                    File Path
+                                                </th>
+                                                <th style="width:96px">Action</th>
+
+                                            </tr>
+                                        </thead>
+                                        @if (Model.EmployeeLinkedList.Count() > 0)
+                                        {
+                                            foreach (var items in Model.EmployeeLinkedList)
+                                            {
+                                                <tr id="Linked@(items.Id)">
+                                                    <td><a href="@items.FilePath" download="@items.Description">@items.Description</a></td>
+                                                    <td>@items.FilePath</td>
+                                                    <td>
+                                                        <a href="javascript:;" class="btn btn-info small btn-sm btn-icon" onclick="bindLinkedData('@items.Id','@HttpUtility.JavaScriptStringEncode(items.Description)','@HttpUtility.JavaScriptStringEncode(items.FilePath)')"><i class="fa fa-pencil"></i></a>
+                                                        <a href="javascript:;" class="btn btn-danger  small btn-sm delete-sm" onclick="DeleteLinkedItem(@items.Id)"><i class="fa fa-trash"></i></a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+
+
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="white-box clearfix" style="min-height:250px;">
+                                @using (Html.BeginForm("EmployeeIncidentLInkedFiles", "Employees", FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off", @id = "EmployeesLInkedFiles" }))
+                                {
+                                    @Html.HiddenFor(m => m.IncidentID)
+                                    @Html.HiddenFor(m => m.EmployeeId)
+                                    <input type="hidden" id="LinkedId" name="LinkedId" value="0" />
+                                    <div class="form-group">
+                                        <label>Description</label>
+                                        <input type="text" class="form-control" id="LinkedDescription" name="Description" />
+                                        <span style="color: red" id="spanDesc"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="file" id="fileUpload" name="fileUpload" class="flubtn" />
+                                        <span style="color: red" id="spanUpload"></span>
+                                    </div>
+                                    <div class="form-group no-margin-bottom">
+                                        <input type="submit" value="Save" id="LinkedButton" class="btn btn-success" @(Model.IncidentID > 0 ? "" : "disabled") />
+                                        <input type="button" value="Cancel" id="ResetButton" class="btn btn-white" />
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Incident Permission", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                {
+                    if (Model.ReportProofread != true)
+                    {
+                        <div class="tab-pane" id="Permission" style="display:@(Model.CheckPermissionID == Convert.ToInt32(Session["UserID"]) ? "" : ((Session["ReportProofreadCheck"].ToString()=="1")?"":"none"))">
+
+                            <div class="large-title">Employee Reports- Access Permission </div>
+                            <div class="col-md-12">
+                                <div class="panel-body all-box" style="padding:0px;">
+                                    <div class="white-box clearfix">
+                                        <div class="table-responsive">
+                                            <h3> Report Creator Details </h3>
+                                            <table id="tblReportCreatorDetails" class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>First Name</th>
+                                                        <th>Last Name</th>
+                                                        <th>User Name</th>
+                                                        <th>Date Created</th>
+                                                        @if (Session["ReportProofreadCheck"].ToString() == "1")
+                                                        {
+                                                            <th>Permission</th>
+                                                        }
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class='has-sub'>
+                                                        <td>@Model.ReportCreatorFirstName</td>
+                                                        <td>@Model.ReportCreatorLastName</td>
+                                                        <td>@Model.ReportCreatorUser</td>
+                                                        <td>@Model.ReportCreateDate</td>
+                                                        @if (Session["ReportProofreadCheck"].ToString() == "1")
+                                                        {
+                                                            <td>
+
+                                                                <div class="checkbox-inline">
+                                                                    @Html.CheckBoxFor(m => m.ReportCreatorView, new { @id = "repCreatorView" })
+                                                                    <label>View</label>
+                                                                </div>
+                                                                <div class="checkbox-inline">
+                                                                    @Html.CheckBoxFor(m => m.ReportCreatorEdit, new { @id = "repCreatorEdit" })
+                                                                    <label>Edit</label>
+                                                                </div>
+                                                                <div class="checkbox-inline">
+                                                                    @Html.CheckBoxFor(m => m.ReportCreatorDelete, new { @id = "repCreatorDelete" })
+                                                                    <label>Delete</label>
+                                                                </div>
+                                                            </td>
+                                                        }
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="white-box clearfix">
+                                        <div class="col-md-12">
+                                            <h3>User Base Permission </h3>
+                                            <div class="box-bg">
+                                                <div class="col-md-3">
+                                                    <div class="col-md-12">
+                                                        <h3> Users</h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <select name="listUsers" id="listUsers" class="form-control" size="5" style="width: 411px; height: 316px;"></select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-1 text-center">
+                                                    <div class="custom-top-margin">
+                                                        <button type="button" class="btn btn-success" onclick="AddUsersInList();"> >> </button>
+                                                        <br />
+                                                        <button type="button" class="btn btn-danger" onclick="RemoveUsersInList();"> << </button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <div class="col-md-12">
+                                                        <h3> Reports Access Users</h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <select name="listReportAccessUsers" id="listReportAccessUsers" size="5" class="form-control" style="width: 411px; height: 316px;"></select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-5">
+                                                    <h3 class="check-space">Permissions</h3>
+                                                    <div class="checkbox-inline">
+                                                        <input type="checkbox" value="1" name="View" class="ByUsers" id="ByUserReportView" />
+                                                        <label>View</label>
+                                                    </div>
+                                                    <div class="checkbox-inline">
+                                                        <input type="checkbox" value="2" name="Edit" class="ByUsers" id="ByUserReportEdit" />
+                                                        <label>Edit</label>
+                                                    </div>
+                                                    <div class="checkbox-inline">
+                                                        <input type="checkbox" value="3" name="Delete" class="ByUsers" id="ByUserReportDelete" />
+                                                        <label>Delete</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="white-box clearfix">
+                                        <div class="col-md-12">
+                                            <h3>Role Base Permission </h3>
+                                            <div class="box-bg">
+                                                <div class="col-md-3">
+                                                    <div class="col-md-12">
+                                                        <h3> Roles</h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <select name="listRoles" id="listRoles" class="form-control" size="5" style="width: 411px; height: 200px;"></select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-1 text-center">
+                                                    <div class="custom-top-margin">
+                                                        <button type="button" class="btn btn-success" onclick="AddRoleInList();"> >> </button>
+                                                        <br />
+                                                        <button type="button" class="btn btn-danger" onclick="RemoveRoleInList();"> << </button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    <div class="col-md-12">
+                                                        <h3> Reports Access Roles</h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <select name="listReportAccessRoles" id="listReportAccessRoles" size="5" class="form-control" style="width: 411px; height: 200px;"></select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-5">
+                                                    <h3 class="check-space"> Permissions</h3>
+                                                    <div class="checkbox-inline">
+                                                        <input type="checkbox" value="4" name="View" class="ByRoles" id="ByRoleReportView" />
+                                                        <label>View</label>
+                                                    </div>
+                                                    <div class="checkbox-inline">
+                                                        <input type="checkbox" value="5" name="Edit" class="ByRoles" id="ByRoleReportEdit" />
+                                                        <label>Edit</label>
+                                                    </div>
+                                                    <div class="checkbox-inline">
+                                                        <input type="checkbox" value="6" name="Delete" class="ByRoles" id="ByRoleReportDelete" />
+                                                        <label>Delete</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                {
+                    <div class="tab-pane" id="Proofread">
+
+                        <div class="large-title">Employee Reports- Proofread </div>
+                        <div class="col-md-12">
+                            <div class="panel-body all-box" style="padding:0px;">
+                                <div class="white-box clearfix">
+                                    <div class="table-responsive">
+                                        @using (Html.BeginForm("EmployeeReportProofread", "Employees", FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off", @id = "EmployeeReportProofread" }))
+                                        {
+                                            <div class="check-width">
+                                                <div class="checkbox-inline">
+                                                    <input type="hidden" value='@Session["ReportProofreadCheck"].ToString()' id="checkcondition" />
+
+                                                    @Html.HiddenFor(m => m.IncidentID)
+                                                    @Html.HiddenFor(m => m.EmployeeId)
+                                                    @Html.HiddenFor(m => m.ProofreadID)
+                                                    @if (Model.IncidentID > 0)
+                                                    {
+                                                        @Html.CheckBoxFor(m => m.ReportProofread, new { @id = "ByProofread" })
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                        <h3 class="new-head">Proofread By:</h3>
+                                                    </div>
+
+                                                    <div class="col-md-6 no-space">
+                                                        <div class="form-group">
+                                                            <label>First Name:</label>
+                                                            <span id="ProofreadByFirstName">@Model.ProofreadByFirstName</span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>Last Name:</label>
+                                                            <span id="ProofreadByLastName">@Model.ProofreadByLastName</span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>User Name:</label>
+                                                            <span id="ProofreadByUserName">@Model.ProofreadByUserName</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row daterow">
+                                                    <div class="col-md-3">
+                                                        <h3 class="new-head">Date Proofread :</h3>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <span id="ProofreadByFirstName">@Model.DateProofread</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-8">
+        </div>
+
+        <div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    @*<form class="avatar-form" action="Update_Picture" enctype="multipart/form-data" method="post">*@
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" id="avatar-modal-label">Change Profile Picture</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="avatar-body">
+
+                            <!-- Upload image and data -->
+                            <div class="avatar-upload">
+                                <input type="hidden" class="avatar-src" name="avatar_src">
+                                <input type="hidden" class="avatar-data" name="avatar_data">
+                                <input type="hidden" class="dataId" name="dataId">
+                                @*<label for="avatarInput">Select an Image</label>
+                                    <input type="file" class="avatar-input" id="avatarInput" name="avatar_file">*@
+                            </div>
+
+                            <!-- Crop and preview -->
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <div class="img-container">
+                                        <img id="image" src="" alt="Picture" height="500" width="500">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-9 docs-buttons">
+                                    <!-- <h3 class="page-header">Toolbar:</h3> -->
+
+
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-primary" data-method="zoom" data-option="0.1" title="Zoom In">
+                                            <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;zoom&quot;, 0.1)">
+                                                <span class="fa fa-search-plus"></span>
+                                            </span>
+                                        </button>
+                                        <button type="button" class="btn btn-primary" data-method="zoom" data-option="-0.1" title="Zoom Out">
+                                            <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;zoom&quot;, -0.1)">
+                                                <span class="fa fa-search-minus"></span>
+                                            </span>
+                                        </button>
+                                    </div>
+
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-primary" data-method="move" data-option="-10" data-second-option="0" title="Move Left">
+                                            <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, -10, 0)">
+                                                <span class="fa fa-arrow-left"></span>
+                                            </span>
+                                        </button>
+                                        <button type="button" class="btn btn-primary" data-method="move" data-option="10" data-second-option="0" title="Move Right">
+                                            <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, 10, 0)">
+                                                <span class="fa fa-arrow-right"></span>
+                                            </span>
+                                        </button>
+                                        <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="-10" title="Move Up">
+                                            <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, 0, -10)">
+                                                <span class="fa fa-arrow-up"></span>
+                                            </span>
+                                        </button>
+                                        <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="10" title="Move Down">
+                                            <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, 0, 10)">
+                                                <span class="fa fa-arrow-down"></span>
+                                            </span>
+                                        </button>
+                                    </div>
+
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-primary" data-method="rotate" data-option="-45" title="Rotate Left">
+                                            <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;rotate&quot;, -45)">
+                                                <span class="fa fa-rotate-left"></span>
+                                            </span>
+                                        </button>
+                                        <button type="button" class="btn btn-primary" data-method="rotate" data-option="45" title="Rotate Right">
+                                            <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;rotate&quot;, 45)">
+                                                <span class="fa fa-rotate-right"></span>
+                                            </span>
+                                        </button>
+                                    </div>
+
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-primary" data-method="scaleX" data-option="-1" title="Flip Horizontal">
+                                            <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;scaleX&quot;, -1)">
+                                                <span class="fa fa-arrows-h"></span>
+                                            </span>
+                                        </button>
+                                        <button type="button" class="btn btn-primary" data-method="scaleY" data-option="-1" title="Flip Vertical">
+                                            <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;scaleY&quot;-1)">
+                                                <span class="fa fa-arrows-v"></span>
+                                            </span>
+                                        </button>
+                                    </div>
+
+
+
+
+
+                                    <div class="btn-group btn-group-crop">
+                                        <button type="button" class="btn btn-primary" data-method="getCroppedCanvas">
+                                            <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;getCroppedCanvas&quot;)">
+                                                Done
+                                            </span>
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                                <div class="col-md-3">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div> -->
+                    @*</form>*@
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Search for Subject</h4>
+                </div>
+
+                <div class="modal-body row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            @Html.Label("First Name")
+                            <input type="text" id="searchfirstName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Last Name")
+                            <input type="text" id="searchlastName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Sex")
+
+                            @Html.DropDownListFor(model => model.EmployeeModel.Sex, ViewBag.GenderList as List<SelectListItem>, new { @class = "form-control", @id = "subjectSex" })
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Race")
+                            @Html.DropDownListFor(model => model.EmployeeModel.Race, ViewBag.RaceList as List<SelectListItem>, new { @class = "form-control", @id = "subjectRace" })
+                        </div>
+                        @*<div class="form-group">
+                                @Html.Label("Date of Birth")
+                                <input type="text" id="dateOfBirth" class="form-control">
+                            </div>*@
+                    </div>
+                    @*<div class="col-md-6">
+                            <div class="form-group">
+                                @Html.Label("Incident Date")
+                                <input type="text" id="incidentDate" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("Nature of Incident")
+                                @Html.DropDownListFor(m => model.EmployeeModel.Race, ViewBag.lstNatureOfIncident as List<SelectListItem>, new { @class = "form-control", @id = "ddlNature" })
+                            </div>
+
+                            <div class="form-group">
+                                @Html.Label("Short Description")
+                                @Html.DropDownListFor(m => model.EmployeeModel.Race, ViewBag.lstShortDescription as List<SelectListItem>, new { @class = "form-control", @id = "ddlShortDes" })
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("Overall Status")
+                                @Html.DropDownListFor(m => model.EmployeeModel.Race, ViewBag.lstOverAllStaus as List<SelectListItem>, new { @class = "form-control" })
+                            </div>
+
+
+
+                        </div>*@
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-success" id="searchButton" onclick="SearchSubject(); ">Search</button>
+                            <button type="reset" class="btn btn-white" id="ClearSubject" onclick="SearchSubjectClear();">Clear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-body row">
+                    <div class="col-md-8">
+                        <div class="table-responsive" style="max-height:250px;overflow-y:auto;">
+                            <table id="SubjectTable" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>
+                                            First Name
+                                        </th>
+                                        <th>
+                                            Last Name
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody></tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+                    <div class="col-md-4">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-success AddInvolvedbutton" id="">Add as Involved</button>
+                                @* <button class="close btn btn-default" aria-hidden="true" data-dismiss="modal" type="button">Cancel</button>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Search for Employee</h4>
+                </div>
+
+                <div class="modal-body row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            @Html.Label("First Name")
+                            <input type="text" id="searchfirstName1" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Last Name")
+                            <input type="text" id="searchlastName1" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Sex")
+
+                            @Html.DropDownListFor(model => model.EmployeeModel.Sex, ViewBag.GenderList as List<SelectListItem>, new { @class = "form-control", @id = "sex1" })
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Race")
+                            @Html.DropDownListFor(model => model.EmployeeModel.Race, ViewBag.RaceList as List<SelectListItem>, new { @class = "form-control", @id = "Race1" })
+                        </div>
+                        @*<div class="form-group">
+                                @Html.Label("Date of Birth")
+                                <input type="text" id="dateOfBirth1" class="form-control">
+                            </div>*@
+                    </div>
+                    @*<div class="col-md-6">
+                            <div class="form-group">
+                                @Html.Label("Incident Date")
+                                <input type="text" id="incidentDate1" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("Nature of Incident")
+                                @Html.DropDownListFor(m => m.SubjectInvolvedModel.Race, ViewBag.lstNatureOfIncident as List<SelectListItem>, new { @class = "form-control", @id = "ddlNature1" })
+                            </div>
+
+                            <div class="form-group">
+                                @Html.Label("Short Description")
+                                @Html.DropDownListFor(m => m.SubjectInvolvedModel.Race, ViewBag.lstShortDescription as List<SelectListItem>, new { @class = "form-control", @id = "ddlShortDes1" })
+                            </div>
+                            <div class="form-group">
+                                @Html.Label("Overall Status")
+                                @Html.DropDownListFor(m => m.SubjectInvolvedModel.Race, ViewBag.lstOverAllStaus as List<SelectListItem>, new { @class = "form-control", @id = "OvarALl" })
+                            </div>
+
+
+
+                        </div>*@
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-success" id="searchButton" onclick="SearchEmployee();">Search</button>
+                            <button type="reset" class="btn btn-white" onclick="SearchEmployeeClear();">Clear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-body row">
+                    <div class="col-md-8">
+                        <div class="table-responsive" style="max-height:250px; overflow-y:auto;">
+                            <table id="EmployeeTable" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th> </th>
+                                        <th>
+                                            First Name
+                                        </th>
+                                        <th>
+                                            Last Name
+                                        </th>
+
+                                        <th>
+                                            Status
+                                        </th>
+                                    </tr>
+                                </thead>
+
+                                <tbody></tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+                    <div class="col-md-4">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-success AddEmployeeInvolvedbutton" id="">Add as Involved</button>
+                                @* <button class="close btn btn-default"  aria-hidden="true" data-dismiss="modal" type="button">Cancel</button>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+<script src="~/assets/js/ckeditor/adapters/jquery.js"></script>
+<script src="~/assets/js/ckeditor/ckeditor.js"></script>
+<script>
+
+    $(document).ready(function () {
+
+        if ($('#checkcondition').val() != "1") {
+            if ($('#hdShow').val() == 'View' || $('#hdShow').val() == 'Link') {
+                $(".form-control").attr("disabled", "disabled");
+                $(".btn").hide(true);
+                $(".flubtn").attr("disabled", "disabled");
+                $(document).find("input[type=checkbox]").attr("disabled", "disabled");
+                $(document).find("input[type=radio]").attr("disabled", "disabled");
+                $(document).find('.enablebtn>a').removeAttr("style");
+            }
+            else {
+                $(".form-control").attr("disabled", false);
+                $(document).find('.editpermission').hide(true);
+                $("#ByProofread").attr("disabled", false);
+            }
+        }
+        if ('@Model.ReportProofread' == 'True') {
+            $(".form-control").attr("disabled", "disabled");
+            $(".btn").hide(true);
+            $(".flubtn").attr("disabled", "disabled");
+            $(document).find("input[type=checkbox]").attr("disabled", "disabled");
+            $(document).find("input[type=radio]").attr("disabled", "disabled");
+
+            $("#ByProofread").attr("disabled", false);
+
+        }
+
+        UsersList(); // Users List
+        ReportsAccessUsers(); // ReportsAccess Users List
+        RolesList(); // Roles List
+        ReportsAccessRoles(); // ReportsAccess Roles List
+
+        //Proofread Report save By Check Box change
+        $('#ByProofread').on('change', function () {
+            $('#EmployeeReportProofread').submit();
+        });
+
+        $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+            localStorage.setItem('activeTab', $(e.target).attr('href'));
+        });
+        var activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+          //  debugger;
+            //AB 26/2
+            if ('@TempData["SaveSuccess"]' == 'Success' && '@Model.IncidentID' > 0) {
+                //if (confirm("Do you want to give permission for this report?")) {
+                if (confirm("This report is accessible to everyone. Would you like to restrict acess to this report ?"))
+                {
+                    //$("#myTab").tab("option", "disabled", [2, 3, 4]);
+                    $('#myTab a[href="#Permission"]').tab('show');
+
+                    //$('#myTab a[href="#involved"]').parent().addClass("disabled");
+                    //$('#myTab a[href="#involved"]').attr('style', 'pointer-events: none;');
+
+                    //$('#myTab a[href="#audit"]').parent().addClass("disabled");
+                    //$('#myTab a[href="#audit"]').attr('style', 'pointer-events: none;');
+
+                    //$('#myTab a[href="#paceAudit"]').parent().addClass("disabled");
+                    //$('#myTab a[href="#paceAudit"]').attr('style', 'pointer-events: none;');
+
+                    //$('#myTab a[href="#variance"]').parent().addClass("disabled");
+                    //$('#myTab a[href="#variance"]').attr('style', 'pointer-events: none;');
+
+                    //$('#myTab a[href="#ipvr"]').parent().addClass("disabled");
+                    //$('#myTab a[href="#ipvr"]').attr('style', 'pointer-events: none;');
+
+                    //$('#myTab a[href="#notes"]').parent().addClass("disabled");
+                    //$('#myTab a[href="#notes"]').attr('style', 'pointer-events: none;');
+
+                    //$('#myTab a[href="#Links"]').parent().addClass("disabled");
+                    //$('#myTab a[href="#Links"]').attr('style', 'pointer-events: none;');
+
+                    //$('#myTab a[href="#Proofread"]').parent().addClass("disabled");
+                    //$('#myTab a[href="#Proofread"]').attr('style', 'pointer-events: none;');
+                }
+                
+            }
+            else 
+                if ('@Model.IncidentID' > 0) {
+                $('#myTab a[href="' + activeTab + '"]').tab('show');
+            }
+            else {
+                $('#myTab a[href="#Details"]').tab('show');
+            }
+        }
+
+        $('#IncidentDate').datepicker({ autoclose: true });
+
+        $('#StartTime').timepicker({ autoclose: true });
+        $('#StartTime').val($('#oldStartTime').val());
+
+        $('#subjectSex').editableSelect({ effects: 'default' });
+        $('#subjectRace').editableSelect({ effects: 'default' });
+        $('#sex1').editableSelect({ effects: 'default' });
+        $('#Race1').editableSelect({ effects: 'default' });
+
+        $('#fileUpload').on('change', function (event) {
+            var x;
+            if (parseInt($('#LinkedId').val()) > 0) {
+                x = EditConfirm('@ViewBag.Action');
+            }
+            else {
+                x = AddConfirm('@ViewBag.Action');
+            }
+            if (x) {
+                $('#LinkedDescription').val($(this).val());
+                $('#FilePath').val('/Content/Employee/LinkedFiles/' + $(this).val());
+                $('#spanDesc').html('');
+                $('#spanUpload').html('');
+            } else {
+                $('#fileUpload').val('');
+            }
+
+        });
+        $('#LinkedDescription').keyup(function () {
+            if ($(this).val() == '') {
+                $('#spanDesc').html('Description is required');
+
+            }
+            else {
+                $('#spanDesc').html('');
+            }
+        });
+        $('#ResetButton').click(function () {
+            $('#LinkedDescription').val('');
+            $('#fileUpload').val('');
+            $('#spanDesc').html('');
+            $('#spanUpload').html('');
+            $('#fileUpload').show();
+            $('#LinkedId').val('');
+        });
+        $('#LinkedButton').click(function () {
+            var x;
+            if (parseInt($('#LinkedId').val()) > 0) {
+                x = EditConfirm('@ViewBag.Action');
+            }
+            else {
+                x = AddConfirm('@ViewBag.Action');
+            }
+            if (x) {
+                var count = 0;
+                if ($('#Description').val() == '') {
+                    $('#spanDesc').html('Description is required');
+                    count++;
+                }
+                if ($('#fileUpload').val() == '' && $('#LinkedId').val() == 0) {
+                    $('#spanUpload').html('Please select a file');
+                    count++;
+                }
+                if (count > 0) {
+                    return false;
+                }
+                else {
+                    $('#spanDesc').html('');
+                    $('#spanUpload').html('');
+                }
+            }
+            else {
+                return false;
+            }
+        });
+
+        $('.allownumericwithoutdecimal').keypress(function (event) {
+
+            return isNumber(event, this)
+        });
+
+
+        function isNumber(evt, element) {
+
+            var charCode = (evt.which) ? evt.which : event.keyCode
+
+            if (
+                (charCode != 45 || $(element).val().indexOf('-') != -1) &&      // “-” CHECK MINUS, AND ONLY ONE.
+                (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // “.” CHECK DOT, AND ONLY ONE.
+                (charCode < 48 || charCode > 57))
+                return false;
+
+            return true;
+        }
+        //$('#Amount').blur(function () {
+
+        //    var amount = $(this).val();
+        //    if (amount.indexOf('.') == -1) {
+        //        amount = amount + '.00';
+        //        $(this).val(amount);
+        //    }
+        //    //if (amount.indexOf('£') == -1) {
+        //    //    amount = '£' + amount;
+        //    //    $(this).val(amount);
+        //    //}
+        //});
+        //$('#Amount').focus(function () {
+
+        //    var amount = $(this).val();
+
+        //    if (amount.indexOf('£') > -1) {
+
+        //        $(this).val(amount.replace('£', ''));
+        //    }
+        //});
+        //$('#varianceForm').submit(function () {
+        //    var amount = $('#Amount').val();
+
+        //    if (amount.indexOf('£') > -1) {
+
+        //        $('#Amount').val(amount.replace('£', ''));
+        //    }
+        //});
+
+
+        $('input[name=ShuffleShoe]').change(function () {
+            if ($('#DisplayName').val().length > 0 && $('input[name=ShuffleShoe]:checked').val().length > 0) {
+                $('#paceAuditDiv').load("/Employee/Employees/_PartailPaceAudit?IncidentId=@Model.IncidentID&DisplayName=" + $('#DisplayName').val() + "&Shuffle=" + $('input[name=ShuffleShoe]:checked').val() + "&Game=" + $('#Game').val() + "");
+            }
+
+
+        });
+
+        $('#newPaceAudit').click(function () {
+            var optionLength = $('#DisplayName').find('option').length;
+            if (optionLength == 0) {
+                $('#DisplayName').append('<option value="1">1</option>');
+                $('#DisplayName').val(1);
+                $('#paceAuditDiv').load("/Employee/Employees/_PartailPaceAudit?IncidentId=@Model.IncidentID&DisplayName=" + $('#DisplayName').val() + "&Shuffle=" + $('input[name=ShuffleShoe]:checked').val() + "&Game=" + $('#Game').val() + "");
+            }
+            else {
+                var optionData = $('#DisplayName').find('option').eq(optionLength - 1).text();
+                optionData = parseInt(optionData) + 1;
+                $('#DisplayName').append('<option value="' + optionData + '">' + optionData + '</option>');
+                $('#DisplayName').val(optionData);
+                $('#paceAuditDiv').load("/Employee/Employees/_PartailPaceAudit?IncidentId=@Model.IncidentID&DisplayName=" + $('#DisplayName').val() + "&Shuffle=" + $('input[name=ShuffleShoe]:checked').val() + "&Game=" + $('#Game').val() + "");
+            }
+        });
+    $('#newAudit').click(function () 
+    {
+            var optionLength = $('#Observation').find('option').length;
+            if (optionLength == 0) {
+                $('#Observation').append('<option value="1">1</option>');
+                $('#Observation').val(1);
+                @*$('#AuditDiv').load("/Employee/Employees/_PartailPaceAudit?IncidentId=@Model.IncidentID&DisplayName=" + $('#DisplayName').val() + "&Shuffle=" + $('input[name=ShuffleShoe]:checked').val() + "&Game=" + $('#Game').val() + "");*@
+            }
+            else {
+                var optionData = $('#Observation').find('option').eq(optionLength - 1).text();
+                optionData = parseInt(optionData) + 1;
+                $('#Observation').append('<option value="' + optionData + '">' + optionData + '</option>');
+                $('#Observation').val(optionData);
+                @*$('#paceAuditDiv').load("/Employee/Employees/_PartailPaceAudit?IncidentId=@Model.IncidentID&DisplayName=" + $('#DisplayName').val() + "&Shuffle=" + $('input[name=ShuffleShoe]:checked').val() + "&Game=" + $('#Game').val() + "");*@
+            }
+            $('#Observation').trigger('change');
+        });
+        $('#Game').change(function () {
+            if ($('#DisplayName').val().length > 0 && $('input[name=ShuffleShoe]:checked').val().length > 0) {
+                $('#paceAuditDiv').load("/Employee/Employees/_PartailPaceAudit?IncidentId=@Model.IncidentID&DisplayName=" + $('#DisplayName').val() + "&Shuffle=" + $('input[name=ShuffleShoe]:checked').val() + "&Game=" + $('#Game').val() + "");
+            }
+        });
+        $('#DisplayName').change(function () {
+            if ($('#DisplayName').val().length > 0 && $('input[name=ShuffleShoe]:checked').val().length > 0) {
+                $('#paceAuditDiv').load("/Employee/Employees/_PartailPaceAudit?IncidentId=@Model.IncidentID&DisplayName=" + $('#DisplayName').val() + "&Shuffle=" + $('input[name=ShuffleShoe]:checked').val() + "&Game=" + $('#Game').val() + "");
+            }
+        });
+        $('#Game').change(function () {
+            if ($(this).val() == 'Roulette') {
+                $('#HandsLabel').html('Spins per Hour');
+            }
+        });
+
+        $('input[value=Shuffle]').prop('checked', true);
+        $('input[value=Shuffle]').trigger('change');
+
+        $('#AuditType').change(function () {
+
+            var IncidentID = '@Model.IncidentID';
+
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/GetObservation_ByAuditType")',
+                type: 'Post',
+                data: { AuditID: $(this).val(), IncidentId: IncidentID },
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    var option = "";
+                    $(data).each(function (i, item) {
+                        option += "<option value='" + item.Value + "'>" + item.Text + "</option>";
+                    });
+                    $('#Observation').html(option);
+                    if ($('#Observation').find('option').length > 0) {
+                        $('#Observation').val($('#Observation').find('option').eq(0).val());
+                        $('#Observation').trigger('change');
+                    }
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+            if ($(this).val().length == 0) {
+                $('#auditBody').html('<tr><td colspan="3"></td></tr>');
+
+            }
+
+
+        });
+
+        $('#Observation').change(function () {
+
+            $('#auditBody').load("/Employee/Employees/GetQuestionsByAudit?IncidentId=@Model.IncidentID&AuditID=" + $('#AuditType').val() + "&Observation=" + $(this).val() + "");
+        });
+        $('#employeeInvolvedButton').click(function () {
+            var x;
+            if (parseInt($('#InvolvedId').val()) > 0) {
+                x = EditConfirm('@ViewBag.Action');
+            }
+            else {
+                x = AddConfirm('@ViewBag.Action');
+            }
+            return x;
+        });
+        $('#employeeInvolvedReset').click(function () {
+            $('#EmployeeId').val('');
+            $('#EmployeeInvolvedId').val('');
+            $('#InvolvedID').val('');
+            $('#EmployeeModel_FirstName').val('');
+            $('#EmployeeModel_LastName').val('');
+            $('#EmployeeModel_Sex').val('');
+            $('#EmployeeModel_Race').val('');
+            $('#EmployeeModel_RoleName').val('');
+        });
+
+
+        $('input[class=full]').change(function () {
+            if ($(this).parent().find('input[type=checkbox]:checked').length == 0) {
+                $(this).parents('li').find('input[type = checkbox]').eq(0).prop('checked', false);
+            }
+            else {
+                $(this).parents('li').find('input[type = checkbox]').eq(0).prop('checked', true);
+            }
+        });
+
+        // Media Images Scripts
+        //$('#something').change(function () {
+        //    if (this.checked) {
+        //        $('#MediaGallery').removeAttr("style");
+        //        BindMediaList();
+        //    }
+        //    else {
+        //        $('#MediaGallery').hide(true);
+        //    }
+        //});
+
+        $('#MediaGallery').removeAttr("style");
+        BindMediaList();
+
+        var id = $('#EmployeeId').val();
+        BindPictureList(id, 0);
+        // end Media Images Scripts
+
+        if ('@Model.EmployeeId' > 0) {
+            $('#NatureOfIncident').val('@Model.NatureOfIncident');
+            BindShortDescriptor();
+            if ('@Model.ShortDescription' > 0) {
+                setTimeout(function () {
+                    $('#ddlShortDescription').val('@Model.ShortDescription');
+                }, 4000);
+            }
+        }
+
+
+        // page changes
+        var somethingChanged = false;
+        var submitform = "";
+        var activetarget = "";
+        var button = "";
+        $("#myTab> li > a").on('shown.bs.tab', function (event) {
+            activetarget = $(event.target).attr("href");         // active tab
+            var previoustarget = $(event.relatedTarget).attr("href");  // previous tab
+            if (somethingChanged == true) {
+                formSubmitByTab(previoustarget, somethingChanged);
+            }
+            activetargets(activetarget);
+            somethingChanged = false;
+        });
+        if (activetarget != "") {
+            activetargets(activetarget);
+        }
+        else {
+            activetarget = $("#myTab li.active a").attr('href');
+            activetargets(activetarget);
+        }
+
+        function activetargets(target) {
+            if (target == "#Details") {
+                button = $('#btnDetails');
+            }
+            else if (target == "#involved") {
+                button = $('#employeeInvolvedButton');
+            }
+            else if (target == "#audit") {
+                button = $('#btnEmpAudit');
+            }
+            else if (target == "#paceAudit") {
+                button = $('#btnEmpPaceAudit');
+            }
+            else if (target == "#variance") {
+                button = $('#EmpVariance');
+            }
+            else if (target == "#ipvr") {
+                button = $('#btnIpvr');
+            }
+            else if (target == "#notes") {
+                button = $('#btnNotes');
+            }
+            else if (target == "#Links") {
+                button = $('#LinkedButton');
+            }
+        }
+
+        var orig = [];
+
+        $.fn.getType = function () {
+            return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
+        }
+
+        $("form :input").each(function () {
+            var type = $(this).getType();
+            var tmp = {
+                'type': type,
+                'value': $(this).val()
+            };
+            if (type == 'radio') {
+                tmp.checked = $(this).is(':checked');
+            }
+            orig[$(this).attr('id')] = tmp;
+        });
+
+        $('form').bind('change keyup', function () {
+
+            somethingChanged = false;
+            var disable = true;
+            $("form :input").each(function () {
+                var type = $(this).getType();
+                var id = $(this).attr('id');
+
+                if (type == 'text' || type == 'select') {
+                    disable = (orig[id].value == $(this).val());
+                } else if (type == 'radio') {
+                    disable = (orig[id].checked == $(this).is(':checked'));
+                }
+
+                if (!disable) {
+                    return false; // break out of loop
+                }
+            });
+
+            somethingChanged = true;
+            button.prop('disabled', disable);
+        });
+
+    }); //End
+
+    function bindLinkedData(Id, DEscription, FilePath) {
+
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#LinkedId').val(Id);
+            $('#FilePath').val(FilePath);
+            $('#fileUpload').hide();
+            $('#LinkedDescription').val(DEscription);
+            $('#LinkedButton').val('Update');
+            $('#spanDesc').html('');
+            $('#spanUpload').html('');
+        }
+    }
+    function DeleteLinkedItem(id) {
+
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/DeleteLinkedItem")',
+                type: 'Post',
+                data: { ID: id },
+                dataType: 'json',
+                success: function (data) {
+                    $('#Linked' + id).remove();
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    function deleteItem() {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            return true;
+        }
+        return false;
+    }
+
+    function bindInvolved(ID, InvolvedID, EmployeeID, FirstName, LastName, Sex, Race, Role) {
+        $('#EmployeeInvolvedId').val(ID);
+        $('#InvolvedId').val(InvolvedID);
+        $('#EmployeeId').val(EmployeeID);
+        $('#EmployeeModel_FirstName').val(FirstName);
+        $('#EmployeeModel_LastName').val(LastName);
+        $('#EmployeeModel_Sex').val(Sex);
+        $('#EmployeeModel_Race').val(Race);
+        $('#EmployeeModel_RoleName').val(Role);
+    }
+
+    function DeleteEmployee(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            var RepId = '@Model.IncidentID';
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/DeleteEmployeeInvolved")',
+                data: JSON.stringify({ 'Id': id, 'RepId': RepId }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#employeeTable>tbody tr').length == 1) {
+                            $('#employeeTable').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Employee Involved has been deleted Suceesfully.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Employee has been deleted Suceesfully.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                        }
+                    } else {
+
+                    }
+
+                }
+            });
+            $('#EmployeeId').val('');
+            $('#EmployeeInvolvedId').val('');
+            $('#InvolvedID').val('');
+            $('#EmployeeModel_FirstName').val('');
+            $('#EmployeeModel_LastName').val('');
+            $('#EmployeeModel_Sex').val('');
+            $('#EmployeeModel_Race').val('');
+            $('#EmployeeModel_RoleName').val('');
+        }
+    }
+
+    @*function SavePermission(EmpId, RepId, UserId, id, caller) {
+        var View = "false";
+        var Edit = "false";
+        var Delete = "false";
+        $('.has-sub[data-id=' + UserId + ']').find('input[type = checkbox]:checked').each(function () {
+            if (parseInt($(this).val()) == 1) {
+                View = "true";
+            }
+            if (parseInt($(this).val()) == 2) {
+                Edit = "true";
+            }
+            if (parseInt($(this).val()) == 3) {
+                Delete = "true";
+            }
+        });
+
+        if (Edit == "true" && View == "false") {
+            View = "true";
+        }
+        if (Delete == "true" && View == "false") {
+            View = "true";
+        }
+
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/EmployeeReportsAccessPermission")',
+            data: JSON.stringify({ 'EmpId': EmpId, 'RepId': RepId, 'UserId': UserId, 'Id': id, 'View': View, 'Edit': Edit, 'Delete': Delete }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    alert("Reports Access Permission Successfully Saved");
+                    location.reload();
+                } else {
+                    alert("Reports Access Permission not Successfully Saved");
+                }
+
+            }
+        });
+    }*@
+
+    $('#EmployeeIncidentReset').click(function () {
+        CKEDITOR.instances['Description'].setData('');
+    });
+
+
+    //Bind Media Script
+
+    function BindPictureList(id, subFeatureid) {
+
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/GetAllPictures")',
+            data: { 'type': 'Employee', 'id': id, 'subFeatureid': subFeatureid },
+            type: 'Post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                var temphtml = "";
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    //var temphtml = "<table class='table table-bordered'><thead><tr><th></th></tr></thead><tbody>";
+                    for (i = 0; i < jsonData.length; i++) {
+                        temphtml += ' <div class="col-md-2"> <div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
+                        temphtml += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                        temphtml += '<div class="btn-show">';
+                        temphtml += '<input type="button" value="Assign Picture" id="AssignPicture" class="btn btn-success add" onclick="AssignPictures(&#39;EmpReport&#39;,&#39;' + id + '&#39;,&#39;' + $('#IncidentID').val() + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        temphtml += '<input type="button" value="Edit" id="EditPicture" class="btn btn-primary add" @*style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")"*@ onclick="EditPictur(&#39;' + jsonData[i].FilePath + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        temphtml += '<input type="button" value="Delete" id="DeletePicture" class="btn btn-danger add" @*style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")"*@ onclick="DeletePictures(&#39;EmpReport&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;,&#39;' + subFeatureid + '&#39;);">';
+                        temphtml += '</div></div></div>';
+                    }
+                    //temphtml += "</tbody></table>";
+                }
+                $('#pictureTable').html(temphtml);
+                $('.pictureTr').hover(function () {
+                    var ImgeSrc = $(this).children('img').attr('src');
+                    var mediaId = $(this).attr('data-id');
+                    $(this).on('click', function () {
+                        $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
+                        $(this).addClass('ShowBorderRed');
+                    });
+                });
+
+            }
+        });
+    }
+
+    function BindMediaList() {
+
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/GetAllMoveToPicture")',
+            data: { 'type': 'Media', 'id': '0', 'subFeatureid': '0' },
+            type: 'Post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                //var types = $('#hdType').val();
+                var value = $('#EmployeeId').val();
+                var subFeatureid = "0";
+                var temph = "";
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    for (i = 0; i < jsonData.length; i++) {
+                        temph += ' <div class="col-md-2"> <div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
+                        temph += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                        temph += '<div class="btn-show">';
+                        if ($('#hdType').val() != 'Media') {
+                            temph += '<input type="button" value="MoveTo" id="MoveToPicture" class="btn btn-info add" onclick="MoveToPicture(&#39;Employee&#39;,&#39;' + value + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        }
+
+                        temph += '</div></div></div>';
+                    }
+                }
+                $('#mediaTable').html(temph);
+                $('.pictureTr').hover(function () {
+                    var ImgeSrc = $(this).children('img').attr('src');
+                    var mediaId = $(this).attr('data-id');
+                    $(this).on('click', function () {
+                        $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
+                        $(this).addClass('ShowBorderRed');
+                    });
+                });
+
+            }
+        });
+    }
+
+    function MoveToPicture(type, id, mediaId) {
+        var subFeatureid = '0';
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/MoveToPicture")',
+            data: { type: type, id: id, MediaID: mediaId },
+            type: 'post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                if (data == 'success') {
+                    BindPictureList(id, subFeatureid);
+                    BindMediaList();
+
+                }
+                else {
+                    alert(' Error in Request!!');
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            },
+            failure: function (response) {
+                console.log(response);
+            },
+        });
+    };
+
+    function AssignPictures(type, id, reportID, mediaId) {
+        if (EditConfirmMedia('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/AssignPictures")',
+                data: { MediaType: type, Type: type, ID: id, IncidentID: reportID, MediaID: mediaId, QuestionID: 0, Observation: 0 },
+                type: 'post',
+                datatype: 'json',
+
+                contenttype: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        alert('Image Assign successfuly!!');
+                    }
+                    else {
+                        alert(' Error in Request!!');
+                    }
+                }
+            });
+        }
+    }
+
+    function EditPictur(ImgeSrc, mediaId) {
+        getDataUri(ImgeSrc, function (dataUri) {
+            $('#image').attr('src', dataUri);
+            $('.cropper-view-box').find('img').attr('src', dataUri);
+            $('.cropper-canvas').find('img').attr('src', dataUri);
+            $('.preview-lg').find('img').attr('src', dataUri);
+            $('.dataId').val(mediaId);
+        });
+
+        $('#avatar-modal').modal('show');
+
+        setTimeout(function () {
+
+            $('script').each(function () {
+
+                if (this.src.split('?') === '/Content/crop-avatar/js/main.js') {
+
+                    $(this).remove();
+                }
+                if (this.src.split('?') === '/Content/crop-avatar/js/cropper.js') {
+
+                    $(this).remove();
+                }
+            });
+            $.getScript('/Content/crop-avatar/js/main.js').done(function () {
+
+
+            });
+            $.getScript('/Content/crop-avatar/js/cropper.js').done(function () {
+
+
+            });
+        }, 100);
+    }
+
+    function getDataUri(url, callback) {
+        var image = new Image();
+
+        image.onload = function () {
+            var canvas = document.createElement('canvas');
+            canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
+            canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
+
+            canvas.getContext('2d').drawImage(this, 0, 0);
+
+            // Get raw image data
+            callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
+
+            // ... or get as Data URI
+            callback(canvas.toDataURL('image/png'));
+        };
+
+        image.src = url;
+    }
+
+    function DeletePictures(type, id, mediaId, subFeatureid) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/DeletePicture")',
+                data: { MediaID: mediaId },
+                type: 'post',
+                datatype: 'json',
+                contenttype: 'application/json',
+                success: function (data) {
+                    if (data == 'success') {
+                        BindPictureList(id, subFeatureid)
+                    }
+                    else {
+                        alert(' Error in Request!!');
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+                failure: function (response) {
+                    console.log(response);
+                },
+            });
+        };
+    };
+
+    // Check Media Permission
+    function DeleteConfirm(action) {
+        //return true;
+        var control = action;
+        if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
+            var a = confirm('Are you sure to delete?');
+            if (a == true) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            var a = alert('You dont have permission to delete');
+            return false;
+        }
+    };
+
+    function EditConfirmMedia(action) {
+
+        var control = action;
+
+        if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
+
+
+            return true;
+
+        }
+        else {
+
+            var a = alert('You dont have permission to assign media');
+
+
+            return false;
+        }
+
+    }
+    //End Media Script
+
+    // Clear Search Subject
+    function SearchSubjectClear() {
+        $('#searchfirstName').val('');
+        $('#searchlastName').val('');
+        $('#subjectSex').val('');
+        $('#subjectRace').val('');
+    }
+    // Clear Search Employee
+    function SearchEmployeeClear() {
+        $('#searchfirstName1').val('');
+        $('#searchlastName1').val('');
+        $('#sex1').val('');
+        $('#Race1').val('');
+    }
+
+    // Search Subject and Employee
+    function SearchSubject() {
+        var FirstName = $('#searchfirstName').val();
+        var LastName = $('#searchlastName').val();
+        var Sex = $('#subjectSex').val();
+        var Race = $('#subjectRace').val();
+
+        var EmployeeID = '@Model.EmployeeId';
+        if (EmployeeID != '') {
+            GetSearchResult(FirstName, LastName, Sex, Race)
+        }
+    }
+
+    function GetSearchResult(FirstName, LastName, Sex, Race) {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/SearchSubject_Filter")',
+            data: { FirstName: FirstName, LastName: LastName, Sex: Sex, Race: Race },
+            type: 'get',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (msg) {
+                if (msg) {
+                    $('#SubjectTable>tbody tr').remove();
+                    $.each(msg.ShortDescriptionList, function (key, value) {
+                        $('#SubjectTable>tbody').append("<tr><td><input type='checkbox' id=" + value.SubjectID + " onchange='SelectedSubject(this);'></td><td>" + value.FirstName + "</td><td>" + value.LastName + "</td></tr>");
+                    });
+                }
+                else {
+
+                }
+
+            }
+        });
+    }
+
+    function SearchEmployee() {
+
+        var FirstName = $('#searchfirstName1').val();
+        var LastName = $('#searchlastName1').val();
+        var Sex = $('#sex1').val();
+        var Race = $('#Race1').val();
+        var EmployeeID = '@Model.EmployeeId';
+
+        if (EmployeeID != '') {
+            GetSearchResult1(FirstName, LastName, Sex, Race);
+        }
+    }
+    // End Search Subject and Employee
+
+    function GetSearchResult1(FirstName, LastName, Sex, Race) {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/SearchEmployee_Filter")',
+            data: { FirstName: FirstName, LastName: LastName, Sex: Sex, Race: Race },
+            type: 'get',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (msg) {
+                if (msg) {
+                    $('#EmployeeTable>tbody tr').remove();
+                    $.each(msg.ShortDescriptionList, function (key, value) {
+                        $('#EmployeeTable>tbody').append("<tr><td><input type='checkbox' id=" + value.EmployeeID + " onchange='SelectedEmployee(this);'></td><td>" + value.FirstName + "</td><td>" + value.LastName + "</td><td>" + value.Status + "</td></tr>");
+                    });
+                }
+                else {
+
+                }
+
+            }
+        });
+    }
+
+    function SelectedSubject(obj) {
+        if ($(obj).is(":checked")) {
+            $(obj).addClass("checkedSubject");
+        } else {
+            $(obj).removeClass("checkedSubject");
+        }
+    }
+    function SelectedEmployee(obj) {
+        if ($(obj).is(":checked")) {
+            $(obj).addClass("checkedEmployee");
+        } else {
+            $(obj).removeClass("checkedEmployee");
+        }
+    }
+    $('.AddInvolvedbutton').click(function () {
+        var EmployeeID = '@Model.EmployeeId';
+        var IncidentID = '@Model.IncidentID';
+        var values = [];
+        $('.checkedSubject').each(function () {
+            values.push($(this).attr('id'));
+        });
+        var datacolumn = values.join(',');
+        if (values.length > 0) {
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/AdAsInvolved")',
+                data: JSON.stringify({ 'datacolumn': datacolumn, 'EmployeeID': EmployeeID, 'IncidentID': IncidentID, 'FetchDetailsBy': 'Subject' }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    window.location.reload();
+                }
+            });
+        }
+        else {
+            alert("Select at least one record.");
+        }
+    });
+    $('.AddEmployeeInvolvedbutton').click(function () {
+        var EmployeeID = '@Model.EmployeeId';
+        var IncidentID = '@Model.IncidentID';
+        var values = [];
+        $('.checkedEmployee').each(function () {
+            values.push($(this).attr('id'));
+        });
+
+        var datacolumn = values.join(',');
+        if (values.length > 0) {
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/AdAsInvolved")',
+                data: JSON.stringify({ 'datacolumn': datacolumn, 'EmployeeID': EmployeeID, 'IncidentID': IncidentID, 'FetchDetailsBy': 'Employee' }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    window.location.reload();
+                }
+            });
+        }
+        else {
+            alert("Select at least one record.");
+        }
+
+
+    });
+
+    // Submit form on tab change Script
+    function formSubmitByTab(previoustarget, valueChanged) {
+        var btnsubmit = "";
+
+        if (previoustarget == "#Details") {
+            btnsubmit = $('#btnDetails');
+        }
+        else if (previoustarget == "#involved") {
+            btnsubmit = $('#employeeInvolvedButton');
+        }
+        else if (previoustarget == "#audit") {
+            btnsubmit = $('#btnEmpAudit');
+        }
+        else if (previoustarget == "#paceAudit") {
+            btnsubmit = $('#btnEmpPaceAudit');
+        }
+        else if (previoustarget == "#variance") {
+            btnsubmit = $('#EmpVariance');
+        }
+        else if (previoustarget == "#ipvr") {
+            btnsubmit = $('#btnIpvr');
+        }
+        else if (previoustarget == "#notes") {
+            btnsubmit = $('#btnNotes');
+        }
+        else if (previoustarget == "#Links") {
+            btnsubmit = $('#LinkedButton');
+        }
+
+        if (btnsubmit != '' && valueChanged == true) {
+            var r = confirm("Do you want to save?");
+            if (r == true) {
+                btnsubmit.click();
+            }
+        }
+    }// End Submit form on tab change Script
+
+    $("#ddlNatureOfEvent").change(function () {
+        BindShortDescriptor();
+    });
+
+    function BindShortDescriptor() {
+        var SelectedText = $("#ddlNatureOfEvent :selected").val();
+        if (SelectedText != 'Select') {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/BindShortDescription")',
+                data: JSON.stringify({ 'SelectedText': SelectedText }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (r) {
+
+                    var ddlShortDescription = $("[id*=ddlShortDescription]");
+                    ddlShortDescription.empty();
+                    $.each(r.ShortDescriptList, function () {
+                        ddlShortDescription.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+    }
+
+    // Report Access By User
+    /* -------- UsersList ---------- */
+    function UsersList() {
+        var ReportID = '@Model.IncidentID';
+        $("#listUsers").html("");
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/UsersListReportsAccess")',
+            data: JSON.stringify({ 'ReportID': ReportID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listUsers').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- ReportsAccess Users List ---------- */
+    function ReportsAccessUsers() {
+        var ReportID = '@Model.IncidentID';
+        $("#listReportAccessUsers").html("");
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/ReportsAccessUsers_Bind")',
+            data: JSON.stringify({ 'ReportID': ReportID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listReportAccessUsers').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- Add Users in List ---------- */
+    function AddUsersInList() {
+        var EmployeeID = '@Model.EmployeeId';
+        var ReportID = '@Model.IncidentID';
+        var UserId = $("#listUsers").val();
+        var values = [];
+        values.push(UserId);
+        var datacolumn = values.join(',');
+        if (datacolumn == "" || datacolumn==null) {
+            alert("Please select a user");
+            return;
+        }
+        else {
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/AddUsersReportsAccess")',
+                data: JSON.stringify({ 'UserID': datacolumn, 'EmployeeID': EmployeeID, 'ReportID': ReportID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Users has been added Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        UsersList(); // Users List
+                        ReportsAccessUsers(); // ReportsAccess Users List
+                    }
+                    else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                    }
+                }
+            });
+        }
+    }
+
+    /* -------- Remove Users in List ---------- */
+    function RemoveUsersInList() {
+        var ID = $("#listReportAccessUsers").val();
+        if (ID == "" || ID == null) {
+            alert("Please select a Reports Access user");
+            return false;
+        }
+        else {
+            var x = DeleteConfirm('@ViewBag.Action');
+            if (x) {
+                $.ajax({
+                    url: '@Url.Content("~/Employee/Employees/RemoveUsersReportsAccess")',
+                    data: JSON.stringify({ 'ID': ID }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data == "success") {
+                            $('#msgDiv').html('<div class="alert alert-success">User has been remove Suceesfully.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                            UsersList(); // Users List
+                            ReportsAccessUsers(); // ReportsAccess Users List
+                        }
+                        else {
+                            $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                        }
+                    }
+                });
+            }
+        }
+    }
+    /* -------- SavePermission By User ---------- */
+    $('#ByUserReportView').click(function () {
+        if ($(this).is(':checked')) {
+            var id = $("#listReportAccessUsers").val();
+            var RepId = '@Model.IncidentID';
+            var type = 'View';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access User.");
+                return false;
+            } else {
+                SavePermission(id, RepId, type, permission);
+            }
+        }
+        else {
+            if ($('#ByUserReportEdit').is(':checked')) {
+                alert("First to Remove Edit Permission");
+                return false;
+            }
+            if ($('#ByUserReportDelete').is(':checked')) {
+                alert("First to Remove Delete Permission");
+                return false;
+            }
+            if (!$(this).is(':checked')) {
+                var id = $("#listReportAccessUsers").val();
+                var RepId = '@Model.IncidentID';
+                var type = 'View';
+                var permission = 'false';
+                if ($(this).is(':checked')) {
+                    permission = 'true';
+                }
+                else {
+                    permission = 'false';
+                }
+                if (id == '' || id == null) {
+                    alert("Please select a Report Access User.");
+                    return false;
+                } else {
+                    SavePermission(id, RepId, type, permission);
+                }
+            }
+        }
+    });
+    $('#ByUserReportEdit').click(function () {
+        if (!$('#ByUserReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessUsers").val();
+            var RepId = '@Model.IncidentID';
+            var type = 'Edit';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access User.");
+                return false;
+            } else {
+                SavePermission(id, RepId, type, permission);
+            }
+        }
+    });
+
+    $('#ByUserReportDelete').click(function () {
+        if (!$('#ByUserReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessUsers").val();
+            var RepId = '@Model.IncidentID';
+            var type = 'Delete';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access User.");
+                return false;
+            } else {
+                SavePermission(id, RepId, type, permission);
+            }
+        }
+    });
+    function SavePermission(id, RepId, type, permission) {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/EmpReportAccessPermission")',
+            data: JSON.stringify({ 'ID': id, 'ReportID': RepId, 'Type': type, 'Permission': permission }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Reports Access Permission Successfully Saved.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+                ReportsAccessPermission(id, caller);
+            }
+        });
+    }
+    /* -------- Reports Access Permission By User ---------- */
+    function ReportsAccessPermission(id, caller) {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/ReportsAccessPermission_ByUser")',
+            data: JSON.stringify({ 'ID': id, 'ReportID': '@Model.IncidentID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var ReportPermission = data.split(',');
+                    if (ReportPermission[0] == "True") {
+                        $('#ByUserReportView').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserReportView').prop('checked', false);
+                    }
+                    if (ReportPermission[1] == "True") {
+                        $('#ByUserReportEdit').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserReportEdit').prop('checked', false);
+                    }
+                    if (ReportPermission[2] == "True") {
+                        $('#ByUserReportDelete').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserReportDelete').prop('checked', false);
+                    }
+                }
+                else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+            }
+        });
+    }
+    //End Report Access Users End
+
+    // Report Access By Role
+    /* -------- Roles List ---------- */
+    function RolesList() {
+        var ReportID = '@Model.IncidentID';
+        $("#listRoles").html("");
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/UsersReportsAccessRole")',
+            data: JSON.stringify({ 'ReportID': ReportID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listRoles').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- ReportsAccess Role List ---------- */
+    function ReportsAccessRoles() {
+        var ReportID = '@Model.IncidentID';
+        $("#listReportAccessRoles").html("");
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/ReportsAccessRoles_Bind")',
+            data: JSON.stringify({ 'ReportID': ReportID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listReportAccessRoles').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- Add Role in List ---------- */
+    function AddRoleInList() {
+        var EmployeeID = '@Model.EmployeeId';
+        var ReportID = '@Model.IncidentID';
+        var RoleId = $("#listRoles").val();
+        var values = [];
+        values.push(RoleId);
+        var datacolumn = values.join(',');
+        if (RoleId == "" || RoleId == null) {
+            alert("Please select a Role");
+            return false;
+        }
+        else {
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/AddRolesReportsAccess")',
+                data: JSON.stringify({ 'RoleID': datacolumn, 'EmployeeID': EmployeeID, 'ReportID': ReportID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Role has been added Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        RolesList(); // Roles List
+                        ReportsAccessRoles(); // ReportsAccess Roles List
+                    }
+                    else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                    }
+                }
+            });
+        }
+    }
+
+    /* -------- Remove Role in List ---------- */
+    function RemoveRoleInList() {
+        var ID = $("#listReportAccessRoles").val();
+        if (ID == "" || ID == null) {
+            alert("Please select a Reports Access Role");
+            return false;
+        }
+        else {
+            var x = DeleteConfirm('@ViewBag.Action');
+            if (x) {
+                $.ajax({
+                    url: '@Url.Content("~/Employee/Employees/RemoveRolesReportsAccess")',
+                    data: JSON.stringify({ 'ID': ID }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data == "success") {
+                            $('#msgDiv').html('<div class="alert alert-success">Role has been remove Suceesfully.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                            RolesList(); // Roles List
+                            ReportsAccessRoles(); // ReportsAccess Roles List
+                        }
+                        else {
+                            $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                        }
+                    }
+                });
+            }
+        }
+    }
+    /* -------- SavePermission By Role ---------- */
+    $('#ByRoleReportView').click(function () {
+        if ($(this).is(':checked')) {
+            var id = $("#listReportAccessRoles").val();
+            var RepId = '@Model.IncidentID';
+            var type = 'View';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, RepId, type, permission);
+            }
+        } else {
+            if ($('#ByRoleReportEdit').is(':checked')) {
+                alert("First to Remove Edit Permission");
+                return false;
+            }
+            if ($('#ByRoleReportDelete').is(':checked')) {
+                alert("First to Remove Delete Permission");
+                return false;
+            }
+            if (!$(this).is(':checked')) {
+                var id = $("#listReportAccessRoles").val();
+                var RepId = '@Model.IncidentID';
+                var type = 'View';
+                var permission = 'false';
+                if (id == '' || id == null) {
+                    alert("Please select a Report Access Role.");
+                    return false;
+                } else {
+                    SavePermissionByRole(id, RepId, type, permission);
+                }
+            }
+        }
+    });
+    $('#ByRoleReportEdit').click(function () {
+        if (!$('#ByRoleReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessRoles").val();
+            var RepId = '@Model.IncidentID';
+            var type = 'Edit';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, RepId, type, permission);
+            }
+        }
+    });
+
+    $('#ByRoleReportDelete').click(function () {
+        if (!$('#ByRoleReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessRoles").val();
+            var RepId = '@Model.IncidentID';
+            var type = 'Delete';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, RepId, type, permission);
+            }
+        }
+    });
+    function SavePermissionByRole(id, RepId, type, permission) {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/EmpReportAccessPermissionByRole")',
+            data: JSON.stringify({ 'ID': id, 'ReportID': RepId, 'Type': type, 'Permission': permission }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Reports Access Permission Successfully Saved.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+                ReportsAccessPermission(id, caller);
+            }
+        });
+    }
+    /* -------- Reports Access Permission By Role ---------- */
+    function ReportsAccessPermissionByRole(id, caller) {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/ReportsAccessPermission_ByRole")',
+            data: JSON.stringify({ 'ID': id, 'ReportID': '@Model.IncidentID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var ReportPermission = data.split(',');
+                    if (ReportPermission[0] == "True") {
+                        $('#ByRoleReportView').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleReportView').prop('checked', false);
+                    }
+                    if (ReportPermission[1] == "True") {
+                        $('#ByRoleReportEdit').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleReportEdit').prop('checked', false);
+                    }
+                    if (ReportPermission[2] == "True") {
+                        $('#ByRoleReportDelete').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleReportDelete').prop('checked', false);
+                    }
+                }
+                else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+            }
+        });
+    }
+    //End Report Access Role End
+
+    // Report Access Permission Check
+    /* -- Check Employee Incident Delete Permission Check -- */
+    function DeleteEmployeeIncident(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            var EmpID = '@Model.EmployeeId';
+            var RepID = '@Model.IncidentID';
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/DeleteIncidents")',
+                data: JSON.stringify({ 'Id': id, 'EmpID': EmpID, 'RepID': RepID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "ReportProfread") {
+                        alert('Report Locked.');
+                        return false;
+                    } else {
+                        if (data != "DeleteFalse") {
+                            if (data == "success") {
+                                $('#msgDiv').html('<div class="alert alert-success">Employee has been deleted Suceesfully.</div>');
+                                setTimeout(function () {
+                                    $('#msgDiv').fadeOut();
+                                }, 5000);
+                                location.replace('@Url.Content("~/Employee/Employees/EmployeeIncidentList?EmpId=" + Model.EmployeeId)');
+                            } else {
+                                $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                                setTimeout(function () {
+                                    $('#msgDiv').fadeOut();
+                                }, 5000);
+                            }
+                        }
+                        else if (data == "DeleteFalse") {
+                            alert('You dont have permission to Delete');
+                            return false;
+                        }
+                        else {
+                            $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    /* -- Report Delete/Edit Permission Check By User -- */
+    function ReportPermissionCheck(EmpID, RepID, per, caller) {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/ReportPermissionCheck")',
+            data: JSON.stringify({ 'EmpID': EmpID, 'RepID': RepID }),
+            type: 'POST',
+            dataType: 'json',
+            async: false,
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    if (data == "ReportProfread") {
+                        alert('Report Locked.');
+                        $('#' + RepID + 'Edit').removeAttr("href");
+                        return false;
+                    } else {
+                        var ReportPermission = data.split(',');
+                        if (per == 1) {
+                            if (ReportPermission[1] == "True") {
+                                return true;
+                            }
+                            else {
+                                alert('You dont have permission to Edit');
+                                $('#' + RepID + 'Edit').removeAttr("href");
+                            }
+                        }
+                        else if (per == 2) {
+                            if (ReportPermission[2] == "True") {
+                                DeleteEmployeeIncident(RepID, caller);
+                            }
+                            else {
+                                alert('You dont have permission to Delete');
+                                return false;
+                            }
+                        }
+                    }
+                }
+            },
+            error: function (data) {
+                console.log('error');
+                console.log(data.responseText);
+
+            }
+        });
+    }
+    /* -- Check Employee Incident Edit Permission Check -- */
+    function EditEmployeeIncident(id, caller) {
+        var x = EditConfirm('@ViewBag.Action');
+        if (x) {
+            var EmpID = '@Model.EmployeeId';
+            var RepID = '@Model.IncidentID';
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/EditIncidents")',
+                data: JSON.stringify({ 'Id': id, 'EmpID': EmpID, 'RepID': RepID }),
+                type: 'POST',
+                dataType: 'json',
+                async: false,
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "ReportProfread") {
+                        alert('Report Locked.');
+                        return false;
+                    } else {
+                        if (data == "true") {
+                            return true;
+                        } else if (data == "false") {
+                            alert('You dont have permission to Edit');
+                            $('#ReportsEdit').removeAttr("href");
+                            return false;
+                        }
+                        else {
+                            alert('You dont have permission to Edit');
+                            $('#ReportsEdit').removeAttr("href");
+                            return false;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    //Report Access Permission save By A...
+    $('#repCreatorView').click(function () {
+        if ($(this).is(':checked')) {
+            var RepId = '@Model.IncidentID';
+            var type = 'View';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (RepId == '' || RepId == null) {
+                alert("Report ID Required.");
+                return false;
+            } else {
+                ReportCreatorPermission(RepId, type, permission);
+            }
+        } else {
+            if ($('#repCreatorEdit').is(':checked')) {
+                alert("First to Remove Edit Permission");
+                return false;
+            }
+            if ($('#repCreatorDelete').is(':checked')) {
+                alert("First to Remove Delete Permission");
+                return false;
+            }
+            if (!$(this).is(':checked')) {
+                var RepId = '@Model.IncidentID';
+                var type = 'View';
+                var permission = 'false';
+                if (RepId == '' || RepId == null) {
+                    alert("Report ID Required.");
+                    return false;
+                } else {
+                    ReportCreatorPermission(RepId, type, permission);
+                }
+            }
+        }
+    });
+    $('#repCreatorEdit').click(function () {
+        if (!$('#repCreatorView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var RepId = '@Model.IncidentID';
+            var type = 'Edit';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (RepId == '' || RepId == null) {
+                alert("Report ID Required.");
+                return false;
+            } else {
+                ReportCreatorPermission(RepId, type, permission);
+            }
+        }
+    });
+
+    $('#repCreatorDelete').click(function () {
+        if (!$('#repCreatorView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var RepId = '@Model.IncidentID';
+            var type = 'Delete';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (RepId == '' || RepId == null) {
+                alert("Report ID Required.");
+                return false;
+            } else {
+                ReportCreatorPermission(RepId, type, permission);
+            }
+        }
+    });
+    function ReportCreatorPermission(RepId, type, permission) {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/EmpReportCreatorPermission")',
+            data: JSON.stringify({ 'ReportID': RepId, 'Type': type, 'Permission': permission }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Report Access Permission has been Saved Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+            }
+        });
+    }
+</script>

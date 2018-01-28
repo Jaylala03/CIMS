@@ -1,0 +1,502 @@
+﻿@model CIMS.Models.ManageSubjectAliasModel
+@{
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+    ViewBag.Title = "Subject";
+}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Subject</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Subject</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+<div class="row">
+    @if (Model.subAliasModel.SubjectID > 0)
+    {
+        <div class="col-md-12 enablebtn btn-enable-main">
+            <h3 class="box-title inline-head">@Model.subAliasModel.LogoFirstName @Model.subAliasModel.LogoMiddleName @Model.subAliasModel.LogoLastName</h3>
+
+            <a href='@Url.Content("~/Subject/Subject/SubjectAlias?Type=Subject&Id=" + Model.subAliasModel.SubjectID + "")' id="permission" class="btn btn-info edit" title="Edit Subject">
+                <i class="fa fa-pencil"></i> Edit
+            </a>
+            <a class="btn btn-danger btndelete disableClick" href='javascript:;' onclick='DeleteSubject(@Model.subAliasModel.SubjectID, this);' title="Delete Subject">
+                <i class='fa fa-trash'></i> Delete
+            </a>
+            <a class="btn btn-primary btnaddrep" href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.subAliasModel.SubjectID + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))">
+                <i class="fa fa-plus"></i> Add Reports
+            </a>
+            <a class="btn btn-primary btnviewrep" href='@Url.Content("~/Subject/Subject/SubjectIncidentsList?SubId=" + Model.subAliasModel.SubjectID + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))">
+                <i class="fa fa-eye"></i> View Reports
+            </a>
+           
+            <a class="btn btn-info" href='@Url.Content("~/Subject/Subject/SearchSubject/" + Model.subAliasModel.SubjectID + "")'>
+                <i class="fa fa-plus"></i>
+                Combine Subject
+            </a>
+        </div>
+    }
+    <div class="col-md-12">
+        <div class="white-box clearfix">
+            <ul class="nav nav-pills custom-tabs" id="myTab">
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+
+                    <li>
+                        <a href='@Url.Content("~/Subject/Subject/AddSubject?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.subAliasModel.SubjectID+"")'>
+
+                            <span>Subject</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Addresses", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectAddress?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.subAliasModel.SubjectID+"")'>
+
+                            <span>Addresses</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Aliases", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+
+                    <li class="active">
+                        <a href="javascript:;">
+                            <span>Aliases</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Features", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectFeatures?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.subAliasModel.SubjectID+"")'>
+                            <span>Features</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Identification", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectIdentification?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id=" + Model.subAliasModel.SubjectID + "")'>
+                            <span>Identification</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject LCT Totals", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a style="display:none;" href='@Url.Content("~/Subject/Subject/SubjectLCTTotals?" + (Request.QueryString["Show"] == "View" ? "Show=View&" : "") + "Type=Subject&Id=" + Model.subAliasModel.SubjectID + "")'>
+                            <span>LCT Totals</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Watch List", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectWatchList?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.subAliasModel.SubjectID+"")'>
+
+                            <span>Watch List</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Linked", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectLinked?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.subAliasModel.SubjectID+"")'>
+
+                            <span>Linked</span>
+                        </a>
+                    </li>
+
+                }
+                @if ((Session["Admin"] == null ?
+                                (CIMS.Models.CheckPermissions.permissionMenu("Subject Permission", Convert.ToInt32(Session["UserId"])) && Model.subAliasModel.SubjectID > 0 && (Model.subAliasModel.CreatedBy == Convert.ToInt32(Session["UserID"])))
+                                : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectPermission?" + (Request.QueryString["Show"] == "View" ? "Show=View&" : "") + "Type=Subject&Id=" + Model.subAliasModel.SubjectID + "")'>
+                            <span>Permission</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <div class="tab-content1">
+            <div class="tab-pane active" id="subject">
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+
+                        <div class="large-title no-margin">
+                            SubjectAlias
+                        </div>
+                        @using (Html.BeginForm("SubjectAlias", "Subject", FormMethod.Post, new { area = "Subject", id = "SubjectAlias" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(m => m.subAliasModel.SubjectID)
+                            @Html.HiddenFor(m => m.subAliasModel.AliasID)
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="white-box clearfix">
+                                        <div class="row">
+                                            <div class="form-group clearfix">
+                                                @Html.LabelFor(m => m.subAliasModel.NameType, new { @class = "col-md-3" })
+                                                <div class="col-md-9">
+                                                    @Html.DropDownListFor(m => m.subAliasModel.NameType, ViewBag.lstAliasNameType as List<SelectListItem>, new { @class = "form-control" })
+                                                    @*@Html.TextBoxFor(m => m.subAliasModel.NameType, new { @class = "form-control" })
+                                                        @Html.ValidationMessageFor(m => m.subAliasModel.NameType, "", new { @class = "text-danger" })*@
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group clearfix">
+                                                @Html.LabelFor(m => m.subAliasModel.FirstName, new { @class = "col-md-3" })
+                                                <div class="col-md-9">
+                                                    @Html.TextBoxFor(m => m.subAliasModel.FirstName, new { @class = "form-control" })
+                                                    @Html.ValidationMessageFor(m => m.subAliasModel.FirstName, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="white-box clearfix">
+                                        <div class="form-group clearfix">
+                                            @Html.LabelFor(m => m.subAliasModel.MiddleName, new { @class = "col-md-3" })
+                                            <div class="col-md-9">
+                                                @Html.TextBoxFor(m => m.subAliasModel.MiddleName, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(m => m.subAliasModel.MiddleName, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group clearfix">
+                                            @Html.LabelFor(m => m.subAliasModel.LastName, new { @class = "col-md-3" })
+                                            <div class="col-md-9">
+                                                @Html.TextBoxFor(m => m.subAliasModel.LastName, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(m => m.subAliasModel.LastName, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-12">
+                                    <div class="white-box clearfix">
+                                        <div class="btn-right-align">
+                                            @*<input type="submit" id="btnSubmit" value="@(Request.QueryString["Id"] != null ? "Update" : "Create")" class="btn btn-success" />*@
+                                            <input type="submit" id="btnSubmit" value="Update" class="btn btn-success" />
+                                            <input type="button" class="btn btn-blue" id="clearBtn" value="Clear" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+
+
+
+
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="white-box clearfix">
+
+            <div class="large-title no-padding">
+                SubjectAlias List
+            </div>
+
+
+            <div id="aliasTable">
+                @if (Model.subAliasList != null && Model.subAliasList.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Data Entered</th>
+                                    <th>Name Type</th>
+                                    <th>First Name</th>
+                                    <th>Middle Name</th>
+                                    <th>Last Name</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var item in Model.subAliasList)
+                                {
+                                    <tr>
+                                        <td>@(Convert.ToDateTime(item.DateEntered).ToShortDateString())</td>
+                                        <td>@item.ANameType</td>
+                                        <td>@item.FirstName</td>
+                                        <td>@item.MiddleName</td>
+                                        <td>@item.LastName</td>
+                                        <td><a href='javascript:;' data-id="@item.AliasID" class="btn btn-info small btn-sm btn-icon subjectTr"><i class='fa fa-pencil'></i></a><a href='javascript:;' class="btn btn-danger small btn-sm delete-sm" onclick='DeleteAlias(@item.AliasID,this);'><i class='fa fa-trash'></i></a></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div>No Record Found</div>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        if ($('#hdShow').val() == 'View') {
+            $(".form-control").attr("disabled", "disabled");
+            $(".btn").hide(true);
+            $(document).find('.enablebtn>a').removeAttr("style");
+        }
+        else {
+            //$(".btn").removeAttr("style");
+            $(".form-control").attr("disabled", false);
+            //$(".btn").attr("disabled", false);
+            $(document).find('#permission').hide(true);
+        }
+
+        $('.subjectTr').on('click', function () {
+            if (EditConfirm('@ViewBag.Action')) {
+                var Id = $(this).attr('data-id');
+                $.ajax({
+                    url: '@Url.Content("~/Subject/Subject/GetSubjectAliasByAliasId")',
+                    data: { Id: Id },
+                    type: 'get',
+                    datatype: 'json',
+                    contenttype: 'application/json',
+                    success: function (data) {
+                        if (data.length > 0) {
+                            var jsondata = JSON.parse(data);
+                            $('#subAliasModel_SubjectID').val(jsondata.SubjectID);
+                            $('#subAliasModel_AliasID').val(jsondata.AliasID);
+                            $('#subAliasModel_FirstName').val(jsondata.FirstName);
+                            $('#subAliasModel_MiddleName').val(jsondata.MiddleName);
+                            $('#subAliasModel_LastName').val(jsondata.LastName);
+                            $('#subAliasModel_NameType').val(jsondata.NameType);
+                            $('#btnSubmit').val('Update');
+                            // $('#addressTitle').text('Update Subject Alias');
+                        }
+
+                    }
+                });
+            }
+        });
+
+
+        $('#clearBtn').on('click', function () {
+            Reset();
+        });
+        $('#btnSubmit').click(function () {
+            var x;
+            if (parseInt($('#subAliasModel_AliasID').val()) > 0) {
+                x = EditConfirm('@ViewBag.Action');
+            }
+            else {
+                x = AddConfirm('@ViewBag.Action');
+            }
+            if (x) {
+                return true;
+            }
+            else {
+
+                return false;
+            }
+        });
+
+        // Page Change
+        var somethingChanged = false;
+        var button = $('#btnSubmit');
+        var orig = [];
+
+        $.fn.getType = function () {
+            return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
+        }
+
+        $("#SubjectAlias :input").each(function () {
+            var type = $(this).getType();
+            var tmp = {
+                'type': type,
+                'value': $(this).val()
+            };
+            if (type == 'radio') {
+                tmp.checked = $(this).is(':checked');
+            }
+            orig[$(this).attr('id')] = tmp;
+        });
+
+        $('#SubjectAlias').bind('change keyup', function () {
+            var disable = true;
+            somethingChanged = false;
+            $("#SubjectAlias :input").each(function () {
+                var type = $(this).getType();
+                var id = $(this).attr('id');
+
+                if (type == 'text' || type == 'select') {
+                    disable = (orig[id].value == $(this).val());
+                } else if (type == 'radio') {
+                    disable = (orig[id].checked == $(this).is(':checked'));
+                }
+
+                if (!disable) {
+                    return false; // break out of loop
+
+                }
+            });
+            somethingChanged = true;
+            button.prop('disabled', disable);
+        }); // End Page Change
+
+        // save change script
+        $('#myTab > li > a ').click(function (e) {
+            if ($('#hdShow').val() != 'View') {
+                if (somethingChanged == true) {
+                    formSubmitByTab(somethingChanged);
+                    somethingChanged = false;
+                    return false;
+                }
+            }
+        });
+        // end save change script
+        if ('@Model.subAliasModel.EditPermission' == 'False') {
+            $(".form-control").attr("disabled", "disabled");
+            //$(".btn").hide(true);
+            $(".btn").attr("disabled", "disabled");
+            $(".flubtn").attr("disabled", "disabled");
+            $(document).find("input[type=checkbox]").attr("disabled", "disabled");
+            $(document).find("input[type=radio]").attr("disabled", "disabled");
+        }
+        $(".btnaddrep").removeAttr("disabled");
+        $(".btnviewrep").removeAttr("disabled");
+
+        if ('@Model.subAliasModel.DeletePermission' == 'True') {
+            $(".btndelete").removeClass("disableClick");
+        }
+    });// End
+
+    function DeleteAlias(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/DeleteSubjectAlias")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#subAliasModel_NameType').val('');
+                        $('#subAliasModel_FirstName').val('');
+                        $('#subAliasModel_MiddleName').val('');
+                        $('#subAliasModel_LastName').val('');
+                        $('#btnSubmit').val('Create');
+                        if ($('#aliasTable>tbody tr').length == 1) {
+                            $('#aliasTable').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Subject Alias Deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Subject Alias Deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function DeleteSubject(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/DeleteSubject")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Subject has been deleted Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                        location.replace('@Url.Content("~/Subject/Subject/Index")');
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function Reset() {
+        $('#subAliasModel_NameType').val('');
+        $('#subAliasModel_FirstName').val('');
+        $('#subAliasModel_MiddleName').val('');
+        $('#subAliasModel_LastName').val('');
+        $('#subAliasModel_AliasID').val('');
+        //$('#btnSubmit').val('Create');
+    }
+    $("#permission").click(function () {
+        if (EditConfirm('@ViewBag.Action')) {
+            return true;
+        }
+        else {
+
+            return false;
+        }
+    });
+
+    // Submit form on tab change Script
+    function formSubmitByTab(valueChanged) {
+        if (valueChanged == true) {
+            var r = confirm("Do you want to save changes?");
+            if (r == true) {
+                $('#btnSubmit').click();
+            }
+        }
+
+    }// End Submit form on tab change Script
+</script>

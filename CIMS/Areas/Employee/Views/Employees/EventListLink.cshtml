@@ -1,0 +1,217 @@
+﻿@model CIMS.Models.EventModel
+
+<link href="~/Content/Custom.css" rel="stylesheet" />
+
+<style>
+    .cmdSub {
+        pointer-events: none;
+        opacity: 0.65;
+    }
+</style>
+
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+
+<div class="panel panel-default">
+    <div class="panel-heading  custom-head">
+        <h3 class="box-title m-b-0">Event List</h3>
+        <button type="submit" class="btn btn-success pull-right" id="submitLinkEvent_button">Link/Unlink Events</button>
+        @*<div class="panel-options">
+            <div class="right-btn">
+                <a href='@Url.Content("~/Events/Event/EventDetail")' class="btn btn-primary add"><i class="fa fa-plus"></i>Add Event</a>
+            </div>
+        </div>*@
+    </div>
+
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="ListTable" class="table table-bordered Tableview">
+                <thead>
+                    <tr>
+                        <th class="desktop" style="text-align:center;">Select</th>
+                        <th class="header">
+                            Media
+                        </th>
+                        <th class="header headerSortDown">
+                            Event#
+                        </th>
+                        <th class="header">
+                            Event Date
+                        </th>
+                        @*<th class="header">
+                            Att#
+                        </th>*@
+                        <th class="header">
+                            Start
+                        </th>
+                        <th class="header">
+                            End
+                        </th>
+                        <th class="header">
+                            Initiated By
+                        </th>
+                        <th class="header">
+                            Nature of Event Code
+                        </th>
+                        @*<th>
+                                Action Taken
+                            </th>*@
+                        @*<th>
+
+                                Camera
+                            </th>*@
+                        @*<th>
+                                Location
+                            </th>*@
+                        @*<th>
+                                Key
+                            </th>*@
+                        <th class="header">
+
+                            User
+                        </th>
+                        @*<th style="width:100px;">
+                                Action
+                            </th>
+                            <th>
+                                Media
+                            </th>*@
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ListEventModel.Count > 0)
+                    {
+
+                        foreach (var items in Model.ListEventModel)
+                        {
+
+                            <tr class="subTR" data-id="@items.EventID" style="cursor:pointer">
+                                <td style="text-align:center;">
+                                    <input type="checkbox" name="chkevents" id="chk'@items.EventID'" class="bigCheckbox"
+                                            data-eventid="@items.EventID" checked="@items.isLinkedEvent" />
+                                </td>
+                                <td style="width: 100px;">
+                                    <a href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")' title="View Event">
+                                        <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.FilePath) ? items.FilePath: Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                    </a>
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">@items.EventNumber</td>
+                                <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">@Convert.ToDateTime(items.EventDate).ToString("MM/dd/yyyy")</td>
+                                @*<td>@items.AttachedEvent</td>*@
+                                <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">@items.EventTime</td>
+                                <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">@items.EndTime</td>
+                                <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">@items.FromCode</td>
+                                <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">@items.NatureCode</td>
+                                @*<td>@items.DutyDesc</td>*@
+                                @*<td>@items.Camera</td>*@
+                                @*<td>@items.Location</td>*@
+                                @*<td>@items.KeyEvent</td>*@
+                                <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">@items.UserID</td>
+                                @*<td>
+                                        <a href='@Url.Content("~/Events/Event/EventDetail?EventID=" + @items.EventID + "")' class="btn btn-info btn-sm btn-icon small" title="Edit Subject Incident"><i class="fa fa-pencil"></i></a>
+                                        <a class="btn btn-danger small btn-sm delete-sm" href='javascript:;' onclick='DeleteEvent(@items.EventID,this);'><i class='fa fa-trash'></i></a>
+                                    </td>
+                                    <td>
+                                        <a href='@Url.Content("~/Media/Media/Index?Type=Event&typeid=" + items.EventID + "")' class="btn btn-info small btn-sm btn-icon" title="Media"><i class="fa fa-camera"></i></a>
+
+                                    </td>*@
+                            </tr>
+
+                        }
+
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+
+</div>
+
+
+
+
+<script src="~/Content/Custom.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        var table = $('#ListTable').DataTable({
+            language: {
+                search: "User:",
+                searchPlaceholder: "User"
+            }
+        });
+
+        //table.columns(8).every(function () {
+        //    var that = this;
+
+        //    $('input', this.footer()).on('keyup change', function () {
+        //        if (that.search() !== this.value) {
+        //            that
+        //                .search('^' + this.value, true, false)
+        //                .draw();
+        //        }
+        //    });
+        //});
+    });
+   
+    container = $('#msgDiv');
+    $('#submitLinkEvent_button').click(function (e) {
+        var tableControl = document.getElementById('ListTable');
+        var arrayOfValues = [];
+        var isSubRptSelected = false;
+        //var arr = [];
+        var arr = new Array();
+        $('input:checkbox[name="chkevents"]:checked', tableControl).each(function () {
+            isSubRptSelected = true;
+            //arr.push({
+            //    eventid: this.dataset.eventid
+            //});
+            arr.push(this.dataset.eventid);
+        });
+        //if (!isSubRptSelected) {
+        //    alert('Please select events.');
+        //    return false;
+        //}
+        e.preventDefault();
+
+        objs = JSON.stringify({ 'EmployeeID': $('#EmployeeId').val(), 'incidentid': $('#IncidentId').val(), 'listeventid': arr });
+        //alert(objs);
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: '/Employee/Employees/LinkEvents',
+            data: objs,
+            cache: false,
+            async: false,
+            beforeSend: function () {
+                // cog placed
+                container.html('<h1><i class="fa fa-cog fa-spin"></i> Loading...</h1>');
+            },
+            success: function (data) {
+                // update hash and avoid a third request since i already have 2 request
+                // i'm updating the content!
+                container.css({
+                    opacity: '0.0'
+                }).html('<div class="alert alert-success">' + JSON.parse(data) + '</div>').delay(50).animate({
+                    opacity: '1.0'
+                }, 300);
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                //var obj = JSON.parse(xhr.responseText);
+                //if (obj.error)
+                //{
+                container.html('<div class="alert alert-error">' + JSON.parse(data) + '</div>');
+                //}
+            }
+        });
+
+        return false; // keeps the page from not refreshing
+    });
+</script>
+

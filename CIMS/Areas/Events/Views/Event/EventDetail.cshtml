@@ -1,0 +1,2447 @@
+﻿@model CIMS.Models.EventModel
+
+@{
+
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+    //CIMS.Models.EventDescription eventDes = new CIMS.Models.EventDescription();
+    //eventDes.DescriptionEvent = "test";
+    //Model.EventDescriptionList.Add(eventDes);
+    //CIMS.Models.EventReviewTableModel eventDes1 = new CIMS.Models.EventReviewTableModel();
+    //eventDes1.Number = 1;
+    //eventDes1.Replaced = "test";
+
+    //eventDes1.Reason = "test";
+    //eventDes1.ReviewFrom = "test";
+    //eventDes1.ReviewTo = "test";
+    //Model.EventDescriptionList1.Add(eventDes1);
+
+}
+@*@for (int i = 0; i < Model.EventDescriptionList1.Count; i++)
+    {*@
+@*@Html.TextBoxFor(m => m.EventDescriptionList1[i].Number)*@
+@*}*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+<script src="~/assets/js/Jspdf/FileSaver.js"></script>
+<script src="~/assets/js/Jspdf/jspdf.js"></script>
+<script src="~/assets/js/Jspdf/jspdfplugintable.js"></script>
+<link href="~/Content/crop-avatar/css/cropper.css" rel="stylesheet" />
+<script src="~/Content/crop-avatar/js/cropper.js"></script>
+
+<style>
+    .disabled {
+        pointer-events: none;
+        cursor: default;
+    }
+
+    .ShowBorderRed {
+        border: 6px solid blue;
+    }
+</style>
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Events</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Events</li>
+        </ol>
+    </div>
+
+</div>
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<div class="row">
+    @Html.Hidden("EventID", Model.EventID)
+
+    @if (Model.EventID > 0)
+    {
+        <div class="pull-right enablebtn">
+            <a href='@Url.Content("~/Events/Event/EventDetail?Type=Event&EventID=" + Model.EventID + "")' id="@(Model.EventID)Edit"  class="btn btn-info" title="Edit Employee" onclick='return EventPermissionCheck(@Model.EventID,1,this);'><i class="fa fa-pencil"></i> Edit</a>
+            <a class="btn btn-danger" href='javascript:;'  title="Delete Employee" onclick='return EventPermissionCheck(@Model.EventID,2,this);'><i class='fa fa-trash'></i> Delete</a>
+        </div>
+    }
+    <div class="col-md-12">
+        <div class="right-tab">
+            <div class="white-box clearfix">
+                <ul class="nav nav-pills custom-tabs" id="myTab">
+                    <li class="active" id="11tabdata">
+                        <a href="#Details" data-toggle="tab">
+
+                            <span>Details</span>
+                        </a>
+                    </li>
+
+                    @if (Model.EventID > 0)
+                    {
+                        <li class="" id="13tabdata">
+                            <a href="#Pictures" data-toggle="tab">
+
+                                <span>Pictures</span>
+                            </a>
+                        </li>
+                        @*<li class="" id="14tabdata">
+                                <a href="#Review" data-toggle="tab">
+
+                                    <span>Review</span>
+                                </a>
+                            </li>
+                            <li class="" id="15tabdata">
+                                <a href="#Copy" data-toggle="tab">
+
+                                    <span>Copy</span>
+                                </a>
+                            </li>*@
+
+                    }
+                    else
+                    {
+                        <li class="" id="13tabdata">
+                            <a href="javascript:;" data-toggle="tab" class="checkAlert">
+
+                                <span>Pictures</span>
+                            </a>
+                        </li>
+                        @*<li class="" id="14tabdata">
+                                <a href="javascript:;" data-toggle="tab">
+
+                                    <span>Review</span>
+                                </a>
+                            </li>
+                            <li class="" id="15tabdata">
+                                <a href="javascript:;" data-toggle="tab">
+
+                                    <span>Copy</span>
+                                </a>
+                            </li>*@
+                    }
+                    <li class="" id="liSubjectReports">
+                        <a href="#SubjectReports" data-toggle="tab">
+
+                            <span>Subject Reports</span>
+                        </a>
+                    </li>
+                    <li class="" id="liEmployeeReports">
+                        <a href="#EmployeeReports" data-toggle="tab">
+                            <span>Employee Reports</span>
+                        </a>
+                    </li>
+                    <li class="" id="liGeneralReports">
+                        <a href="#GeneralReports" data-toggle="tab">
+                            <span>General Reports</span>
+                        </a>
+                    </li>
+                    <li class="" id="liPermissions">
+                        <a href="#Permissions" data-toggle="tab">
+                            <span>Permissions</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+            <input type="hidden" id="hdType" name="hdType" value='@(Request.QueryString["Type"])' />
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="Details">
+                    @using (Html.BeginForm("EventDetail", "Event", new { Area = "Events" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                    {
+
+                        <div class="col-md-3">
+                            <div class="panel panel-default custom-main-border">
+                                <div class="panel-body">
+                                    @if (Model.EventID > 0)
+                                    {
+                                        <div class="form-group">
+                                            <label class="control-label">Event Number </label>
+                                            @Html.TextBoxFor(m => m.EventNumber, null, new { @class = "form-control", @readonly = true })
+                                        </div>
+                                    }
+                                    <div class="form-group">
+                                        <label class="control-label">Event Date </label>
+                                        @Html.HiddenFor(m => m.EventID)
+                                        @Html.HiddenFor(m => m.UserID)
+                                        @Html.HiddenFor(m => m.RoleName)
+                                        @Html.TextBoxFor(m => m.EventDate, null, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.EventDate, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Start Time</label>
+                                        <input type="hidden" id="OldEventTime" name="OldEventTime" value="@Model.EventTime" />
+                                        @Html.TextBoxFor(m => m.EventTime, null, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.EventTime, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">End Time </label>
+                                        <input type="hidden" id="OldEndTime" name="OldEndTime" value="@Model.EndTime" />
+                                        @Html.TextBoxFor(m => m.EndTime, null, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.EndTime, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-success">Save</button>
+                                        <button type="reset" class="btn btn-white">Reset</button>
+
+
+                                    </div>
+
+                                    <div class="form-group clearfix">
+                                        @Html.CheckBoxFor(m => m.KeyEvent)
+                                        <label class="control-label">Key Event </label>
+
+                                    </div>
+
+
+                                    <div class="form-group clearfix" style="margin-bottom:0px;">
+                                        <a href="#myModal" data-toggle="modal" class="btn btn-primary btn-block"><i class="fa fa-search"></i> Search</a>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="panel panel-default custom-main-border">
+                                <div class="large-title no-margin">Events-Details </div>
+
+                                <div class="panel-body">
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Initiated By</label>
+
+                                            @Html.DropDownListFor(m => m.FromCode, Model.InitiatedByList as List<SelectListItem>, new { @class = "form-control" })
+
+                                            @Html.ValidationMessageFor(m => m.FromCode, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label">Nature of Event Code</label>
+                                            @Html.DropDownListFor(m => m.NatureCode, Model.EventCodeList as List<SelectListItem>, "Select", new { @class = "form-control", @id = "ddlShortDescription" })
+                                            @Html.ValidationMessageFor(m => m.NatureCode, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label">Nature of Event Details</label>
+                                            @Html.TextAreaFor(m => m.NatureDesc, 9, 40, new { @class = "form-control" })
+                                        </div>
+
+                                        <div class="form-group no-margin-bottom">
+                                            <label class="control-label">Location</label>
+                                            @Html.DropDownListFor(m => m.Location, Model.LocationList as List<SelectListItem>, new { @class = "form-control" })
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Action Taken Details </label>
+                                            @Html.TextAreaFor(m => m.DutyDesc, 18, 40, new { @class = "form-control" })
+
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">Camera</label>
+                                            @Html.TextBoxFor(m => m.Camera, null, new { @class = "form-control" })
+
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label class="control-label">Comments</label>
+                                        <div class="form-group no-margin-bottom">
+                                            @Html.TextAreaFor(m => m.Comments, new { @class = "form-control ckeditor" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @*<div class="col-md-3 tab-space">
+                        <div class="white-box">
+                            <div class="etab">
+                                <div id="accordion" role="tablist" aria-multiselectable="true">
+                                    <div class="panel panel-default">
+                                        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                                            <div class="form-dispatch">
+                                                <div class="form-group clearfix">
+                                                    <label>Areas</label>
+                                                    @Html.DropDownListFor(m => m.Dispatcher.Area, Model.DispatchList as List<SelectListItem>, new { @class = "form-control" })
+                                                    <label id="AreaList" style="color:red;"></label>
+                                                </div>
+
+                                                <div class="form-group clearfix">
+                                                    <label>Scheduled Time</label>
+                                                    @Html.TextBoxFor(m => m.Dispatcher.ScheduledTime, null, new { @class = "form-control" })
+                                                    @Html.ValidationMessageFor(m => m.Dispatcher.ScheduledTime, "", new { @class = "text-danger" })
+                                                </div>
+
+                                                <div class="form-group clearfix">
+                                                    <label>Priority</label>
+                                                    @Html.DropDownListFor(m => m.Dispatcher.Priority, Model.DispatchPriorityList as List<SelectListItem>, new { @class = "form-control" })
+
+                                                </div>
+
+                                                <div class="form-group clearfix" style="margin-bottom: 6px;">
+                                                    <label>
+                                                        <input type="checkbox" id="closeDropdown" />
+                                                        Hold
+                                                    </label>
+
+                                                </div>
+
+                                                <div class="form-group clearfix">
+                                                    <label>Unit</label>
+                                                    @Html.DropDownListFor(m => m.Dispatcher.Units, Model.DispatchUnitCodesList as List<SelectListItem>, new { @class = "form-control" })
+                                                    <label id="UnitList" style="color:red;"></label>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <input type="submit" value="Create for dispatch" class="btn btn-success" onclick="CreateDispatch();" />
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading" role="tab" id="headingTwo">
+                                            <h4 class="panel-title">
+                                                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                    Attach To Event
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                            <div class="form-dispatch">
+                                                <div class="form-group clearfix">
+                                                    <label>Event number</label>
+                                                    @Html.TextBoxFor(m => m.EventNumber, null, new { @class = "form-control", @readonly = true })
+                                                </div>
+
+                                                <div class="form-group clearfix">
+                                                    <label>Attached To</label>
+                                                    @Html.DropDownListFor(m => m.AtachEvent.AttachedEvent, Model.AttachedEventList as List<SelectListItem>, new { @class = "form-control" })
+                                                </div>
+
+                                                <div class="form-group no-margin-bottom">
+                                                    <input type="submit" value="Attach" class="btn btn-success" onclick="AttachEvent();" />
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+                </div>
+
+
+                <div class="tab-pane" id="Pictures">
+                    <div class="col-md-12">
+                        @using (Html.BeginForm("EventPictures", "Event", new { Area = "Events" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off", @id = "PictureFormSubmit" }))
+                        {
+                            @Html.HiddenFor(m => m.EventID)
+                            @Html.HiddenFor(m => m.PictureModel.EventMediaID)
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title" style="font-weight: 600;">Event - Pictures</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Add Description</label>
+
+                                            @Html.TextBoxFor(m => m.PictureModel.Description, null, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.PictureModel.Description, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div style="min-height: 40px; float: right"></div>
+
+                                            <button type="button" class="btn btn-success" id="AddRowTable">Add</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="table-responsive">
+                                            <div class="p-table-height">
+                                                <label class="control-label" id="DesDetails">Description List</label>
+                                                <table id="PicturesTable" class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                Description
+                                                            </th>
+
+                                                            <th class="remotr">
+                                                                Action
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.ListPictureModel.Count > 0)
+                                                        {
+                                                            foreach (var items in Model.ListPictureModel)
+                                                            {
+
+                                                                <tr>
+                                                                    <td>@items.Description</td>
+                                                                    <td>
+                                                                        <a href='javascript:;' class="btn btn-info btn-sm btn-icon" onclick="bindPicture('@items.EventMediaID','@HttpUtility.JavaScriptStringEncode(items.Description)','@HttpUtility.JavaScriptStringEncode(items.Details)')"><i class="fa fa-pencil"></i></a>
+                                                                        <a class="btn btn-danger btn-sm delete-sm" href='javascript:;' onclick='DeletePicture(@items.EventMediaID,this);'><i class='fa fa-trash'></i></a>
+                                                                    </td>
+
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    </tbody>
+
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <div class="form-group clearfix">
+                                                @Html.TextAreaFor(m => m.PictureModel.Details, new { @class = "form-control ckeditor" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-success" id="PictureSubmit">Save</button>
+                                            <button type="reset" class="btn btn-white">Reset</button>
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    @if (Model.EventID > 0)
+                    {
+                        <div class="col-md-12">
+                            <div class="white-box clearfix">
+
+                                <div class="col-md-12 media-main" style="padding-bottom: 8px;">
+                                    <div class="col-md-2">
+                                        <div class="large-title no-padding">Media</div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <a href='@Url.Content("~/Media/Media/Index?Type=Event&typeid=" + Model.EventID + "")' class="btn btn-info small btn-sm btn-icon" title="Media"><i class="fa fa-camera fa-2x"></i></a>
+                                    </div>
+                                    <div class="pull-right">
+                                        <label class="large-title no-padding">View General Media Gallery :</label>
+                                        <input type="checkbox" id="something" />
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="large-title no-padding">Event Gallery</div>
+                                    <div id="pictureTable">
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12" id="MediaGallery" style="display: none;">
+                                    <div class="large-title no-padding">Media Gallery</div>
+                                    <div id="mediaTable">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="tab-pane" id="SubjectReports">
+                    <div class="col-md-12" id="divsubjectreports">
+                        <div class="preloader">
+                            <div class="cssload-speeding-wheel"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="EmployeeReports">
+                    <div class="col-md-12" id="divemployeereports">
+                        <div class="preloader">
+                            <div class="cssload-speeding-wheel"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="GeneralReports">
+                    <div class="col-md-12" id="divgeneralreports">
+                        <div class="preloader">
+                            <div class="cssload-speeding-wheel"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="Permissions">
+                    <div class="col-md-12" id="divpermissions">
+                        <div class="preloader">
+                            <div class="cssload-speeding-wheel"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="Review">
+                    @using (Html.BeginForm("EventReview", "Event", new { Area = "Events" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off", @id = "ReviewFormSubmit" }))
+                    {
+                        @Html.HiddenFor(m => m.EventID)
+                        @Html.HiddenFor(m => m.EventReviewModel.EventReviewID)
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title" style="font-weight: 600;">Event - Pictures</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <div class="table-review">
+                                            <table id="ReviewTable" class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            Number
+                                                        </th>
+                                                        <th>
+                                                            Replaced By
+                                                        </th>
+                                                        <th>
+                                                            Reason
+                                                        </th>
+                                                        <th>
+                                                            From
+                                                        </th>
+                                                        <th>
+                                                            To
+                                                        </th>
+                                                        <th class="removeAction">
+                                                            Action
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.EventDescriptionList1.Count > 0)
+                                                    {
+                                                        foreach (var items in Model.EventDescriptionList1)
+                                                        {
+
+                                                            <tr>
+                                                                <td>@items.ItemNumber</td>
+                                                                <td>@items.Reason</td>
+                                                                <td>@items.Replaced</td>
+                                                                <td>@items.ReviewFrom</td>
+                                                                <td>@items.ReviewTo</td>
+                                                                <td class="removeAction">
+                                                                    <a href='javascript:;' class="btn small btn-info btn-sm btn-icon" onclick="bindReview('@items.EventReviewID','@items.ItemNumber','@HttpUtility.JavaScriptStringEncode(items.Reason)','@items.Replaced','@items.ReviewFrom','@items.ReviewTo','@HttpUtility.JavaScriptStringEncode(items.Description)')"><i class="fa fa-pencil"></i></a>
+                                                                    <a class="btn btn-danger btn-sm small  delete-sm" href='javascript:;' onclick='DeleteReview(@items.EventReviewID,this);'><i class='fa fa-trash'></i></a>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Number</label>
+                                        @Html.TextBoxFor(m => m.EventReviewModel.ItemNumber, null, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Replaced</label>
+                                        @Html.TextBoxFor(m => m.EventReviewModel.Replaced, null, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Reason</label>
+                                        @Html.TextBoxFor(m => m.EventReviewModel.Reason, null, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+
+                                    <div class="form-group">
+                                        <label class="control-label">From</label>
+                                        @Html.TextBoxFor(m => m.EventReviewModel.ReviewFrom, null, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">To</label>
+                                        @Html.TextBoxFor(m => m.EventReviewModel.ReviewTo, null, new { @class = "form-control" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div style="min-height: 40px;margin-top: -14px;"></div>
+                                        <button type="button" class="btn btn-success" id="AddReviewTable">Add</button>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <div class="form-group clearfix">
+                                            @Html.TextAreaFor(m => m.EventReviewModel.Description, new { @class = "form-control ckeditor" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-success" id="ReviewSubmit">Save</button>
+                                        <button type="reset" class="btn btn-white">Reset</button>
+
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="tab-pane" id="Copy">
+                    @using (Html.BeginForm("EventCopy", "Event", new { Area = "Events" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off", @id = "PictureFormSubmit" }))
+                    {
+                        @Html.HiddenFor(m => m.EventID)
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title" style="font-weight: 600;">Event - Copy</h3>
+                            </div>
+                            <div class="panel-body">
+
+
+                                <div class="col-md-8">
+
+                                    <div class="form-group">
+                                        <label class="control-label">Media</label>
+                                        @Html.TextBoxFor(m => m.EventCopyModel.Media, null, new { @class = "form-control" })
+
+
+
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Media Labled As</label>
+                                        @Html.TextBoxFor(m => m.EventCopyModel.MediaLabledAs, null, new { @class = "form-control" })
+
+
+
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Incident Number</label>
+                                        @Html.TextBoxFor(m => m.EventCopyModel.IncidentNumber, null, new { @class = "form-control" })
+
+
+
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Originals Held By</label>
+                                        @Html.TextBoxFor(m => m.EventCopyModel.OriginalHeldBy, null, new { @class = "form-control" })
+
+
+
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Originals Saved</label>
+                                        @Html.TextBoxFor(m => m.EventCopyModel.OriginalSaved, null, new { @class = "form-control" })
+
+
+
+
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-success">Save</button>
+                                        <button type="reset" class="btn btn-white">Reset</button>
+
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <fieldset>
+                                        <legend>Sent To</legend>
+                                        <div class="form-group">
+                                            <label class="control-label">Other</label>
+                                            @Html.TextBoxFor(m => m.EventCopyModel.Other, null, new { @class = "form-control" })
+
+
+
+
+                                        </div>
+                                    </fieldset>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title">Print Event</h4>
+                            </div>
+
+                            <div class="modal-body row" style="padding-bottom: 0px;">
+                                <div class="col-md-12">
+                                    <div class="form-group col-md-4">
+                                        <input type="checkbox" class="selected" value="EventDate" checked="checked">
+                                        @Html.Label("Date")
+
+                                    </div>
+
+                                    <div class="form-group col-md-4">
+                                        <input type="checkbox" class="" value="EventNumber">
+                                        @Html.Label("Event Number")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="checkbox" class="" value="AttachedEvent">
+                                        @Html.Label("Attached Event")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="checkbox" class="" value="EventTime">
+                                        @Html.Label("Start")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="checkbox" class="" value="EndTime">
+                                        @Html.Label("End")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="checkbox" class="" value="FromCode">
+                                        @Html.Label("Initiated By")
+
+                                    </div>
+
+                                    <div class="form-group col-md-4">
+                                        <input type="checkbox" class="" value="NatureDesc">
+                                        @Html.Label("Nature Of Event")
+
+                                    </div>
+
+
+
+
+                                    <div class="form-group col-md-4">
+                                        <input type="checkbox" class="" value="DutyDesc">
+                                        @Html.Label("Action Taken")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="checkbox" class="" value="Camera">
+                                        @Html.Label("Camera")
+
+                                    </div>
+
+                                    <div class="form-group col-md-4">
+                                        <input type="checkbox" class="" value="KeyEvent">
+                                        @Html.Label("Key Event")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="checkbox" class="" value="UserID">
+                                        @Html.Label("User Name")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="checkbox" class="" value="Location">
+                                        @Html.Label("Location")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="checkbox" class="" value="Site">
+                                        @Html.Label("Site")
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="modal-body row" style="padding-top:0px;">
+                                <div class="col-md-12">
+                                    <div class="form-group col-md-4">
+                                        <input type="radio" name="Radio1" value="EventDate" checked="checked" class="active">
+                                        @Html.Label("Date & Time")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="radio" name="Radio1" value="EventNumber">
+                                        @Html.Label("Event Number")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="radio" name="Radio1" value="AttachedEvent">
+                                        @Html.Label("Attached Event")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="radio" name="Radio1" value="EventTime">
+                                        @Html.Label("Event Time")
+
+                                    </div>
+
+                                    <div class="form-group col-md-4">
+                                        <input type="radio" name="Radio1" value="FromCode">
+                                        @Html.Label("Initiated By")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="radio" name="Radio1" value="NatureDesc">
+                                        @Html.Label("Nature Of Event")
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group col-md-4">
+                                        <input type="radio" name="Radio1" value="DutyDesc">
+                                        @Html.Label("Action Taken")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="radio" name="Radio1" value="Camera">
+                                        @Html.Label("Camera")
+
+                                    </div>
+
+                                    <div class="form-group col-md-4">
+                                        <input type="radio" name="Radio1" value="KeyEvent">
+                                        @Html.Label("Key Event")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="radio" name="Radio1" value="UserID">
+                                        @Html.Label("User Name")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="radio" name="Radio1" value="Location">
+                                        @Html.Label("Location")
+
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <input type="radio" name="Radio1" value="Site">
+                                        @Html.Label("Site")
+
+                                    </div>
+                                    <div class="col-md-12">
+
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-success" id="PrintSubmit">Print</button>
+                                            <button type="button" class="btn btn-success" id="PreviewSubmit">Preview</button>
+                                            <a href="#myModal1" data-toggle="modal" class="btn btn-success" style="padding: 7px 8px;" id="SendEmail">Send Email</a>
+                                            <button type="button" class="btn btn-success" id="PdfSubmit">Save As Pdf</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title">Send Email</h4>
+                            </div>
+
+                            <div class="modal-body row">
+                                <div class="col-md-12 right-label">
+                                    <div class="form-group clearfix">
+                                        @Html.Label("To", new { @class = "col-md-3" })
+                                        <div class="col-md-9">
+                                            <input type="text" name="To" id="To" class="form-control">
+                                            <label id="EmailTo" style="color:red;"></label>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="form-group clearfix">
+                                        @Html.Label("Subject", new { @class = "col-md-3" })
+                                        <div class="col-md-9">
+                                            <input type="text" name="Subject" id="Subject" class="form-control">
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="form-group clearfix">
+                                        @Html.Label("Desciption", new { @class = "col-md-3" })
+                                        <div class="col-md-9">
+                                            <input type="text" name="Desciption" id="Desciption" class="form-control">
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="form-group col-md-12 text-right">
+
+                                        <button type="submit" class="btn btn-success" id="SendEmailData">Send Email</button>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-12">
+                                    <div class="visitor-log">
+
+                                        <div class="table-responsive">
+                                            <div id="Attachment"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+</div>
+
+<div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            @*<form class="avatar-form" action="Update_Picture" enctype="multipart/form-data" method="post">*@
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="avatar-modal-label">Change Profile Picture</h4>
+            </div>
+            <div class="modal-body">
+                <div class="avatar-body">
+
+                    <!-- Upload image and data -->
+                    <div class="avatar-upload">
+                        <input type="hidden" class="avatar-src" name="avatar_src">
+                        <input type="hidden" class="avatar-data" name="avatar_data">
+                        <input type="hidden" class="dataId" name="dataId">
+                        @*<label for="avatarInput">Select an Image</label>
+                            <input type="file" class="avatar-input" id="avatarInput" name="avatar_file">*@
+                    </div>
+
+                    <!-- Crop and preview -->
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="img-container">
+                                <img id="image" src="" alt="Picture" height="500" width="500">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-9 docs-buttons">
+                            <!-- <h3 class="page-header">Toolbar:</h3> -->
+
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" data-method="zoom" data-option="0.1" title="Zoom In">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;zoom&quot;, 0.1)">
+                                        <span class="fa fa-search-plus"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="zoom" data-option="-0.1" title="Zoom Out">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;zoom&quot;, -0.1)">
+                                        <span class="fa fa-search-minus"></span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" data-method="move" data-option="-10" data-second-option="0" title="Move Left">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, -10, 0)">
+                                        <span class="fa fa-arrow-left"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="move" data-option="10" data-second-option="0" title="Move Right">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, 10, 0)">
+                                        <span class="fa fa-arrow-right"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="-10" title="Move Up">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, 0, -10)">
+                                        <span class="fa fa-arrow-up"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="10" title="Move Down">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, 0, 10)">
+                                        <span class="fa fa-arrow-down"></span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" data-method="rotate" data-option="-45" title="Rotate Left">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;rotate&quot;, -45)">
+                                        <span class="fa fa-rotate-left"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="rotate" data-option="45" title="Rotate Right">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;rotate&quot;, 45)">
+                                        <span class="fa fa-rotate-right"></span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" data-method="scaleX" data-option="-1" title="Flip Horizontal">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;scaleX&quot;, -1)">
+                                        <span class="fa fa-arrows-h"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="scaleY" data-option="-1" title="Flip Vertical">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;scaleY&quot;-1)">
+                                        <span class="fa fa-arrows-v"></span>
+                                    </span>
+                                </button>
+                            </div>
+
+
+
+
+
+                            <div class="btn-group btn-group-crop">
+                                <button type="button" class="btn btn-primary" data-method="getCroppedCanvas">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;getCroppedCanvas&quot;)">
+                                        Done
+                                    </span>
+                                </button>
+
+                            </div>
+
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div> -->
+            @*</form>*@
+        </div>
+    </div>
+</div>
+
+
+<script src="~/assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+<link href="~/assets/css/wickedpicker.css" rel="stylesheet" />
+<script src="~/assets/js/datepicker/wickedpicker.js"></script>
+<script src="~/assets/js/ckeditor/adapters/jquery.js"></script>
+<script src="~/assets/js/ckeditor/ckeditor.js"></script>
+<style>
+    .wickedpicker__controls {
+        line-height: inherit;
+        margin: 0;
+        padding: 10px 0;
+    }
+</style>
+
+    <script>
+
+        function SetFormView() {
+            if ($('#hdShow').val() == 'View') {
+                $(".form-control").attr("disabled", "disabled");
+                $(".btn").hide(true);
+                $(".flubtn").attr("disabled", "disabled");
+                $(document).find("input[type=checkbox]").attr("disabled", "disabled");
+                $(document).find('.enablebtn>a').removeAttr("style");
+                $('.disabled').click(function (e) {
+                    e.preventDefault();
+                })
+            }
+            else {
+                $(".btn").removeAttr("style");
+                $(".form-control").attr("disabled", false);
+                $(".btn").attr("disabled", false);
+                $(document).find('#permission').hide(true);
+            }
+        }
+
+        $(document).ready(function () {
+
+            var type = $('#hdType').val();
+            var id = $('#EventID').val();
+            var subFeatureid = "0";
+
+            BindPictureList(type, id, subFeatureid);
+            SetFormView();
+
+            $('a[data-toggle="tab"]').on('show.bs.tab', function (e)
+            {
+                localStorage.setItem('activeTab', $(e.target).attr('href'));
+            });
+
+            var activeTab = localStorage.getItem('activeTab');
+
+            if ('@TempData["SaveSuccess"]' == 'Success' && parseInt(@Model.EventID) > 0)
+            {
+                if (confirm("Event details is accessible to everyone. Would you like to restrict acess to this details ?"))
+                {
+                    $('#divpermissions').load("/Events/Event/Permissions?EventId=@Model.EventID");
+                    $('#myTab a[href="#Permissions"]').tab('show');
+                }
+            }
+            else {
+                if (activeTab) {
+                if (activeTab == "#SubjectReports") {
+                    $('#divsubjectreports').load("/Subject/Subject/ALLSubjectIncidentsList?EventId=@Model.EventID");
+                }
+                if (activeTab == "#EmployeeReports") {
+                    $('#divemployeereports').load("/Employee/Employees/ALLEmployeeIncidentsList?EventId=@Model.EventID");
+                }
+                if (activeTab == "#GeneralReports") {
+                    $('#divgeneralreports').load("/GeneralReports/GeneralReports/ALLGeneralReportsList?EventId=@Model.EventID");
+                }
+                if (activeTab == "#Permissions") {
+                    $('#divpermissions').load("/Events/Event/Permissions?EventId=@Model.EventID");
+                }
+                if (activeTab == "javascript:;") {
+                    activeTab = "#Details";
+                }
+                $('#myTab a[href="' + activeTab + '"]').tab('show');
+            }
+            }
+
+            // $('#divsubjectreports').load("/Subject/Subject/ALLSubjectIncidentsList?EventId=@Model.EventID");
+
+            var tabletrlength = $('#PicturesTable>tbody tr').length;
+            if (tabletrlength == 0) {
+                $('#AddRowTable').css('display', 'block');
+                $('#PicturesTable .remotr').css('display', 'none');
+            }
+            else {
+
+                $('#AddRowTable').css('display', 'none');
+                $('#PicturesTable .remotr').css('display', 'block');
+            }
+            var tabletrlength = $('#ReviewTable>tbody tr').length;
+            if (tabletrlength == 0) {
+                $('#AddReviewTable').css('display', 'block');
+                $('#ReviewTable .removeAction').css('display', 'none');
+                $('#ReviewTable .removeAction').css('display', 'none');
+            }
+            else {
+
+                $('#AddReviewTable').css('display', 'none');
+                $('#ReviewTable .removeAction').css('display', 'block');
+
+            }
+
+            //$('#Dispatcher_Area').editableSelect({ effects: 'default' });
+            //$('#Dispatcher_Priority').editableSelect({ effects: 'default' });
+            //$('#Dispatcher_Units').editableSelect({ effects: 'default' });
+
+            $('#EventDate').datepicker({ autoclose: true });
+            $('#EventTime').timepicker({ autoclose: true });
+            $('#EventTime').val($('#OldEventTime').val());
+            $('#EndTime').timepicker({ autoclose: true });
+            $('#EndTime').val($('#OldEndTime').val());
+
+            $('#EventReviewModel_ReviewFrom').wickedpicker();
+            $('#Dispatcher_ScheduledTime').wickedpicker();
+            $('#EventReviewModel_ReviewTo').wickedpicker();
+            $('#Dispatcher_Units').attr('disabled', 'disabled');
+            $('#ddlShortDescription').change(function () {
+                var selectedValue = $('#ddlShortDescription').val();
+                $.ajax({
+                    url: '@Url.Content("~/Events/Event/NatureCodesLoadByID")',
+                    data: JSON.stringify({ 'ID': selectedValue }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        var json = JSON.parse(data);
+                        $('#NatureDesc').val(json.Description + "\n");
+                        if (json.DefaultAction != "") {
+                            $('#DutyDesc').val(json.DefaultAction);
+                        }
+                        if (json.DefaultCamera != "") {
+                            $('#Camera').val(json.DefaultCamera);
+                        }
+                    }
+                });
+
+                //var newVlue = selectedValue.split('|');
+
+                //var NatureValue = $(this).val();
+
+                //if (NatureValue.indexOf(newVlue[1]) > -1) {
+
+                //}
+                //else {
+                //    if (newVlue != '' && newVlue != 'undefined' && NatureValue != newVlue[1]) {
+                //        $('#NatureDesc').append(newVlue[1] + "\n");
+                //    }
+                //}
+            });
+
+            $('.checkAlert').on('click', function () {
+                showAlert();
+            });
+        });
+
+        function showAlert() {
+            // alert();
+            $('#msgDiv').html("<div class='alert alert-danger'>Please Event Details First</div>");
+        }
+
+        $('#PictureSubmit').click(function () {
+            var totaldata = $('#PicturesTable>tbody tr').length;
+
+            $('#PicturesTable>tbody ').append("<input type='hidden' value=" + totaldata + " name='TotalCount' id='Picture' />");
+            $('#PictureFormSubmit').submit();
+        });
+
+        /* -- Event Delete/Edit Permission Check By User-- */
+        function EventPermissionCheck(EventID, per, caller) {
+            $.ajax({
+                url: '@Url.Content("~/Events/Event/EventPermissionCheck")',
+                data: JSON.stringify({ 'EventID': EventID, }),
+                type: 'POST',
+                dataType: 'json',
+                async: false,
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        var jsonData = JSON.parse(data);
+                        if (per == 1) {
+                            if (jsonData.EventEdit == true) {
+                                return false;
+                            }
+                            else {
+                                alert('You dont have permission to Edit');
+                                $('#' + EventID + 'Edit').removeAttr("href");
+                            }
+                        }
+                        else if (per == 2)
+                        {
+                            debugger
+                            if (jsonData.EventDelete == true) {
+                                DeleteEvent(EventID, caller);
+                            }
+                            else {
+                                alert('You dont have permission to Delete');
+                                return false;
+                            }
+                        }
+                    }
+                },
+                error: function (data) {
+                    console.log('error');
+                    console.log(data.responseText);
+
+                }
+            });
+        }
+
+        function DeleteEvent(id, caller) {
+            @*if (DeleteConfirm('@ViewBag.Action'))
+            {*@
+            $.ajax({
+                url: '@Url.Content("~/Events/Event/DeleteEvent")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#ListTable>tbody tr').length == 1) {
+                            $('#ListTable>tbody tr').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Event has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Event has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+
+
+                    } else {
+
+                    }
+
+                }
+            });
+            //}
+        }
+        function DeletePicture(id, caller) {
+            if (DeleteConfirm('@ViewBag.Action')) {
+                $.ajax({
+                    url: '@Url.Content("~/Events/Event/DeletePicture")',
+                    data: JSON.stringify({ 'Id': id }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data == "success") {
+                            $('#PictureModel_Description').val('');
+                            CKEDITOR.instances['PictureModel_Details'].setData('')
+                            if ($('#PicturesTable>tbody tr').length == 1) {
+                                $('#PicturesTable>tbody tr').remove();
+                                $('#msgDiv').html('<div class="alert alert-success">Pictures has been deleted Suceesfully.</div>');
+                                window.scrollTo(0, 0);
+                            }
+                            else {
+                                $(caller).parents('tr:first').remove();
+                                $('#msgDiv').html('<div class="alert alert-success">Pictures has been deleted Suceesfully.</div>');
+                                window.scrollTo(0, 0);
+                            }
+
+
+                        } else {
+
+                        }
+
+                    }
+                });
+            }
+        }
+        function DeleteReview(id, caller) {
+            if (DeleteConfirm('@ViewBag.Action')) {
+                $.ajax({
+                    url: '@Url.Content("~/Events/Event/DeleteReview")',
+                    data: JSON.stringify({ 'Id': id }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data == "success") {
+                            $('#PictureModel_Description').val('');
+                            CKEDITOR.instances['EventReviewModel_Description'].setData('')
+                            if ($('#ReviewTable>tbody tr').length == 1) {
+                                $('#ReviewTable>tbody tr').remove();
+                                $('#msgDiv').html('<div class="alert alert-success">Review has been deleted Suceesfully.</div>');
+                                window.scrollTo(0, 0);
+                            }
+                            else {
+                                $(caller).parents('tr:first').remove();
+                                $('#msgDiv').html('<div class="alert alert-success">Review has been deleted Suceesfully.</div>');
+                                window.scrollTo(0, 0);
+                            }
+
+
+                        } else {
+
+                        }
+
+                    }
+                });
+            }
+        }
+        if ('@Model.EventID' > 0) {
+
+            $('#FromCode').val('@Model.FromCode');
+            $('#ddlShortDescription').val('@Model.NatureCode');
+            $('#Location').val('@Model.Location');
+
+
+        }
+
+        var count = 0;
+
+        $('#AddRowTable').click(function () {
+            var description = $('#PictureModel_Description').val();
+            $('#PicturesTable>tbody').append("<tr><td><input type='text' readonly='readonly' id='EventDescriptionList_" + count + "__DescriptionEvent' name='EventDescriptionList[" + count + "].DescriptionEvent' Value='" + description + "' style='border:none;'></td></tr>");
+            count = count + 1;
+            // $('#PictureModel_Description').val('');
+        });
+
+
+        var sum = 0;
+        $('#AddReviewTable').click(function () {
+            var Number = $('#EventReviewModel_ItemNumber').val();
+            var Replaced = $('#EventReviewModel_Replaced').val();
+            var Reason = $('#EventReviewModel_Reason').val();
+            var ReviewFrom = $('#EventReviewModel_ReviewFrom').val();
+
+            var ReviewTo = $('#EventReviewModel_ReviewTo').val();
+
+            $('#ReviewTable>tbody').append("<tr><td><input type='text' readonly='readonly' id='EventDescriptionList1_" + sum + "__ItemNumber' name='EventDescriptionList1[" + sum + "].ItemNumber' Value='" + Number + "' style='border:none;' ></td><td><input type='text' readonly='readonly'  id='EventDescriptionList1_" + sum + "__Replaced' name='EventDescriptionList1[" + sum + "].Replaced'  style='border:none;' Value='" + Replaced + "'></td><td><input type='text' readonly='readonly' id='EventDescriptionList1_" + sum + "__Reason' name='EventDescriptionList1[" + sum + "].Reason' style='border:none;' Value='" + Reason + "' ></td><td><input type='text' readonly='readonly' id='EventDescriptionList1_" + sum + "__ReviewFrom' name='EventDescriptionList1[" + sum + "].ReviewFrom' Value='" + ReviewFrom + "' style='border:none;'></td><td><input type='text' readonly='readonly' id='EventDescriptionList1_" + sum + "__ReviewTo' name='EventDescriptionList1[" + sum + "].ReviewTo' Value='" + ReviewTo + "' style='border:none;'></td></tr>");
+            sum = sum + 1;
+
+        });
+        $('#ReviewSubmit').click(function () {
+            var totaldata1 = $('#ReviewTable>tbody tr').length;
+
+            $('#ReviewTable>tbody ').append("<input type='hidden' value='" + totaldata1 + "' name='TotalReviewCount' id='Review' />");
+            $('#ReviewFormSubmit').submit();
+        });
+        function bindPicture(Id, Description, Details) {
+
+
+            $('#PictureModel_EventMediaID').val(Id);
+
+            $('#PictureModel_Description').val(Description);
+            CKEDITOR.instances['PictureModel_Details'].setData(Details)
+            //$('#PictureModel_Details').val(Details);
+        }
+
+        $('input:checkbox').change(function () {
+            if ($(this).is(':checked'))
+                $(this).addClass('selected');
+            else
+                $(this).removeClass('selected');
+
+        });
+        $('input:radio').click(function () {
+            $('input:radio:checked').addClass('active');
+            $('input:radio:not(:checked)').removeClass('active');
+
+        });
+
+        //print--
+        $('#PrintSubmit').click(function () {
+            var EventID = $('#EventID').val();
+            var values = [];
+            $('.selected').each(function () {
+                values.push($(this).val());
+
+            });
+            var datacolumn = values.join(',');
+            var sortValue = $('input[type=radio][name=Radio1].active').val();
+
+
+            $.ajax({
+                url: '@Url.Content("~/Events/Event/SelectColumnFromEventLog")',
+                data: JSON.stringify({ 'datacolumn': datacolumn, 'sortValue': sortValue, 'EventID': EventID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+
+                    var Column = datacolumn.split(',');
+
+                    var sOut = '<table id="dynamicTable" style="border-collapse:collapse"><thead><tr class="head-bg">';
+
+                    sOut += '<th class="EventDate td-border">EventDate</th><th class="EventNumber td-border">EventNumber</th><th class="AttachedEvent td-border">AttachedEvent</th><th class="EventTime td-border">EventTime</th><th class="EndTime td-border">EndTime</th><th class="FromCode td-border">FromCode</th><th class="NatureDesc td-border">NatureDesc</th><th class="DutyDesc td-border">DutyDesc</th><th class="Camera td-border">Camera</th><th class="KeyEvent td-border">KeyEvent</th><th class="UserID td-border">UserID</th><th class="Location">Location</th><th class="Site td-border">Site</th>';
+
+                    sOut += '</tr><thead><tbody><tr>';
+
+                    for (var i = 0; i < data.length; i += 1) {
+
+                        console.log(data[i]);
+                        sOut += '<td class="EventDate td-border">' + data[i]["EventDate"] + '</td><td class="EventNumber td-border">' + data[i]["EventNumber"] + '</td><td class="AttachedEvent td-border">' + data[i]["AttachedEvent"] + '</td><td class="EventTime td-border">' + data[i]["EventTime"] + '</td><td class="EndTime td-border">' + data[i]["EndTime td-border"] + '</td><td class="FromCode td-border">' + data[i]["FromCode"] + '</td><td class="NatureDesc td-border">' + data[i]["NatureDesc"] + '</td><td class="DutyDesc td-border">' + data[i]["DutyDesc"] + '</td><td class="Camera td-border">' + data[i]["Camera"] + '</td><td class="KeyEvent td-border">' + data[i]["KeyEvent"] + '</td><td class="UserID td-border">' + data[i]["UserID"] + '</td><td class="Location td-border">' + data[i]["Location"] + '</td><td class="Site td-border">' + data[i]["Site"] + '</td>';
+                    }
+                    sOut += '</tr><tbody></table>';
+
+                    $('#Printdiv').html(sOut);
+
+                    var data = $('#Printdiv .EventDate').html();
+                    if (datacolumn.indexOf(data) > -1) {
+                        $('#Printdiv .EventDate').show();
+                    }
+                    else {
+                        $('#Printdiv .EventDate').hide();
+                    }
+                    var data1 = $('#Printdiv .EventNumber').html();
+                    if (datacolumn.indexOf(data1) > -1) {
+                        $('#Printdiv .EventNumber').show();
+                    }
+                    else {
+                        $('#Printdiv .EventNumber').hide();
+                    }
+                    var data2 = $('#Printdiv .AttachedEvent').html();
+                    if (datacolumn.indexOf(data2) > -1) {
+                        $('#Printdiv .AttachedEvent').show();
+                    }
+                    else {
+                        $('#Printdiv .AttachedEvent').hide();
+                    }
+                    var data3 = $('#Printdiv .EventTime').html();
+                    if (datacolumn.indexOf(data3) > -1) {
+                        $('#Printdiv .EventTime').show();
+                    }
+                    else {
+                        $('#Printdiv .EventTime').hide();
+                    }
+                    var data4 = $('#Printdiv .EndTime').html();
+                    if (datacolumn.indexOf(data4) > -1) {
+                        $('#Printdiv .EndTime').show();
+                    }
+                    else {
+                        $('#Printdiv .EndTime').hide();
+                    }
+                    var data5 = $('#Printdiv .FromCode').html();
+                    if (datacolumn.indexOf(data5) > -1) {
+                        $('#Printdiv .FromCode').show();
+                    }
+                    else {
+                        $('#Printdiv .FromCode').hide();
+                    }
+                    var data6 = $('#Printdiv .NatureDesc').html();
+                    if (datacolumn.indexOf(data6) > -1) {
+                        $('#Printdiv .NatureDesc').show();
+                    }
+                    else {
+                        $('#Printdiv .NatureDesc').hide();
+                    }
+                    var data7 = $('#Printdiv .DutyDesc').html();
+                    if (datacolumn.indexOf(data7) > -1) {
+                        $('#Printdiv .DutyDesc').show();
+                    }
+                    else {
+                        $('#Printdiv .DutyDesc').hide();
+                    }
+                    var data8 = $('#Printdiv .Camera').html();
+                    if (datacolumn.indexOf(data8) > -1) {
+                        $('#Printdiv .Camera').show();
+                    }
+                    else {
+                        $('#Printdiv .Camera').hide();
+                    }
+                    var data9 = $('#Printdiv .KeyEvent').html();
+                    if (datacolumn.indexOf(data9) > -1) {
+                        $('#Printdiv .KeyEvent').show();
+                    }
+                    else {
+                        $('#Printdiv .KeyEvent').hide();
+                    }
+                    var data10 = $('#Printdiv .UserID').html();
+                    if (datacolumn.indexOf(data10) > -1) {
+                        $('#Printdiv .UserID').show();
+                    }
+                    else {
+                        $('#Printdiv .UserID').hide();
+                    }
+                    var data11 = $('#Printdiv .Location').html();
+                    if (datacolumn.indexOf(data11) > -1) {
+                        $('#Printdiv .Location').show();
+                    }
+                    else {
+                        $('#Printdiv .Location').hide();
+                    }
+                    var data12 = $('#Printdiv .Site').html();
+                    if (datacolumn.indexOf(data12) > -1) {
+                        $('#Printdiv .Site').show();
+                    }
+                    else {
+                        $('#Printdiv .Site').hide();
+                    }
+                    var divContents = $('#Printdiv').html();
+
+                    var printWindow = window.open('', '_blank', 'width=350,height=150,location=no,left=200px');
+                    printWindow.document.open();
+                    printWindow.document.write('<html><head><title></title>');
+                    printWindow.document.write('</head><body >');
+                    printWindow.document.write('<style>.head-bg{background:#f2f2f2}.td-border{outline:1px solid #ccc;padding:5px}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+                    printWindow.document.write(divContents);
+                    printWindow.document.write('</body></html>');
+                    printWindow.document.close();
+                    printWindow.print();
+
+
+                    printWindow.close();
+
+
+
+
+                }
+            });
+
+        });
+
+        //Preview
+        $('#PreviewSubmit').click(function () {
+            var EventID = $('#EventID').val();
+            var values = [];
+            $('.selected').each(function () {
+                values.push($(this).val());
+
+            });
+            var sortValue = $('input[type=radio][name=Radio1].active').val();
+
+            var datacolumn = values.join(',');
+            $.ajax({
+                url: '@Url.Content("~/Events/Event/SelectColumnFromEventLog")',
+                data: JSON.stringify({ 'datacolumn': datacolumn, 'sortValue': sortValue, 'EventID': EventID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+
+
+
+                    var sOut = '<table id="dynamicTable border-merge" style="border-collapse:collapse"><thead><tr class="head-bg">';
+
+                    sOut += '<th class="EventDate td-border">EventDate</th><th class="EventNumber td-border">EventNumber</th><th class="AttachedEvent td-border">AttachedEvent</th><th class="EventTime td-border">EventTime</th><th class="EndTime td-border">EndTime</th><th class="FromCode td-border">FromCode</th><th class="NatureDesc td-border">NatureDesc</th><th class="DutyDesc td-border">DutyDesc</th><th class="Camera td-border">Camera</th><th class="KeyEvent td-border">KeyEvent</th><th class="UserID td-border">UserID</th><th class="Location td-border">Location</th><th class="Site">Site</th>';
+
+                    sOut += '</tr><thead><tbody><tr>';
+
+                    for (var i = 0; i < data.length; i += 1) {
+
+                        console.log(data[i]);
+                        sOut += '<td class="EventDate td-border">' + data[i]["EventDate"] + '</td><td class="EventNumber td-border">' + data[i]["EventNumber"] + '</td><td class="AttachedEvent td-border">' + data[i]["AttachedEvent"] + '</td><td class="EventTime td-border">' + data[i]["EventTime"] + '</td><td class="EndTime td-border">' + data[i]["EndTime"] + '</td><td class="FromCode td-border">' + data[i]["FromCode"] + '</td><td class="NatureDesc td-border">' + data[i]["NatureDesc"] + '</td><td class="DutyDesc td-border">' + data[i]["DutyDesc"] + '</td><td class="Camera td-border">' + data[i]["Camera"] + '</td><td class="KeyEvent td-border">' + data[i]["KeyEvent"] + '</td><td class="UserID td-border">' + data[i]["UserID"] + '</td><td class="Location td-border">' + data[i]["Location"] + '</td><td class="Site td-border">' + data[i]["Site"] + '</td>';
+                    }
+                    sOut += '</tr><tbody></table>';
+
+                    $('#Printdiv').html(sOut);
+
+                    var data = $('#Printdiv .EventDate').html();
+                    if (datacolumn.indexOf(data) > -1) {
+                        $('#Printdiv .EventDate').show();
+                    }
+                    else {
+                        $('#Printdiv .EventDate').hide();
+                    }
+                    var data1 = $('#Printdiv .EventNumber').html();
+                    if (datacolumn.indexOf(data1) > -1) {
+                        $('#Printdiv .EventNumber').show();
+                    }
+                    else {
+                        $('#Printdiv .EventNumber').hide();
+                    }
+                    var data2 = $('#Printdiv .AttachedEvent').html();
+                    if (datacolumn.indexOf(data2) > -1) {
+                        $('#Printdiv .AttachedEvent').show();
+                    }
+                    else {
+                        $('#Printdiv .AttachedEvent').hide();
+                    }
+                    var data3 = $('#Printdiv .EventTime').html();
+                    if (datacolumn.indexOf(data3) > -1) {
+                        $('#Printdiv .EventTime').show();
+                    }
+                    else {
+                        $('#Printdiv .EventTime').hide();
+                    }
+                    var data4 = $('#Printdiv .EndTime').html();
+                    if (datacolumn.indexOf(data4) > -1) {
+                        $('#Printdiv .EndTime').show();
+                    }
+                    else {
+                        $('#Printdiv .EndTime').hide();
+                    }
+                    var data5 = $('#Printdiv .FromCode').html();
+                    if (datacolumn.indexOf(data5) > -1) {
+                        $('#Printdiv .FromCode').show();
+                    }
+                    else {
+                        $('#Printdiv .FromCode').hide();
+                    }
+                    var data6 = $('#Printdiv .NatureDesc').html();
+                    if (datacolumn.indexOf(data6) > -1) {
+                        $('#Printdiv .NatureDesc').show();
+                    }
+                    else {
+                        $('#Printdiv .NatureDesc').hide();
+                    }
+                    var data7 = $('#Printdiv .DutyDesc').html();
+                    if (datacolumn.indexOf(data7) > -1) {
+                        $('#Printdiv .DutyDesc').show();
+                    }
+                    else {
+                        $('#Printdiv .DutyDesc').hide();
+                    }
+                    var data8 = $('#Printdiv .Camera').html();
+                    if (datacolumn.indexOf(data8) > -1) {
+                        $('#Printdiv .Camera').show();
+                    }
+                    else {
+                        $('#Printdiv .Camera').hide();
+                    }
+                    var data9 = $('#Printdiv .KeyEvent').html();
+                    if (datacolumn.indexOf(data9) > -1) {
+                        $('#Printdiv .KeyEvent').show();
+                    }
+                    else {
+                        $('#Printdiv .KeyEvent').hide();
+                    }
+                    var data10 = $('#Printdiv .UserID').html();
+                    if (datacolumn.indexOf(data10) > -1) {
+                        $('#Printdiv .UserID').show();
+                    }
+                    else {
+                        $('#Printdiv .UserID').hide();
+                    }
+                    var data11 = $('#Printdiv .Location').html();
+                    if (datacolumn.indexOf(data11) > -1) {
+                        $('#Printdiv .Location').show();
+                    }
+                    else {
+                        $('#Printdiv .Location').hide();
+                    }
+                    var data12 = $('#Printdiv .Site').html();
+                    if (datacolumn.indexOf(data12) > -1) {
+                        $('#Printdiv .Site').show();
+                    }
+                    else {
+                        $('#Printdiv .Site').hide();
+                    }
+
+
+
+                    //$('#Printdiv').html(sOut;)
+                    var divContents = $('#Printdiv').html();
+
+                    var printWindow = window.open('', '', 'width=1000,height=1000,location=no,left=200px');
+                    printWindow.document.open();
+                    printWindow.document.write('<html><head><title></title>');
+                    printWindow.document.write('</head><body >');
+                    printWindow.document.write('<style>.head-bg{background:#f2f2f2}.border-merge{border-collapse:collapse;}.td-border{outline:1px solid #ccc;padding:5px}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+                    printWindow.document.write(divContents);
+                    printWindow.document.write('</body></html>');
+
+                    //printWindow.preview({render:render});
+                    //printWindow.document.close();
+
+                }
+            });
+
+        });
+
+        $('#PdfSubmit').click(function () {
+
+            var values = [];
+            $('.selected').each(function () {
+                values.push($(this).val());
+
+            });
+            var EventID = $('#EventID').val();
+            var sortValue = $('input[type=radio][name=Radio1].active').val();
+
+            var datacolumn = values.join(',');
+            $.ajax({
+                url: '@Url.Content("~/Events/Event/SelectColumnFromEventLog")',
+                data: JSON.stringify({ 'datacolumn': datacolumn, 'sortValue': sortValue, 'EventID': EventID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    var sOut = '<table id="dynamicTable"><thead><tr>';
+
+                    sOut += '<th class="EventDate">EventDate</th><th class="EventNumber">EventNumber</th><th class="AttachedEvent">AttachedEvent</th><th class="EventTime">EventTime</th><th class="EndTime">EndTime</th><th class="FromCode">FromCode</th><th class="NatureDesc">NatureDesc</th><th class="DutyDesc">DutyDesc</th><th class="Camera">Camera</th><th class="KeyEvent">KeyEvent</th><th class="UserID">UserID</th><th class="Location">Location</th><th class="Site">Site</th>';
+
+                    sOut += '</tr><thead><tbody><tr>';
+
+                    for (var i = 0; i < data.length; i += 1) {
+
+                        console.log(data[i]);
+                        sOut += '<td class="EventDate">' + data[i]["EventDate"] + '</td><td class="EventNumber">' + data[i]["EventNumber"] + '</td><td class="AttachedEvent">' + data[i]["AttachedEvent"] + '</td><td class="EventTime">' + data[i]["EventTime"] + '</td><td class="EndTime">' + data[i]["EndTime"] + '</td><td class="FromCode">' + data[i]["FromCode"] + '</td><td class="NatureDesc">' + data[i]["NatureDesc"] + '</td><td class="DutyDesc">' + data[i]["DutyDesc"] + '</td><td class="Camera">' + data[i]["Camera"] + '</td><td class="KeyEvent">' + data[i]["KeyEvent"] + '</td><td class="UserID">' + data[i]["UserID"] + '</td><td class="Location">' + data[i]["Location"] + '</td><td class="Site">' + data[i]["Site"] + '</td>';
+                    }
+                    sOut += '</tr><tbody></table>';
+
+                    $('#Printdiv').html(sOut);
+
+                    var data = $('#Printdiv .EventDate').html();
+                    if (datacolumn.indexOf(data) > -1) {
+                        $('#Printdiv .EventDate').show();
+                    }
+                    else {
+                        $('#Printdiv .EventDate').remove();
+                    }
+                    var data1 = $('#Printdiv .EventNumber').html();
+                    if (datacolumn.indexOf(data1) > -1) {
+                        $('#Printdiv .EventNumber').show();
+                    }
+                    else {
+                        $('#Printdiv .EventNumber').remove();
+                    }
+                    var data2 = $('#Printdiv .AttachedEvent').html();
+                    if (datacolumn.indexOf(data2) > -1) {
+                        $('#Printdiv .AttachedEvent').show();
+                    }
+                    else {
+                        $('#Printdiv .AttachedEvent').remove();
+                    }
+                    var data3 = $('#Printdiv .EventTime').html();
+                    if (datacolumn.indexOf(data3) > -1) {
+                        $('#Printdiv .EventTime').show();
+                    }
+                    else {
+                        $('#Printdiv .EventTime').remove();
+                    }
+                    var data4 = $('#Printdiv .EndTime').html();
+                    if (datacolumn.indexOf(data4) > -1) {
+                        $('#Printdiv .EndTime').show();
+                    }
+                    else {
+                        $('#Printdiv .EndTime').remove();
+                    }
+                    var data5 = $('#Printdiv .FromCode').html();
+                    if (datacolumn.indexOf(data5) > -1) {
+                        $('#Printdiv .FromCode').show();
+                    }
+                    else {
+                        $('#Printdiv .FromCode').remove();
+                    }
+                    var data6 = $('#Printdiv .NatureDesc').html();
+                    if (datacolumn.indexOf(data6) > -1) {
+                        $('#Printdiv .NatureDesc').show();
+                    }
+                    else {
+                        $('#Printdiv .NatureDesc').remove();
+                    }
+                    var data7 = $('#Printdiv .DutyDesc').html();
+                    if (datacolumn.indexOf(data7) > -1) {
+                        $('#Printdiv .DutyDesc').show();
+                    }
+                    else {
+                        $('#Printdiv .DutyDesc').remove();
+                    }
+                    var data8 = $('#Printdiv .Camera').html();
+                    if (datacolumn.indexOf(data8) > -1) {
+                        $('#Printdiv .Camera').show();
+                    }
+                    else {
+                        $('#Printdiv .Camera').remove();
+                    }
+                    var data9 = $('#Printdiv .KeyEvent').html();
+                    if (datacolumn.indexOf(data9) > -1) {
+                        $('#Printdiv .KeyEvent').show();
+                    }
+                    else {
+                        $('#Printdiv .KeyEvent').remove();
+                    }
+                    var data10 = $('#Printdiv .UserID').html();
+                    if (datacolumn.indexOf(data10) > -1) {
+                        $('#Printdiv .UserID').show();
+                    }
+                    else {
+                        $('#Printdiv .UserID').remove();
+                    }
+                    var data11 = $('#Printdiv .Location').html();
+                    if (datacolumn.indexOf(data11) > -1) {
+                        $('#Printdiv .Location').show();
+                    }
+                    else {
+                        $('#Printdiv .Location').remove();
+                    }
+                    var data12 = $('#Printdiv .Site').html();
+                    if (datacolumn.indexOf(data12) > -1) {
+                        $('#Printdiv .Site').show();
+                    }
+                    else {
+                        $('#Printdiv .Site').remove();
+                    }
+
+                    var htmldata = $('#Printdiv').html();
+
+                    $('#dynamicTable').html(htmldata);
+
+                    var data = [], fontSize = 12, height = 0, doc;
+                    doc = new jsPDF('p', 'pt', 'a4', true);
+                    doc.setFont("times", "normal");
+                    doc.setFontSize(fontSize);
+
+                    data = [];
+                    data = doc.tableToJson('dynamicTable');
+                    height = doc.drawTable(data, {
+                        xstart: 10,
+                        ystart: 10,
+                        tablestart: 40,
+                        marginleft: 10,
+                        xOffset: 10,
+                        yOffset: 15
+                    });
+                    doc.save("Event.pdf");
+
+                }
+            });
+        });
+        $('#SendEmail').click(function () {
+            var EventID = $('#EventID').val();
+            var values = [];
+            $('.selected').each(function () {
+                values.push($(this).val());
+
+            });
+            var sortValue = $('input[type=radio][name=Radio1].active').val();
+
+            var datacolumn = values.join(',');
+            $.ajax({
+                url: '@Url.Content("~/Events/Event/SelectColumnFromEventLog")',
+                data: JSON.stringify({ 'datacolumn': datacolumn, 'sortValue': sortValue, 'EventID': EventID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+
+                    var sOut = '<table id="dynamicTable" style="text-align: center;border-collapse:collapse"><thead><tr>';
+
+                    sOut += '<th class="EventDate">EventDate</th><th class="EventNumber">EventNumber</th><th class="AttachedEvent">AttachedEvent</th><th class="EventTime">EventTime</th><th class="EndTime">EndTime</th><th class="FromCode">FromCode</th><th class="NatureDesc">NatureDesc</th><th class="DutyDesc">DutyDesc</th><th class="Camera">Camera</th><th class="KeyEvent">KeyEvent</th><th class="UserID">UserID</th><th class="Location">Location</th><th class="Site">Site</th>';
+
+                    sOut += '</tr><thead><tbody><tr>';
+
+                    for (var i = 0; i < data.length; i += 1) {
+
+                        console.log(data[i]);
+                        sOut += '<td class="EventDate">' + data[i]["EventDate"] + '</td><td class="EventNumber">' + data[i]["EventNumber"] + '</td><td class="AttachedEvent">' + data[i]["AttachedEvent"] + '</td><td class="EventTime">' + data[i]["EventTime"] + '</td><td class="EndTime">' + data[i]["EndTime"] + '</td><td class="FromCode">' + data[i]["FromCode"] + '</td><td class="NatureDesc">' + data[i]["NatureDesc"] + '</td><td class="DutyDesc">' + data[i]["DutyDesc"] + '</td><td class="Camera">' + data[i]["Camera"] + '</td><td class="KeyEvent">' + data[i]["KeyEvent"] + '</td><td class="UserID">' + data[i]["UserID"] + '</td><td class="Location">' + data[i]["Location"] + '</td><td class="Site">' + data[i]["Site"] + '</td>';
+                    }
+                    sOut += '</tr><tbody></table>';
+
+                    $('#Printdiv').html(sOut);
+
+                    var data = $('#Printdiv .EventDate').html();
+                    if (datacolumn.indexOf(data) > -1) {
+                        $('#Printdiv .EventDate').show();
+                    }
+                    else {
+                        $('#Printdiv .EventDate').hide();
+                    }
+                    var data1 = $('#Printdiv .EventNumber').html();
+                    if (datacolumn.indexOf(data1) > -1) {
+                        $('#Printdiv .EventNumber').show();
+                    }
+                    else {
+                        $('#Printdiv .EventNumber').hide();
+                    }
+                    var data2 = $('#Printdiv .AttachedEvent').html();
+                    if (datacolumn.indexOf(data2) > -1) {
+                        $('#Printdiv .AttachedEvent').show();
+                    }
+                    else {
+                        $('#Printdiv .AttachedEvent').hide();
+                    }
+                    var data3 = $('#Printdiv .EventTime').html();
+                    if (datacolumn.indexOf(data3) > -1) {
+                        $('#Printdiv .EventTime').show();
+                    }
+                    else {
+                        $('#Printdiv .EventTime').hide();
+                    }
+                    var data4 = $('#Printdiv .EndTime').html();
+                    if (datacolumn.indexOf(data4) > -1) {
+                        $('#Printdiv .EndTime').show();
+                    }
+                    else {
+                        $('#Printdiv .EndTime').hide();
+                    }
+                    var data5 = $('#Printdiv .FromCode').html();
+                    if (datacolumn.indexOf(data5) > -1) {
+                        $('#Printdiv .FromCode').show();
+                    }
+                    else {
+                        $('#Printdiv .FromCode').hide();
+                    }
+                    var data6 = $('#Printdiv .NatureDesc').html();
+                    if (datacolumn.indexOf(data6) > -1) {
+                        $('#Printdiv .NatureDesc').show();
+                    }
+                    else {
+                        $('#Printdiv .NatureDesc').hide();
+                    }
+                    var data7 = $('#Printdiv .DutyDesc').html();
+                    if (datacolumn.indexOf(data7) > -1) {
+                        $('#Printdiv .DutyDesc').show();
+                    }
+                    else {
+                        $('#Printdiv .DutyDesc').hide();
+                    }
+                    var data8 = $('#Printdiv .Camera').html();
+                    if (datacolumn.indexOf(data8) > -1) {
+                        $('#Printdiv .Camera').show();
+                    }
+                    else {
+                        $('#Printdiv .Camera').hide();
+                    }
+                    var data9 = $('#Printdiv .KeyEvent').html();
+                    if (datacolumn.indexOf(data9) > -1) {
+                        $('#Printdiv .KeyEvent').show();
+                    }
+                    else {
+                        $('#Printdiv .KeyEvent').hide();
+                    }
+                    var data10 = $('#Printdiv .UserID').html();
+                    if (datacolumn.indexOf(data10) > -1) {
+                        $('#Printdiv .UserID').show();
+                    }
+                    else {
+                        $('#Printdiv .UserID').hide();
+                    }
+                    var data11 = $('#Printdiv .Location').html();
+                    if (datacolumn.indexOf(data11) > -1) {
+                        $('#Printdiv .Location').show();
+                    }
+                    else {
+                        $('#Printdiv .Location').hide();
+                    }
+                    var data12 = $('#Printdiv .Site').html();
+                    if (datacolumn.indexOf(data12) > -1) {
+                        $('#Printdiv .Site').show();
+                    }
+                    else {
+                        $('#Printdiv .Site').hide();
+                    }
+
+                    var divContents = $('#Printdiv').html();
+                    $('#Attachment').html(divContents);
+
+                }
+            });
+
+
+        });
+        $('#SendEmailData').click(function () {
+            if ($("#To").val() == "") {
+                alert("Enter email address.");
+            }
+            else {
+                if (!ValidateEmail($("#To").val())) {
+                    alert("Invalid email address.");
+                }
+                else {
+                    html2canvas($("#Attachment"), {
+                        onrendered: function (canvas) {
+                            var myImage = canvas.toDataURL("img/png");
+
+                            var Subject = $('#Subject').val();
+                            var Desciption = $('#Desciption').val();
+                            var To = $('#To').val();
+                            var pic = myImage.replace(/^data:image\/png;base64,/, "")
+                            var Attachment = pic;
+                            $.ajax({
+                                url: '@Url.Content("~/Events/Event/SendEmailData")',
+                                data: JSON.stringify({ 'Attachment': Attachment, 'Subject': Subject, 'Desciption': Desciption, 'To': To }),
+                                type: 'POST',
+                                dataType: 'json',
+                                contentType: 'application/json',
+                                success: function (data) {
+                                    $('.close').click();
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        });
+
+        function bindReview(EventReviewID, ItemNumber, Reason, Replaced, ReviewFrom, ReviewTo, Description) {
+            $('#EventReviewModel_EventReviewID').val(EventReviewID);
+
+            $('#EventReviewModel_ItemNumber').val(ItemNumber);
+            $('#EventReviewModel_Reason').val(Reason);
+            $('#EventReviewModel_Replaced').val(Replaced);
+            $('#EventReviewModel_ReviewFrom').val(ReviewFrom);
+            $('#EventReviewModel_ReviewTo').val(ReviewTo);
+            CKEDITOR.instances['EventReviewModel_Description'].setData(Description)
+
+        }
+
+        function AttachEvent() {
+            var EventNumber = $('#EventNumber').val().length;
+            var AttachedEvent = $('#AtachEvent_AttachedEvent').val().length;
+
+
+            if (EventNumber == 0 || AttachedEvent == 0) {
+                alert("Please Fill Event Number.");
+            }
+            else {
+                var EventNumberData = $('#EventNumber').val();
+                var AttachedEventData = $('#AtachEvent_AttachedEvent').val();
+
+                var EventID = $('#EventID').val();
+                $.ajax({
+                    url: '@Url.Content("~/Events/Event/AttachEvent")',
+                    data: JSON.stringify({ 'EventNumberData': EventNumberData, 'AttachedEventData': AttachedEventData, 'EventID': EventID }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data == "success") {
+                            $('#msgDiv').html('<div class="alert alert-success">Dispatch Created Sucessfully.</div>');
+                        }
+                        else {
+                            $('#msgDiv').html('<div class="alert alert-danger">Error in Saving record.</div>');
+                        }
+                    }
+                });
+            }
+
+        }
+        function CreateDispatch() {
+
+            var DispatcherArealength = $('#Dispatcher_Area').val().length;
+            var DispatcherPrioritylength = $('#Dispatcher_Priority').val().length;
+
+            var DispatcherUnitslength = $('#Dispatcher_Units').val().length;
+
+            var EndTime = $('#EndTime').val().length;
+            var EventDate = $('#EventDate').val().length;
+            var EventTime = $('#EventTime').val().length;
+            if (DispatcherArealength == 0 || DispatcherUnitslength == 0) {
+                alert("you must select area or unit to make for this call");
+
+
+                return false;
+            }
+            else {
+                var DispatcherArea = $('#Dispatcher_Area').val();
+                var ScheduledTime = $('#Dispatcher_ScheduledTime').val();
+                var Priority = $('#Dispatcher_Priority').val();
+                var Units = $('#Dispatcher_Units').val();
+                var EndTime = $('#EndTime').val();
+                var EventID = $('#EventID').val();
+                var EventTime = $('#EventTime').val();
+                $.ajax({
+                    url: '@Url.Content("~/Events/Event/CreateDispatch")',
+                    data: JSON.stringify({ 'EventID': EventID, 'EndTime': EndTime, 'DispatcherArea': DispatcherArea, 'EventTime': EventTime, 'ScheduledTime': ScheduledTime, 'Priority': Priority, 'Units': Units }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        $('#msgDiv').html('<div class="alert alert-success">Dispatch Created Sucessfully.</div>');
+                    }
+                });
+            }
+
+        }
+        $('#closeDropdown').click(function () {
+
+            var Checkclass = $(this).hasClass("selected");
+            if (Checkclass == false) {
+
+                $('#Dispatcher_Units').removeAttr('disabled');
+            }
+        });
+
+        function ValidateEmail(email) {
+            var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+            return expr.test(email);
+        };
+
+
+        @*function DeleteEvent(id, caller) {
+            if (DeleteConfirm('@ViewBag.Action')) {
+                $.ajax({
+                    url: '@Url.Content("~/Events/Event/DeleteEvent")',
+                    data: JSON.stringify({ 'Id': id }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data == "success") {
+                            if ($('#ListTable>tbody tr').length == 1) {
+                                $('#ListTable>tbody tr').remove();
+                                $('#msgDiv').html('<div class="alert alert-success">Event has been deleted Suceesfully.</div>');
+                                window.scrollTo(0, 0);
+                            }
+                            else {
+                                $(caller).parents('tr:first').remove();
+                                $('#msgDiv').html('<div class="alert alert-success">Event has been deleted Suceesfully.</div>');
+                                window.scrollTo(0, 0);
+                            }
+
+
+                        } else {
+
+                        }
+
+                    }
+                });
+            }
+        }*@
+
+        function BindPictureList(type, id, subFeatureid) {
+
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/GetAllPictures")',
+                data: { 'type': type, 'id': id, 'subFeatureid': subFeatureid },
+                type: 'Post',
+                datatype: 'json',
+                contenttype: 'application/json',
+                success: function (data) {
+                    var temphtml = "";
+                    if (data.length > 0) {
+                        var jsonData = JSON.parse(data);
+                        for (i = 0; i < jsonData.length; i++) {
+                            temphtml += ' <div class="col-md-2"> <div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
+                            temphtml += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                            temphtml += '<div class="btn-show">';
+                            temphtml += '<input type="button" value="Assign Picture" id="AssignPicture" class="btn btn-success add" onclick="AssignPictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                            temphtml += '<input type="button" value="Edit" id="EditPicture" class="btn btn-primary add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="EditPictur(&#39;' + jsonData[i].FilePath + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                            temphtml += '<input type="button" value="Delete" id="DeletePicture" class="btn btn-danger add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="DeletePictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;,&#39;' + subFeatureid + '&#39;);">';
+                            temphtml += '</div></div></div>';
+                        }
+                    }
+                    $('#pictureTable').html(temphtml);
+                    $('.pictureTr').hover(function () {
+                        var ImgeSrc = $(this).children('img').attr('src');
+                        var mediaId = $(this).attr('data-id');
+                        $(this).on('click', function () {
+                            $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
+                            $(this).addClass('ShowBorderRed');
+                        });
+                    });
+
+                }
+            });
+        }
+
+        function AssignPictures(type, id, mediaId) {
+
+            if (EditConfirmMedia('@ViewBag.Action')) {
+                $.ajax({
+                    url: '@Url.Content("~/Media/Media/AssignPictures")',
+                    data: { MediaType: type, Type: type, ID: id, IncidentID: 0, MediaID: mediaId, QuestionID: 0, Observation: 0 },
+                    type: 'post',
+                    datatype: 'json',
+
+                    contenttype: 'application/json',
+                    success: function (data) {
+                        if (data == "success") {
+                            alert('Image Assign successfuly!!');
+                        }
+                        else {
+                            alert(' Error in Request!!');
+                        }
+                    }
+                });
+            }
+        }
+        function DeletePictures(type, id, mediaId, subFeatureid) {
+            if (DeleteConfirm('@ViewBag.Action')) {
+                $.ajax({
+                    url: '@Url.Content("~/Media/Media/DeletePicture")',
+                    data: { MediaID: mediaId },
+                    type: 'post',
+                    datatype: 'json',
+                    contenttype: 'application/json',
+                    success: function (data) {
+                        if (data == 'success') {
+                            BindPictureList(type, id, subFeatureid)
+                        }
+                        else {
+                            alert(' Error in Request!!');
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                    failure: function (response) {
+                        console.log(response);
+                    },
+                });
+            };
+        };
+
+        function DeleteConfirm(action) {
+            //return true;
+            var control = action;
+            if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
+                var a = confirm('Are you sure to delete?');
+                if (a == true) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                var a = alert('You dont have permission to delete');
+                return false;
+            }
+        };
+
+        function EditConfirmMedia(action) {
+
+            var control = action;
+
+            if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
+
+
+                return true;
+
+            }
+            else {
+
+                var a = alert('You dont have permission to assign media');
+
+
+                return false;
+            }
+
+        }
+
+        function EditPictur(ImgeSrc, mediaId) {
+            getDataUri(ImgeSrc, function (dataUri) {
+                $('#image').attr('src', dataUri);
+                $('.cropper-view-box').find('img').attr('src', dataUri);
+                $('.cropper-canvas').find('img').attr('src', dataUri);
+                $('.preview-lg').find('img').attr('src', dataUri);
+                $('.dataId').val(mediaId);
+            });
+
+            $('#avatar-modal').modal('show');
+
+            setTimeout(function () {
+
+                $('script').each(function () {
+
+                    if (this.src.split('?') === '/Content/crop-avatar/js/main.js') {
+
+                        $(this).remove();
+                    }
+                    if (this.src.split('?') === '/Content/crop-avatar/js/cropper.js') {
+
+                        $(this).remove();
+                    }
+                });
+                $.getScript('/Content/crop-avatar/js/main.js').done(function () {
+
+
+                });
+                $.getScript('/Content/crop-avatar/js/cropper.js').done(function () {
+
+
+                });
+            }, 100);
+        }
+
+        function getDataUri(url, callback) {
+            var image = new Image();
+
+            image.onload = function () {
+                var canvas = document.createElement('canvas');
+                canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
+                canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
+
+                canvas.getContext('2d').drawImage(this, 0, 0);
+
+                // Get raw image data
+                callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
+
+                // ... or get as Data URI
+                callback(canvas.toDataURL('image/png'));
+            };
+
+            image.src = url;
+        }
+
+        $('#something').change(function () {
+            if (this.checked) {
+                $('#MediaGallery').removeAttr("style");
+                BindMediaList();
+            }
+            else {
+                $('#MediaGallery').hide(true);
+            }
+        });
+
+        function MoveToPicture(type, id, mediaId) {
+            var subFeatureid = '0';
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/MoveToPicture")',
+                data: { type: type, id: id, MediaID: mediaId },
+                type: 'post',
+                datatype: 'json',
+                contenttype: 'application/json',
+                success: function (data) {
+                    if (data == 'success') {
+                        BindPictureList(type, id, subFeatureid);
+                        BindMediaList();
+                    }
+                    else {
+                        alert(' Error in Request!!');
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+                failure: function (response) {
+                    console.log(response);
+                },
+            });
+        };
+
+        function BindMediaList() {
+
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/GetAllPictures")',
+                data: { 'type': 'Media', 'id': '0', 'subFeatureid': '0' },
+                type: 'Post',
+                datatype: 'json',
+                contenttype: 'application/json',
+                success: function (data) {
+                    var types = $('#hdType').val();
+                    var value = $('#EventID').val();
+                    var subFeatureid = "0";
+                    var temph = "";
+                    if (data.length > 0) {
+                        var jsonData = JSON.parse(data);
+                        for (i = 0; i < jsonData.length; i++) {
+                            temph += ' <div class="col-md-2"> <div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
+                            temph += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                            temph += '<div class="btn-show">';
+                            if ($('#hdType').val() != 'Media') {
+                                temph += '<input type="button" value="MoveTo" id="MoveToPicture" class="btn btn-info add" onclick="MoveToPicture(&#39;' + types + '&#39;,&#39;' + value + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                            }
+
+                            temph += '</div></div></div>';
+                        }
+                    }
+                    $('#mediaTable').html(temph);
+                    $('.pictureTr').hover(function () {
+                        var ImgeSrc = $(this).children('img').attr('src');
+                        var mediaId = $(this).attr('data-id');
+                        $(this).on('click', function () {
+                            $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
+                            $(this).addClass('ShowBorderRed');
+                        });
+                    });
+
+                }
+            });
+        }
+
+        $("#permission").click(function () {
+            if (EditConfirm('@ViewBag.Action')) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        });
+        $('#myTab a[href="#SubjectReports"]').on('click', function (e) {
+            $('#divsubjectreports').load("/Subject/Subject/ALLSubjectIncidentsList?EventId=@Model.EventID");
+        });
+        $('#myTab a[href="#EmployeeReports"]').on('click', function (e) {
+            //localStorage.setItem('activeTab', 'SubjectReports');
+            //$('#myTab a[href="#SubjectReports"]').tab('show');
+            $('#divemployeereports').load("/Employee/Employees/ALLEmployeeIncidentsList?EventId=@Model.EventID");
+        });
+        $('#myTab a[href="#GeneralReports"]').on('click', function (e) {
+            $('#divgeneralreports').load("/GeneralReports/GeneralReports/ALLGeneralReportsList?EventId=@Model.EventID");
+        });
+        $('#myTab a[href="#Permissions"]').on('click', function (e) {
+            $('#divpermissions').load("/Events/Event/Permissions?EventId=@Model.EventID");
+        });
+            </script>
+            <div id="Printdiv" style="text-align: center; border: 1px solid #ccc;display:none;">
+            </div>
+            <div id="editor"></div>
+            <table id="newtable" style="display: none;"></table>

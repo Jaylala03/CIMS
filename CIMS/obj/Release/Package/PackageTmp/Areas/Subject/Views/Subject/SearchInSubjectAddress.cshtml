@@ -1,0 +1,668 @@
+﻿@model CIMS.Models.ManageSubjectAddressModel
+
+@{
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+    ViewBag.Title = "Subject";
+}
+
+<link href="~/Content/Custom.css" rel="stylesheet" />
+
+<style>
+    .cmbSub {
+        pointer-events: none;
+        opacity: 0.40;
+    }
+
+    .alphabet_group {
+        display: none;
+    }
+
+    .dataTables_filter {
+        display: none;
+    }
+
+    .alphabet {
+        display: none !important;
+    }
+</style>
+<style>
+    .cmbEmp {
+        pointer-events: none;
+        opacity: 0.40;
+    }
+
+    .dataTables_filter {
+        display: none;
+    }
+
+    .alphabet {
+        display: none !important;
+    }
+
+    #subjectTable_length {
+        display: none !important;
+    }
+
+    #subjectTable_filter {
+        display: none !important;
+    }
+</style>
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Search Subject</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Addresses</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+
+<div class="row">
+
+    <div class="col-md-12">
+
+        <div class="white-box clearfix">
+            <ul class="nav nav-pills custom-tabs" id="myTab">
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li>
+                        <a href='@Url.Action("SearchInSubject")'>
+                            <span>Subject</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Addresses", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="active">
+                        <a href="@Url.Action("SearchInSubjectAddress")">
+                            <span>Addresses</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Aliases", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href="@Url.Action("SearchInSubjectAlias")">
+                            <span>Aliases</span>
+                        </a>
+                    </li>
+                }
+                @*Ankur New 1*@
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Aliases", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Action("SearchInSubjectFeatures")'>
+                            <span>Features</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Aliases", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Action("SearchInWatchList")'>
+                            <span>Watch List</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+
+        <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+        <input type="hidden" id="hdType" name="hdType" value='@(Request.QueryString["Type"])' />
+
+        <div class="full-width">
+
+            @using (Html.BeginForm("SearchInSubjectAddress", "Subject", FormMethod.Post, new { area = "Subject", id = "SubjectAddress" }))
+            {
+                @Html.AntiForgeryToken()
+
+
+                <div class="large-title no-margin" id="addressTitle">
+                    Search Into Address
+                </div>
+                @Html.HiddenFor(m => m.subAddressModel.SubjectID)
+                @Html.HiddenFor(m => m.subAddressModel.AddressID)
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="white-box clearfix" style="min-height: 367px;">
+                            <div class="form-group clearfix">
+                                @Html.LabelFor(m => m.subAddressModel.AddressType)
+                                @Html.DropDownListFor(m => m.subAddressModel.AddressType, Model.EmployeeModel.AddressTypeList as List<SelectListItem>, new { @class = "form-control" })
+                                @*@Html.TextBoxFor(m => m.subAddressModel.AddressType, new { @class = "form-control" })*@
+                                @Html.ValidationMessageFor(m => m.subAddressModel.AddressType, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="form-group clearfix">
+                                @Html.LabelFor(m => m.subAddressModel.Apartment)
+                                @Html.TextBoxFor(m => m.subAddressModel.Apartment, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.subAddressModel.Apartment, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="form-group clearfix">
+                                @Html.LabelFor(m => m.subAddressModel.Address)
+                                @Html.TextBoxFor(m => m.subAddressModel.Address, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.subAddressModel.Address, "", new { @class = "text-danger" })
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="white-box clearfix">
+                            <div class="form-group clearfix">
+                                @Html.LabelFor(m => m.subAddressModel.PostalZip)
+                                @Html.TextBoxFor(m => m.subAddressModel.PostalZip, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.subAddressModel.PostalZip, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group clearfix" id="foobar">
+                                @Html.LabelFor(m => m.subAddressModel.CountryID)
+                                US
+                                @Html.RadioButtonFor(m => m.subAddressModel.CountryID, "231", new { Checked = "checked", @class = "active" })
+                                Canada
+                                @Html.RadioButtonFor(m => m.subAddressModel.CountryID, "38")
+
+                                @*@Html.TextBoxFor(m => m.subAddressModel.CountryID, new { @class = "form-control" })*@
+                            </div>
+
+                            <div class="form-group clearfix">
+                                @Html.LabelFor(m => m.subAddressModel.ProvState)
+                                @Html.DropDownListFor(m => m.subAddressModel.ProvState, new SelectList(Enumerable.Empty<SelectListItem>(), "ID", "StateName"), new { @class = "form-control", @onchange = "GetCities(this.value)" })
+                                @*@Html.TextBoxFor(m => m.subAddressModel.ProvState, new { @class = "form-control" })*@
+                                @Html.ValidationMessageFor(m => m.subAddressModel.ProvState, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="form-group clearfix">
+                                @Html.LabelFor(m => m.subAddressModel.City)
+                                @Html.DropDownListFor(m => m.subAddressModel.City, new SelectList(Enumerable.Empty<SelectListItem>(), "ID", "CityName"), new { @class = "form-control" })
+                                @*@Html.TextBoxFor(m => m.subAddressModel.City, new { @class = "form-control" })*@
+                                @Html.ValidationMessageFor(m => m.subAddressModel.City, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group clearfix">
+                    <div class="white-box clearfix">
+                        <div class="btn-right-align">
+                            <input type="submit" value="Search" id="btnSubmit" class="btn btn-success">
+                            <input type="button" class="btn btn-blue" id="clearBtn" value="Clear" />
+                        </div>
+                    </div>
+
+                </div>
+
+            }
+
+            @*Ankur New 1*@
+            @*<div class="white-box clearfix">
+                    <div class="table-responsive table-fixes col-md-12">
+                        <table id="sample_3" class="table table-bordered dataTable no-footer ">
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+                </div>*@
+
+
+        </div>
+    </div>
+    <div class="large-title">Result </div>
+    <div class="white-box clearfix">
+        <div class="table-responsive table-fixes col-md-12">
+            <table id="subjectTable" class="table table-bordered Tableview">
+                <thead>
+                    <tr>
+                        <th class="header">Image</th>
+                        <th class="header">First Name</th>
+                        <th class="header">Last Name</th>
+                        <th class="header">ID #</th>
+                        <th class="header headerSortDown">
+                            Created Date
+                        </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null &&  Model.subAddressList != null && Model.subAddressList.Count > 0)
+                    {
+                        foreach (var itm in Model.subAddressList)
+                        {
+                            <tr class="subjectTR" data-id="@itm.SubjectID" style="cursor:pointer">
+                                @if (ViewBag.Action == 4 || ViewBag.Action == 5 || ViewBag.Action == 6 || ViewBag.Action == 7 || ViewBag.Action == 12 || ViewBag.Action == 13 || ViewBag.Action == 14 || ViewBag.Action == 15)
+                                {
+
+                                    <td style="width: 100px;">
+                                        <a href='@Url.Content("~/Subject/Subject/AddSubject?Type=Subject&Id="+itm.SubjectID+"")'>
+                                            <img style="width: 100px;" src="@(!String.IsNullOrEmpty(itm.FilePath) ? itm.FilePath: Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                        </a>
+                                    </td>
+                                    <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Type=Subject&Id=" + itm.SubjectID + "")'">@itm.FirstName</td>
+                                    <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Type=Subject&Id=" + itm.SubjectID + "")'">@itm.LastName</td>
+
+                                    <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Type=Subject&Id=" + itm.SubjectID + "")'">@itm.VIP</td>
+                                    <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Type=Subject&Id=" + itm.SubjectID + "")'">@itm.ModifiedDate </td>
+
+                                }
+                                else
+                                {
+
+                                    <td style="width: 100px;">
+                                        <a href='@Url.Content("~/Subject/Subject/AddSubject?Type=&Show=View&Subject&Id="+itm.SubjectID+"")'>
+                                            <img style="width: 100px;" src="@(!String.IsNullOrEmpty(itm.FilePath) ? itm.FilePath: Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                        </a>
+                                    </td>
+                                    <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Show=View&Type=Subject&Id=" + itm.SubjectID + "")'">@itm.FirstName</td>
+                                    <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Show=View&Type=Subject&Id=" + itm.SubjectID + "")'">@itm.LastName</td>
+
+                                    <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Show=View&Type=Subject&Id=" + itm.SubjectID + "")'">@itm.VIP</td>
+                                    <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Show=View&Type=Subject&Id=" + itm.SubjectID + "")'"> @itm.ModifiedDate</td>
+
+                                }
+
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+
+
+
+            </table>
+        </div>
+    </div>
+    <div class="col-md-8">
+    </div>
+</div>
+
+
+
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+
+<script src="~/assets/js/jquery.maskedinput.min.js"></script>
+<script src="~/Content/Custom.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+
+        var table = $('#subjectTable').DataTable({
+            dom: 'Alfrtip'
+
+        });
+        table.columns(2).every(function () {
+            var that = this;
+            $('input', this.footer()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                         .search('^' + this.value, true, false)
+                        .draw();
+                }
+            });
+        });
+
+        $('.ToggleCls').addClass('cmbSub');
+        $('.subjectTR').on('click', function () {
+            var subjectID = $(this).attr('data-id');
+            var url = "/Subject/Subject/SearchSubject/" + subjectID;
+            $('#combineBtn').attr('href', url);
+            $('.ToggleCls').removeClass('cmbSub');
+        });
+
+        $('input:radio').change(function () {
+            $('input:radio:checked').addClass('active');
+            $('input:radio:not(:checked)').removeClass('active');
+
+        });
+
+        GetStates();
+
+        //Ankur New 1
+        @*$('#btnSubmit').on('click', function (e) {
+
+            loadlicense();
+
+        });
+
+        function loadlicense() {
+            $("#sample_3").find("tr:not(:first)").remove();
+            $.ajax({
+                url: '@Url.Action("SearchSubjectAddress", "Subject")',
+                type: 'Post',
+                data: { AddressType: $('#subAddressModel_AddressType').val(), Apartment: $('#subAddressModel_Apartment').val(), Address: $('#subAddressModel_Address').val(), city: $('#subAddressModel_City').val(), state: $('#subAddressModel_ProvState').val(), zipCode: $('#subAddressModel_PostalZip').val(), country: $('#subAddressModel_CountryID').val() },
+                dataType: 'json',
+                success: function (data) {
+
+                    $('#sample_3 tbody').empty();
+                    $('#sample_3 tbody').append(data);
+                    //if ($('#hdShow').val() == 'View') {
+                    //    $(document).find('#sample_2 tbody>tr>td>a').attr("disabled", "disabled").addClass('disabled');
+                    //}
+
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }*@
+
+
+        if ($('#hdShow').val() == 'View') {
+            $(".form-control").attr("disabled", "disabled");
+            $(".btn").hide(true);
+            $(document).find('.enablebtn>a').removeAttr("style");
+            $('#subAddressModel_CountryID').attr("disabled", "disabled");
+        }
+        else {
+            //$(".btn").removeAttr("style");
+            $(".form-control").attr("disabled", false);
+            //$(".btn").attr("disabled", false);
+            $('#subAddressModel_CountryID').attr("disabled", false);
+            $(document).find('#permission').hide(true);
+        }
+
+        $('.subjectTr').on('click', function () {
+            if (EditConfirm('@ViewBag.Action')) {
+                var Id = $(this).attr('data-id');
+                $.ajax({
+                    url: '@Url.Content("~/Subject/Subject/GetSubjectAddressByAddressId")',
+                    data: { Id: Id },
+                    type: 'get',
+                    datatype: 'json',
+                    contenttype: 'application/json',
+                    success: function (data) {
+                        if (data.length > 0) {
+                            var jsondata = JSON.parse(data);
+                            $('#subAddressModel_AddressType').val(jsondata.AddressType);
+                            $('#subAddressModel_Apartment').val(jsondata.Apartment);
+                            $('#subAddressModel_Address').val(jsondata.Address);
+
+
+                            $('#subAddressModel_CountryID').val(jsondata.CountryID);
+
+                            document.getElementById("subAddressModel_CountryID").checked = true;
+                            document.getElementById("subAddressModel_CountryID").className = "active";
+
+                            GetStates();
+
+                            setTimeout(function () {
+                                $('#subAddressModel_ProvState').val(jsondata.ProvState);
+                            }, 1000);
+
+
+
+                            GetCities(jsondata.ProvState);
+                            setTimeout(function () {
+                                $('#subAddressModel_City').val(jsondata.City);
+                            }, 1000);
+
+                            // $('#subAddressModel_City').val(jsondata.City);
+                            $('#subAddressModel_PostalZip').val(jsondata.PostalZip);
+                            $('#subAddressModel_SubjectID').val(jsondata.SubjectID);
+                            $('#subAddressModel_AddressID').val(jsondata.AddressID);
+                            $('#btnSubmit').val('Update');
+                            $('#addressTitle').text('Update Subject Address');
+                        }
+
+                    }
+                });
+            }
+        });
+
+        $('#clearBtn').on('click', function () {
+            Reset();
+        });
+        $('#btnSubmit').click(function () {
+            var x;
+            if (parseInt($('#subAddressModel_AddressID').val()) > 0) {
+                x = EditConfirm('@ViewBag.Action');
+            }
+            else {
+                x = AddConfirm('@ViewBag.Action');
+            }
+            if (x) {
+                return true;
+            }
+            else {
+
+                return false;
+            }
+        });
+
+        $("input:radio").change(function () {
+
+            GetStates();
+        });
+
+        // Page Change
+        var somethingChanged = false;
+        var button = $('#btnSubmit');
+        var orig = [];
+
+        $.fn.getType = function () {
+            return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
+        }
+
+        $("#SubjectAddress :input").each(function () {
+            var type = $(this).getType();
+            var tmp = {
+                'type': type,
+                'value': $(this).val()
+            };
+            if (type == 'radio') {
+                tmp.checked = $(this).is(':checked');
+            }
+            orig[$(this).attr('id')] = tmp;
+        });
+
+        $('#SubjectAddress').bind('change keyup', function () {
+            var disable = true;
+            somethingChanged = false;
+            $("#SubjectAddress :input").each(function () {
+                var type = $(this).getType();
+                var id = $(this).attr('id');
+
+                if (type == 'text' || type == 'select') {
+                    disable = (orig[id].value == $(this).val());
+                } else if (type == 'radio') {
+                    disable = (orig[id].checked == $(this).is(':checked'));
+                }
+
+                if (!disable) {
+                    return false; // break out of loop
+
+                }
+            });
+            somethingChanged = true;
+            button.prop('disabled', disable);
+        }); // End Page Change
+
+        // save change script
+        $('#myTab > li > a ').click(function (e) {
+            if ($('#hdShow').val() != 'View') {
+                if (somethingChanged == true) {
+                    formSubmitByTab(somethingChanged);
+                    somethingChanged = false;
+                    return false;
+                }
+            }
+        });
+        // end save change script
+
+    });// End
+
+
+
+    function DeleteAddress(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/DeleteSubjectAddress")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#subAddressModel_AddressType').val('');
+                        $('#subAddressModel_Apartment').val('');
+                        $('#subAddressModel_Address').val('');
+                        $('#subAddressModel_City').val('');
+                        $('#subAddressModel_ProvState').val('');
+                        $('#subAddressModel_PostalZip').val('');
+                        $('#subAddressModel_AddressID').val('');
+                        $('#btnSubmit').val('Create');
+                        if ($('#addressTable>tbody tr').length == 1) {
+                            $('#addressTable').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Subject Address Deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Subject Address Deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function DeleteSubject(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/DeleteSubject")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Subject has been deleted Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                        location.replace('@Url.Content("~/Subject/Subject/Index")');
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function GetStates() {
+        var id = $('input[type=radio].active').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/GetStates")',
+            type: 'get',
+            data: { ID: id },
+            dataType: 'json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $("#subAddressModel_ProvState").html('');
+                    $("#subAddressModel_City").html('');
+                    var optionhtml1 = '<option value="' + 0 + '">' + "-- Select State --" + '</option>';
+                    $("#subAddressModel_ProvState").append(optionhtml1);
+
+                    $.each(data, function (i) {
+                        var optionhtml = '<option value="' + data[i].Value + '">' + data[i].Text + '</option>';
+                        $("#subAddressModel_ProvState").append(optionhtml);
+                    });
+                }
+                else {
+                    $("#subAddressModel_ProvState").html('');
+                    $("#subAddressModel_City").html('');
+                    var optionhtml1 = '<option value="' + 0 + '">' + "-- Select State --" + '</option>';
+                    $("#subAddressModel_ProvState").append(optionhtml1);
+                }
+
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function GetCities(sid) {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/GetCities")',
+            type: 'get',
+            data: { ID: sid },
+            dataType: 'json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $("#subAddressModel_City").html('');
+                    var optionhtml1 = '<option value="' + 0 + '">' + "-- Select City --" + '</option>';
+                    $("#subAddressModel_City").append(optionhtml1);
+
+                    $.each(data, function (i) {
+                        var optionhtml = '<option value="' + data[i].Value + '">' + data[i].Text + '</option>';
+                        $("#subAddressModel_City").append(optionhtml);
+                    });
+                }
+                else {
+                    $("#subAddressModel_City").html('');
+                    var optionhtml1 = '<option value="' + 0 + '">' + "-- Select City --" + '</option>';
+                    $("#subAddressModel_City").append(optionhtml1);
+                }
+
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function Reset() {
+        $('#subAddressModel_AddressType').val('');
+        $('#subAddressModel_Apartment').val('');
+        $('#subAddressModel_Address').val('');
+        $('#subAddressModel_City').val('');
+        $('#subAddressModel_ProvState').val('');
+        $('#subAddressModel_PostalZip').val('');
+        $('#subAddressModel_AddressID').val('');
+        $('#btnSubmit').val('Create');
+    }
+
+    $("#permission").click(function () {
+        if (EditConfirm('@ViewBag.Action')) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+
+    // Submit form on tab change Script
+    //function formSubmitByTab(valueChanged) {
+    //    if (valueChanged == true) {
+    //        var r = confirm("Do you want to save changes?");
+    //        if (r == true) {
+    //            $('#btnSubmit').click();
+    //        }
+    //    }
+
+    //}// End Submit form on tab change Script
+</script>
+

@@ -1,0 +1,3925 @@
+﻿@model CIMS.Models.GeneralReportsModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">General Reports</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">General Reports</li>
+        </ol>
+    </div>
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        @if (Model.ReportID > 0)
+        {
+            <div class="col-lg-12 enablebtn btn-enable-main">
+
+                @if (Model.UserName == Session["UserName"].ToString())
+                {
+                    <span style="font:bold"> Report CreatedBy: Me</span>
+                    <a href='@Url.Content("~/GeneralReports/GeneralReports/Index?Id=" + Model.ReportID + "")' id="" class="btn btn-info edit editpermission" title="Edit General Report">
+                        <i class="fa fa-pencil"></i> Edit
+                    </a>
+                    <a class="btn btn-danger" href='javascript:;' onclick='DeleteGeneralReport(@Model.ReportID,this);' title="Delete General Report">
+                        <i class='fa fa-trash'></i> Delete
+                    </a>
+                }
+                else
+                {
+                    <span> Report CreatedBy: @Model.UserName</span>
+                    <a href='@Url.Content("~/GeneralReports/GeneralReports/Index?Id=" + Model.ReportID + "")' class="btn btn-info edit editpermission" id="@(Model.ReportID)Edit" onclick='return ReportPermissionCheck(@Model.ReportID,1,this);' title="Edit General Report">
+                        <i class="fa fa-pencil"></i> Edit
+                    </a>
+                    <a class="btn btn-danger" href='javascript:;' onclick='ReportPermissionCheck(@Model.ReportID,2,this);' id="@(Model.ReportID)Delete" title="Delete General Report">
+                        <i class='fa fa-trash'></i> Delete
+                    </a>
+                }
+            </div>
+        }
+        <div class="right-tab">
+            <div class="white-box clearfix">
+                <ul class="nav nav-pills custom-tabs" id="myTab">
+                    <li class="active">
+                        <a href="#Details" data-toggle="tab">
+
+                            <span>Details</span>
+                        </a>
+                    </li>
+                    @*<li class="">
+                            <a href="#cashTransactions" data-toggle="tab">
+
+                                <span>Cash Transactions</span>
+                            </a>
+                        </li>*@
+                    @*
+                        <li class="" id="13tabdata">
+                            <a href="#LCT" data-toggle="tab">
+
+                                <span>LCT</span>
+                            </a>
+                        </li>*@
+                    @*<li class="">
+                            <a href="#Vehicles" data-toggle="tab">
+
+                                <span>Vehicles</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#involved" data-toggle="tab">
+
+                                <span>Involved</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#Banned" data-toggle="tab">
+
+                                <span>Banned</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#Dispute" data-toggle="tab">
+
+                                <span>Dispute</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="#Services" data-toggle="tab">
+
+                                <span>Services</span>
+                            </a>
+                        </li>*@
+                    <li class="">
+                        <a href="#Links" data-toggle="tab">
+
+                            <span>Linked</span>
+                        </a>
+                    </li>
+
+                    <li class="">
+                        <a href="#Events" data-toggle="tab">
+                            <span>Events</span>
+                        </a>
+                    </li>
+
+                    @*<li class="">
+                            <a href="#Reports" data-toggle="tab">
+
+                                <span>Reports</span>
+                            </a>
+                        </li>*@
+                    <li class="" id="21tabdata">
+                        <a href="@(Model.CheckPermissionID==Convert.ToInt32(Session["UserID"])?"#Permission":"#Details")" data-toggle="tab" style="display:@(Model.CheckPermissionID==Convert.ToInt32(Session["UserID"])?"true":" none")">
+
+                            <span>Permission</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+            <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+            <div class="tab-content">
+                <div class="tab-pane active" id="Details">
+
+
+                    <div class="large-title">General Reports-Details </div>
+
+
+                    @using (Html.BeginForm("Index", "GeneralReports", new { Area = "GeneralReports" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                    {
+
+                        <div class="col-md-6">
+                            <div class="white-box">
+                                <div class="form-group">
+                                    <label class="control-label">Report Number</label>
+
+                                    @Html.HiddenFor(m => m.ReportID, new { @id = "ReportID" })
+                                    @Html.TextBoxFor(m => m.ReportNumber, null, new { @class = "form-control", @readonly = "readonly" })
+                                    @*@Html.ValidationMessageFor(m => m.IncidentNumber, "", new { @class = "text-danger" })*@
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Report Date </label>
+
+                                    @Html.TextBoxFor(m => m.IncidentDate, null, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.IncidentDate, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Start Time </label>
+                                    <input type="hidden" id="OldIncidentTime" name="OldIncidentTime" value="@Model.IncidentTime" />
+                                    @Html.TextBoxFor(m => m.IncidentTime, null, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.IncidentTime, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Location</label>
+
+                                    @Html.DropDownListFor(m => m.Location, Model.LocationList as List<SelectListItem>, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Location, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    @Html.CheckBoxFor(m => m.ActiveStatus)
+                                    <label class="control-label">Active Status</label>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="white-box" style=" min-height: 455px;">
+                                <div class="form-group">
+                                    <label class="control-label">Nature of Incident </label>
+                                    @Html.DropDownListFor(m => m.NatureOfEvent, ViewBag.lstNatureOfIncident as List<SelectListItem>, new { @class = "form-control", @id = "ddlNatureOfEvent" })
+                                    @*@Html.TextBoxFor(m => m.NatureOfEvent, null, new { @class = "form-control" })*@
+                                    @Html.ValidationMessageFor(m => m.NatureOfEvent, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Short Description</label>
+                                    @Html.DropDownListFor(m => m.ShortDescriptor, ViewBag.lstShortDescription as List<SelectListItem>, new { @class = "form-control", @id = "ddlShortDescription" })
+
+                                    @Html.ValidationMessageFor(m => m.ShortDescriptor, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Status</label>
+                                    @Html.DropDownListFor(m => m.Status, ViewBag.lstOverAllStaus as List<SelectListItem>
+                                        , new { @class = "form-control" })
+                                    @*@Html.TextBoxFor(m => m.Status, null, new { @class = "form-control" })*@
+                                    @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Incident Role</label>
+                                    @Html.DropDownListFor(m => m.IncidentRole, ViewBag.lstRole as List<SelectListItem>, new { @class = "form-control" })
+                                    @*@Html.TextBoxFor(m => m.IncidentRole, null, new { @class = "form-control" })*@
+                                    @Html.ValidationMessageFor(m => m.IncidentRole, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="white-box">
+                                <div class="form-group">
+                                    <label class="control-label">Description</label>
+
+                                    @Html.TextAreaFor(m => m.Description, new { @class = "form-control ckeditor" })
+                                    @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                                </div>
+
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-success @(Model.ReportID > 0 ? " edit":" add")" id="btnDetails">Save</button>
+                                    <button type="reset" class="btn btn-white" id="IndexReset">Reset</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+                <div class="tab-pane" id="cashTransactions">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="right-tab">
+                                <div class="white-box clearfix">
+                                    <ul class="nav nav-pills custom-tabs">
+                                        <li class="active" id="1tab">
+                                            <a href="#BuyIns" data-toggle="tab">
+
+                                                <span>Buy-Ins</span>
+                                            </a>
+                                        </li>
+                                        <li class="" id="2tab">
+                                            <a href="#Exchange" data-toggle="tab">
+
+                                                <span>Exchange</span>
+                                            </a>
+                                        </li>
+                                        <li class="" id="3tab">
+                                            <a href="#CashOuts" data-toggle="tab">
+
+                                                <span>Cash-Outs</span>
+                                            </a>
+                                        </li>
+                                        <li class="" id="4tab">
+                                            <a href="#CashCall" data-toggle="tab">
+
+                                                <span>Cash Call</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="BuyIns">
+
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title" style="font-weight: 600;">Buys-In</h3>
+                                            </div>
+
+                                            <div class="panel-body">
+
+                                                <div class="col-md-8">
+                                                    <div class="table-responsive">
+                                                        <table id="BuyInTable" class="table table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>
+                                                                        Time
+                                                                    </th>
+                                                                    <th>
+                                                                        Pit
+                                                                    </th>
+                                                                    <th>
+                                                                        Game
+                                                                    </th>
+                                                                    <th>
+                                                                        Cash
+                                                                    </th>
+                                                                    <th>
+                                                                        Marker
+                                                                    </th>
+                                                                    <th>
+                                                                        Action
+                                                                    </th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            @if (Model.LCTPitTransactionsModelList.Count > 0)
+                                                            {
+                                                                foreach (var items in Model.LCTPitTransactionsModelList)
+                                                                {
+
+                                                                    <tr>
+                                                                        <td>@items.BuyInTime</td>
+                                                                        <td>@items.Pit</td>
+                                                                        <td>@items.GameName</td>
+                                                                        <td>@(items.BuyInType == "1" ? items.Amount.ToString() : "")</td>
+                                                                        <td>@(items.BuyInType == "2" ? items.Amount.ToString() : "")</td>
+                                                                        <td>
+                                                                            <a href='javascript:;' class="btn btn-info btn-sm btn-icon" onclick="bindBuyIn('@items.ID','@HttpUtility.JavaScriptStringEncode(items.BuyInTime)','@HttpUtility.JavaScriptStringEncode(items.Pit)','@items.Game','@items.BuyInType','@items.Amount')"> <i class="fa fa-pencil"></i></a>
+                                                                            <a class="btn btn-danger btn-sm delete-sm" href='javascript:;' onclick='DeleteBuyIn(@items.ID,this);'><i class='fa fa-trash'></i></a>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+
+                                                        </table>
+                                                        <span>Total Amount:<label id="TotalCashAmount" style="margin-left:240px;"></label><label id="TotalMarkerAmount" style="margin-left:80px;"></label></span>
+                                                    </div>
+                                                </div>
+
+                                                @using (Html.BeginForm("GeneralReportsBuyIn", "GeneralReports", new { Area = "GeneralReports" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                                                {
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            @Html.HiddenFor(m => m.ReportID)
+                                                            @Html.HiddenFor(m => m.LCTPitTransactionsModel.ID)
+
+                                                            <label class="control-label">Time</label>
+                                                            @Html.TextBoxFor(m => m.LCTPitTransactionsModel.BuyInTime, "", new { @class = "form-control" })
+
+                                                        </div>
+
+
+
+                                                        <div class="form-group">
+                                                            <label class="control-label">Pit</label>
+
+                                                            @Html.TextBoxFor(m => m.LCTPitTransactionsModel.Pit, null, new { @class = "form-control" })
+
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="control-label">Game</label>
+                                                            @Html.DropDownListFor(m => m.LCTPitTransactionsModel.Game, Model.GameList as List<SelectListItem>, new { @class = "form-control" })
+
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">Type</label>
+                                                            <br />
+                                                            @Html.RadioButtonFor(m => m.LCTPitTransactionsModel.BuyInType, 1) Cash
+                                                            @Html.RadioButtonFor(m => m.LCTPitTransactionsModel.BuyInType, 2) Marker
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">Amount </label>
+                                                            @Html.TextBoxFor(m => m.LCTPitTransactionsModel.Amount, null, new { @class = "form-control allownumericwithoutdecimal" })
+                                                            @Html.ValidationMessageFor(m => m.LCTPitTransactionsModel.Amount, "", new { @class = "text-danger" })
+
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <button type="submit" class="btn btn-success @(Model.ReportID > 0 ? " edit":" add") @(Model.ReportID > 0 ? "" : "disabled")">Save</button>
+                                                            <button type="reset" class="btn btn-white">Reset</button>
+
+                                                        </div>
+
+                                                    </div>
+                                                }
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" id="Exchange">
+
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title" style="font-weight: 600;">Exchange</h3>
+                                            </div>
+
+                                            <div class="panel-body">
+
+                                                <div class="col-md-8">
+                                                    <div class="table-responsive">
+                                                        <table id="ExchangeTable" class="table table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>
+                                                                        Country
+                                                                    </th>
+                                                                    <th>
+                                                                        Foreign Amount
+                                                                    </th>
+                                                                    <th>
+                                                                        Rate
+                                                                    </th>
+                                                                    <th>
+                                                                        Amount
+                                                                    </th>
+
+                                                                    <th>
+                                                                        Action
+                                                                    </th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            @if (Model.LCTForeignExchangeModelList.Count > 0)
+                                                            {
+                                                                foreach (var items in Model.LCTForeignExchangeModelList)
+                                                                {
+
+                                                                    <tr>
+                                                                        <td>@items.ForeignCountryName</td>
+                                                                        <td>@items.ForeignAmount</td>
+                                                                        <td>@items.Rate</td>
+                                                                        <td>@items.Amount</td>
+
+                                                                        <td>
+                                                                            <a href='javascript:;' class="btn btn-info btn-sm btn-icon" onclick="bindExchange('@items.ID','@HttpUtility.JavaScriptStringEncode(items.ForeignCountry)','@items.ForeignAmount','@items.Rate','@items.Amount')"> <i class="fa fa-pencil"></i></a>
+                                                                            <a class="btn btn-danger btn-sm delete-sm" href='javascript:;' onclick='DeleteExchange(@items.ID,this);'><i class='fa fa-trash'></i></a>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+
+                                                        </table>
+                                                        <span>Total Amount:<label id="TotalExchangeAmount" style="margin-left:330px;"></label></span>
+                                                    </div>
+                                                </div>
+                                                @using (Html.BeginForm("GeneralReportsExchange", "GeneralReports", new { Area = "GeneralReports" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                                                {
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            @Html.HiddenFor(m => m.ReportID)
+                                                            @Html.HiddenFor(m => m.LCTForeignExchangeModel.ID)
+
+                                                            <label class="control-label">Country</label>
+                                                            @Html.DropDownListFor(m => m.LCTForeignExchangeModel.ForeignCountry, ViewBag.lstForeignExchangeRates as List<SelectListItem>, new { @class = "form-control", @id = "ForeignExchangeRate" })
+
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="control-label">Foreign Amount</label>
+
+                                                            @Html.TextBoxFor(m => m.LCTForeignExchangeModel.ForeignAmount, null, new { @class = "form-control allownumericwithoutdecimal", onkeyup = "ExchangeAmount();" })
+
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="control-label">Rate</label>
+                                                            @Html.TextBoxFor(m => m.LCTForeignExchangeModel.Rate, null, new { @class = "form-control allownumericwithoutdecimal", onkeyup = "ExchangeAmount();" })
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="control-label">Amount </label>
+                                                            @Html.TextBoxFor(m => m.LCTForeignExchangeModel.Amount, null, new { @class = "form-control allownumericwithoutdecimal", @readonly = "readonly" })
+                                                            @Html.ValidationMessageFor(m => m.LCTForeignExchangeModel.Amount, "", new { @class = "text-danger" })
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <button type="submit" class="btn btn-success @(Model.ReportID > 0 ? " edit":" add") @(Model.ReportID > 0 ? "" : "disabled")">Save</button>
+                                                            <button type="reset" class="btn btn-white">Reset</button>
+
+                                                        </div>
+
+                                                    </div>
+                                                }
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" id="CashOuts">
+
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title" style="font-weight: 600;">Cash-Outs</h3>
+                                            </div>
+
+                                            <div class="panel-body">
+
+                                                <div class="col-md-8">
+                                                    <div class="table-responsive">
+                                                        <table id="CashOutTable" class="table table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>
+                                                                        Time
+                                                                    </th>
+                                                                    <th>
+                                                                        Type of Win
+                                                                    </th>
+                                                                    <th>
+                                                                        Payment Type
+                                                                    </th>
+                                                                    <th>
+                                                                        Number
+                                                                    </th>
+                                                                    <th>
+                                                                        Table  Number
+
+                                                                    </th>
+                                                                    <th>
+                                                                        Cash
+
+                                                                    </th>
+                                                                    <th>
+                                                                        Marker
+                                                                    </th>
+
+                                                                    <th>
+                                                                        Action
+                                                                    </th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            @if (Model.LCTCashOutsModelList.Count > 0)
+                                                            {
+                                                                foreach (var items in Model.LCTCashOutsModelList)
+                                                                {
+
+                                                                    <tr>
+                                                                        <td>@items.CashOutTime</td>
+                                                                        @if (items.TypeOfWin == "1")
+                                                                        {
+                                                                            <td>Table</td>
+                                                                        }
+                                                                        else if (items.TypeOfWin == "2")
+                                                                        {
+                                                                            <td>Slot</td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td>Progressive</td>
+                                                                        }
+                                                                        @if (items.PaymentType == "1")
+                                                                        {
+                                                                            <td>Cash</td>
+                                                                        }
+                                                                        else if (items.PaymentType == "2")
+                                                                        {
+                                                                            <td>Marker Buy-Back</td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td>Check</td>
+                                                                        }
+
+                                                                        <td>@items.ChequeNo</td>
+                                                                        <td>@items.TableNumber</td>
+
+                                                                        <td>@((items.PaymentType == "1" || items.PaymentType == "3") ? items.Amount.ToString() : "")</td>
+
+
+                                                                        <td>@(items.PaymentType == "2" ? items.Amount.ToString() : "")</td>
+
+
+                                                                        <td>
+                                                                            <a href='javascript:;' class="btn btn-info btn-sm btn-icon" onclick="bindCashOuts('@items.ID','@HttpUtility.JavaScriptStringEncode(items.CashOutTime)','@items.TypeOfWin','@items.PaymentType','@items.ChequeNo','@items.TableNumber','@items.Amount')"> <i class="fa fa-pencil"></i></a>
+                                                                            <a class="btn btn-danger btn-sm delete-sm" href='javascript:;' onclick='DeleteCashOuts(@items.ID,this);'><i class='fa fa-trash'></i></a>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        </table>
+                                                        <span>Total Amount:<label id="TotalCashOutAmount" style="margin-left:400px;"></label><label id="TotalMarkerOutAmount" style="margin-left:20px;"></label></span>
+                                                    </div>
+                                                </div>
+                                                @using (Html.BeginForm("GeneralReportsCashOuts", "GeneralReports", new { Area = "GeneralReports" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                                                {
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            @Html.HiddenFor(m => m.ReportID)
+                                                            @Html.HiddenFor(m => m.LCTCashOutsModel.ID)
+
+                                                            <label class="control-label">Time</label>
+
+                                                            @Html.TextBoxFor(m => m.LCTCashOutsModel.CashOutTime, "", new { @class = "form-control" })
+
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <fieldset>
+                                                                <legend>
+                                                                    Type of win
+                                                                </legend>
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.LCTCashOutsModel.TypeOfWin, 1, new { @checked = "checked" }) Table
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="control-label">Table Number</label>
+                                                                    @Html.TextBoxFor(m => m.LCTCashOutsModel.TableNumber, "", new { @class = "form-control" })
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.LCTCashOutsModel.TypeOfWin, 2) Slot
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.LCTCashOutsModel.TypeOfWin, 3) Progressive
+                                                                </div>
+
+                                                            </fieldset>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <fieldset>
+                                                                <legend>
+                                                                    Payment Type
+                                                                </legend>
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.LCTCashOutsModel.PaymentType, 1, new { @checked = "checked" }) Cash
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.LCTCashOutsModel.PaymentType, 2) Marker Buy-Back
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    @Html.RadioButtonFor(m => m.LCTCashOutsModel.PaymentType, 3) Check
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="control-label"> Number</label>
+                                                                    @Html.TextBoxFor(m => m.LCTCashOutsModel.ChequeNo, "", new { @class = "form-control" })
+                                                                </div>
+                                                            </fieldset>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">Amount</label>
+
+                                                            @Html.TextBoxFor(m => m.LCTCashOutsModel.Amount, "", new { @class = "form-control allownumericwithoutdecimal" })
+                                                            @Html.ValidationMessageFor(m => m.LCTCashOutsModel.Amount, "", new { @class = "text-danger" })
+                                                        </div>
+
+
+
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <button type="submit" class="btn btn-success @(Model.ReportID > 0 ? " edit":" add") @(Model.ReportID > 0 ? "" : "disabled")">Save</button>
+                                                            <button type="reset" class="btn btn-white">Reset</button>
+
+                                                        </div>
+
+                                                    </div>
+                                                }
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" id="CashCall">
+
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title" style="font-weight: 600;">Cash Call</h3>
+                                            </div>
+
+                                            <div class="panel-body">
+
+                                                <div class="col-md-8">
+                                                    <div class="table-responsive">
+                                                        <table id="CashCallTable" class="table table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Time</th>
+                                                                    <th>
+                                                                        Cashier
+                                                                    </th>
+                                                                    <th>
+                                                                        Amount
+                                                                    </th>
+
+
+                                                                    <th>
+                                                                        Action
+                                                                    </th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            @if (Model.LCTCashCallModelList.Count > 0)
+                                                            {
+                                                                foreach (var items in Model.LCTCashCallModelList)
+                                                                {
+
+                                                                    <tr>
+                                                                        <td>@items.CashCallTime</td>
+                                                                        <td>@items.CashierName</td>
+                                                                        <td>@items.Amount</td>
+
+                                                                        <td>
+                                                                            <a href='javascript:;' class="btn btn-info btn-sm btn-icon" onclick="bindCashCall('@items.ID','@HttpUtility.JavaScriptStringEncode(items.CashCallTime)','@items.Cashier','@items.Amount')"> <i class="fa fa-pencil"></i></a>
+                                                                            <a class="btn btn-danger btn-sm delete-sm" href='javascript:;' onclick='DeleteCashCall(@items.ID,this);'><i class='fa fa-trash'></i></a>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        </table>
+                                                        <span>Total Amount:<label id="TotalCasCallAmount" style="margin-left:250px;"></label></span>
+                                                    </div>
+                                                </div>
+                                                @using (Html.BeginForm("GeneralReportsCashCall", "GeneralReports", new { Area = "GeneralReports" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                                                {
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            @Html.HiddenFor(m => m.ReportID)
+                                                            @Html.HiddenFor(m => m.LCTCashCallModel.ID)
+
+                                                            <label class="control-label">Time</label>
+
+                                                            @Html.TextBoxFor(m => m.LCTCashCallModel.CashCallTime, "", new { @class = "form-control" })
+
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="control-label">Cashier</label>
+                                                            @Html.DropDownListFor(m => m.LCTCashCallModel.Cashier, Model.CashierNameList as List<SelectListItem>, new { @class = "form-control" })
+
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">Amount</label>
+
+                                                            @Html.TextBoxFor(m => m.LCTCashCallModel.Amount, "", new { @class = "form-control allownumericwithoutdecimal" })
+                                                            @Html.ValidationMessageFor(m => m.LCTCashCallModel.Amount, "", new { @class = "text-danger" })
+                                                        </div>
+
+
+
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <button type="submit" class="btn btn-success @(Model.ReportID > 0 ? " edit":" add") @(Model.ReportID > 0 ? "" : "disabled")">Save</button>
+                                                            <button type="reset" class="btn btn-white">Reset</button>
+
+
+                                                        </div>
+
+                                                    </div>
+                                                }
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="Vehicles">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" style="font-weight: 600;">Vehicles</h3>
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div class="col-md-8">
+                                <div class="table-responsive">
+                                    <table id="VehiclesTable" class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    Make
+                                                </th>
+                                                <th>
+                                                    Model
+                                                </th>
+
+                                                <th>
+                                                    Action
+                                                </th>
+
+                                            </tr>
+                                        </thead>
+                                        @if (Model.VehiclesModelList.Count > 0)
+                                        {
+                                            foreach (var items in Model.VehiclesModelList)
+                                            {
+
+                                                <tr>
+                                                    <td>@items.VehicleMake</td>
+                                                    <td>@items.VehicleModel</td>
+
+
+                                                    <td>
+                                                        <a href='javascript:;' class="btn btn-info btn-sm btn-icon" onclick="bindVehicle('@items.VehicleID','@HttpUtility.JavaScriptStringEncode(items.VehicleYear)','@HttpUtility.JavaScriptStringEncode(items.LicensePlate)','@HttpUtility.JavaScriptStringEncode(items.VehicleMake)','@HttpUtility.JavaScriptStringEncode(items.IssuedIn)','@HttpUtility.JavaScriptStringEncode(items.VehicleModel)','@HttpUtility.JavaScriptStringEncode(items.VehicleVIN)','@HttpUtility.JavaScriptStringEncode(items.VehicleColor)')"> <i class="fa fa-pencil"></i></a>
+                                                        <a class="btn btn-danger btn-sm delete-sm" href='javascript:;' onclick='DeleteVehicle(@items.VehicleID,this);'><i class='fa fa-trash'></i></a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+
+                                    </table>
+
+                                </div>
+                            </div>
+
+                            @using (Html.BeginForm("GeneralReportsVehicles", "GeneralReports", new { Area = "GeneralReports" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                            {
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.HiddenFor(m => m.ReportID)
+                                        @Html.HiddenFor(m => m.VehiclesModel.VehicleID)
+
+                                        <label class="control-label">Year</label>
+
+                                        @Html.TextBoxFor(m => m.VehiclesModel.VehicleYear, "", new { @class = "form-control OnlyNumber", maxLength = "4" })
+                                        <label id="textdangerYear" style="color:red;"></label>
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                        <label class="control-label">Licence Plate</label>
+
+                                        @Html.TextBoxFor(m => m.VehiclesModel.LicensePlate, null, new { @class = "form-control" })
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Make</label>
+                                        @Html.TextBoxFor(m => m.VehiclesModel.VehicleMake, null, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Pro/State of Issued</label>
+                                        @Html.TextBoxFor(m => m.VehiclesModel.IssuedIn, null, new { @class = "form-control" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Model </label>
+                                        @Html.TextBoxFor(m => m.VehiclesModel.VehicleModel, null, new { @class = "form-control" })
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">VIN Number </label>
+                                        @Html.TextBoxFor(m => m.VehiclesModel.VehicleVIN, null, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Color </label>
+                                        @Html.DropDownListFor(m => m.VehiclesModel.VehicleColor, Model.ColorList as List<SelectListItem>, new { @class = "form-control" })
+
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-success @(Model.ReportID > 0 ? " edit":" add") @(Model.ReportID > 0 ? "" : "disabled")" id="btnGenVehicles">Save</button>
+                                        <button type="reset" class="btn btn-white">Reset</button>
+
+                                    </div>
+                                </div>
+
+                            }
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="involved">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" style="font-weight: 600;">Involved</h3>
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div class="col-md-8">
+                                <div class="table-responsive">
+                                    <table id="InvolvedTable" class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    First Name
+                                                </th>
+                                                <th>
+                                                    Last Name
+                                                </th>
+
+                                                <th>
+                                                    Role
+                                                </th>
+                                                <th>
+                                                    Action
+                                                </th>
+
+                                            </tr>
+                                        </thead>
+                                        @if (Model.SubjectInvolvedModelList.Count > 0)
+                                        {
+                                            foreach (var items in Model.SubjectInvolvedModelList)
+                                            {
+
+                                                <tr>
+                                                    <td>@items.FirstName</td>
+                                                    <td>@items.LastName</td>
+                                                    <td>@items.InvolvedRole</td>
+
+                                                    <td>
+                                                        <a href='javascript:;' class="btn small btn-info btn-sm btn-icon" onclick="bindInvolved('@items.SubjectIncidentID','@items.InvolvedID','@HttpUtility.JavaScriptStringEncode(items.FirstName)','@HttpUtility.JavaScriptStringEncode(items.LastName)','@HttpUtility.JavaScriptStringEncode(items.Sex)','@HttpUtility.JavaScriptStringEncode(items.Race)','@HttpUtility.JavaScriptStringEncode(items.InvolvedRole)')"> <i class="fa fa-pencil"></i></a>
+                                                        <a class="btn btn-danger small btn-sm delete-sm" href='javascript:;' onclick='DeleteInvolved(@items.InvolvedID,this);'><i class='fa fa-trash'></i></a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </table>
+
+                                </div>
+                                <a href="#myModal" data-toggle="modal" class="btn btn-primary  @(Model.ReportID > 0 ? "" : "disabled")" id="FindSubject"> <i class="fa fa-search"></i> Find Subject</a>
+                                <a href="#myModal1" data-toggle="modal" class="btn btn-primary default  @(Model.ReportID > 0 ? "" : "disabled")" id="FindEmployee"><i class="fa fa-search"></i> Find Employee</a>
+                            </div>
+
+                            @using (Html.BeginForm("GeneralReportsInvolved", "GeneralReports", new { Area = "GeneralReports" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                            {
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.HiddenFor(m => m.SubjectInvolvedModel.SubjectIncidentID)
+                                        @Html.HiddenFor(m => m.ReportID)
+                                        @Html.HiddenFor(m => m.SubjectInvolvedModel.InvolvedID)
+                                        <label class="control-label">First Name</label>
+
+                                        @Html.TextBoxFor(m => m.SubjectInvolvedModel.FirstName, "", new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.SubjectInvolvedModel.FirstName, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Last Name</label>
+                                        @Html.TextBoxFor(m => m.SubjectInvolvedModel.LastName, null, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.SubjectInvolvedModel.LastName, "", new { @class = "text-danger" })
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Sex</label>
+                                        @Html.DropDownListFor(m => m.SubjectInvolvedModel.Sex, ViewBag.lstGender as List<SelectListItem>, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Race</label>
+                                        @Html.DropDownListFor(m => m.SubjectInvolvedModel.Race, ViewBag.lstRace as List<SelectListItem>, new { @class = "form-control" })
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label">Role </label>
+                                        @Html.DropDownListFor(m => m.SubjectInvolvedModel.InvolvedRole, ViewBag.lstRole as List<SelectListItem>, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-success" @(Model.ReportID > 0 ? "" : "disabled") id="employeeInvolvedButton">Save</button>
+                                        <button type="reset" class="btn btn-white" id="genReportInvolvedReset">Reset</button>
+
+                                    </div>
+                                </div>
+
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="Banned">
+
+                    @using (Html.BeginForm("GeneralReportsBanned", "GeneralReports", FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                    {
+
+                        <div class="large-title no-margin">General Report -  Banned </div>
+
+                        <div class="row">
+
+                            @Html.HiddenFor(m => m.ReportID)
+
+                            <div class="col-md-6">
+                                <div class="white-box clearfix">
+                                    <div class="form-group">
+                                        <label class="control-label">Date</label>
+                                        @Html.TextBoxFor(m => m.BannedModel.EntryDate, new { @class = "form-control", @readonly = "readonly" })
+
+                                    </div>
+                                    <div class="form-group margin-bottom-10">
+                                        <label class="control-label">Start Date</label>
+                                        @Html.TextBoxFor(m => m.BannedModel.StartDate, new { @class = "form-control" })
+
+                                    </div>
+                                    <div class="form-group margin-bottom-10">
+                                        <label class="control-label">End Date</label>
+                                        @Html.TextBoxFor(m => m.BannedModel.EndDate, new { @class = "form-control" })
+
+                                    </div>
+                                    <div class="form-group margin-bottom-10">
+                                        <label class="control-label">Year</label>
+                                        @Html.TextBoxFor(m => m.BannedModel.BanYears, new { @class = "form-control OnlyNumber", ReadOnly = "ReadOnly" })
+                                        <label id="textdanger2" style="color:red;"></label>
+                                    </div>
+                                    <div class="form-group margin-bottom-10">
+                                        <label class="control-label">Month</label>
+                                        @Html.TextBoxFor(m => m.BannedModel.BanMonths, new { @class = "form-control OnlyNumber", ReadOnly = "ReadOnly" })
+                                        <label id="textdanger1" style="color:red;"></label>
+                                    </div>
+                                    <div class="form-group margin-bottom-10">
+                                        <label class="control-label">Day</label>
+                                        @Html.TextBoxFor(m => m.BannedModel.BanDays, new { @class = "form-control OnlyNumber", ReadOnly = "ReadOnly" })
+                                        <label id="textdanger" style="color:red;"></label>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <div class="white-box clearfix">
+                                    <div class="form-group">
+                                        <fieldset>
+                                            <legend>Type of Ban</legend>
+
+                                            <input type="hidden" value="@Model.BannedModel.MSTBanTypeList.Count" name="Count" id="BannedList" />
+                                            <div class="form-group">
+                                                <select class="form-control">
+                                                    <option value="Unknown">Unknown</option>
+                                                    @for (int i = 0; i < Model.BannedModel.MSTBanTypeList.ToList().Count; i++)
+                                                    {
+                                                        @*if (Model.BannedModel.BanTypesubList != null && Model.BannedModel.BanTypesubList.Count > 0)
+                                                            {
+
+
+                                                                if (Model.BannedModel.BanTypesubList.Where(m => m.Text == Model.BannedModel.BanTypeList[i].Text).FirstOrDefault() != null)
+                                                                {
+                                                                    <input type="checkbox" id="BanTypeList_(@i)__TypeOfBan" name="BanTypeList[@i].TypeOfBan" checked="checked" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <input type="checkbox" id="BanTypeList_(@i)__TypeOfBan" name="BanTypeList[@i].TypeOfBan" />
+
+                                                                }
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" id="BanTypeList_(@i)__TypeOfBan" name="BanTypeList[@i].TypeOfBan" />
+
+                                                            }*@
+
+                                                        <option value="@Model.BannedModel.MSTBanTypeList[i].Value">@Model.BannedModel.MSTBanTypeList[i].Text</option>
+                                                        @*<input type="hidden" id="BanTypeList_(@i)__Text" name="BanTypeList[@i].__Text" value="@Model.BannedModel.BanTypeList[i].Text" />
+                                                            @Model.BannedModel.BanTypeList[i].Text <br />*@
+
+                                                    }
+                                                </select>
+                                            </div>
+                                            @*<div class="form-group">
+                                                    <label class="control-label">Authorized By</label>
+                                                    @Html.DropDownListFor(model => model.BannedModel.BanTypeList, Model.BanTypeList as List<SelectListItem>, new { @class = "form-control" })
+                                                </div>*@
+                                        </fieldset>
+
+
+
+                                    </div>
+
+                                    <div class="form-group">
+
+
+                                        <label class="control-label">Authorized By</label>
+                                        @Html.DropDownListFor(model => model.BannedModel.AuthorizedBy, Model.AuthorizedByList as List<SelectListItem>, new { @class = "form-control" })
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="white-box clearfix">
+                                    <div class="form-group">
+                                        <label class="control-label">Description</label>
+
+                                        @Html.TextAreaFor(m => m.BannedModel.Description, new { @class = "form-control ckeditor" })
+
+                                    </div>
+
+
+                                    <div class="form-group no-margin-bottom">
+                                        <button type="submit" class="btn btn-success @(Model.ReportID > 0 ? " edit":" add") @(Model.ReportID > 0 ? "" : "disabled")" id="btnGenBanned">
+                                            Save
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                </div>
+
+                <div class="tab-pane" id="Dispute">
+
+                    @using (Html.BeginForm("GeneralReportsDispute", "GeneralReports", FormMethod.Post, new { @id = "EmployeesPersonal" }))
+                    {
+                        <div class="large-title no-margin">General Report - Dispute </div>
+
+                        <div class="row">
+
+                            @Html.HiddenFor(m => m.ReportID)
+                            @Html.HiddenFor(m => m.DisputeModel.DisputeID)
+                            <div class="col-md-6">
+                                <div class="white-box clearfix">
+                                    <div class="form-group">
+                                        <label class="control-label">Dispute Type</label>
+                                        @Html.DropDownListFor(model => model.DisputeModel.DisputeType, Model.DisputTypeList as List<SelectListItem>, new { @class = "form-control" })
+
+
+
+
+                                    </div>
+
+                                    <div class="form-group margin-bottom-10">
+                                        <label class="control-label">Amount</label>
+                                        @Html.TextBoxFor(m => m.DisputeModel.Amount, new { @class = "form-control allownumericwithoutdecimal" })
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <div class="white-box clearfix">
+                                    <div class="form-group">
+                                        <label class="control-label">Resolution</label>
+                                        @Html.DropDownListFor(model => model.DisputeModel.Resolution, Model.ResolutionList as List<SelectListItem>, new { @class = "form-control" })
+
+
+                                    </div>
+
+                                    <div class="form-group">
+
+
+                                        @Html.CheckBoxFor(m => m.DisputeModel.RecoveredMoney)  <label class="control-label">Recovered Money</label>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="white-box clearfix">
+                                    <div class="form-group">
+                                        <label class="control-label">Description</label>
+
+                                        @Html.TextAreaFor(m => m.DisputeModel.Description, new { @class = "form-control ckeditor" })
+
+                                    </div>
+
+
+                                    <div class="form-group no-margin-bottom">
+                                        <button type="submit" class="btn btn-success @(Model.ReportID > 0 ? " edit":" add") @(Model.ReportID > 0 ? "" : "disabled")" id="btnGenDispute">Save</button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    }
+
+
+                </div>
+
+                <div class="tab-pane" id="Services">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" style="font-weight: 600;">Services</h3>
+                        </div>
+
+                        <div class="panel-body">
+
+                            @using (Html.BeginForm("GeneralReportsServices", "GeneralReports", new { Area = "GeneralReports" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off", @id = "GeneralReportsServices" }))
+                            {
+                                <div class="col-md-6">
+                                    <div class="table-responsive">
+                                        <table id="ServicesTable" class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        Service Name
+                                                    </th>
+                                                    <th>
+                                                        Offered/Called
+                                                    </th>
+
+                                                    <th>
+                                                        Declined
+                                                    </th>
+
+                                                </tr>
+                                            </thead>
+
+                                            @if (Model.ServiceModelList.Count > 0)
+                                            {
+                                                foreach (var items in Model.ServiceModelList)
+                                                {
+
+                                                    <tr>
+                                                        <td>@items.ServiceName</td>
+
+                                                        @if (Model.ServiceSubjectModelList != null && Model.ServiceSubjectModelList.Count > 0)
+                                                        {
+
+
+                                                            if (Model.ServiceSubjectModelList.Where(m => m.ServiceName == items.ServiceName).FirstOrDefault() != null)
+                                                            {
+                                                                var newModel = Model.ServiceSubjectModelList.Where(m => m.ServiceName == items.ServiceName).FirstOrDefault();
+                                                                <td>@(newModel.Offered == "True" ? Html.Raw("<input type='Checkbox' class='offered checked' checked='checked' />") : Html.Raw("<input type='Checkbox' class='offered' />"))</td>
+                                                                <td>@(items.DeclinedAvailable == "True" ? (newModel.DeclinedAvailable == "True" ? Html.Raw("<input type='Checkbox' class='declined checked' checked='checked'/>") : Html.Raw("<input type='Checkbox' class='offered' />")) : Html.Raw(""))</td>
+                                                                @*<td>@(newModel.DeclinedAvailable == "True" ? Html.Raw("<input type='Checkbox' class='declined checked' checked='checked'>") : Html.Raw("<input type='Checkbox' class='declined'>"))</td>*@
+                                                            }
+                                                            else
+                                                            {
+                                                                <td><input type="checkbox" class="offered" /></td>
+                                                                <td>@(items.DeclinedAvailable == "True" ? Html.Raw("<input type='Checkbox' class='declined'>") : Html.Raw(""))</td>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <td><input type="checkbox" class="offered" /></td>
+                                                            <td>@(items.DeclinedAvailable == "True" ? Html.Raw("<input type='Checkbox' class='declined'>") : Html.Raw(""))</td>
+
+                                                        }
+                                                    </tr>
+                                                }
+                                            }
+
+
+                                        </table>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-1"></div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+
+
+                                        @Html.HiddenFor(m => m.ReportID, new { @id = "ReportID" })
+                                        @Html.HiddenFor(m => m.ServiceModel.ServiceID)
+                                        <label class="control-label">Time Called</label>
+
+                                        @Html.TextBoxFor(m => m.ServiceModel.CallTime, null, new { @class = "form-control" })
+                                        <input type="hidden" id="hdfServiceCallTime" name="hdfServiceCallTime" value="@Model.ServiceModel.CallTime" />
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                        <label class="control-label">Time Arrived</label>
+
+                                        @Html.TextBoxFor(m => m.ServiceModel.ArriveTime, null, new { @class = "form-control" })
+                                        <input type="hidden" id="hdfServiceArriveTime" name="hdfServiceArriveTime" value="@Model.ServiceModel.ArriveTime" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">By</label>
+
+                                        @Html.TextBoxFor(m => m.ServiceModel.ServiceBy, null, new { @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">For</label>
+
+                                        @Html.TextBoxFor(m => m.ServiceModel.ServiceFor, null, new { @class = "form-control" })
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+
+                                        @Html.TextAreaFor(m => m.ServiceModel.Description, new { @class = "form-control ckeditor" })
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-success @(Model.ReportID > 0 ? " edit":" add") @(Model.ReportID > 0 ? "" : "disabled")" onclick="SaveReportServicesOffererd();" id="btnGenServices" disabled="">Save</button>
+
+
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="Links">
+
+                    <div class="row">
+
+
+                        <div class="large-title">Incident- Linked Files</div>
+
+                        @using (Html.BeginForm("GenReportsLInkedFiles", "GeneralReports", FormMethod.Post, new { enctype = "multipart/form-data", @id = "ReportsFilesLinked" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(m => m.IncidentLinkedModel.ID)
+                            @Html.HiddenFor(m => m.ReportID)
+                            <input type="hidden" id="hdnFilePath" name="hdnFilePath" />
+
+                            <div class="col-md-6">
+                                <div class="white-box clearfix">
+                                    <div class="form-group clearfix">
+                                        @Html.LabelFor(m => m.IncidentLinkedModel.Description)
+                                        @Html.TextBoxFor(m => m.IncidentLinkedModel.Description, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.IncidentLinkedModel.Description, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="white-box clearfix">
+                                    <div class="form-group clearfix">
+                                        @Html.LabelFor(m => m.IncidentLinkedModel.FilePath)
+                                        @*@Html.TextBoxFor(m => m.subLinkedModel.FilePath, new {@type="file",@id="filePath",name="filePath"})*@
+                                        <input type="file" id="filePath" name="filePath" class="flubtn" />
+                                        <span style="color: red" id="spanUpload"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="white-box clearfix">
+                                    <div class="btn-right-align clearfix">
+                                        <input type="button" id="btnSubmit" value="Create" class="btn btn-success @(Model.ReportID > 0 ? "" : "disabled")" />
+                                        <input type="button" class="btn btn-blue" id="clearBtn" value="Clear" />
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+
+                            </div>
+
+
+
+                        }
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <div class="white-box clearfix">
+                                <div class="all-head1">
+                                    <div class="large-title no-padding left">General Reports Linked List</div>
+                                </div>
+                                <div class="full-box">
+                                    @if (Model.IncidentLinkedModelList != null && Model.IncidentLinkedModelList.Count > 0)
+                                    {
+                                        <div id="linkTable" class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>File Path</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    @foreach (var item in Model.IncidentLinkedModelList)
+                                                    {
+                                                        <tr>
+                                                            <td><a href="@item.FilePath" download="@item.FilePath.Split('/').Last()" class="product-item">@item.FilePath</a></td>
+                                                            <td><a href='javascript:;' data-id="@item.ID" class="btn small btn-info btn-sm btn-icon subjectTr"><i class='fa fa-pencil'></i></a><a href='javascript:;' class="btn small btn-danger btn-sm delete-sm" onclick='DeleteIncidentLink(@item.ID,this);'><i class='fa fa-trash'></i></a></td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div>No Record Found</div>
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="Reports">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Reports </div>
+                        <div class="panel-body">
+                            @using (Html.BeginForm("IncidentGeneralReports", "GeneralReports", new { Area = "GeneralReports" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                            {
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+
+
+                                        @Html.HiddenFor(m => m.ReportID, new { @id = "ReportID" })
+                                        @Html.HiddenFor(m => m.ReportModel.ID)
+                                        <label class="control-label">Report Date </label>
+
+                                        @Html.TextBoxFor(m => m.ReportModel.ReportDate, null, new { @class = "form-control" })
+
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                        <label class="control-label">Author</label>
+
+                                        @Html.DropDownListFor(model => model.ReportModel.UserID, Model.AuthorNameList as List<SelectListItem>, new { @class = "form-control" })
+                                    </div>
+
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+
+                                        @Html.TextAreaFor(m => m.ReportModel.Description, new { @class = "form-control ckeditor" })
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-success @(Model.ReportID > 0 ? " edit" : " add") @(Model.ReportID > 0 ? "" : "disabled")" id="GenReports">Save</button>
+                                        @*<button type="reset" class="btn btn-white" id="cleardata">Reset</button>*@
+                                        <button type="button" class="btn btn-primary add @(Model.ReportID > 0 ? "" : "disabled")">New</button>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="Events">
+                    <div class="col-md-12" id="divevents">
+                        <div class="preloader">
+                            <div class="cssload-speeding-wheel"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="Permission" style="display:@(Model.CheckPermissionID==Convert.ToInt32(Session["UserID"])?"true":" none")">
+
+                    <div class="large-title">Genereal Reports- Access Permission </div>
+
+                    <div class="col-md-12">
+                        <div class="white-box clearfix">
+                            <div class="table-responsive">
+
+                                <h3> Report Creator Details </h3>
+                                <table id="tblReportCreatorDetails" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>User Name</th>
+                                            <th>Date Created</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class='has-sub'>
+                                            <td>@Model.ReportCreatorFirstName</td>
+                                            <td>@Model.ReportCreatorLastName</td>
+                                            <td>@Model.UserName</td>
+                                            <td>@Model.ReportCreateDate</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                        <div class="white-box clearfix">
+                            <div class="col-md-12">
+                                <h3>User Base Permission </h3>
+                                <div class="box-bg">
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">
+                                            <h3> Users</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <select name="listUsers" id="listUsers" class="form-control" size="5" style="width: 411px; height: 316px;"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-1 text-center">
+                                        <div class="custom-top-margin">
+                                            <button type="button" class="btn btn-success btnwidh" id="btnadduser" onclick="AddUsersInList(this.id);">></button>
+                                            <br />
+                                            <button type="button" class="btn btn-success btnwidh" id="btnaddalluser" onclick="AddUsersInList(this.id);">>></button>
+                                            <br />
+                                            <button type="button" class="btn btn-danger btnwidh" id="btnremoveuser" onclick="RemoveUsersInList(this.id);"><</button>
+                                            <br />
+                                            <button type="button" class="btn btn-danger btnwidh" id="btnremovealluser" onclick="RemoveUsersInList(this.id);"><<</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">
+                                            <h3> Reports Access Users</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <select name="listReportAccessUsers" id="listReportAccessUsers" size="5" class="form-control" style="width: 411px; height: 316px;"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <h3 class="check-space">Permissions</h3>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="1" name="View" class="ByUsers" id="ByUserReportView" />
+                                            <label>View</label>
+                                        </div>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="2" name="Edit" class="ByUsers" id="ByUserReportEdit" />
+                                            <label>Edit</label>
+                                        </div>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="3" name="Delete" class="ByUsers" id="ByUserReportDelete" />
+                                            <label>Delete</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="white-box clearfix">
+                            <div class="col-md-12">
+                                <h3>Role Base Permission </h3>
+                                <div class="box-bg">
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">
+                                            <h3> Roles</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <select name="listRoles" id="listRoles" class="form-control" size="5" style="width: 411px; height: 200px;"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-1 text-center">
+                                        <div class="custom-top-margin">
+                                            <button type="button" class="btn btn-success btnwidh" id="btnaddrole" onclick="AddRoleInList(this.id);"> > </button>
+                                            <br />
+                                            <button type="button" class="btn btn-success btnwidh" id="btnaddallrole" onclick="AddRoleInList(this.id);"> >> </button>
+                                            <br />
+                                            <button type="button" class="btn btn-danger btnwidh" id="btnremoverole" onclick="RemoveRoleInList(this.id);"> < </button>
+                                            <br />
+                                            <button type="button" class="btn btn-danger btnwidh" id="btnremoveallrole" onclick="RemoveRoleInList(this.id);"> << </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">
+                                            <h3> Reports Access Roles</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <select name="listReportAccessRoles" id="listReportAccessRoles" size="5" class="form-control" style="width: 411px; height: 200px;"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <h3 class="check-space"> Permissions</h3>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="4" name="View" class="ByRoles" id="ByRoleReportView" />
+                                            <label>View</label>
+                                        </div>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="5" name="Edit" class="ByRoles" id="ByRoleReportEdit" />
+                                            <label>Edit</label>
+                                        </div>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="6" name="Delete" class="ByRoles" id="ByRoleReportDelete" />
+                                            <label>Delete</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Search for Subject</h4>
+            </div>
+
+            <div class="modal-body row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        @Html.Label("First Name")
+                        <input type="text" id="searchfirstName" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Last Name")
+                        <input type="text" id="searchlastName" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Sex")
+
+
+                        @Html.DropDownListFor(m => m.SubjectInvolvedModel.Sex, ViewBag.lstGender as List<SelectListItem>, new { @class = "form-control", @id = "subjectSex" })
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Race")
+                        @Html.DropDownListFor(m => m.SubjectInvolvedModel.Race, ViewBag.lstRace as List<SelectListItem>, new { @class = "form-control", @id = "subjectRace" })
+                    </div>
+                    @*<div class="form-group">
+                            @Html.Label("Date of Birth")
+                            <input type="text" id="dateOfBirth" class="form-control">
+                        </div>*@
+                </div>
+                @*<div class="col-md-6">
+                        <div class="form-group">
+                            @Html.Label("Incident Date")
+                            <input type="text" id="incidentDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Nature of Incident")
+                            @Html.DropDownListFor(m => m.SubjectInvolvedModel.Race, ViewBag.lstNatureOfIncident as List<SelectListItem>, new { @class = "form-control", @id = "ddlNature" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label("Short Description")
+                            @Html.DropDownListFor(m => m.SubjectInvolvedModel.Race, ViewBag.lstShortDescription as List<SelectListItem>, new { @class = "form-control", @id = "ddlShortDes" })
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Overall Status")
+                            @Html.DropDownListFor(m => m.SubjectInvolvedModel.Race, ViewBag.lstOverAllStaus as List<SelectListItem>, new { @class = "form-control" })
+                        </div>
+
+
+
+                    </div>*@
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success" id="searchButton" onclick="SearchSubject(); ">Search</button>
+                        <button type="reset" class="btn btn-white" onclick="SearchSubjectClear();">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-body row">
+                <div class="col-md-8">
+                    <div class="table-responsive" style="max-height:250px;overflow-y:auto;">
+                        <table id="SubjectTable" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th> </th>
+                                    <th>
+                                        First Name
+                                    </th>
+                                    <th>
+                                        Last Name
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-success AddInvolvedbutton" id="">Add as Involved</button>
+                            @* <button class="close btn btn-default" aria-hidden="true" data-dismiss="modal" type="button">Cancel</button>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Search for Employee</h4>
+            </div>
+
+            <div class="modal-body row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        @Html.Label("First Name")
+                        <input type="text" id="searchfirstName1" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Last Name")
+                        <input type="text" id="searchlastName1" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Sex")
+                        @Html.DropDownListFor(m => m.SubjectInvolvedModel.Sex, ViewBag.lstGender as List<SelectListItem>, new { @class = "form-control", @id = "sex1" })
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Race")
+                        @Html.DropDownListFor(m => m.SubjectInvolvedModel.Race, ViewBag.lstRace as List<SelectListItem>, new { @class = "form-control", @id = "Race1" })
+                    </div>
+                    @*<div class="form-group">
+                            @Html.Label("Date of Birth")
+                            <input type="text" id="dateOfBirth1" class="form-control">
+                        </div>*@
+                </div>
+                @*<div class="col-md-6">
+                        <div class="form-group">
+                            @Html.Label("Incident Date")
+                            <input type="text" id="incidentDate1" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Nature of Incident")
+                            @Html.DropDownListFor(m => m.SubjectInvolvedModel.Race, ViewBag.lstNatureOfIncident as List<SelectListItem>, new { @class = "form-control", @id = "ddlNature1" })
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label("Short Description")
+                            @Html.DropDownListFor(m => m.SubjectInvolvedModel.Race, ViewBag.lstShortDescription as List<SelectListItem>, new { @class = "form-control", @id = "ddlShortDes1" })
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Overall Status")
+                            @Html.DropDownListFor(m => m.SubjectInvolvedModel.Race, ViewBag.lstOverAllStaus as List<SelectListItem>, new { @class = "form-control", @id = "OvarALl" })
+                        </div>
+
+
+
+                    </div>*@
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success" id="searchButton" onclick="SearchEmployee();">Search</button>
+                        <button type="reset" class="btn btn-white" onclick="SearchEmployeeClear();">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-body row">
+                <div class="col-md-8">
+                    <div class="table-responsive" style="max-height:250px; overflow-y:auto;">
+                        <table id="EmployeeTable" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th> </th>
+                                    <th>
+                                        First Name
+                                    </th>
+                                    <th>
+                                        Last Name
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <button type="button" class="btn btn-success AddEmployeeInvolvedbutton" id="">Add as Involved</button>
+                            @* <button class="close btn btn-default"  aria-hidden="true" data-dismiss="modal" type="button">Cancel</button>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+<link href="~/assets/css/wickedpicker.css" rel="stylesheet" />
+<script src="~/assets/js/datepicker/wickedpicker.js"></script>
+<script src="~/assets/js/ckeditor/adapters/jquery.js"></script>
+<script src="~/assets/js/ckeditor/ckeditor.js"></script>
+
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+<link href="~/Content/data-tables/dataTables.alphabetSearch.css" rel="stylesheet" />
+<script src="~/Content/data-tables/dataTables.alphabetSearch.min.js"></script>
+<style>
+    legend {
+        display: block;
+        padding-left: 2px;
+        padding-right: 2px;
+        border: none;
+    }
+
+    .wickedpicker__controls {
+        line-height: inherit;
+        margin: 0;
+        padding: 10px 0;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+
+        if ($('#hdShow').val() == 'View') {
+            $(".form-control").attr("disabled", "disabled");
+            $(".btn").hide(true);
+            $(".flubtn").attr("disabled", "disabled");
+            $(document).find("input[type=checkbox]").attr("disabled", "disabled");
+            $(document).find("input[type=radio]").attr("disabled", "disabled");
+            $(document).find('.enablebtn>a').removeAttr("style");
+        }
+        else {
+            $(".form-control").attr("disabled", false);
+            $(document).find('.editpermission').hide(true);
+        }
+
+        BindForeignExchangeRate(); // Bind ForeignExchangeRates
+
+
+        $('#IncidentDate').datepicker({ autoclose: true });
+
+        //$('#IncidentTime').wickedpicker();
+        $('#IncidentTime').timepicker({ autoclose: true });
+        $('#IncidentTime').val($('#OldIncidentTime').val());
+
+
+        $('#LCTPitTransactionsModel_BuyInTime').timepicker({ autoclose: true });
+        $('#LCTCashCallModel_CashCallTime').timepicker({ autoclose: true });
+        $('#LCTCashOutsModel_CashOutTime').timepicker({ autoclose: true });
+        $('#ReportModel_ReportDate').datepicker({ autoclose: true });
+
+        $('#ServiceModel_CallTime').timepicker({ autoclose: true });
+        $('#ServiceModel_CallTime').val($('#hdfServiceCallTime').val());
+
+        $('#ServiceModel_ArriveTime').timepicker({ autoclose: true });
+        $('#ServiceModel_ArriveTime').val($('#hdfServiceArriveTime').val());
+
+        $('#ddlNature').val("Select");
+        $('#ddlNature1').val("Select");
+
+        $('#subjectSex').editableSelect({ effects: 'default' });
+        $('#subjectRace').editableSelect({ effects: 'default' });
+        $('#sex1').editableSelect({ effects: 'default' });
+        $('#Race1').editableSelect({ effects: 'default' });
+
+        //$('#ReportModel_UserID').editableSelect({ effects: 'default' });
+        //$('#Location').editableSelect({ effects: 'default' });
+        //$('#BannedModel_AuthorizedBy').editableSelect({ effects: 'default' });
+        //$('#DisputeModel_DisputeType').editableSelect({ effects: 'default' });
+        //$('#DisputeModel_Resolution').editableSelect({ effects: 'default' });
+        //$('#ddlNatureOfEvent').editableSelect({ effects: 'default' });
+        //$('#IncidentRole').editableSelect({ effects: 'default' });
+        //$('#Status').editableSelect({ effects: 'default' });
+        //$('#ddlShortDescription').editableSelect({ effects: 'default' });
+        //$('#LCTPitTransactionsModel_Game').editableSelect({ effects: 'default' });
+        //$('#LCTCashCallModel_Cashier').editableSelect({ effects: 'default' });
+        //$('#VehiclesModel_VehicleColor').editableSelect({ effects: 'default' });
+
+        $('input[name="LCTCashOutsModel.TypeOfWin"][value=1]').on('click', function () {
+
+
+            $('#LCTCashOutsModel_TableNumber').prop('disabled', false);
+
+        });
+        $('input[name="LCTCashOutsModel.TypeOfWin"][value=2]').on('click', function () {
+            $('#LCTCashOutsModel_TableNumber').prop('disabled', true);
+
+
+        });
+        $('input[name="LCTCashOutsModel.TypeOfWin"][value=3]').on('click', function () {
+            $('#LCTCashOutsModel_TableNumber').prop('disabled', true);
+
+        });
+        $('#LCTCashOutsModel_ChequeNo').prop('disabled', 'disabled');
+        $('input[name="LCTCashOutsModel.PaymentType"][value=1]').on('click', function () {
+
+            $('#LCTCashOutsModel_ChequeNo').prop('disabled', true);
+        });
+        $('input[name="LCTCashOutsModel.PaymentType"][value=2]').on('click', function () {
+
+            $('#LCTCashOutsModel_ChequeNo').prop('disabled', true);
+
+        });
+        $('input[name="LCTCashOutsModel.PaymentType"][value=3]').on('click', function () {
+
+            $('#LCTCashOutsModel_ChequeNo').prop('disabled', false);
+        });
+
+        $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+            localStorage.setItem('activeTab', $(e.target).attr('href'));
+        });
+        var activeTab = localStorage.getItem('activeTab');
+        if (activeTab)
+        {
+            if (activeTab == "#Events") {
+                $('#divevents').load("/GeneralReports/GeneralReports/EventListLink?ReportID=@Model.ReportID");
+            }
+
+            $('#myTab a[href="' + activeTab + '"]').tab('show');
+        }
+
+        var sum = 0;
+        var sum1 = 0;
+        $("#BuyInTable tbody>tr").each(function () {
+
+            var buySum = parseFloat($(this).find('td:eq(3)').html());
+            var buySum1 = parseFloat($(this).find('td:eq(4)').html());
+            if (!isNaN(buySum)) {
+                sum += buySum;
+            }
+            if (!isNaN(buySum1)) {
+                sum1 += buySum1;
+            }
+
+
+        });
+        if (!isNaN(sum))
+        { $('#TotalCashAmount').html('$' + sum + '.00'); }
+        else { $('#TotalCashAmount').html('$0.00'); }
+
+        if (!isNaN(sum1)) { $('#TotalMarkerAmount').html('$' + sum1 + '.00'); }
+        else { $('#TotalMarkerAmount').html('$0.00'); }
+
+        $('.allownumericwithoutdecimal').keyup(function () {
+            $(this).append('$');
+        });
+
+        $('.allownumericwithoutdecimal').keypress(function (event) {
+
+            return isNumber(event, this)
+        });
+
+
+
+        var Exchange = 0;
+        $("#ExchangeTable tbody>tr").each(function () {
+            var ExchangeSum = parseFloat($(this).find('td:eq(3)').html());
+
+            if (!isNaN(ExchangeSum)) {
+                Exchange += ExchangeSum;
+            }
+
+        });
+        if (!isNaN(Exchange))
+        { $('#TotalExchangeAmount').html('$' + Exchange + '.00'); }
+        else { $('#TotalExchangeAmount').html('$0.00'); }
+
+
+
+
+        var CashCall = 0;
+        $("#CashCallTable tbody>tr").each(function () {
+            var CashCallSum = parseFloat($(this).find('td:eq(2)').html());
+            if (!isNaN(CashCallSum)) {
+                CashCall += CashCallSum;
+            }
+
+
+        });
+        if (!isNaN(CashCall))
+        { $('#TotalCasCallAmount').html('$' + CashCall + '.00'); }
+        else { $('#TotalCasCallAmount').html('$0.00'); }
+
+
+
+
+
+        var cashout = 0;
+        var Markerout = 0;
+        $("#CashOutTable tbody>tr").each(function () {
+
+            var addedValue = parseFloat($(this).find('td:eq(5)').html());
+            var Markervalue = parseFloat($(this).find('td:eq(6)').html());
+            if (!isNaN(addedValue)) {
+                cashout += addedValue;
+            }
+            if (!isNaN(Markervalue)) {
+                Markerout += Markervalue;
+            }
+        });
+
+
+        if (!isNaN(cashout))
+        { $('#TotalCashOutAmount').html('$' + cashout + '.00'); }
+        else { $('#TotalCashOutAmount').html('$0.00'); }
+
+        if (!isNaN(Markerout)) { $('#TotalMarkerOutAmount').html('$' + Markerout + '.00'); }
+        else { $('#TotalMarkerOutAmount').html('$0.00'); }
+
+        $("a.product-item").click(function () {
+            url_to_open = $(this).attr("href");
+            window.open(url_to_open, '_blank');
+            return false;
+        });
+
+        $('.offered').change(function () {
+            if ($(this).is(":checked")) {
+                $(this).addClass("checked");
+            } else {
+                $(this).removeClass("checked");
+            }
+        });
+        $('.declined').change(function () {
+            if ($(this).is(":checked")) {
+                $(this).addClass("checked");
+            } else {
+                $(this).removeClass("checked");
+            }
+        });
+        var currdate = new Date();
+
+        var currdate = (currdate.getMonth() + 1) + '/' + currdate.getDate() + '/' + currdate.getFullYear();
+        $('.add').on('click', function () {
+            $('#ReportModel_ReportDate').val(currdate);
+
+
+            $("#ReportModel_UserID").val($("#ReportModel_UserID option:first").val());
+            CKEDITOR.instances['ReportModel_Description'].setData('')
+        });
+        $('.clear').on('click', function () {
+
+            $('#ReportModel_ReportDate').val(" ");
+
+
+            $("#ReportModel_UserID").val(" ");
+            CKEDITOR.instances['ReportModel_Description'].setData('')
+        });
+        $('.subjectTr').on('click', function () {
+
+            if (EditConfirm('@ViewBag.Action')) {
+                var Id = $(this).attr('data-id');
+                $.ajax({
+                    url: '@Url.Content("~/GeneralReports/GeneralReports/GetGenReportsLinkById")',
+                    data: { Id: Id },
+                    type: 'get',
+                    datatype: 'json',
+                    contenttype: 'application/json',
+                    success: function (data) {
+                        if (data.length > 0) {
+                            var jsondata = JSON.parse(data);
+                            console.log(jsondata);
+                            $('#ReportID').val(jsondata.ReportID);
+                            $('#IncidentLinkedModel_ID').val(jsondata.ID);
+                            $('#IncidentLinkedModel_Description').val(jsondata.Description);
+                            $('#hdnFilePath').val(jsondata.FilePath);
+                            $('#btnSubmit').val('Update');
+                            // $('#addressTitle').text('Update Subject Alias');
+                        }
+
+                    }
+                });
+            }
+        });
+
+        $('#clearBtn').on('click', function () {
+            Reset();
+        });
+
+        $('#filePath').on('change', function (event) {
+            var x;
+
+            if (parseInt($('#IncidentLinkedModel_ID').val()) > 0) {
+                x = EditConfirm('@ViewBag.Action');
+            }
+            else {
+                x = AddConfirm('@ViewBag.Action');
+            }
+            if (x) {
+                $('#IncidentLinkedModel_Description').val($(this).val());
+                $('#hdnFilePath').val($(this).val());
+            }
+            else {
+                $('#filePath').val('');
+            }
+        });
+
+        $('#btnSubmit').on('click', function () {
+            var x;
+            if (parseInt($('#IncidentLinkedModel_ID').val()) > 0) {
+                x = EditConfirm('@ViewBag.Action');
+            }
+            else {
+                x = AddConfirm('@ViewBag.Action');
+            }
+            if (x) {
+                var uploadedfile = $('#hdnFilePath').val();
+                if (uploadedfile != null && uploadedfile != "") {
+                    $('#ReportsFilesLinked').submit();
+                } else {
+                    $('#spanUpload').text('Please Choose File.');
+                }
+            }
+        });
+
+        var sum = 0;
+        var sum1 = 0;
+        $("#BuyInTable tbody>tr").each(function () {
+
+            var buySum = parseFloat($(this).find('td:eq(3)').html());
+            var buySum1 = parseFloat($(this).find('td:eq(4)').html());
+            if (!isNaN(buySum)) {
+                sum += buySum;
+            }
+            if (!isNaN(buySum1)) {
+                sum1 += buySum1;
+            }
+
+
+        });
+        if (!isNaN(sum))
+        { $('#TotalCashAmount').html('$' + sum + '.00'); }
+        else { $('#TotalCashAmount').html('$0.00'); }
+
+        if (!isNaN(sum1)) { $('#TotalMarkerAmount').html('$' + sum1 + '.00'); }
+        else { $('#TotalMarkerAmount').html('$0.00'); }
+
+        $('.allownumericwithoutdecimal').keyup(function () {
+            $(this).append('$');
+        });
+
+        $('.allownumericwithoutdecimal').keypress(function (event) {
+
+            return isNumber(event, this)
+        });
+
+
+
+        var Exchange = 0;
+        $("#ExchangeTable tbody>tr").each(function () {
+            var ExchangeSum = parseFloat($(this).find('td:eq(3)').html());
+
+            if (!isNaN(ExchangeSum)) {
+                Exchange += ExchangeSum;
+            }
+
+        });
+        if (!isNaN(Exchange))
+        { $('#TotalExchangeAmount').html('$' + Exchange + '.00'); }
+        else { $('#TotalExchangeAmount').html('$0.00'); }
+
+
+
+
+        var CashCall = 0;
+        $("#CashCallTable tbody>tr").each(function () {
+            var CashCallSum = parseFloat($(this).find('td:eq(2)').html());
+            if (!isNaN(CashCallSum)) {
+                CashCall += CashCallSum;
+            }
+
+
+        });
+        if (!isNaN(CashCall))
+        { $('#TotalCasCallAmount').html('$' + CashCall + '.00'); }
+        else { $('#TotalCasCallAmount').html('$0.00'); }
+
+
+
+
+
+        var cashout = 0;
+        var Markerout = 0;
+        $("#CashOutTable tbody>tr").each(function () {
+
+            var addedValue = parseFloat($(this).find('td:eq(5)').html());
+            var Markervalue = parseFloat($(this).find('td:eq(6)').html());
+            if (!isNaN(addedValue)) {
+                cashout += addedValue;
+            }
+            if (!isNaN(Markervalue)) {
+                Markerout += Markervalue;
+            }
+        });
+
+
+        if (!isNaN(cashout))
+        { $('#TotalCashOutAmount').html('$' + cashout + '.00'); }
+        else { $('#TotalCashOutAmount').html('$0.00'); }
+
+        if (!isNaN(Markerout)) { $('#TotalMarkerOutAmount').html('$' + Markerout + '.00'); }
+        else { $('#TotalMarkerOutAmount').html('$0.00'); }
+
+        $('#BannedModel_EntryDate').val(currdate);
+
+        $("#BannedModel_StartDate").datepicker({ autoclose: true });
+        $("#BannedModel_EndDate").datepicker({ autoclose: true });
+
+        $('#BannedModel_EndDate').change(function () {
+            var start = $('#BannedModel_StartDate').datepicker('getDate');
+            var end = $('#BannedModel_EndDate').datepicker('getDate');
+
+            if (start < end) {
+                var days = (end - start) / 1000 / 60 / 60 / 24;
+                $('#BannedModel_BanDays').val(days);
+
+                var Months = (end.getFullYear() * 12 + end.getMonth()) - (start.getFullYear() * 12 + start.getMonth());
+                $('#BannedModel_BanMonths').val(Months);
+
+                var Years = end.getFullYear() - start.getFullYear();
+                $('#BannedModel_BanYears').val(Years);
+            }
+            else {
+                alert("You cant come back before you have been!");
+                $('#BannedModel_StartDate').val("");
+                $('#BannedModel_EndDate').val("");
+                $('#BannedModel_BanDays').val("");
+                $('#BannedModel_BanMonths').val("");
+                $('#BannedModel_BanYears').val("");
+            }
+        }); //end change function
+
+        // page changes
+        var somethingChanged = false;
+        var submitform = "";
+        var activetarget = "";
+        var button = "";
+        $("#myTab> li > a").on('shown.bs.tab', function (event) {
+            activetarget = $(event.target).attr("href");  // active tab
+
+            var previoustarget = $(event.relatedTarget).attr("href");  // previous tab
+            if (somethingChanged == true) {
+                formSubmitByTab(previoustarget, somethingChanged);
+            }
+            activetargets(activetarget);
+            somethingChanged = false;
+        });
+        if (activetarget != "") {
+            activetargets(activetarget);
+        }
+        else {
+            activetarget = $("#myTab li.active a").attr('href');
+            activetargets(activetarget);
+        }
+
+        function activetargets(target) {
+            if (target == "#Details") {
+                button = $('#btnDetails');
+            }
+            else if (target == "#cashTransactions") {
+                button = $('');
+            }
+            else if (target == "#Vehicles") {
+                button = $('#btnGenVehicles');
+            }
+            else if (target == "#involved") {
+                button = $('#employeeInvolvedButton');
+            }
+            else if (target == "#Banned") {
+                button = $('#btnGenBanned');
+            }
+            else if (target == "#Dispute") {
+                button = $('#btnGenDispute');
+            }
+            else if (target == "#Services") {
+                button = $('#btnGenServices');
+            }
+            else if (target == "#Links") {
+                button = $('#btnSubmit');
+            }
+            else if (target == "#Reports") {
+                button = $('#GenReports');
+            }
+        }
+
+        var orig = [];
+
+        $.fn.getType = function () {
+            return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
+        }
+
+        $("form :input").each(function () {
+            var type = $(this).getType();
+            var tmp = {
+                'type': type,
+                'value': $(this).val()
+            };
+            if (type == 'radio') {
+                tmp.checked = $(this).is(':checked');
+            }
+            orig[$(this).attr('id')] = tmp;
+        });
+
+        $('form').bind('change keyup', function () {
+
+            somethingChanged = false;
+            var disable = true;
+            $("form :input").each(function () {
+                var type = $(this).getType();
+                var id = $(this).attr('id');
+
+                if (type == 'text' || type == 'select') {
+                    disable = (orig[id].value == $(this).val());
+                } else if (type == 'radio') {
+                    disable = (orig[id].checked == $(this).is(':checked'));
+                }
+
+                if (!disable) {
+                    return false; // break out of loop
+                }
+            });
+            somethingChanged = true;
+            button.prop('disabled', disable);
+        });
+
+        if ($("#ddlNatureOfEvent :selected").val() != null && $("#ddlNatureOfEvent :selected").val() != 0)
+        { BindShortDescriptor(); }
+
+
+        if ('@Model.ReportID' > 0) {
+            $('#ddlNatureOfEvent').val('@Model.NatureOfEvent');
+
+            if ($("#ddlNatureOfEvent :selected").val() != null && $("#ddlNatureOfEvent :selected").val() != 0)
+            { BindShortDescriptor(); }
+
+            setTimeout(function () {
+                $('#ddlShortDescription').val('@Model.ShortDescriptor');
+            }, 4000);
+
+
+        }
+
+    }); // End Ready
+
+    $(function () {
+        $('.OnlyNumber').keydown(function (e) {
+            if (e.shiftKey || e.ctrlKey || e.altKey) {
+                e.preventDefault();
+            } else {
+                var key = e.keyCode;
+                if (!((key == 8) || (key == 46) || (key >= 35 && key <= 40) || (key >= 48 && key <= 57) || (key >= 96 && key <= 105))) {
+                    e.preventDefault();
+                }
+            }
+        });
+    });
+
+    //$('.Banneddate').keyup(function () {
+    //    var dateValue = $(this).val();
+    //    var datelenght = $(this).val().length;
+    //    if (datelenght > 2) {
+    //        $('#textdanger').html('Please Enter valid Day')
+    //        return false;
+    //    }
+    //    else {
+    //        $('#textdanger').html('')
+    //        return true;
+    //    }
+    //    if (!NaN(dateValue)) {
+    //        $('#textdanger').html('Please Enter valid Day')
+    //        return false;
+    //    }
+    //    else {
+    //        $('#textdanger').html('')
+    //        return true;
+    //    }
+    //});
+    //$('.BannedMonth').keyup(function () {
+    //    var dateValue = $(this).val();
+    //    var datelenght = $(this).val().length;
+    //    if (datelenght > 2) {
+    //        $('#textdanger1').html('Please Enter valid Month')
+    //        return false;
+    //    }
+    //    else {
+    //        $('#textdanger1').html('')
+    //        return true;
+    //    }
+    //    if (!NaN(dateValue)) {
+    //        $('#textdanger1').html('Please Enter valid Month')
+    //        return false;
+    //    }
+    //    else {
+    //        $('#textdanger1').html('')
+    //        return true;
+    //    }
+    //});
+    //$('.Bannedyear').keyup(function () {
+    //    var dateValue = $(this).val();
+    //    var datelenght = $(this).val().length;
+    //    if (datelenght > 4) {
+    //        $('#textdanger2').html('Please Enter valid year')
+    //        return false;
+    //    }
+    //    else {
+    //        $('#textdanger2').html('')
+    //        return true;
+    //    }
+    //    if (!NaN(dateValue)) {
+    //        $('#textdanger2').html('Please Enter valid year')
+    //        return false;
+    //    }
+    //    else {
+    //        $('#textdanger2').html('')
+    //        return true;
+    //    }
+    //});
+
+    //$('.VehicleYear').keyup(function () {
+    //    var dateValue = $(this).val();
+    //    var datelenght = $(this).val().length;
+    //    if (datelenght > 4) {
+    //        $('#textdangerYear').html('Please Enter valid year')
+    //        return false;
+    //    }
+    //    else {
+    //        $('#textdangerYear').html('')
+    //        return true;
+    //    }
+    //    if (!NaN(dateValue)) {
+    //        $('#textdangerYear').html('Please Enter valid year')
+    //        return false;
+    //    }
+    //    else {
+    //        $('#textdangerYear').html('')
+    //        return true;
+    //    }
+    //});
+
+    function ExchangeAmount() {
+        var ForeignAmount = $('#LCTForeignExchangeModel_ForeignAmount').val();
+
+        var ForeignRate = $('#LCTForeignExchangeModel_Rate').val();
+
+        $('#LCTForeignExchangeModel_Amount').val(ForeignAmount * ForeignRate);
+    }
+    function isNumber(evt, element) {
+
+        var charCode = (evt.which) ? evt.which : event.keyCode
+
+        if (
+            (charCode != 45 || $(element).val().indexOf('-') != -1) &&      // “-” CHECK MINUS, AND ONLY ONE.
+            (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // “.” CHECK DOT, AND ONLY ONE.
+            (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+
+    function bindBuyIn(Id, Time, Pit, Game, Cash, Amount) {
+        $('#LCTPitTransactionsModel_ID').val(Id);
+        $('#LCTPitTransactionsModel_BuyInTime').val(Time);
+        $('#LCTPitTransactionsModel_Pit').val(Pit);
+        $('#LCTPitTransactionsModel_Game').val(Game);
+        $('input[type=radio][value=' + Cash + ']').prop('checked', true);
+        $('#LCTPitTransactionsModel_Amount').val(Amount);
+    }
+    function DeleteBuyIn(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/GeneralReports/GeneralReports/DeleteCashBuyIn")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#BuyInTable>tbody tr').length == 1) {
+
+                            $('#BuyInTable>tbody tr').remove();
+
+                            $('#msgDiv').html('<div class="alert alert-success">Buy-In has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+
+                        }
+                        else {
+
+                            $(caller).parents('tr:first').remove();
+
+                            $('#msgDiv').html('<div class="alert alert-success">Buy-In has been deleted Suceesfully.</div>');
+
+                            window.scrollTo(0, 0);
+
+                        }
+                        var sum = 0;
+                        var sum1 = 0;
+                        $("#BuyInTable tbody>tr").each(function () {
+
+                            var buySum = parseFloat($(this).find('td:eq(3)').html());
+                            var buySum1 = parseFloat($(this).find('td:eq(4)').html());
+                            if (!isNaN(buySum)) {
+                                sum += buySum;
+                            }
+                            if (!isNaN(buySum1)) {
+                                sum1 += buySum1;
+                            }
+
+
+                        });
+                        if (!isNaN(sum))
+                        { $('#TotalCashAmount').html('$' + sum + '.00'); }
+                        else { $('#TotalCashAmount').html('$0.00'); }
+
+                        if (!isNaN(sum1)) { $('#TotalMarkerAmount').html('$' + sum1 + '.00'); }
+                        else { $('#TotalMarkerAmount').html('$0.00'); }
+
+
+                        $('#LCTPitTransactionsModel_ID').val('');
+                        $('#LCTPitTransactionsModel_BuyInTime').val('');
+                        $('#LCTPitTransactionsModel_Pit').val('');
+                        $('#LCTPitTransactionsModel_Game').val('');
+                        $('#LCTPitTransactionsModel_Amount').val('');
+
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function bindExchange(Id, Country, ForeignAmount, Rate, Amount) {
+
+        $('#LCTForeignExchangeModel_ID').val(Id);
+        $('#LCTForeignExchangeModel_ForeignCountry').val(Country);
+        $('#LCTForeignExchangeModel_ForeignAmount').val(ForeignAmount);
+        $('#LCTForeignExchangeModel_Rate').val(Rate);
+        $('#LCTForeignExchangeModel_Amount').val(Amount);
+
+    }
+    function DeleteExchange(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/GeneralReports/GeneralReports/DeleteExchange")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#ExchangeTable>tbody tr').length == 1) {
+                            $('#ExchangeTable>tbody tr').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Exchange has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Exchange has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+
+                        var Exchange = 0;
+                        $("#ExchangeTable tbody>tr").each(function () {
+                            var ExchangeSum = parseFloat($(this).find('td:eq(3)').html());
+
+                            if (!isNaN(ExchangeSum)) {
+                                Exchange += ExchangeSum;
+                            }
+
+                        });
+                        if (!isNaN(Exchange))
+                        { $('#TotalExchangeAmount').html('$' + Exchange + '.00'); }
+                        else { $('#TotalExchangeAmount').html('$0.00'); }
+
+                        $('#LCTForeignExchangeModel_ID').val('');
+                        $('#LCTForeignExchangeModel_ForeignCountry').val('');
+                        $('#LCTForeignExchangeModel_ForeignAmount').val('');
+                        $('#LCTForeignExchangeModel_Rate').val('');
+                        $('#LCTForeignExchangeModel_Amount').val('');
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function bindCashOuts(Id, Time, typeofwin, paymenttype, number, tableNumber, Amount) {
+        $('#LCTCashOutsModel_ID').val(Id);
+        $('#LCTCashOutsModel_CashOutTime').val(Time);
+        $('input[type=radio][value=' + typeofwin + ']').prop('checked', true);
+        $('input[type=radio][value=' + paymenttype + ']').prop('checked', true);
+        $('#LCTCashOutsModel_ChequeNo').val(number);
+        $('#LCTCashOutsModel_TableNumber').val(tableNumber);
+        $('#LCTCashOutsModel_Amount').val(Amount);
+    }
+    function DeleteCashOuts(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/GeneralReports/GeneralReports/DeleteCashOuts")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#CashOutTable>tbody tr').length == 1) {
+                            $('#CashOutTable>tbody tr').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Cash Out  has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Cash Out has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        var cashout = 0;
+                        var Markerout = 0;
+                        $("#CashOutTable tbody>tr").each(function () {
+
+                            var addedValue = parseFloat($(this).find('td:eq(5)').html());
+                            var Markervalue = parseFloat($(this).find('td:eq(6)').html());
+                            if (!isNaN(addedValue)) {
+                                cashout += addedValue;
+                            }
+                            if (!isNaN(Markervalue)) {
+                                Markerout += Markervalue;
+                            }
+                        });
+
+
+                        if (!isNaN(cashout))
+                        { $('#TotalCashOutAmount').html('$' + cashout + '.00'); }
+                        else { $('#TotalCashOutAmount').html('$0.00'); }
+
+                        if (!isNaN(Markerout)) { $('#TotalMarkerOutAmount').html('$' + Markerout + '.00'); }
+                        else { $('#TotalMarkerOutAmount').html('$0.00'); }
+
+                        $('#LCTCashOutsModel_ID').val('');
+                        $('#LCTCashOutsModel_CashOutTime').val('');
+                        $('#LCTCashOutsModel_ChequeNo').val('');
+                        $('#LCTCashOutsModel_TableNumber').val('');
+                        $('#LCTCashOutsModel_Amount').val('');
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function bindCashCall(Id, Time, cashier, Amount) {
+        $('#LCTCashCallModel_ID').val(Id);
+        $('#LCTCashCallModel_CashCallTime').val(Time);
+        $('#LCTCashCallModel_Cashier').val(cashier);
+        $('#LCTCashCallModel_Amount').val(Amount);
+    }
+    function DeleteCashCall(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/GeneralReports/GeneralReports/DeleteCashCall")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#CashCallTable>tbody tr').length == 1) {
+                            $('#CashCallTable>tbody tr').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Cash Call  has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Cash Call has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        var CashCall = 0;
+                        $("#CashCallTable tbody>tr").each(function () {
+                            var CashCallSum = parseFloat($(this).find('td:eq(2)').html());
+                            if (!isNaN(CashCallSum)) {
+                                CashCall += CashCallSum;
+                            }
+
+
+                        });
+                        if (!isNaN(CashCall))
+                        { $('#TotalCasCallAmount').html('$' + CashCall + '.00'); }
+                        else { $('#TotalCasCallAmount').html('$0.00'); }
+
+
+                        $('#LCTCashCallModel_ID').val('');
+                        $('#LCTCashCallModel_CashCallTime').val('');
+                        $('#LCTCashCallModel_Cashier').val('');
+                        $('#LCTCashCallModel_Amount').val('');
+
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function bindVehicle(Id, Year, LicencePlate, make, Issued, model, VINNumber, Color) {
+        $('#VehiclesModel_VehicleID').val(Id);
+        $('#VehiclesModel_VehicleYear').val(Year);
+        $('#VehiclesModel_LicensePlate').val(LicencePlate);
+        $('#VehiclesModel_VehicleMake').val(make);
+        $('#VehiclesModel_IssuedIn').val(Issued);
+        $('#VehiclesModel_VehicleModel').val(model);
+        $('#VehiclesModel_VehicleVIN').val(VINNumber);
+        $('#VehiclesModel_VehicleColor').val(Color);
+    }
+    function DeleteVehicle(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/GeneralReports/GeneralReports/DeleteVehicle")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#VehiclesTable>tbody tr').length == 1) {
+                            $('#VehiclesTable>tbody tr').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Vehicle has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Vehicle has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+
+                        $('#VehiclesModel_VehicleID').val('');
+                        $('#VehiclesModel_VehicleYear').val('');
+                        $('#VehiclesModel_LicensePlate').val('');
+                        $('#VehiclesModel_VehicleMake').val('');
+                        $('#VehiclesModel_IssuedIn').val('');
+                        $('#VehiclesModel_VehicleModel').val('');
+                        $('#VehiclesModel_VehicleVIN').val('');
+                        $('#VehiclesModel_VehicleColor').val('');
+
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function bindInvolved(ID, InvolvedID, FirstName, LastName, Sex, Race, InvolvedRole) {
+        $('#SubjectInvolvedModel_SubjectIncidentID').val(ID);
+        $('#SubjectInvolvedModel_InvolvedID').val(InvolvedID);
+        $('#SubjectInvolvedModel_FirstName').val(FirstName);
+        $('#SubjectInvolvedModel_LastName').val(LastName);
+        $('#SubjectInvolvedModel_Sex').val(Sex);
+        $('#SubjectInvolvedModel_Race').val(Race);
+        $('#SubjectInvolvedModel_InvolvedRole').val(InvolvedRole);
+    }
+
+    function DeleteInvolved(Id, caller) {
+        var ReportID = '@Model.ReportID';
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/GeneralReports/GeneralReports/DeleteInvolved")',
+                data: JSON.stringify({ 'Id': Id, 'ReportID': ReportID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#InvolvedTable>tbody tr').length == 1) {
+                            $('#InvolvedTable>tbody tr').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Involved has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Involved has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+
+
+                        $('#SubjectInvolvedModel_InvolvedID').val('');
+                        $('#SubjectInvolvedModel_FirstName').val('');
+                        $('#SubjectInvolvedModel_LastName').val('');
+                        $('#SubjectInvolvedModel_Sex').val('');
+                        $('#SubjectInvolvedModel_Race').val('');
+                        $('#SubjectInvolvedModel_InvolvedRole').val('');
+
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+
+    function DeleteIncidentLink(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/GeneralReports/GeneralReports/DeleteGenReportsLinked")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#linkTable>tbody tr').length == 1) {
+                            $('#linkTable').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Subject Linked Deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Subject Linked Deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function SavePermission(id, RepId, type, permission) {
+        $.ajax({
+            url: '@Url.Content("~/GeneralReports/GeneralReports/SubReportAccessPermission")',
+            data: JSON.stringify({ 'ID': id, 'ReportID': RepId, 'Type': type, 'Permission': permission }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Report Access Permission Successfully Saved.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+                ReportsAccessPermission(id);
+            }
+        });
+    }
+
+    function Reset() {
+        $('#filePath').val('');
+        $('#IncidentLinkedModel_Description').val('');
+        $('#hdnFilePath').val('');
+        $('#btnSubmit').val('Create');
+    }
+
+    function SaveReportServicesOffererd() {
+
+        var ReportID = '@Model.ReportID';
+
+        var servicelength = $('#ServicesTable tbody>tr').length;
+
+        var count = 0;
+
+        if (servicelength > 0) {
+            $("#ServicesTable tbody>tr").each(function () {
+
+                var ServiceName = $(this).find('td:eq(0)').html();
+                var text = $(this).find('td:eq(1)').html();
+
+                var text1 = $(this).find('td:eq(2)').html();
+
+                var findOfferedClass = $(text).hasClass("checked");
+                var findDeclinedClass = $(text1).hasClass("checked");
+
+                //if (findOfferedClass == true || findDeclinedClass == true) {
+                $.ajax({
+                    url: '@Url.Content("~/GeneralReports/GeneralReports/SaveServiceOffered")',
+                    data: JSON.stringify({ 'ReportID': ReportID, 'Offered': findOfferedClass, 'Declined': findDeclinedClass, 'ServiceName': ServiceName }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data == "success") {
+                            count++;
+                            if (count == servicelength) {
+                                $('#GeneralReportsServices').submit();
+                            }
+                        } else {
+
+                        }
+
+                    }
+                });
+
+                // }
+            });
+        }
+    }
+
+    $('#IndexReset').click(function () {
+        CKEDITOR.instances['Description'].setData('');
+    });
+
+    // Submit form on tab change Script
+    function formSubmitByTab(previoustarget, valueChanged) {
+        var btnsubmit = "";
+        if (previoustarget == "#Details") {
+            btnsubmit = $('#btnDetails');
+        }
+        else if (previoustarget == "#cashTransactions") {
+            btnsubmit = '';
+        }
+        else if (previoustarget == "#Vehicles") {
+            btnsubmit = $('#btnGenVehicles');
+        }
+        else if (previoustarget == "#involved") {
+            btnsubmit = $('#employeeInvolvedButton');
+        }
+        else if (previoustarget == "#Banned") {
+            btnsubmit = $('#btnGenBanned');
+        }
+        else if (previoustarget == "#Dispute") {
+            btnsubmit = $('#btnGenDispute');
+        }
+        else if (previoustarget == "#Services") {
+            btnsubmit = $('#btnGenServices');
+        }
+        else if (previoustarget == "#Links") {
+            btnsubmit = $('#btnSubmit');
+        }
+        else if (previoustarget == "#Reports") {
+            btnsubmit = $('#GenReports');
+        }
+
+        if (btnsubmit != '' && valueChanged == true) {
+            var r = confirm("Do you want to save?");
+            if (r == true) {
+                btnsubmit.click();
+            }
+        }
+    }// End Submit form on tab change Script
+
+    $("#ddlNatureOfEvent").change(function () {
+        if ($("#ddlNatureOfEvent :selected").val() != null && $("#ddlNatureOfEvent :selected").val() != 0)
+        { BindShortDescriptor(); }
+
+    });
+
+    function BindShortDescriptor() {
+        var SelectedText = $("#ddlNatureOfEvent :selected").val();
+        if (SelectedText != 'Select') {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/BindShortDescription")',
+                data: JSON.stringify({ 'SelectedText': SelectedText }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (r) {
+
+                    var ddlShortDescription = $("[id*=ddlShortDescription]");
+                    ddlShortDescription.empty();
+                    $.each(r.ShortDescriptList, function () {
+                        ddlShortDescription.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+
+                },
+                error: function (xhr, status, error) {
+                    alert(error);
+                }
+            });
+        }
+    }
+
+    // Report Access Permission Check
+    /* -- Check General Reports Delete Permission Check -- */
+    function DeleteGeneralReport(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/GeneralReports/GeneralReports/DeleteGeneralReports")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">General Reports has been deleted Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                        location.replace('@Url.Content("~/GeneralReports/GeneralReports/GeneralReportsList")');
+                    } else {
+
+                    }
+                }
+            });
+        }
+    }
+    /* -- General Report Delete/Edit Permission Check By User-- */
+    function ReportPermissionCheck(RepID, per, caller) {
+        $.ajax({
+            url: '@Url.Content("~/GeneralReports/GeneralReports/ReportPermissionCheck")',
+            data: JSON.stringify({ 'RepID': RepID, }),
+            type: 'POST',
+            dataType: 'json',
+            async: false,
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    if (per == 1) {
+                        if (jsonData.ReportEdit == true) {
+                            return false;
+                        }
+                        else {
+                            alert('You dont have permission to Edit');
+                            $('#' + RepID + 'Edit').removeAttr("href");
+                        }
+                    }
+                    else if (per == 2) {
+                        if (jsonData.ReportDelete == true) {
+                            DeleteGeneralReport(RepID, caller);
+                        }
+                        else {
+                            alert('You dont have permission to Delete');
+                            return false;
+                        }
+                    }
+                }
+            },
+            error: function (data) {
+                console.log('error');
+                console.log(data.responseText);
+
+            }
+        });
+    }
+
+    $('#genReportInvolvedReset').click(function () {
+        $('#SubjectInvolvedModel_SubjectIncidentID').val('');
+        $('#SubjectInvolvedModel_InvolvedID').val('');
+        $('#SubjectInvolvedModel_FirstName').val('');
+        $('#SubjectInvolvedModel_LastName').val('');
+        $('#SubjectInvolvedModel_Sex').val('');
+        $('#SubjectInvolvedModel_Race').val('');
+        $('#SubjectInvolvedModel_InvolvedRole').val('');
+    });
+
+    // Search ----
+    // Clear Search Subject
+    function SearchSubjectClear() {
+        $('#searchfirstName').val('');
+        $('#searchlastName').val('');
+        $('#subjectSex').val('');
+        $('#subjectRace').val('');
+    }
+    // Clear Search Employee
+    function SearchEmployeeClear() {
+        $('#searchfirstName1').val('');
+        $('#searchlastName1').val('');
+        $('#sex1').val('');
+        $('#Race1').val('');
+    }
+
+    function SearchSubject() {
+
+        var FirstName = $('#searchfirstName').val();
+        var LastName = $('#searchlastName').val();
+        var Sex = $('#subjectSex').val();
+        var Race = $('#subjectRace').val();
+
+        var ReportID = '@Model.ReportID';
+        if (ReportID != '') {
+            GetSearchResult(FirstName, LastName, Sex, Race);
+        }
+    }
+
+    function GetSearchResult(FirstName, LastName, Sex, Race) {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/SearchSubject_Filter")',
+            data: { FirstName: FirstName, LastName: LastName, Sex: Sex, Race: Race },
+            type: 'get',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (msg) {
+                if (msg) {
+                    $('#SubjectTable>tbody tr').remove();
+                    $.each(msg.ShortDescriptionList, function (key, value) {
+                        $('#SubjectTable>tbody').append("<tr><td><input type='checkbox' id=" + value.SubjectID + " onchange='SelectedSubject(this);'></td><td>" + value.FirstName + "</td><td>" + value.LastName + "</td><td>" + value.Status + "</td></tr>");
+                    });
+                }
+                else {
+
+                }
+
+            }
+        });
+    }
+    function SearchEmployee() {
+
+        var FirstName = $('#searchfirstName1').val();
+        var LastName = $('#searchlastName1').val();
+        var Sex = $('#sex1').val();
+        var Race = $('#Race1').val();
+
+        var SubjectID = '@Model.ReportID';
+
+        if (SubjectID != '') {
+            GetSearchResult1(FirstName, LastName, Sex, Race);
+        }
+    }
+
+    function GetSearchResult1(FirstName, LastName, Sex, Race) {
+
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/SearchEmployee_Filter")',
+            data: { FirstName: FirstName, LastName: LastName, Sex: Sex, Race: Race },
+            type: 'get',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (msg) {
+
+                //console.log(data);
+                if (msg) {
+                    $('#EmployeeTable>tbody tr').remove();
+                    $.each(msg.ShortDescriptionList, function (key, value) {
+                        $('#EmployeeTable>tbody').append("<tr><td><input type='checkbox' id=" + value.EmployeeID + " onchange='SelectedEmployee(this);'></td><td>" + value.FirstName + "</td><td>" + value.LastName + "</td><td>" + value.Status + "</td></tr>");
+                    });
+                }
+                else {
+
+                }
+
+            }
+        });
+    }
+    function SelectedSubject(obj) {
+        if ($(obj).is(":checked")) {
+            $(obj).addClass("checkedSubject");
+        } else {
+            $(obj).removeClass("checkedSubject");
+        }
+    }
+    function SelectedEmployee(obj) {
+        if ($(obj).is(":checked")) {
+            $(obj).addClass("checkedEmployee");
+        } else {
+            $(obj).removeClass("checkedEmployee");
+        }
+    }
+    $('.AddInvolvedbutton').click(function () {
+        @*var SubjectID = '@Model.SubjectID';*@
+        var IncidentID = '@Model.ReportID';
+        var values = [];
+        $('.checkedSubject').each(function () {
+            values.push($(this).attr('id'));
+
+        });
+        var datacolumn = values.join(',');
+        if (values.length > 0) {
+            $.ajax({
+                url: '@Url.Content("~/GeneralReports/GeneralReports/AdAsInvolved")',
+                //data: JSON.stringify({ 'datacolumn': datacolumn, 'SubjectID': SubjectID, 'IncidentID': IncidentID }),
+                data: JSON.stringify({ 'datacolumn': datacolumn, 'IncidentID': IncidentID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    window.location.reload();
+                }
+            });
+        } else {
+            alert("Select at least one record.");
+        }
+    });
+
+    $('.AddEmployeeInvolvedbutton').click(function () {
+        @*var SubjectID = '@Model.SubjectID';*@
+        var IncidentID = '@Model.ReportID';
+        var values = [];
+        $('.checkedEmployee').each(function () {
+            values.push($(this).attr('id'));
+        });
+        var datacolumn = values.join(',');
+        if (values.length > 0) {
+            $.ajax({
+                url: '@Url.Content("~/GeneralReports/GeneralReports/AddEmployeeInvolvedbutton")',
+                //data: JSON.stringify({ 'datacolumn': datacolumn, 'SubjectID': SubjectID, 'IncidentID': IncidentID }),
+                data: JSON.stringify({ 'datacolumn': datacolumn, 'IncidentID': IncidentID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    window.location.reload();
+                }
+            });
+        } else {
+            alert("Select at least one record.");
+        }
+    });
+
+    // ForeignExchangeRate Change event
+    $(document).on('change', '#ForeignExchangeRate', function () {
+        BindForeignExchangeRate();
+    });
+
+    function BindForeignExchangeRate() {
+        var val = $('#ForeignExchangeRate').val();
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/ForeignExchangeRates")',
+            data: JSON.stringify({ 'ID': val }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#LCTForeignExchangeModel_Rate').val(data);
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var table = $('#usersTable1').DataTable({
+
+            dom: 'Alfrtip',
+            alphabetSearch: {
+                column: 1
+            },
+            language: {
+                search: "User Name:",
+                searchPlaceholder: "User Name"
+            }
+        });
+
+        table.columns(2).every(function () {
+            var that = this;
+
+            $('#usersTable1_filter input[type=search]', this.footer()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search('^' + this.value, true, false)
+                        .draw();
+                }
+            });
+        });
+        $(document).on('click', '.empty', function () { $('#usersTable1>tbody tr.alphabet_group').remove(); });
+        $(document).on('click', '.data', function () { $('#usersTable1>tbody tr.alphabet_group').remove(); });
+        $(document).on('click', '.active', function () { $('#usersTable1>tbody tr.alphabet_group').remove(); });
+
+        $(document).on('keyup', '#usersTable1_filter input[type=search]', function () {
+            $(document).find('.alphabet-clear').click();
+        });
+
+        UsersList(); // Users List
+        ReportsAccessUsers(); // ReportsAccess Users List
+        RolesList(); // Roles List
+        ReportsAccessRoles(); // ReportsAccess Roles List
+
+    });
+</script>
+
+<script>
+
+    // Report Access By User
+    /* -------- UsersList ---------- */
+    function UsersList() {
+        var ReportID = '@Model.ReportID';
+        $("#listUsers").html("");
+        $.ajax({
+            url: '@Url.Content("~/GeneralReports/GeneralReports/UsersListReportsAccess")',
+            data: JSON.stringify({ 'ReportID': ReportID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listUsers').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- ReportsAccess Users List ---------- */
+    function ReportsAccessUsers() {
+        var ReportID = '@Model.ReportID';
+        $("#listReportAccessUsers").html("");
+        $.ajax({
+            url: '@Url.Content("~/GeneralReports/GeneralReports/ReportsAccessUsers_Bind")',
+            data: JSON.stringify({ 'ReportID': ReportID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listReportAccessUsers').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- Add Users in List ---------- */
+    function AddUsersInList(btnid) {
+        var ReportID = '@Model.ReportID';
+        //var UserId = $("#listUsers").val();
+        var values = [];
+        var datacolumn = '';
+        if (btnid == 'btnadduser') {
+            values.push($("#listUsers").val());
+        }
+        else {
+            $("#listUsers > option").each(function () {
+                values.push(this.value);
+            });
+        }
+        //alert(values.join(','));
+        datacolumn = values.join(',');
+        if (datacolumn == '') {
+            alert("Please select a user");
+            return false;
+        }
+        else {
+            $.ajax({
+                url: '@Url.Content("~/GeneralReports/GeneralReports/AddUsersReportsAccess")',
+                data: JSON.stringify({ 'UserID': datacolumn, 'ReportID': ReportID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Users has been added Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        UsersList(); // Users List
+                        ReportsAccessUsers(); // ReportsAccess Users List
+                    }
+                    else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                    }
+                }
+            });
+        }
+    }
+
+    /* -------- Remove Users in List ---------- */
+    function RemoveUsersInList(btnid) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            var values = [];
+            var datacolumn = '';
+            if (btnid == 'btnremoveuser') {
+                values.push($("#listReportAccessUsers").val());
+            }
+            else {
+                $("#listReportAccessUsers > option").each(function () {
+                    values.push(this.value);
+                });
+            }
+            //alert(values.join(','));
+            datacolumn = values.join(',');
+            if (datacolumn == '') {
+                alert("Please select a Reports Access user");
+                return false;
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Content("~/GeneralReports/GeneralReports/RemoveUsersReportsAccess")',
+                    data: JSON.stringify({ 'ID': datacolumn }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data == "success") {
+                            $('#msgDiv').html('<div class="alert alert-success">User has been removed Suceesfully.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                            UsersList(); // Users List
+                            ReportsAccessUsers(); // ReportsAccess Users List
+                        }
+                        else {
+                            $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                        }
+                    }
+                });
+            }
+        }
+    }
+    /* -------- SavePermission By User ---------- */
+    $('#ByUserReportView').click(function () {
+        if ($(this).is(':checked')) {
+            var id = $("#listReportAccessUsers").val();
+            var RepId = '@Model.ReportID';
+            var type = 'View';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access User.");
+                return false;
+            } else {
+                debugger
+                SavePermission(id, RepId, type, permission);
+            }
+        }
+        else {
+            if ($('#ByUserReportEdit').is(':checked')) {
+                alert("First to Remove Edit Permission");
+                return false;
+            }
+            if ($('#ByUserReportDelete').is(':checked')) {
+                alert("First to Remove Delete Permission");
+                return false;
+            }
+            if (!$(this).is(':checked')) {
+                var id = $("#listReportAccessUsers").val();
+                var RepId = '@Model.ReportID';
+                var type = 'View';
+                var permission = 'false';
+                if ($(this).is(':checked')) {
+                    permission = 'true';
+                }
+                else {
+                    permission = 'false';
+                }
+                if (id == '' || id == null) {
+                    alert("Please select a Report Access User.");
+                    return false;
+                } else {
+                    SavePermission(id, RepId, type, permission);
+                }
+            }
+        }
+    });
+    $('#ByUserReportEdit').click(function () {
+        if (!$('#ByUserReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessUsers").val();
+            var RepId = '@Model.ReportID';
+            var type = 'Edit';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access User.");
+                return false;
+            } else {
+                SavePermission(id, RepId, type, permission);
+            }
+        }
+    });
+
+    $('#ByUserReportDelete').click(function () {
+        if (!$('#ByUserReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessUsers").val();
+            var RepId = '@Model.ReportID';
+            var type = 'Delete';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access User.");
+                return false;
+            } else {
+                SavePermission(id, RepId, type, permission);
+            }
+        }
+    });
+
+    function checkuserViewRights() {
+        $.ajax({
+            url: '@Url.Content("~/GeneralReports/GeneralReports/ReportsAccessPermission_ByUser")',
+            data: JSON.stringify({ 'ID': $("#listReportAccessUsers").val(), 'ReportID': '@Model.ReportID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var ReportPermission = data.split(',');
+
+                    if (ReportPermission[0] == "True") {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+
+                }
+                else {
+                    return true;
+                }
+            }
+        });
+    }
+    function checkuserEditRights() {
+        $.ajax({
+            url: '@Url.Content("~/GeneralReports/GeneralReports/ReportsAccessPermission_ByUser")',
+            data: JSON.stringify({ 'ID': $("#listReportAccessUsers").val(), 'ReportID': '@Model.ReportID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var ReportPermission = data.split(',');
+
+                    if (ReportPermission[1] == "True") {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+
+                }
+                else {
+                    return true;
+                }
+            }
+        });
+    }
+    /* -------- Reports Access Permission By User ---------- */
+    function ReportsAccessPermission(id) {
+        $.ajax({
+            url: '@Url.Content("~/GeneralReports/GeneralReports/ReportsAccessPermission_ByUser")',
+            data: JSON.stringify({ 'ID': id, 'ReportID': '@Model.ReportID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var ReportPermission = data.split(',');
+                    if (ReportPermission[0] == "True") {
+                        $('#ByUserReportView').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserReportView').prop('checked', false);
+                    }
+                    if (ReportPermission[1] == "True") {
+                        $('#ByUserReportEdit').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserReportEdit').prop('checked', false);
+                    }
+                    if (ReportPermission[2] == "True") {
+                        $('#ByUserReportDelete').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserReportDelete').prop('checked', false);
+                    }
+                }
+                else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+            }
+        });
+    }
+    //End Report Access Users End
+
+    // Report Access By Role
+    /* -------- Roles List ---------- */
+    function RolesList() {
+        var ReportID = '@Model.ReportID';
+        $("#listRoles").html("");
+        $.ajax({
+            url: '@Url.Content("~/GeneralReports/GeneralReports/UsersReportsAccessRole")',
+            data: JSON.stringify({ 'ReportID': ReportID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listRoles').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- ReportsAccess Role List ---------- */
+    function ReportsAccessRoles() {
+        var ReportID = '@Model.ReportID';
+        $("#listReportAccessRoles").html("");
+        $.ajax({
+            url: '@Url.Content("~/GeneralReports/GeneralReports/ReportsAccessRoles_Bind")',
+            data: JSON.stringify({ 'ReportID': ReportID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listReportAccessRoles').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- Add Role in List ---------- */
+    function AddRoleInList(btnid) {
+        var ReportID = '@Model.ReportID';
+
+        //var RoleId = $("#listRoles").val();
+        var values = [];
+        var datacolumn = '';
+        if (btnid == 'btnaddrole') {
+            values.push($("#listRoles").val());
+        }
+        else {
+            $("#listRoles > option").each(function () {
+                values.push(this.value);
+            });
+        }
+        datacolumn = values.join(',');
+        if (datacolumn == '') {
+            alert("Please select a Role");
+            return false;
+        }
+        else {
+            $.ajax({
+                url: '@Url.Content("~/GeneralReports/GeneralReports/AddRolesReportsAccess")',
+                data: JSON.stringify({ 'RoleID': datacolumn, 'ReportID': ReportID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Role has been added Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        RolesList(); // Roles List
+                        ReportsAccessRoles(); // ReportsAccess Roles List
+                    }
+                    else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                    }
+                }
+            });
+        }
+    }
+
+    /* -------- Remove Role in List ---------- */
+    function RemoveRoleInList(btnid) {
+        //var ID = $("#listReportAccessRoles").val();
+        //if (ID == "" || ID == null) {
+        //    alert("Please select a Subject Access Role");
+        //    return false;
+        //}
+        //else
+        //{
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            var values = [];
+            var datacolumn = '';
+            if (btnid == 'btnremoverole') {
+                values.push($("#listReportAccessRoles").val());
+            }
+            else {
+                $("#listReportAccessRoles > option").each(function () {
+                    values.push(this.value);
+                });
+            }
+            datacolumn = values.join(',');
+            if (datacolumn == '') {
+                alert("Please select a Reports Access Role");
+                return false;
+            }
+            else {
+                $.ajax(
+                    {
+                        url: '@Url.Content("~/GeneralReports/GeneralReports/RemoveRolesReportsAccess")',
+                        data: JSON.stringify({ 'ID': datacolumn }),
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            if (data == "success") {
+                                $('#msgDiv').html('<div class="alert alert-success">Role has been remove Suceesfully.</div>');
+                                setTimeout(function () {
+                                    $('#msgDiv').fadeOut();
+                                }, 5000);
+                                RolesList(); // Roles List
+                                ReportsAccessRoles(); // ReportsAccess Roles List
+                            }
+                            else {
+                                $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                                setTimeout(function () {
+                                    $('#msgDiv').fadeOut();
+                                }, 5000);
+                            }
+                        }
+                    });
+            }
+        }
+        //}
+    }
+    /* -------- SavePermission By Role ---------- */
+    $('#ByRoleReportView').click(function () {
+        if ($(this).is(':checked')) {
+            var id = $("#listReportAccessRoles").val();
+            var RepId = '@Model.ReportID';
+            var type = 'View';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, RepId, type, permission);
+            }
+        } else {
+            if ($('#ByRoleReportEdit').is(':checked')) {
+                alert("First to Remove Edit Permission");
+                return false;
+            }
+            if ($('#ByRoleReportDelete').is(':checked')) {
+                alert("First to Remove Delete Permission");
+                return false;
+            }
+            if (!$(this).is(':checked')) {
+                var id = $("#listReportAccessRoles").val();
+                var RepId = '@Model.ReportID';
+                var type = 'View';
+                var permission = 'false';
+                if (id == '' || id == null) {
+                    alert("Please select a Report Access Role.");
+                    return false;
+                } else {
+                    SavePermissionByRole(id, RepId, type, permission);
+                }
+            }
+        }
+    });
+    $('#ByRoleReportEdit').click(function () {
+        if (!$('#ByRoleReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessRoles").val();
+            var RepId = '@Model.ReportID';
+            var type = 'Edit';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, RepId, type, permission);
+            }
+        }
+    });
+
+    $('#ByRoleReportDelete').click(function () {
+        if (!$('#ByRoleReportView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listReportAccessRoles").val();
+            var RepId = '@Model.ReportID';
+            var type = 'Delete';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Report Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, RepId, type, permission);
+            }
+        }
+    });
+    function SavePermissionByRole(id, RepId, type, permission)
+    {
+        $.ajax({
+            url: '@Url.Content("~/GeneralReports/GeneralReports/SubReportAccessPermissionByRole")',
+            data: JSON.stringify({ 'ID': id, 'ReportID': RepId, 'Type': type, 'Permission': permission }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Reports Access Permission Successfully Saved.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+                ReportsAccessPermission(id);
+            }
+        });
+    }
+    /* -------- Reports Access Permission By Role ---------- */
+    function ReportsAccessPermissionByRole(id)
+    {
+        $.ajax({
+            url: '@Url.Content("~/GeneralReports/GeneralReports/ReportsAccessPermission_ByRole")',
+            data: JSON.stringify({ 'ID': id, 'ReportID': '@Model.ReportID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var ReportPermission = data.split(',');
+                    if (ReportPermission[0] == "True") {
+                        $('#ByRoleReportView').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleReportView').prop('checked', false);
+                    }
+                    if (ReportPermission[1] == "True") {
+                        $('#ByRoleReportEdit').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleReportEdit').prop('checked', false);
+                    }
+                    if (ReportPermission[2] == "True") {
+                        $('#ByRoleReportDelete').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleReportDelete').prop('checked', false);
+                    }
+                }
+                else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+            }
+        });
+    }
+    //End Report Access Role End
+
+    $('#myTab a[href="#Events"]').on('click', function (e) {
+        $('#divevents').load("/GeneralReports/GeneralReports/EventListLink?ReportID=@Model.ReportID");
+    });
+</script>
+
+<style>
+    .alphabet_group {
+        display: none;
+    }
+
+    .btnwidh {
+        width: 44px;
+    }
+</style>

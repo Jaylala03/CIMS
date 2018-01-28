@@ -1,0 +1,218 @@
+﻿@model CIMS.Models.EmployeeIncidentModel
+@{
+    ViewBag.Title = "EmployeeList";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+
+<style>
+    .cmbEmp {
+        pointer-events: none;
+        opacity: 0.65;
+    }
+</style>
+
+
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Employee Report List</h4>
+
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Employee Report List</li>
+        </ol>
+    </div>
+
+</div>
+
+
+
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix custom-head">
+        <h3 class="box-title m-b-0">@Model.EmployeeModel.LogoFirstName @Model.EmployeeModel.LogoMiddleName @Model.EmployeeModel.LogoLastName - Report List</h3>
+
+        <div class="panel-options">
+            <div class="right-btn">
+
+                <a href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId+"")' class="btn btn-primary add"><i class="fa fa-plus"></i> Add Report</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div class="table-responsive col-md-12">
+            <table id="employeeTable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>
+                            Image
+                        </th>
+                        <th>
+                            Nature of incident
+                        </th>
+                        <th>
+                            Report Number
+                        </th>
+                        <th>
+                            Short Description
+                        </th>
+                        <th>
+                            Short description text
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                        <th>
+                            Reports CreatedBy (UserName)
+                        </th>
+                        <th>
+                            Creation Date
+                        </th>
+                        @*<th>Action</th>*@
+
+                    </tr>
+                </thead>
+                @if (Model.EmployeeIncidentList.Count() > 0)
+                {
+                    foreach (var items in Model.EmployeeIncidentList)
+                    {
+                        <tr class="empTR" data-id="@Model.EmployeeId" style="cursor:pointer">
+                            @if (items.LinkWithReport == true)
+                            {
+                                if (items.LinkFile == "Subject")
+                                {
+                                    <td style="width: 100px;">
+                                        <a href='@Url.Content("~/Subject/Subject/SujectIncident?Show=Link&SubId=" + items.LinkByEmpID + "&Id=" + items.IncidentID + "")' title="Employee Report">
+                                            <img style="width: 100px;" src="@(Url.Content("~/Content/ReportsLogo/L.PNG"))" />
+                                        </a>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td style="width: 100px;">
+                                        <a href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=Link&EmpId=" + items.LinkByEmpID + "&Id=" + items.IncidentID + "")' title="Employee Report">
+                                            <img style="width: 100px;" src="@(Url.Content("~/Content/ReportsLogo/L.PNG"))" />
+                                        </a>
+                                    </td>
+                                }
+                            }
+                            else
+                            {
+                                <td style="width: 100px;">
+                                    @if (ViewBag.Action == 4 || ViewBag.Action == 5 || ViewBag.Action == 6 || ViewBag.Action == 7 || ViewBag.Action == 12 || ViewBag.Action == 13 || ViewBag.Action == 14 || ViewBag.Action == 15)
+                                    {
+                                        <a href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")' title="Employee Report">
+                                            <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.ImagePath) ? items.ImagePath : (!String.IsNullOrEmpty(items.DefaultImage) ? Url.Content("~/assets/images/"+items.DefaultImage+"") : Url.Content("~/asset/plugins/images/no-image.jpg")))" />
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")' title="Employee Report">
+                                            <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.ImagePath) ? items.ImagePath : (!String.IsNullOrEmpty(items.DefaultImage) ? Url.Content("~/assets/images/"+items.DefaultImage+"") : Url.Content("~/asset/plugins/images/no-image.jpg")))" />
+                                        </a>
+                                    }
+                                </td>
+                            }
+                            @if (ViewBag.Action == 4 || ViewBag.Action == 5 || ViewBag.Action == 6 || ViewBag.Action == 7 || ViewBag.Action == 12 || ViewBag.Action == 13 || ViewBag.Action == 14 || ViewBag.Action == 15)
+                            {
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">
+                                    @items.NatureOfIncident
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.IncidentNumber</td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ShortDescriptionName</td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@Html.Raw(@items.Description) </td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.Status</td>
+                                if (items.ReportCreatorUser == Session["UserName"].ToString())
+                                {
+                                    <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ReportCreatorUser</td>
+                                    @*<td>
+                                            <a href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")' class="btn btn-info btn-sm  small btn-icon" title="Edit Employee Incident"><i class="fa fa-pencil"></i></a>
+                                            <a class="btn btn-danger btn-sm delete-sm small" href='javascript:;' onclick='DeleteEmployeeIncident(@items.IncidentID,this);' title="Delete Employee Incident"><i class='fa fa-trash'></i></a>
+                                        </td>*@
+                                }
+                                else
+                                {
+                                    <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ReportCreatorUser</td>
+                                    @*<td>
+                                            <a href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")' class="btn btn-info btn-sm  small btn-icon" id="@(items.IncidentID)Edit" onclick='return ReportPermissionCheck(@Model.EmployeeId,@items.IncidentID,1,this);' title="Edit Employee Incident"><i class="fa fa-pencil"></i></a>
+                                            <a class="btn btn-danger btn-sm delete-sm small" href='javascript:;' onclick='ReportPermissionCheck(@Model.EmployeeId,@items.IncidentID,2,this);' id="@(items.IncidentID)Delete" title="Delete Employee Incident"><i class='fa fa-trash'></i></a>
+                                        </td>*@
+                                }
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ReportCreateDate</td>
+                            }
+                            else
+                            {
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">
+                                    @items.NatureOfIncident
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.IncidentNumber</td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ShortDescriptionName</td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@Html.Raw(@items.Description) </td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.Status</td>
+                                if (items.ReportCreatorUser == Session["UserName"].ToString())
+                                {
+                                    <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ReportCreatorUser</td>
+                                    @*<td>
+                                            <a href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")' class="btn btn-info btn-sm  small btn-icon" title="Edit Employee Incident"><i class="fa fa-pencil"></i></a>
+                                            <a class="btn btn-danger btn-sm delete-sm small" href='javascript:;' onclick='DeleteEmployeeIncident(@items.IncidentID,this);' title="Delete Employee Incident"><i class='fa fa-trash'></i></a>
+                                        </td>*@
+                                }
+                                else
+                                {
+                                    <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ReportCreatorUser</td>
+                                    @*<td>
+                                            <a href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")' class="btn btn-info btn-sm  small btn-icon" id="@(items.IncidentID)Edit" onclick='return ReportPermissionCheck(@Model.EmployeeId,@items.IncidentID,1,this);' title="Edit Employee Incident"><i class="fa fa-pencil"></i></a>
+                                            <a class="btn btn-danger btn-sm delete-sm small" href='javascript:;' onclick='ReportPermissionCheck(@Model.EmployeeId,@items.IncidentID,2,this);' id="@(items.IncidentID)Delete" title="Delete Employee Incident"><i class='fa fa-trash'></i></a>
+                                        </td>*@
+                                }
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ReportCreateDate</td>
+                            }
+                        </tr>
+                    }
+                }
+
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+
+@*<link href="~/Content/data-tables/dataTables.alphabetSearch.css" rel="stylesheet" />
+    <script src="~/Content/data-tables/dataTables.alphabetSearch.min.js"></script>*@
+<script>
+
+    $(document).ready(function () {
+        $("#employeeTable").dataTable();
+
+
+        $('.ToggleCls').addClass('cmbEmp');
+        $('.empTR').on('click', function () {
+            var employeeID = $(this).attr('data-id');
+            //var url = "/Employee/Employees/SearchEmployee/" + employeeID;
+            var url = "/CIMS/Employee/Employees/SearchEmployee/" + employeeID;
+            $('#combineBtn').attr('href', url);
+            $('.ToggleCls').removeClass('cmbEmp');
+        });
+
+    });
+
+
+</script>

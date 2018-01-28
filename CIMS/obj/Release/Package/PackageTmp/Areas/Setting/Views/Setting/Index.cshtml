@@ -1,0 +1,3606 @@
+﻿@model CIMS.Models.SettingModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+@*<h2>Index</h2>*@
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Setting</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Setting</li>
+        </ol>
+    </div>
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<div class="row">
+    <div class="white-box">
+        <div class="vtabs vtabfull">
+            <ul class="nav tabs-vertical custom-tabs" id="newmyTab">
+                <input type="text" id="searchtab" class="form-control" placeholder="Search tab" />
+                <li class="active">
+                    <a href="#DepartmentType" data-toggle="tab">
+                        <span>Department Type</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#LicenseType" data-toggle="tab">
+                        <span>License Type</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#LicenseStatus" data-toggle="tab">
+                        <span>License Status</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#FeatureType" data-toggle="tab">
+                        <span>Feature Type</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#FeatureLocation" data-toggle="tab">
+                        <span>Feature Location</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#Complexion" data-toggle="tab">
+                        <span>Complexion</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#Build" data-toggle="tab">
+                        <span>Build</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#HairLength" data-toggle="tab">
+                        <span>HairLength</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#TypeID1" data-toggle="tab">
+                        <span>Type ID#1</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#TypeID2" data-toggle="tab">
+                        <span>Type ID#2</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#TypeID3" data-toggle="tab">
+                        <span>Type ID#3</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#HairColor" data-toggle="tab">
+                        <span>HairColor</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#FacialHair" data-toggle="tab">
+                        <span>FacialHair</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#Race" data-toggle="tab">
+                        <span>Race</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#Eyes" data-toggle="tab">
+                        <span>Eyes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#watch" data-toggle="tab">
+                        <span>Watch List</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#Sex" data-toggle="tab">
+                        <span>Sex</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#EmployeePosition" data-toggle="tab">
+                        <span>Position</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#AddressType" data-toggle="tab">
+                        <span>Address Type</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#EquipmentProblems" data-toggle="tab">
+                        <span>Equipment Problems</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#EquipmentActions" data-toggle="tab">
+                        <span>Equipment Actions</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#InitiatedBy" data-toggle="tab">
+                        <span>Initiated By</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#NatureCodes" data-toggle="tab">
+                        <span>Nature of Event</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#SetMetrics" data-toggle="tab">
+                        <span>Set Metrics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#VisitorLogo" data-toggle="tab">
+                        <span>Visitor Logo</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#ReportLogo" data-toggle="tab">
+                        <span>Report Logo</span>
+                    </a>
+                </li>
+                @*<li>
+                        <a href="#VisitorEmailLog" data-toggle="tab">
+                            <span>Visitor Email Log</span>
+                        </a>
+                    </li>*@
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="DepartmentType">
+                    <div class="large-title" style="padding:10px 0px;">Department Type</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdDepartmentID" name="hdDepartmentID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Department Name</label>
+                            <input type="text" class="form-control" id="DepartmentName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="btnAddDepartment" onclick="submitDepartment();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetDepartment();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="DepartmentTypeTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="LicenseType">
+                    <div class="large-title" style="padding:10px 0px;">License Type</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdLicenseID" name="hdLicenseID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">License Type</label>
+                            <input type="text" class="form-control" id="LicenseName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitLicense();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetLicense();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="LicenseTypeTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="LicenseStatus">
+                    <div class="large-title" style="padding:10px 0px;">License Status</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdLicenseStatusID" name="hdLicenseStatusID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">License Status</label>
+                            <input type="text" class="form-control" id="LicenseStatusName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitLicenseStatus();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetLicenseStatus();">Reset</button>
+
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <table id="LicenseStatusTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="FeatureType">
+                    <div class="large-title" style="padding:10px 0px;">Feature Type</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdFeatureID" name="hdFeatureID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Feature Type Name</label>
+                            <input type="text" class="form-control" id="FeatureTypeName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitFeatureType();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetFeatureType();">Reset</button>
+
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <table id="FeatureTypeTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="FeatureLocation">
+                    <div class="large-title" style="padding:10px 0px;">Feature Location</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdFLocationID" name="hdFLocationID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Feature Location Name</label>
+                            <input type="text" class="form-control" id="FlocationName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitFeatureLocation();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetFeatureLocation();">Reset</button>
+
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <table id="FeatureLocationTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="Complexion">
+                    <div class="large-title" style="padding:10px 0px;">Complexion</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdCompID" name="hdCompID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Complexion Name</label>
+                            <input type="text" class="form-control" id="ComplexionName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitComplexion();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetComplexion();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="ComplexionTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="Build">
+                    <div class="large-title" style="padding:10px 0px;">Build</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdBuildID" name="hdBuildID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Build Name</label>
+                            <input type="text" class="form-control" id="BuildName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitBuild();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetBuild();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="BuildTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="HairLength">
+                    <div class="large-title" style="padding:10px 0px;">HairLength</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdHairLengthID" name="hdHairLengthID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Build Name</label>
+                            <input type="text" class="form-control" id="HairLengthName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitHairLength();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetHairLength();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="HairLengthTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="HairColor">
+                    <div class="large-title" style="padding:10px 0px;">HairColor</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdHairColorID" name="hdHairColorID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Build Name</label>
+                            <input type="text" class="form-control" id="HairColorName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitHairColor();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetHairColor();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="HairColorTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane" id="TypeID1">
+                    <div class="large-title" style="padding:10px 0px;">Type ID#1</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdTypeID1" name="hdTypeID1" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Name</label>
+                            <input type="text" class="form-control" id="TypeIDName1" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="SubmitTypeid1('1');" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="restTypeID('1');">Reset</button>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <table id="TypeID1Table" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+                <div class="tab-pane" id="TypeID2">
+                    <div class="large-title" style="padding:10px 0px;">Type ID#2</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdTypeID2" name="hdTypeID2" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Name</label>
+                            <input type="text" class="form-control" id="TypeIDName2" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="SubmitTypeid1('2');" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="restTypeID('2');">Reset</button>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <table id="TypeID2Table" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+                <div class="tab-pane" id="TypeID3">
+                    <div class="large-title" style="padding:10px 0px;">Type ID#3</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdTypeID3" name="hdTypeID2" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Name</label>
+                            <input type="text" class="form-control" id="TypeIDName3" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="SubmitTypeid1('3');" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="restTypeID('3');">Reset</button>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <table id="TypeID3Table" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+                <div class="tab-pane" id="FacialHair">
+                    <div class="large-title" style="padding:10px 0px;">FacialHair</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdFacialHairID" name="hdFacialHairID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Facial Hair Name</label>
+                            <input type="text" class="form-control" id="FacialHairName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitFacialHair();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetFacialHair();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="FacialHairTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="Race">
+                    <div class="large-title" style="padding:10px 0px;">Race</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdRaceID" name="hdRaceID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Race Name</label>
+                            <input type="text" class="form-control" id="RaceName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitRace();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetRace();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="RaceTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="Eyes">
+                    <div class="large-title" style="padding:10px 0px;">Eyes</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdEyesID" name="hdEyesID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Eyes Name</label>
+                            <input type="text" class="form-control" id="EyesName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitEyes();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetEyes();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="EyesTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="watch">
+                    <div class="large-title" style="padding:10px 0px;">Watch List</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdwatchID" name="hdwatchID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Watch Name</label>
+                            <input type="text" class="form-control" id="watchName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitwatch();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetwatch();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="watchTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="Sex">
+                    <div class="large-title" style="padding:10px 0px;">Sex</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdSexID" name="hdSexID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Sex Name</label>
+                            <input type="text" class="form-control" id="SexName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitSex();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetSex();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="SexTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="EmployeePosition">
+                    <div class="large-title" style="padding:10px 0px;">Position</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdPositionID" name="hdPositionID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Position Name</label>
+                            <input type="text" class="form-control" id="PositionName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitPosition();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetPosition();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="PositionTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="AddressType">
+                    <div class="large-title" style="padding:10px 0px;">Address Type</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdAddressTypeID" name="hdAddressTypeID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">AddressType Type</label>
+                            <input type="text" class="form-control" id="AddressTypeName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitAddressType();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetAddressType();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="AddressTypeTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="EquipmentProblems">
+                    <div class="large-title" style="padding:10px 0px;">Equipment Problems</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdProblemsID" name="hdProblemsID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Problems Type</label>
+                            <input type="text" class="form-control" id="ProblemsName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitEquipmentProblems();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetEquipmentProblems();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="EquipmentProblemsTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <div class="tab-pane" id="EquipmentActions">
+                    <div class="large-title" style="padding:10px 0px;">Equipment Actions</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdActionsID" name="hdActionsID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Problems Type</label>
+                            <input type="text" class="form-control" id="ActionsName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitEquipmentAction();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetEquipmentAction();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="EquipmentActionsTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="InitiatedBy">
+                    <div class="large-title" style="padding:10px 0px;">Initiated By</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdInitiatedID" name="hdInitiatedID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Initiated By</label>
+                            <input type="text" class="form-control" id="InitiatedName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitInitiatedBy();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetInitiatedBy();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="InitiatedByTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="NatureCodes">
+                    <div class="large-title" style="padding:10px 0px;">Nature of Event</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdNatureEventID" name="hdNatureEventID" value="0" />
+                        <fieldset>
+                            <legend>Nature of Event Code</legend>
+                            <div class="form-group">
+                                <label class="control-label">Code: </label>
+                                <input type="text" class="form-control" id="CodeName" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Details: </label>
+                                <input type="text" class="form-control" id="DetailsName" />
+                            </div>
+                        </fieldset>
+                        <fieldset style="margin-top:20px;">
+                            <legend>Defaults(Optional)</legend>
+                            <div class="form-group">
+                                <label class="control-label">Action Taken: </label>
+                                <input type="text" class="form-control" id="ActionTaken" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Camera: </label>
+                                <input type="text" class="form-control" id="Camera" />
+                            </div>
+                        </fieldset>
+                        <div class="form-group" style="margin-top:15px;">
+                            <button type="button" onclick="submitNatureCodes();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetNatureCodes();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="NatureCodesTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Code
+                                    </td>
+                                    <td class="td-border">
+                                        Details
+                                    </td>
+                                    <td class="td-border">
+                                        Action
+                                    </td>
+                                    <td class="td-border">
+                                        Camera
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="SetMetrics">
+                    <div class="large-title" style="padding:10px 0px;">Set Metrics</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdsetmetricsID" name="hdsetmetricsID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Type</label>
+                            <select id="setmetricsType" class="form-control">
+                                <option value="Height">Height</option>
+                                <option value="Weight">Weight</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Metrics</label>
+                            <input type="text" id="metrics" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitsetmetrics();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetsetmetrics();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="setmetricsTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Metrics
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                    <td class="td-border">
+                                        Active Metrics
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="VisitorLogo">
+                    <div class="large-title" style="padding:10px 0px;">Visitor Logo</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdVisitorLogo" name="hdVisitorLogo" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Upload Visitor Logo</label>
+                            <input type="file" id="VisitorLogoImage" name="image" multiple="multiple" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitVisitorLogo();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetVisitorLogo();">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <table id="visitorLogoTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Image
+                                    </td>
+                                    <td class="td-border">
+                                        Set Image
+                                    </td>
+                                    <td class="td-border removefromtable">
+                                        Action
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="ReportLogo">
+                    <div class="large-title" style="padding:10px 0px;">Report Logo</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdReportLogo" name="hdReportLogo" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Upload Report Logo</label>
+                            <input type="file" id="ReportLogoImage" name="image" multiple="multiple" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" onclick="submitReportLogo();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetReportLogo();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="reportLogoTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Image
+                                    </td>
+                                    <td class="td-border">
+                                        Set Image
+                                    </td>
+                                    <td class="td-border removefromtable">
+                                        Action
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="VisitorEmailLog">
+                    <div class="large-title">Sex</div>
+                    <div class="col-md-12">
+                        <div class="white-box">
+                            <input type="hidden" id="hdVisitorEmailLog" name="hdVisitorEmailLog" value="0" />
+                            <div class="form-group">
+                                <label class="control-label">From Email</label>
+                                <input type="text" class="form-control" id="txtFromEmail" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Password</label>
+                                <input type="text" class="form-control" id="txtPassword" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">SMTP</label>
+                                <input type="text" class="form-control" id="txtSMTP" />
+                            </div>
+
+                            <div class="form-group">
+                                <button type="button" onclick="submitVisitorEmailLog();" class="btn btn-success add">Save</button>
+                                <button type="reset" class="btn btn-white" onclick="resetVisitorEmailLog();">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <table id="tableVisitorEmailLogo" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Email
+                                    </td>
+                                    <td class="td-border">
+                                        SMTP
+                                    </td>
+                                    <td class="td-border removefromtable">
+                                        Action
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+        DepartmentType(); // Bind Department Type
+        LicenseType(); // Bind License Type
+        LicenseStatus(); // Bind  License Status
+        FeatureType(); // Bind Feature Type
+        FeatureLocation(); // Bind Feature Location
+        Complexion();// Bind Complexion
+        Build(); // Bind Build
+        HairLength(); // Bind HairLength
+        TypeID1();;
+        TypeID2();
+        TypeID3();
+        HairColor(); // Bind HairColor
+        FacialHair(); // Facial Hair
+        Race(); // Bind Race
+        Eyes(); // Bind Eyes
+        watch(); // Bind Watch
+        Sex(); // Bind Sex
+        Position(); // Bind Employee Position
+        AddressType(); // Bind Employee Position
+        EquipmentsProblems(); // Bind EquipmentsProblems
+        EquipmentAction(); // Bind EquipmentAction
+        InitiatedBy(); // Bind InitiatedBy
+        NatureCode(); // Bind Nature Of Event
+        SetMetrics(); // Bind Set Metrics
+        VisitorLogo(); // Bind Visitor Logo Image
+        ReportLogo(); // Bind Report Logo Image
+        // VisitorEmailLog(); // Bind Visitor Email Log
+
+        $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+            localStorage.setItem('activeTab', $(e.target).attr('href'));
+        });
+        var activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            $('#newmyTab a[href="' + activeTab + '"]').tab('show');
+        }
+
+        $('#searchtab').keyup(function () {
+
+            var that = this, $allListElements = $('#newmyTab > li');
+
+            var $matchingListElements = $allListElements.filter(function (i, li) {
+                var listItemText = $(li).text().toUpperCase(), searchText = that.value.toUpperCase();
+                return ~listItemText.indexOf(searchText);
+            });
+
+            $allListElements.hide();
+            $matchingListElements.show();
+
+        });
+    });
+
+    // Department Type
+    function DepartmentType() {
+        $("#DepartmentTypeTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/DepartmentType_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#DepartmentTypeTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditDepartmentType(id, name) {
+        $('#hdDepartmentID').val(id);
+        $('#DepartmentName').val(name);
+    }
+
+    function resetDepartment() {
+        $('#hdDepartmentID').val(0);
+        $('#DepartmentName').val('');
+    }
+
+    function submitDepartment() {
+        var id = $('#hdDepartmentID').val();
+        var name = $('#DepartmentName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/DepartmentType_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Department save Successfully.</div>');
+
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetDepartment(); // reset Department value
+                DepartmentType(); // Bind Department Type
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteDepartmentType(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/DepartmentType_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Department Type has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetDepartment(); // reset Department value
+                    DepartmentType(); // Bind Department Type
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Department
+
+    // License Type
+    function LicenseType() {
+        $("#LicenseTypeTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/LicenseType_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#LicenseTypeTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditLicenseType(id, name) {
+        $('#hdLicenseID').val(id);
+        $('#LicenseName').val(name);
+    }
+
+    function resetLicense() {
+        $('#hdLicenseID').val(0);
+        $('#LicenseName').val('');
+    }
+
+    function submitLicense() {
+        var id = $('#hdLicenseID').val();
+        var name = $('#LicenseName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/LicenseType_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">License Type save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetLicense(); // Reset License Type
+                LicenseType(); // Bind License Type
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteLicenseType(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/LicenseType_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">License Type has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetLicense(); // Reset License Type
+                    LicenseType(); // Bind License Type
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End License Type
+
+    // License Status
+    function LicenseStatus() {
+        $("#LicenseStatusTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/LicenseStatus_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#LicenseStatusTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditLicenseStatus(id, name) {
+        $('#hdLicenseStatusID').val(id);
+        $('#LicenseStatusName').val(name);
+    }
+
+    function resetLicenseStatus() {
+        $('#hdLicenseStatusID').val(0);
+        $('#LicenseStatusName').val('');
+    }
+
+    function submitLicenseStatus() {
+        var id = $('#hdLicenseStatusID').val();
+        var name = $('#LicenseStatusName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/LicenseStatus_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">License Status save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetLicenseStatus(); // Reset License Status
+                LicenseStatus(); // Bind License Status
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteLicenseStatus(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/LicenseStatus_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">License Status has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetLicenseStatus(); // Reset License Status
+                    LicenseStatus(); // Bind License Status
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End License Status
+
+    // Feature Type
+    function FeatureType() {
+        $("#FeatureTypeTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/FeatureType_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#FeatureTypeTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditFeatureType(id, name) {
+        $('#hdFeatureID').val(id);
+        $('#FeatureTypeName').val(name);
+    }
+
+    function resetFeatureType() {
+        $('#hdFeatureID').val(0);
+        $('#FeatureTypeName').val('');
+    }
+
+    function submitFeatureType() {
+        var id = $('#hdFeatureID').val();
+        var name = $('#FeatureTypeName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/FeatureType_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Feature Type save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetFeatureType(); // Reset Feature Type
+                FeatureType(); // Bind Feature Type
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteFeatureType(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/FeatureType_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Feature Type has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetFeatureType(); // Reset Feature Type
+                    FeatureType(); // Bind Feature Type
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Feature Type
+
+    // Feature Location
+    function FeatureLocation() {
+        $("#FeatureLocationTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/FeatureLocation_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#FeatureLocationTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditFeatureLocation(id, name) {
+        $('#hdFLocationID').val(id);
+        $('#FlocationName').val(name);
+    }
+
+    function resetFeatureLocation() {
+        $('#hdFLocationID').val(0);
+        $('#FlocationName').val('');
+    }
+
+    function submitFeatureLocation() {
+        var id = $('#hdFLocationID').val();
+        var name = $('#FlocationName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/FeatureLocation_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Feature Location save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetFeatureLocation(); // Reset Feature Location
+                FeatureLocation(); // Bind Feature Location
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteFeatureLocation(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/FeatureLocation_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Feature Location has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetFeatureLocation(); // Reset Feature Location
+                    FeatureLocation(); // Bind Feature Location
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Feature Location
+
+    // Complexion
+    function Complexion() {
+        $("#ComplexionTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/Complexion_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#ComplexionTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditComplexion(id, name) {
+        $('#hdCompID').val(id);
+        $('#ComplexionName').val(name);
+    }
+
+    function resetComplexion() {
+        $('#hdCompID').val(0);
+        $('#ComplexionName').val('');
+    }
+
+    function submitComplexion() {
+        var id = $('#hdCompID').val();
+        var name = $('#ComplexionName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/Complexion_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Complexion save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetComplexion(); // Reset Complexion
+                Complexion(); // Bind Complexion
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteComplexion(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/Complexion_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Complexion has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetComplexion(); // Reset Complexion
+                    Complexion(); // Bind Complexion
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Complexion
+
+    // Build
+    function Build() {
+        $("#BuildTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/Build_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#BuildTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditBuild(id, name) {
+        $('#hdBuildID').val(id);
+        $('#BuildName').val(name);
+    }
+
+    function resetBuild() {
+        $('#hdBuildID').val(0);
+        $('#BuildName').val('');
+    }
+
+    function submitBuild() {
+        var id = $('#hdBuildID').val();
+        var name = $('#BuildName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/Build_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Build save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetBuild(); // Reset Build
+                Build(); // Bind Build
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteBuild(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/Build_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Build has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetBuild(); // Reset Build
+                    Build(); // Bind Build
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Build
+
+    function TypeID1() {
+        $("#TypeID1Table").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterTypeID1_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#TypeID1Table tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function TypeID2() {
+        $("#TypeID2Table").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterTypeID2_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#TypeID2Table tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function TypeID3() {
+        $("#TypeID3Table").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterTypeID3_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#TypeID3Table tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    // HairLength
+    function HairLength() {
+        $("#HairLengthTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/HairLength_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#HairLengthTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditHairLength(id, name) {
+        $('#hdHairLengthID').val(id);
+        $('#HairLengthName').val(name);
+    }
+    function EditTypeID(id, Name, strID) {
+        if (strID == 1) {
+            $('#hdTypeID1').val(id);
+            $('#TypeIDName1').val(name);
+        }
+        else if (strID == 2) {
+            $('#hdTypeID2').val(id);
+            $('#TypeIDName2').val(name);
+        }
+        else if (strID == 3) {
+            $('#hdTypeID3').val(id);
+            $('#TypeIDName3').val(name);
+        }
+    }
+    function resetHairLength() {
+        $('#hdHairLengthID').val(0);
+        $('#HairLengthName').val('');
+    }
+    function resetTypeID(strID) {
+        if (strID == 1) {
+            $('#hdTypeID1').val(0);
+            $('#TypeIDName1').val('');
+        }
+        else if (strID == 2) {
+            $('#hdTypeID2').val(0);
+            $('#TypeIDName2').val('');
+        }
+        else if (strID == 3) {
+            $('#hdTypeID3').val(0);
+            $('#TypeIDName3').val('');
+        }
+    }
+    function submitHairLength() {
+        var id = $('#hdHairLengthID').val();
+        var name = $('#HairLengthName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/HairLength_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Hair Length save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetHairLength(); // Reset HairLength
+                HairLength(); // Bind HairLength
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function SubmitTypeid1(strID) {
+        var id = $('#hdTypeID1').val();
+        var name = $('#TypeIDName1').val();
+        if (strID == 1) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/TypeID1_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Type ID#1 save Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetTypeID(1); // Reset HairLength
+                    TypeID1(); // Bind HairLength
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+        else if (strID == 2) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/TypeID2_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Type ID#2 save Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetTypeID(2); // Reset HairLength
+                    TypeID2(); // Bind HairLength
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+        else if (strID == 3) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/TypeID3_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Type ID#3 save Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetTypeID(3); // Reset HairLength
+                    TypeID3(); // Bind HairLength
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    function DelecteTypeid1(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterTypeID1_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Type ID#1 has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetTypeID('1'); // Reset HairLength
+                    TypeID1(); // Bind HairLength
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    function DelecteTypeid2(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterTypeID2_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Type ID#2 has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetTypeID(2); // Reset HairLength
+                    TypeID2(); // Bind HairLength
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    function DelecteTypeid3(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterTypeID3_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Type ID#3 has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetTypeID('3'); // Reset HairLength
+                    TypeID3();
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    function DeleteHairLength(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/HairLength_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Hair Length has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetHairLength(); // Reset HairLength
+                    HairLength(); // Bind HairLength
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End HairLength
+
+    // HairColor
+    function HairColor() {
+        $("#HairColorTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/HairColor_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#HairColorTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditHairColor(id, name) {
+        $('#hdHairColorID').val(id);
+        $('#HairColorName').val(name);
+    }
+
+    function resetHairColor() {
+        $('#hdHairColorID').val(0);
+        $('#HairColorName').val('');
+    }
+
+    function submitHairColor() {
+        var id = $('#hdHairColorID').val();
+        var name = $('#HairColorName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/HairColor_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">HairColor save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetHairColor(); // Reset HairColor
+                HairColor(); // Bind HairColor
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteHairColor(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/HairColor_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">HairColor has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetHairColor(); // Reset HairColor
+                    HairColor(); // Bind HairColor
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End HairColor
+
+    // Facial Hair
+    function FacialHair() {
+        $("#FacialHairTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/FacialHair_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#FacialHairTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditFacialHair(id, name) {
+        $('#hdFacialHairID').val(id);
+        $('#FacialHairName').val(name);
+    }
+
+    function resetFacialHair() {
+        $('#hdFacialHairID').val(0);
+        $('#FacialHairName').val('');
+    }
+
+    function submitFacialHair() {
+        var id = $('#hdFacialHairID').val();
+        var name = $('#FacialHairName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/FacialHair_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Facial Hair save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetFacialHair(); // Reset Facial Hair
+                FacialHair(); // Bind Facial Hair
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteFacialHair(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/FacialHair_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Facial Hair has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetFacialHair(); // Reset Facial Hair
+                    FacialHair(); // Bind Facial Hair
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Facial Hair
+
+
+    // Race
+    function Race() {
+        $("#RaceTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterRace_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#RaceTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditRace(id, name) {
+        $('#hdRaceID').val(id);
+        $('#RaceName').val(name);
+    }
+
+    function resetRace() {
+        $('#hdRaceID').val(0);
+        $('#RaceName').val('');
+    }
+
+    function submitRace() {
+        var id = $('#hdRaceID').val();
+        var name = $('#RaceName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterRace_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Race save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetRace(); // Reset Race
+                Race(); // Bind Race
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteRace(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterRace_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Race has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetRace(); // Reset Race
+                    Race(); // Bind Race
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Race
+
+    // Eyes
+    function Eyes() {
+        $("#EyesTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterEyes_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#EyesTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function watch() {
+        $("#watchTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/Masterwatch_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#watchTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditEyes(id, name) {
+        $('#hdEyesID').val(id);
+        $('#EyesName').val(name);
+    }
+
+    function Editwatch(id, name) {
+        $('#hdwatchID').val(id);
+        $('#watchName').val(name);
+    }
+
+
+    function resetEyes() {
+        $('#hdEyesID').val(0);
+        $('#EyesName').val('');
+    }
+
+    function resetwatch() {
+        $('#hdwatchID').val(0);
+        $('#watchName').val('');
+    }
+
+    function submitEyes() {
+        var id = $('#hdEyesID').val();
+        var name = $('#EyesName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterEyes_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Eyes Information save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetEyes(); // Reset Eyes
+                Eyes(); // Bind Eyes
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+                }
+
+    function submitwatch() {
+        var id = $('#hdwatchID').val();
+        var name = $('#watchName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/Masterwatch_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Watch Information save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetwatch(); // Reset Eyes
+                watch(); // Bind Eyes
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteEyes(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterEyes_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Eyes has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetEyes(); // Reset Eyes
+                    Eyes(); // Bind Eyes
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function Deletewatch(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/Masterwatch_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">watch has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetwatch(); // Reset Eyes
+                    watch(); // Bind Eyes
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Eyes
+
+    // Sex
+    function Sex() {
+        $("#SexTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterSex_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#SexTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditSex(id, name) {
+        $('#hdSexID').val(id);
+        $('#SexName').val(name);
+    }
+
+    function resetSex() {
+        $('#hdSexID').val(0);
+        $('#SexName').val('');
+    }
+
+    function submitSex() {
+        var id = $('#hdSexID').val();
+        var name = $('#SexName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterSex_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Sex Information save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetSex(); // Reset Sex
+                Sex(); // Bind Sex
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteSex(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterSex_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Sex has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetSex(); // Reset Sex
+                    Sex(); // Bind Sex
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Sex
+
+    // Position
+    function Position() {
+        $("#PositionTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/EmployeePosition_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#PositionTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditPosition(id, name) {
+        $('#hdPositionID').val(id);
+        $('#PositionName').val(name);
+    }
+
+    function resetPosition() {
+        $('#hdPositionID').val(0);
+        $('#PositionName').val('');
+    }
+
+    function submitPosition() {
+        var id = $('#hdPositionID').val();
+        var name = $('#PositionName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/EmployeePosition_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Position Information save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetPosition(); // Reset Position
+                Position(); // Bind Position
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeletePosition(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/EmployeePosition_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Position has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetPosition(); // Reset Position
+                    Position(); // Bind Position
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Position
+
+    // AddressType
+    function AddressType() {
+        $("#AddressTypeTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/AddressType_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#AddressTypeTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditAddressType(id, name) {
+        $('#hdAddressTypeID').val(id);
+        $('#AddressTypeName').val(name);
+    }
+
+    function resetAddressType() {
+        $('#hdAddressTypeID').val(0);
+        $('#AddressTypeName').val('');
+    }
+
+    function submitAddressType() {
+        var id = $('#hdAddressTypeID').val();
+        var name = $('#AddressTypeName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/AddressType_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">AddressType Information save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetAddressType(); // Reset AddressType
+                AddressType(); // Bind AddressType
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteAddressType(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/AddressType_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">AddressType has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetAddressType(); // Reset AddressType
+                    AddressType(); // Bind AddressType
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End AddressType
+
+    // EquipmentsProblems
+    function EquipmentsProblems() {
+        $("#EquipmentProblemsTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/EquipmentStatus_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#EquipmentProblemsTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditEquipmentProblems(id, name) {
+        $('#hdProblemsID').val(id);
+        $('#ProblemsName').val(name);
+    }
+
+    function resetEquipmentProblems() {
+        $('#hdProblemsID').val(0);
+        $('#ProblemsName').val('');
+    }
+
+    function submitEquipmentProblems() {
+        var id = $('#hdProblemsID').val();
+        var name = $('#ProblemsName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/EquipmentStatus_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Equipments Problems Information save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetEquipmentProblems(); // Reset EquipmentsProblems
+                EquipmentsProblems(); // Bind EquipmentsProblems
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteEquipmentProblems(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/EquipmentStatus_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Equipments Problems has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetEquipmentProblems(); // Reset EquipmentsProblems
+                    EquipmentsProblems(); // Bind EquipmentsProblems
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End EquipmentsProblems
+
+    // EquipmentAction
+    function EquipmentAction() {
+        $("#EquipmentActionsTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/EquipmentsAction_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#EquipmentActionsTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditEquipmentAction(id, name) {
+        $('#hdActionsID').val(id);
+        $('#ActionsName').val(name);
+    }
+
+    function resetEquipmentAction() {
+        $('#hdActionsID').val(0);
+        $('#ActionsName').val('');
+    }
+
+    function submitEquipmentAction() {
+        var id = $('#hdActionsID').val();
+        var name = $('#ActionsName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/EquipmentAction_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Equipments Action Information save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetEquipmentAction(); // Reset EquipmentAction
+                EquipmentAction(); // Bind EquipmentAction
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteEquipmentAction(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/EquipmentAction_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Equipments Problems has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetEquipmentAction(); // Reset EquipmentAction
+                    EquipmentAction(); // Bind EquipmentAction
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End EquipmentAction
+
+
+    // InitiatedBy
+    function InitiatedBy() {
+        $("#InitiatedByTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/InitiatedBy_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#InitiatedByTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditInitiatedBy(id, name) {
+        $('#hdInitiatedID').val(id);
+        $('#InitiatedName').val(name);
+    }
+
+    function resetInitiatedBy() {
+        $('#hdInitiatedID').val(0);
+        $('#InitiatedName').val('');
+    }
+
+    function submitInitiatedBy() {
+        var id = $('#hdInitiatedID').val();
+        var name = $('#InitiatedName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/InitiatedBy_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">InitiatedBy Information save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetInitiatedBy(); // Reset InitiatedBy
+                InitiatedBy(); // Bind InitiatedBy
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteInitiatedBy(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/InitiatedBy_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">InitiatedBy has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetInitiatedBy(); // Reset InitiatedBy
+                    InitiatedBy(); // Bind InitiatedBy
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End InitiatedBy
+
+    // Nature Event
+    function NatureCode() {
+        $("#NatureCodesTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/NatureCodes_LoadAll")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#NatureCodesTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditNatureCodes(id, code, details, actiontaken, Camera) {
+        $('#hdNatureEventID').val(id);
+        $('#CodeName').val(code);
+        $('#DetailsName').val(details);
+        $('#ActionTaken').val(actiontaken);
+        $('#Camera').val(Camera);
+    }
+
+    function resetNatureCodes() {
+        $('#hdNatureEventID').val(0);
+        $('#CodeName').val('');
+        $('#DetailsName').val('');
+        $('#ActionTaken').val('');
+        $('#Camera').val('');
+    }
+
+    function submitNatureCodes() {
+        var id = $('#hdNatureEventID').val();
+        var code = $('#CodeName').val();
+        var details = $('#DetailsName').val();
+        var actiontaken = $('#ActionTaken').val();
+        var camera = $('#Camera').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/NatureCodes_IU")',
+            data: JSON.stringify({ 'ID': id, 'Code': code, 'Description': details, 'DefaultAction': actiontaken, 'DefaultCamera': camera }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Nature Event Information save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetNatureCodes(); // Reset NatureCode
+                NatureCode(); // Bind NatureCode
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteNatureCodes(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/NatureCodes_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Nature Event has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetNatureCodes(); // Reset NatureCode
+                    NatureCode(); // Bind NatureCode
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End InitiatedBy
+
+    // Set Metrics
+    function SetMetrics() {
+        $("#setmetricsTable").find("tr:not(:first)").remove();
+        var type = $('#setmetricsType').val();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/setmetrics_LoadBy")',
+            data: JSON.stringify({ 'Type': type, }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#setmetricsTable tbody').html('');
+                $('#setmetricsTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    $('#setmetricsType').on('change', function () {
+        SetMetrics();
+    })
+
+    function Editsetmetrics(id, metrics) {
+        $('#hdsetmetricsID').val(id);
+        $('#metrics').val(metrics);
+    }
+
+    function resetsetmetrics() {
+        $('#hdsetmetricsID').val(0);
+        $('#metrics').val('');
+    }
+
+    function submitsetmetrics() {
+        var id = $('#hdsetmetricsID').val();
+        var type = $('#setmetricsType').val();
+        var metrics = $('#metrics').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/setmetrics_IU")',
+            data: JSON.stringify({ 'ID': id, 'Type': type, 'Metrics': metrics }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Metrics Information save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetsetmetrics(); // Reset Set Metrics
+                SetMetrics(); // Bind Set Metrics
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function Deletesetmetrics(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/setmetrics_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Metrics has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetsetmetrics(); // Reset Set Metrics
+                    SetMetrics(); // Bind Set Metrics
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function Activesetmetrics(id, caller) {
+        var type = $('#setmetricsType').val();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/ActiveMetrics")',
+            data: JSON.stringify({ 'ID': id, 'Type': type }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Metrics has been "Set" Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetsetmetrics(); // Reset Set Metrics
+                SetMetrics(); // Bind Set Metrics
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    // End Set Metrics
+
+    // Set Visitor
+    function VisitorLogo() {
+        $("#visitorLogoTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/VisitorLogo")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#visitorLogoTable tbody').html('');
+                $('#visitorLogoTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function resetVisitorLogo() {
+        $('#hdVisitorLogo').val(0);
+        $('#VisitorLogoImage').val('');
+    }
+
+    function submitVisitorLogo() {
+        //  var filePath = $('#VisitorLogoImage').val();
+
+        var formData = new FormData();
+        var totalFiles = document.getElementById("VisitorLogoImage").files.length;
+        for (var i = 0; i < totalFiles; i++) {
+            var file = document.getElementById("VisitorLogoImage").files[i];
+            formData.append("VisitorLogoImage", file);
+        }
+        $.ajax({
+            type: "POST",
+            url: '@Url.Content("~/Setting/Setting/Visitor_Add")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Visitor Logo save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+            },
+            error: function (error) {
+                console.log('error');
+            }
+        });
+        resetVisitorLogo(); // Reset Visitor Logo
+        VisitorLogo(); // Bind Visitor Logo
+    }
+
+    function DeleteVisitorLogo(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/Visitor_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Visitor Logo has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetVisitorLogo(); // Reset Visitor Logo
+                    VisitorLogo(); // Bind Visitor Logo
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function SetVisitorLogo(id, caller) {
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/ActiveVisitorLogo")',
+            data: JSON.stringify({ 'ID': id }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Visitor Logo has been "Set" Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetVisitorLogo(); // Reset Visitor Logo
+                VisitorLogo(); // Bind Visitor Logo
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    // End Visitor Logo
+
+    // Set Report
+    function ReportLogo() {
+        $("#reportLogoTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/ReportsLogo")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#reportLogoTable tbody').html('');
+                $('#reportLogoTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function resetReportLogo() {
+        $('#hdReportLogo').val(0);
+        $('#ReportLogoImage').val('');
+    }
+
+    function submitReportLogo() {
+        //  var filePath = $('#ReportLogoImage').val();
+
+        var formData = new FormData();
+        var totalFiles = document.getElementById("ReportLogoImage").files.length;
+        for (var i = 0; i < totalFiles; i++) {
+            var file = document.getElementById("ReportLogoImage").files[i];
+            formData.append("ReportLogoImage", file);
+        }
+        $.ajax({
+            type: "POST",
+            url: '@Url.Content("~/Setting/Setting/Reports_Add")',
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                $('#msgDiv').html('<div class="alert alert-success">Reports Logo save Successfully.</div>');
+                setTimeout(function () {
+                    $('#msgDiv').fadeOut();
+                }, 5000);
+                window.scrollTo(0, 0);
+            },
+            error: function (error) {
+                console.log('error');
+            }
+        });
+        resetReportLogo(); // Reset Report Logo
+        ReportLogo(); // Bind Report Logo
+    }
+
+    function DeleteReportLogo(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/Reports_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Report Logo has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetReportLogo(); // Reset Report Logo
+                    ReportLogo(); // Bind Report Logo
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function SetReportLogo(id, caller) {
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/ActiveReportsLogo")',
+            data: JSON.stringify({ 'ID': id }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Report Logo has been "Set" Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetReportLogo(); // Reset Report Logo
+                ReportLogo(); // Bind Report Logo
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    // End Report Logo
+
+    // Visitor Email Log
+    function VisitorEmailLog() {
+        $("#tableVisitorEmailLogo").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/VisitorEmailSend_LoadAll")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#tableVisitorEmailLogo tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditVisitorEmailLog(id, Email, SMTP, Password) {
+        $('#hdVisitorEmailLog').val(id);
+        $('#txtFromEmail').val(Email);
+        $('#txtSMTP').val(SMTP);
+        $('#txtPassword').val(Password);
+    }
+
+    function resetVisitorEmailLog() {
+        $('#hdVisitorEmailLog').val(0);
+        $('#txtFromEmail').val('');
+        $('#txtSMTP').val('');
+        $('#txtPassword').val('');
+    }
+
+    function submitVisitorEmailLog() {
+        var id = $('#hdVisitorEmailLog').val();
+        var email = $('#txtFromEmail').val();
+        var smtp = $('#txtSMTP').val();
+        var password = $('#txtPassword').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/VisitorEmailSend_AddEdit")',
+            data: JSON.stringify({ 'ID': id, 'Email': email, 'SMTP': smtp, 'Password': password }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Email Log save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetVisitorEmailLog(); // Reset Visitor Email Log
+                VisitorEmailLog(); // Bind Visitor Email Log
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteVisitorEmailLog(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/VisitorEmailSend_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Email Log has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetVisitorEmailLog(); // Reset Visitor Email Log
+                    VisitorEmailLog(); // Bind Visitor Email Log
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End License Status
+
+</script>

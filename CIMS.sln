@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIMS", "CIMS\CIMS.csproj", "{0F6816C0-2113-4AFC-9CB3-1E1925986288}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIMS.BaseLayer", "CIMS.BaseLayer\CIMS.BaseLayer.csproj", "{06C86030-2F13-459E-A790-5FB089AE95C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIMS.DataLayer", "CIMS.DataLayer\CIMS.DataLayer.csproj", "{4E3AE85E-9A69-4139-8C73-740D80E72D7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIMS.ActionLayer", "CIMS.ActionLayer\CIMS.ActionLayer.csproj", "{6BFA79EE-515F-4469-934F-678AAED5A797}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIMS.Utility", "CIMS.Utility\CIMS.Utility.csproj", "{A93B3AB8-D7DF-4EEE-BA5D-BB48A9BDF6BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIMS.DbServices", "CIMS.DbServices\CIMS.DbServices.csproj", "{61074F38-81FE-4127-A624-C80AA822AAC4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A9C433EF-0143-40E0-8E5C-47B0A53FE9E4}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Global
+	
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0F6816C0-2113-4AFC-9CB3-1E1925986288}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F6816C0-2113-4AFC-9CB3-1E1925986288}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F6816C0-2113-4AFC-9CB3-1E1925986288}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F6816C0-2113-4AFC-9CB3-1E1925986288}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06C86030-2F13-459E-A790-5FB089AE95C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06C86030-2F13-459E-A790-5FB089AE95C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06C86030-2F13-459E-A790-5FB089AE95C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06C86030-2F13-459E-A790-5FB089AE95C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E3AE85E-9A69-4139-8C73-740D80E72D7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E3AE85E-9A69-4139-8C73-740D80E72D7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E3AE85E-9A69-4139-8C73-740D80E72D7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E3AE85E-9A69-4139-8C73-740D80E72D7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BFA79EE-515F-4469-934F-678AAED5A797}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BFA79EE-515F-4469-934F-678AAED5A797}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BFA79EE-515F-4469-934F-678AAED5A797}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BFA79EE-515F-4469-934F-678AAED5A797}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A93B3AB8-D7DF-4EEE-BA5D-BB48A9BDF6BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A93B3AB8-D7DF-4EEE-BA5D-BB48A9BDF6BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A93B3AB8-D7DF-4EEE-BA5D-BB48A9BDF6BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A93B3AB8-D7DF-4EEE-BA5D-BB48A9BDF6BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61074F38-81FE-4127-A624-C80AA822AAC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61074F38-81FE-4127-A624-C80AA822AAC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61074F38-81FE-4127-A624-C80AA822AAC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61074F38-81FE-4127-A624-C80AA822AAC4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

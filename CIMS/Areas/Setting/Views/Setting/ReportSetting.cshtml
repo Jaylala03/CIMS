@@ -1,0 +1,3236 @@
+﻿
+@model CIMS.Models.SettingModel
+@{
+    ViewBag.Title = "ReportSetting";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+<style>
+    .btn {
+        display: inline-block;
+        padding: 6px 8px;
+    }
+
+    #NatureofIncidentTable {
+        height: 370px;
+        overflow-y: auto;
+    }
+
+    #ShortDescriptorTable {
+        height: 370px;
+        overflow-y: auto;
+    }
+
+    .large-title {
+        padding: 10px 1px;
+    }
+</style>
+@*<h2>ReportSetting</h2>*@
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Report Setting</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Report Setting</li>
+        </ol>
+    </div>
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="white-box">
+            <div class="vtabs vtabfull">
+                <ul class="nav tabs-vertical custom-tabs" id="newmyTab">
+                    <input type="text" id="searchtab" class="form-control" placeholder="Search tab" />
+                    <li class="active">
+                        <a href="#NatureofIncident" data-toggle="tab">
+                            <span>Report Type</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#Status" data-toggle="tab">
+                            <span>Status</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#IncidentRole" data-toggle="tab">
+                            <span>Incident Role</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#Game" data-toggle="tab">
+                            <span>Pace Audit - Game</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#BuyInGame" data-toggle="tab">
+                            <span>Buys-In - Game</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#BuyInPitType" data-toggle="tab">
+                            <span>Buys-In Pit</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#DisputeType" data-toggle="tab">
+                            <span>Dispute Type</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#Resolution" data-toggle="tab">
+                            <span>Resolution</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#Cashier" data-toggle="tab">
+                            <span>Cashier</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#Location" data-toggle="tab">
+                            <span>Location</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#Color" data-toggle="tab">
+                            <span>Vehicle Color</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#AuthorizedBy" data-toggle="tab">
+                            <span>Ban Authorized By</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#BanType" data-toggle="tab">
+                            <span>Ban Type</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#VarianceType" data-toggle="tab">
+                            <span>Variance Type</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#VarianceResolution" data-toggle="tab">
+                            <span>Variance Resolution</span>
+                        </a>
+                    </li>
+                    @*Ab New 22/2*@
+                    <li>
+                        <a href="#Audit" data-toggle="tab">
+                            <span>Audit</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#AliasNameType" data-toggle="tab">
+                            <span>Alias Name Type</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#ForeignExchangeRates" data-toggle="tab">
+                            @*<span>Foreign Exchange Rates</span>*@
+                            <span>Country - Foreign Exchange Rates</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#Services" data-toggle="tab">
+                            <span>Services</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#TabCashoutTableNumber" data-toggle="tab">
+                            <span>Cash-Outs Table Number</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="NatureofIncident">
+                        <div class="large-title ">Report Type</div>
+                        <div class=" clearfix">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    @using (Html.BeginForm("MasterNatureofIncident_IU", "Setting", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                    {
+                                    <div class="col-md-12">
+                                        <fieldset style="margin-bottom: 20px;">
+                                            <legend>Type</legend>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group no-margin-bottom">
+                                                        <input type="radio" name="Radio1" value="1" id="rdSubject" checked="checked" class="active">
+                                                        <label class="control-label" for="rdSubject">Subject</label>
+
+                                                        <input type="radio" name="Radio1" value="2" id="rbPersonnel">
+                                                        <label class="control-label" for="rbPersonnel">Employee</label>
+                                                        <input type="radio" name="Radio1" value="3" id="rbPersonnel">
+                                                        <label class="control-label" for="rbPersonnel">General</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label class="control-label">Report Code:</label>
+                                                <select name="NatureofIncidentTable" id="NatureofIncidentTable" size="10" class="form-control"></select>
+                                                <input type="hidden" id="hdNatureofIncidentID" name="hdNatureofIncidentID" value="0" />
+                                                <input type="hidden" id="hdNatureimage" name="hdNatureimage" />
+
+                                                <div class="form-group" style="margin-top: 5px;">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <input type="text" class="form-control" id="NatureofIncidentName" name="NatureofIncidentName" onkeypress="AddNatureofIncident();" />
+                                                        </div>
+                                                        <div class="col-md-1">
+                                                            <img src="~/assets/images/logo-collapsed@2x.png" id="NatureImage" width="30" height="30" />
+                                                        </div>
+                                                        <div class="col-md-7">
+                                                            @*Ankur New 1*@
+
+                                                            <div id="uploadIcon" style="margin-top: 5px;">
+                                                                <button type="submit" id="uploadIconBtn" class="btn btn-primary pull-right" style="margin: 10px 0px;display:none">Add icon</button>
+                                                                <input type="file" name="file" id="file" class="filestyle" style="margin-bottom:25px" />
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="submit" id="btnNatureofIncident" name="natureofinci" value="Add" class="btn btn-success add" @*onclick="submitNatureofIncident()";*@ />
+                                                    <button type="reset" class="btn btn-danger" onclick="DeleteNatureofIncident();">Delete</button>
+                                                    <button type="reset" class="btn btn-white" onclick="resetNatureofIncident();">Reset</button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="form-group" style="margin-top: 5px;">
+
+                                                    <label class="control-label">Short Description Code:</label>
+                                                    <select name="ShortDescriptorTable" id="ShortDescriptorTable" size="10" class="form-control"></select>
+                                                    <input type="hidden" id="hdShortDescriptorID" name="hdShortDescriptorID" value="0" />
+
+                                                    <input type="text" class="form-control" id="ShortDescriptorName" style="margin-top: 5px;" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="button" id="btnShortDescriptor" value="Add" class="btn btn-success add" onclick="submitShortDescriptor();" disabled="" />
+                                                    <button type="reset" class="btn btn-danger" id="btnDeleteShortDescriptor" onclick="DeleteShortDescriptor();">Delete</button>
+                                                    <button type="reset" class="btn btn-white" onclick="resetShortDescriptor();">Reset</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    }
+                                    <div class="col-md-12">
+                                        <label class="control-label">Procedure for Short Descriptor Code:</label>
+                                        <div class="form-group">
+                                            <textarea class="form-control ckeditor" rows="4" id="procedureForShortDes"> </textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="button" id="btnAddDepartment" onclick="submitShortDescriptorDetails();" class="btn btn-success add" disabled="">Add</button>
+                                            <button type="button" id="btnAddDepartment" onclick="deleteShortDescriptorDetails();" class="btn btn-danger add">Delete</button>
+                                            <button type="reset" class="btn btn-white" onclick="resetProcForShortDescriptor();">Reset</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="tab-pane" id="Status">
+                        <div class="large-title col-md-12">Status</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdStatusID" name="hdStatusID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">Status</label>
+                                    <input type="text" class="form-control" id="StatusName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitStatus();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetStatus();">Reset</button>
+                                </div>
+
+                            </div>
+                            <div class="col-md-12">
+                                <table id="StatusTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="IncidentRole">
+                        <div class="large-title col-md-12">Role</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdRoleID" name="hdRoleID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">Role</label>
+                                    <input type="text" class="form-control" id="RoleName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitRole();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetRole();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="RoleTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="Game">
+                        <div class="large-title col-md-12">Pace Audit - Game</div>
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdGameID" name="hdGameID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">Game Name</label>
+                                    <input type="text" class="form-control" id="GameName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitGame();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetGame();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="GameTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="BuyInGame">
+                        <div class="large-title col-md-12">Buy-In Game</div>
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdBuyInGameID" name="hdBuyInGameID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">Game Name</label>
+                                    <input type="text" class="form-control" id="BuyInGameName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitBuyInGame();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetBuyInGame();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="BuyInGameTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="BuyInPitType">
+                        <div class="large-title col-md-12">Buy-In Pit</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdBuyInPitTypeID" name="hdBuyInPitTypeID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">Pit Name</label>
+                                    <input type="text" class="form-control" id="BuyInPitTypeName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitBuyInPitType();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetBuyInPitType();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="BuyInPitTypeTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="DisputeType">
+                        <div class="large-title col-md-12">DisputeType</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdDisputeTypeID" name="hdDisputeTypeID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">DisputeType Name</label>
+                                    <input type="text" class="form-control" id="DisputeTypeName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitDisputeType();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetDisputeType();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="DisputeTypeTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="Cashier">
+                        <div class="large-title col-md-12">Cashier</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdCashierID" name="hdCashierID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">Cashier Name</label>
+                                    <input type="text" class="form-control" id="CashierName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitCashier();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetCashier();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="CashierTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="Location">
+                        <div class="large-title col-md-12">Location</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdLocationID" name="hdLocationID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">Location Name</label>
+                                    <input type="text" class="form-control" id="LocationName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitLocation();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetLocation();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="LocationTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="Resolution">
+                        <div class="large-title col-md-12">Resolution</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdResolutionID" name="hdResolutionID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">Resolution Name</label>
+                                    <input type="text" class="form-control" id="ResolutionName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitResolution();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetResolution();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="ResolutionTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="Color">
+                        <div class="large-title col-md-12">Color</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdColorID" name="hdColorID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">Color Name</label>
+                                    <input type="text" class="form-control" id="ColorName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitColor();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetColor();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="ColorTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="AuthorizedBy">
+                        <div class="large-title col-md-12">Ban AuthorizedBy</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdAuthorizedByID" name="hdAuthorizedByID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">AuthorizedBy</label>
+                                    <input type="text" class="form-control" id="AuthorizedByName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitAuthorizedBy();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetAuthorizedBy();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="AuthorizedByTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="BanType">
+                        <div class="large-title col-md-12">Ban Type</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdBanTypeID" name="hdBanTypeID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">BanType</label>
+                                    <input type="text" class="form-control" id="BanTypeByName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitBanTypeBy();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetBanTypeBy();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="MstBanTypeTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="VarianceType">
+                        <div class="large-title col-md-12">VarianceType</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdVarianceTypeID" name="hdVarianceTypeID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">VarianceType</label>
+                                    <input type="text" class="form-control" id="VarianceTypeName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitVarianceType();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetVarianceType();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="VarianceTypeTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="VarianceResolution">
+                        <div class="large-title col-md-12">VarianceResolution</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdVarianceResolutionID" name="hdVarianceResolutionID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">VarianceResolution</label>
+                                    <input type="text" class="form-control" id="VarianceResolutionName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitVarianceResolution();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetVarianceResolution();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="VarianceResolutionTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    @*AB 22/2*@
+                    <div class="tab-pane" id="Audit">
+                        <div class="large-title col-md-12">Audit</div>
+
+                        <div class="clearfix">
+                            @using (Html.BeginForm("CreateAudit", "Setting", FormMethod.Post, new { area = "Setting" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <div class="col-md-12">
+                                    <input type="hidden" id="AuditID" name="AuditID" value="0" />
+                                    <div class="form-group">
+                                        <label class="control-label">Audit</label>
+                                        <input type="text" class="form-control" id="AuditName" name="AuditName"  />
+                                    </div>
+                                    <div class="form-group">
+                                        @*<button type="button" onclick="submitAudit();" class="btn btn-success add">Save</button>
+                                        <button type="reset" class="btn btn-white" onclick="resetAudit();">Reset</button>*@
+                                        <input type="submit" id="btnSubmit" value="Save" class="btn btn-success" />
+                                        <input type="button" class="btn btn-blue" id="clearBtn" onclick="resetAudit();" value="Clear" />
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-md-12">
+                                <table id="AuditTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="AliasNameType">
+                        <div class="large-title col-md-12">AliasNameType</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdAliasNameTypeID" name="hdAliasNameTypeID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">AliasNameType</label>
+                                    <input type="text" class="form-control" id="AliasNameTypeName" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitAliasNameType();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetAliasNameType();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="AliasNameTypeTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Name
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="ForeignExchangeRates">
+                        <div class="large-title col-md-12">Country - Foreign Exchange Rates</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdForeignExchangeRatesID" name="hdForeignExchangeRatesID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">Country</label>
+                                    <input type="text" class="form-control" id="ForeignExchangeRatesName" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Rate</label>
+                                    <input type="text" class="form-control" id="ExchangeRate" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitForeignExchangeRates();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetForeignExchangeRates();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="ForeignExchangeRatesTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Country
+                                            </td>
+                                            <td class="td-border">
+                                                Rate
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="Services">
+                        <div class="large-title col-md-12">Services</div>
+
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdServicesID" name="hdServicesID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">Service Name</label>
+                                    <input type="text" class="form-control" id="ServiceName" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Declined Available</label>
+                                    <input type="checkbox" id="DeclinedAvailable">
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitServices();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetServices();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="ServicesTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Service Name
+                                            </td>
+                                            <td class="td-border">
+                                                Declined Available
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                    <div class="tab-pane" id="TabCashoutTableNumber">
+                        <div class="large-title col-md-12">CASH-OUTS Table Number</div>
+                        <div class="clearfix">
+                            <div class="col-md-12">
+                                <input type="hidden" id="hdCashoutTableNumberID" name="hdCashoutTableNumberID" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">Table Number</label>
+                                    <input type="text" class="form-control" id="CashoutTableNumber" />
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" onclick="submitCashoutTableNumber();" class="btn btn-success add">Save</button>
+                                    <button type="reset" class="btn btn-white" onclick="resetCashoutTableNumber();">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table id="CashoutTableNumberTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                                    <thead>
+                                        <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                            <td class="td-border">
+                                                Table Number
+                                            </td>
+                                            <td class="removefromtable td-border">
+                                                Actions
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        NatureofIncident(); // Bind Nature of Incident
+        Status(); // Bind Status
+        Role(); // Bind Role
+        Game(); // Bind Game
+        BuyInGame(); // Bind BuyInGame
+        CashoutTableNumber(); //Bind Cashout TableNumber
+        DisputeType(); // Bind DisputeType
+        BuyInPitType(); // Bind BuyInPitType
+        Resolution(); // Bind Resolution
+        Cashier(); // Bind Cashier
+        Location(); // Bind Location
+        Color(); // Bind Vehicle Color
+        AuthorizedBy(); // Bind AuthorizedBy
+        MSTBanType();
+        VarianceType(); // Bind VarianceType
+        VarianceResolution(); // Bind VarianceResolution
+        //Ankur New 22/2
+        Audit() //Bind Audit
+        AliasNameType(); // Bind AliasNameType
+        ForeignExchangeRates(); // Bind ForeignExchangeRates
+        Services(); // Bind Services
+
+        // Find active Tab and set
+        $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+            localStorage.setItem('activeTab', $(e.target).attr('href'));
+        });
+        var activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            $('#newmyTab a[href="' + activeTab + '"]').tab('show');
+        }
+
+        // Search Tab
+        $('#searchtab').keyup(function () {
+
+            var that = this, $allListElements = $('#newmyTab > li');
+
+            var $matchingListElements = $allListElements.filter(function (i, li) {
+                var listItemText = $(li).text().toUpperCase(), searchText = that.value.toUpperCase();
+                return ~listItemText.indexOf(searchText);
+            });
+
+            $allListElements.hide();
+            $matchingListElements.show();
+
+        });
+
+        // set and Remove active
+        $('input:radio').click(function () {
+            $('input:radio:checked').addClass('active');
+            $('input:radio:not(:checked)').removeClass('active');
+
+        });
+        // Radio Button Change event
+        $("input[name=Radio1]:radio").change(function () {
+            NatureofIncident();
+        });
+    }); // End
+
+    // Nature of Incident
+
+    function NatureofIncident() {
+        var id = $('input[type=radio][name=Radio1].active').val();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterNatureofIncident_Load")',
+            data: JSON.stringify({ 'ID': id }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $("#NatureofIncidentTable").html("");
+                    $('#NatureofIncidentTable').append(data);
+                }
+                else { $("#NatureofIncidentTable").html(""); }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditNatureofIncident(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdNatureofIncidentID').val(id);
+            $('#NatureofIncidentName').val(name);
+
+            // $('#btnNatureofIncident').attr("disabled", "disabled");
+            resetShortDescriptor(); // Reset Short Descriptor
+            ShortDescriptor(); // Bind Short Descriptor
+
+            $('#btnNatureofIncident').val("Update");
+            $('#btnNatureofIncident').attr("disabled", false);
+
+            $('#NatureofIncidentName').attr("disabled", "disabled");
+
+            if ($('#hdNatureofIncidentID').val() > 0) {
+                $('#btnShortDescriptor').attr("disabled", false);
+            }
+            else {
+                $('#btnShortDescriptor').attr("disabled", "disabled");
+            }
+            /// debugger;
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/GetNatureImage")',
+                data: JSON.stringify({ 'ID': id, "Name": name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        //      debugger;
+                        console.log(data);
+                        $("#NatureImage").attr("src", "/assets/images/" + data);
+                        $('#hdNatureimage').val(data);
+                        //$("#NatureofIncidentTable").html("");
+                        //$('#NatureofIncidentTable').append(data);
+                    }
+                    else {
+                        $("#NatureImage").attr("src", "");
+                        $('#hdNatureimage').val("");
+                    }
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function resetNatureofIncident() {
+        $('#hdNatureofIncidentID').val(0);
+        $('#hdNatureimage').val("");
+        $('#NatureofIncidentName').val('');
+        $('#btnNatureofIncident').val('Add');
+        $('#btnNatureofIncident').attr("disabled", false);
+        $("#NatureImage").attr("src", "");
+        resetShortDescriptor(); // Reset Short Descriptor
+        resetProcForShortDescriptor();
+        $("#ShortDescriptorTable").html("");
+        if ($('#hdNatureofIncidentID').val() > 0) {
+            $('#btnShortDescriptor').attr("disabled", false);
+        }
+        else {
+            $('#btnShortDescriptor').attr("disabled", "disabled");
+        }
+        $('#NatureofIncidentName').attr("disabled", false);
+    }
+
+    @*function submitNatureofIncident() {
+        var natureType = $('input[type=radio][name=Radio1].active').val();
+        var id = $('#hdNatureofIncidentID').val();
+        var name = $('#NatureofIncidentName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterNatureofIncident_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name, 'NatureType': natureType }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Short Descriptor save Successfully.</div>');
+
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetNatureofIncident(); // reset NatureofIncident
+                NatureofIncident(); // Bind NatureofIncident
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }*@
+
+    function DeleteNatureofIncident() {
+        var id = $('#hdNatureofIncidentID').val();
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterNatureofIncident_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Short Descriptor has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetNatureofIncident(); // reset NatureofIncident
+                    NatureofIncident(); // Bind NatureofIncident
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End NatureofIncident
+
+    // Short Descriptor
+    function ShortDescriptor() {
+        var natureId = $('#hdNatureofIncidentID').val();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterShortDescriptor_Load")',
+            data: JSON.stringify({ 'NatureID': natureId }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $("#ShortDescriptorTable").html("");
+                    $('#ShortDescriptorTable').append(data);
+                }
+                else { $("#ShortDescriptorTable").html(""); }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditShortDescriptor(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdShortDescriptorID').val(id);
+            $('#ShortDescriptorName').val(name);
+            $('#btnShortDescriptor').attr("disabled", "disabled");
+
+            ProForShortDescriptorDetails();
+
+            if ($('#hdShortDescriptorID').val() > 0) {
+                $('#btnAddDepartment').attr("disabled", false);
+            }
+            else {
+                $('#btnAddDepartment').attr("disabled", "disabled");
+            }
+        }
+    }
+
+    function resetShortDescriptor() {
+        $('#hdShortDescriptorID').val(0);
+        $('#ShortDescriptorName').val('');
+        $('#btnShortDescriptor').val('Add');
+        $('#btnShortDescriptor').attr("disabled", "disabled");
+        if ($('#hdShortDescriptorID').val() > 0) {
+            $('#btnAddDepartment').attr("disabled", false);
+        }
+        else {
+            $('#btnAddDepartment').attr("disabled", "disabled");
+        }
+    }
+
+
+    function resetProcForShortDescriptor() {
+        CKEDITOR.instances['procedureForShortDes'].setData('')
+
+    }
+
+    function submitShortDescriptor()
+    {
+        if (AddConfirm('@ViewBag.Action')) {
+            var natureId = $('#hdNatureofIncidentID').val();
+            var id = $('#hdShortDescriptorID').val();
+            var name = $('#ShortDescriptorName').val();
+            var pro = "";
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterShortDescriptor_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name, 'NatureID': natureId, 'Pro': pro }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Short Descriptor save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetShortDescriptor(); // reset Short Descriptor
+                    ShortDescriptor(); // Bind Short Descriptor
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteShortDescriptor() {
+        var id = $('#hdShortDescriptorID').val();
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterShortDescriptor_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Short Descriptor has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetShortDescriptor(); // reset Short Descriptor
+                    ShortDescriptor(); // Bind Short Descriptor
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    // Procedure for Short Description
+    //Ankur
+    function submitShortDescriptorDetails() {
+
+        if (AddConfirm('@ViewBag.Action')) {
+            //var xhr = new XMLHttpRequest();
+            //var ImageFile = new FormData();
+            var natureId = $('#hdNatureofIncidentID').val();
+            var id = $('#hdShortDescriptorID').val();
+            var name = $('#ShortDescriptorName').val();
+            var pro = CKEDITOR.instances['procedureForShortDes'].getData();
+
+
+            @*ImageFile.append("file", $("#file")[0].files[0]);
+        ImageFile.append("ID", id);
+        ImageFile.append("Name", name);
+        ImageFile.append("NatureID", natureId);
+        ImageFile.append("Pro", pro);
+
+        xhr.open("POST", "@Url.Content("~/Setting/Setting/MasterShortDescriptor_IU")", true);
+        xhr.responseType = "document";
+        xhr.send(ImageFile);
+        xhr.addEventListener("load", function (event) {
+            //window.location.reload();
+        }, false);*@
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterShortDescriptor_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name, 'NatureID': natureId, 'Pro': pro }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success"> Procedure for Short Descriptor save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    ProForShortDescriptorDetails();
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    @*function submitShortDescriptorDetails() {
+        var natureId = $('#hdNatureofIncidentID').val();
+        var id = $('#hdShortDescriptorID').val();
+        var name = $('#ShortDescriptorName').val();
+        var pro = CKEDITOR.instances['procedureForShortDes'].getData();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterShortDescriptor_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name, 'NatureID': natureId,'Pro':pro }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success"> Procedure for Short Descriptor save Successfully.</div>');
+
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                ProForShortDescriptorDetails();
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }*@
+
+    function deleteShortDescriptorDetails() {
+        var natureId = $('#hdNatureofIncidentID').val();
+        var id = $('#hdShortDescriptorID').val();
+        var name = $('#ShortDescriptorName').val();
+        var pro = "";
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterShortDescriptor_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name, 'NatureID': natureId, 'Pro': pro }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success"> Procedure for Short Descriptor save Successfully.</div>');
+
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function ProForShortDescriptorDetails() {
+
+        var id = $('#hdShortDescriptorID').val();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterShortDescriptor_DestilsbyID")',
+            data: JSON.stringify({ 'ID': id }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                CKEDITOR.instances['procedureForShortDes'].setData(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    // End Procedure for Short Description
+
+    // End ShortDescriptor
+
+    // Status
+    function Status() {
+        $("#StatusTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterStatus_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#StatusTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditStatus(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdStatusID').val(id);
+            $('#StatusName').val(name);
+        }
+    }
+
+    function resetStatus() {
+        $('#hdStatusID').val(0);
+        $('#StatusName').val('');
+    }
+
+    function submitStatus() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdStatusID').val();
+            var name = $('#StatusName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterStatus_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Short Descriptor save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetStatus(); // reset Status
+                    Status(); // Bind Status
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteStatus(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterStatus_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Short Descriptor has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetStatus(); // reset Status
+                    Status(); // Bind Status
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Status
+
+    // Role
+    function Role() {
+        $("#RoleTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterRole_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#RoleTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditRole(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdRoleID').val(id);
+            $('#RoleName').val(name);
+        }
+    }
+
+    function resetRole() {
+        $('#hdRoleID').val(0);
+        $('#RoleName').val('');
+    }
+
+    function submitRole() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdRoleID').val();
+            var name = $('#RoleName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterRole_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Short Descriptor save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetRole(); // reset Role
+                    Role(); // Bind Role
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteRole(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterRole_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Short Descriptor has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetRole(); // reset Role
+                    Role(); // Bind Role
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Role
+
+    // Game
+    function Game() {
+        $("#GameTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterGame_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#GameTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditGame(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdGameID').val(id);
+            $('#GameName').val(name);
+        }
+    }
+
+    function resetGame() {
+        $('#hdGameID').val(0);
+        $('#GameName').val('');
+    }
+
+    function submitGame() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdGameID').val();
+            var name = $('#GameName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterGame_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Game save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetGame(); // reset Game
+                    Game(); // Bind Game
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteGame(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterGame_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Game has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetGame(); // reset Game
+                    Game(); // Bind Game
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Game
+
+    // DisputeType
+    function DisputeType() {
+        $("#DisputeTypeTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterDisputeType_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#DisputeTypeTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditDisputeType(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdDisputeTypeID').val(id);
+            $('#DisputeTypeName').val(name);
+        }
+    }
+
+    function resetDisputeType() {
+        $('#hdDisputeTypeID').val(0);
+        $('#DisputeTypeName').val('');
+    }
+
+    function submitDisputeType() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdDisputeTypeID').val();
+            var name = $('#DisputeTypeName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterDisputeType_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">DisputeType save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetDisputeType(); // reset DisputeType
+                    DisputeType(); // Bind DisputeType
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteDisputeType(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterDisputeType_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">DisputeType has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetDisputeType(); // reset DisputeType
+                    DisputeType(); // Bind DisputeType
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End DisputeType
+
+    // Cashier
+    function Cashier() {
+        $("#CashierTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/CashierName_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#CashierTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditCashier(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdCashierID').val(id);
+            $('#CashierName').val(name);
+        }
+    }
+
+    function resetCashier() {
+        $('#hdCashierID').val(0);
+        $('#CashierName').val('');
+    }
+
+    function submitCashier() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdCashierID').val();
+            var name = $('#CashierName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/CashierName_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Cashier save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetCashier(); // reset Cashier
+                    Cashier(); // Bind Cashier
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteCashier(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/CashierName_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Cashier has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetCashier(); // reset Cashier
+                    Cashier(); // Bind Cashier
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Cashier
+
+    // Location
+    function Location() {
+        $("#LocationTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/Location_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#LocationTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditLocation(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdLocationID').val(id);
+            $('#LocationName').val(name);
+        }
+    }
+
+    function resetLocation() {
+        $('#hdLocationID').val(0);
+        $('#LocationName').val('');
+    }
+
+    function submitLocation() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdLocationID').val();
+            var name = $('#LocationName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/Location_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Location save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetLocation(); // reset Location
+                    Location(); // Bind Location
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteLocation(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/Location_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Location has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetLocation(); // reset Location
+                    Location(); // Bind Location
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Location
+
+    // Resolution
+    function Resolution() {
+        $("#ResolutionTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/DisputeResolution_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#ResolutionTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditResolution(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdResolutionID').val(id);
+            $('#ResolutionName').val(name);
+        }
+    }
+
+    function resetResolution() {
+        $('#hdResolutionID').val(0);
+        $('#ResolutionName').val('');
+    }
+
+    function submitResolution() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdResolutionID').val();
+            var name = $('#ResolutionName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/DisputeResolution_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Resolution save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetResolution(); // reset Resolution
+                    Resolution(); // Bind Resolution
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteResolution(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/DisputeResolution_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Resolution has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetResolution(); // reset Resolution
+                    Resolution(); // Bind Resolution
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Resolution
+
+    // Color
+    function Color() {
+        $("#ColorTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/VehicleColor_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#ColorTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditColor(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdColorID').val(id);
+            $('#ColorName').val(name);
+        }
+    }
+
+    function resetColor() {
+        $('#hdColorID').val(0);
+        $('#ColorName').val('');
+    }
+
+    function submitColor() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdColorID').val();
+            var name = $('#ColorName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/VehicleColor_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Color save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetColor(); // reset Color
+                    Color(); // Bind Color
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteColor(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/VehicleColor_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Color has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetColor(); // reset Color
+                    Color(); // Bind Color
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Color
+    function MSTBanType() {
+        $("#MstBanTypeTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MstBanType_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#MstBanTypeTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    // AuthorizedBy
+    function AuthorizedBy() {
+        $("#AuthorizedByTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/BanAuthorizedBy_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#AuthorizedByTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditBanTypeBy(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdBanTypeID').val(id);
+            $('#BanTypeByName').val(name);
+        }
+    }
+    function resetBanTypeBy() {
+        $('#hdBanTypeID').val(0);
+        $('#BanTypeByName').val('');
+    }
+    function EditAuthorizedBy(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdAuthorizedByID').val(id);
+            $('#AuthorizedByName').val(name);
+        }
+    }
+
+    function resetAuthorizedBy() {
+        $('#hdAuthorizedByID').val(0);
+        $('#AuthorizedByName').val('');
+    }
+    function submitBanTypeBy() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdBanTypeID').val();
+            var name = $('#BanTypeByName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MstBanType_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Ban Type save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetBanTypeBy(); // reset AuthorizedBy
+                    MSTBanType() // Bind AuthorizedBy
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    function submitAuthorizedBy() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdAuthorizedByID').val();
+            var name = $('#AuthorizedByName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/BanAuthorizedBy_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">AuthorizedBy save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetAuthorizedBy(); // reset AuthorizedBy
+                    AuthorizedBy(); // Bind AuthorizedBy
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function MSTBanTypeDelete(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MstBanType_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Ban Type has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetAuthorizedBy(); // reset AuthorizedBy
+                    AuthorizedBy(); // Bind AuthorizedBy
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    function DeleteAuthorizedBy(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/BanAuthorizedBy_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">AuthorizedBy has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetAuthorizedBy(); // reset AuthorizedBy
+                    AuthorizedBy(); // Bind AuthorizedBy
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End AuthorizedBy
+
+    // VarianceType
+    function VarianceType() {
+        $("#VarianceTypeTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/VarianceType_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#VarianceTypeTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditVarianceType(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdVarianceTypeID').val(id);
+            $('#VarianceTypeName').val(name);
+        }
+    }
+
+    function resetVarianceType() {
+        $('#hdVarianceTypeID').val(0);
+        $('#VarianceTypeName').val('');
+    }
+
+    function submitVarianceType() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdVarianceTypeID').val();
+            var name = $('#VarianceTypeName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/VarianceType_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">VarianceType save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetVarianceType(); // reset VarianceType
+                    VarianceType(); // Bind VarianceType
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteVarianceType(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/VarianceType_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">VarianceType has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetVarianceType(); // reset VarianceType
+                    VarianceType(); // Bind VarianceType
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End VarianceType
+
+
+    // VarianceResolution
+    function VarianceResolution() {
+        $("#VarianceResolutionTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/VarianceResolution_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#VarianceResolutionTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditVarianceResolution(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdVarianceResolutionID').val(id);
+            $('#VarianceResolutionName').val(name);
+        }
+    }
+
+    function resetVarianceResolution() {
+        $('#hdVarianceResolutionID').val(0);
+        $('#VarianceResolutionName').val('');
+    }
+
+    function submitVarianceResolution() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdVarianceResolutionID').val();
+            var name = $('#VarianceResolutionName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/VarianceResolution_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Resolution save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetVarianceResolution(); // reset VarianceResolution
+                    VarianceResolution(); // Bind VarianceResolution
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteVarianceResolution(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/VarianceResolution_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Resolution has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetVarianceResolution(); // reset VarianceResolution
+                    VarianceResolution(); // Bind VarianceResolution
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End VarianceResolution
+
+    //Ab New 22/2
+    function submitAudit() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#AuditID').val();
+            var name = $('#AuditName').val();
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/CreateAudit")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Audit save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+
+                    resetAudit(); // reset Audit
+                    Audit(); // Bind Audit
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    //Ab New 22/2
+    function Audit() {
+        $("#AuditTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/Audit_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#AuditTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    //Ab New 22/2
+    function EditAudit(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#AuditID').val(id);
+            $('#AuditName').val(name);
+        }
+    }
+
+    //Ab New 22/2
+    function resetAudit() {
+        $('#AuditID').val(0);
+        $('#AuditName').val('');
+    }
+
+    function DeleteAudit(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/Audit_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Audit has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+
+                    resetAudit(); // reset Audit
+                    Audit(); // Bind Audit
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    // End Audit
+
+    // Alias Name Type
+    function AliasNameType() {
+        $("#AliasNameTypeTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/AliasNameType_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#AliasNameTypeTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditAliasNameType(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdAliasNameTypeID').val(id);
+            $('#AliasNameTypeName').val(name);
+        }
+    }
+
+    function resetAliasNameType() {
+        $('#hdAliasNameTypeID').val(0);
+        $('#AliasNameTypeName').val('');
+    }
+
+    function submitAliasNameType() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdAliasNameTypeID').val();
+            var name = $('#AliasNameTypeName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/AliasNameType_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Alias Name Type save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetAliasNameType(); // reset AliasNameType
+                    AliasNameType(); // Bind AliasNameType
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteAliasNameType(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/AliasNameType_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Alias Name Type has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetAliasNameType(); // reset AliasNameType
+                    AliasNameType(); // Bind AliasNameType
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End AliasNameType
+
+    // ForeignExchangeRates
+    function ForeignExchangeRates() {
+        $("#ForeignExchangeRatesTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/ForeignExchangeRates_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#ForeignExchangeRatesTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditForeignExchangeRates(id, country, rate) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdForeignExchangeRatesID').val(id);
+            $('#ForeignExchangeRatesName').val(country);
+            $('#ExchangeRate').val(rate);
+        }
+    }
+
+    function resetForeignExchangeRates() {
+        $('#hdForeignExchangeRatesID').val(0);
+        $('#ForeignExchangeRatesName').val('');
+        $('#ExchangeRate').val('');
+    }
+
+    function submitForeignExchangeRates() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdForeignExchangeRatesID').val();
+            var country = $('#ForeignExchangeRatesName').val();
+            var rate = $('#ExchangeRate').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/ForeignExchangeRates_IU")',
+                data: JSON.stringify({ 'ID': id, 'Country': country, 'Rate': rate }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Foreign Exchange Rates save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetForeignExchangeRates(); // reset ForeignExchangeRates
+                    ForeignExchangeRates(); // Bind ForeignExchangeRates
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteForeignExchangeRates(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/ForeignExchangeRates_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Foreign Exchange Rates has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetForeignExchangeRates(); // reset ForeignExchangeRates
+                    ForeignExchangeRates(); // Bind ForeignExchangeRates
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End ForeignExchangeRates
+
+    // Services
+    function Services() {
+        $("#ServicesTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/Services_LoadAll")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#ServicesTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditServices(id, name, Declined) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdServicesID').val(id);
+            $('#ServiceName').val(name);
+            if (Declined == "True") {
+                $('#DeclinedAvailable').prop('checked', true);
+            }
+            else {
+                $('#DeclinedAvailable').prop('checked', false);
+            }
+        }
+    }
+
+    function resetServices() {
+        $('#hdServicesID').val(0);
+        $('#ServiceName').val('');
+        $('#DeclinedAvailable').prop('checked', false);
+    }
+
+    function submitServices() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdServicesID').val();
+            var name = $('#ServiceName').val();
+            var Declined = "False";
+            if ($('#DeclinedAvailable').is(':checked')) {
+                Declined = "True";
+            }
+            else {
+                Declined = "False";
+            }
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/Services_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name, 'Declined': Declined }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Services save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetServices(); // reset Services
+                    Services(); // Bind Services
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteServices(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/Services_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Services has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetServices(); // reset Services
+                    Services(); // Bind Services
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Services
+
+    // BuyInGame
+    function BuyInGame() {
+        $("#BuyInGameTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterBuyInGame_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#BuyInGameTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditBuyInGame(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdBuyInGameID').val(id);
+            $('#BuyInGameName').val(name);
+        }
+    }
+
+    function resetBuyInGame() {
+        $('#hdBuyInGameID').val(0);
+        $('#BuyInGameName').val('');
+    }
+
+    function submitBuyInGame() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdBuyInGameID').val();
+            var name = $('#BuyInGameName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterBuyInGame_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">BuyIn Game save Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetBuyInGame(); // reset BuyInGame
+                    BuyInGame(); // Bind BuyInGame
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteBuyInGame(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterBuyInGame_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">BuyIn Game has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetBuyInGame(); // reset BuyInGame
+                    BuyInGame(); // Bind BuyInGame
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End BuyInGame
+    // BuyInPitType
+    function BuyInPitType() {
+        $("#BuyInPitTypeTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterBuyInPitType_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#BuyInPitTypeTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditBuyInPitType(id, name) {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdBuyInPitTypeID').val(id);
+            $('#BuyInPitTypeName').val(name);
+        }
+    }
+
+    function resetBuyInPitType() {
+        $('#hdBuyInPitTypeID').val(0);
+        $('#BuyInPitTypeName').val('');
+    }
+
+    function submitBuyInPitType() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdBuyInPitTypeID').val();
+            var name = $('#BuyInPitTypeName').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterBuyInPitType_IU")',
+                data: JSON.stringify({ 'ID': id, 'Name': name }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">BuyIn PitType Saved Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetBuyInPitType(); // reset BuyInPitType
+                    BuyInPitType(); // Bind BuyInPitType
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteBuyInPitType(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterBuyInPitType_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">BuyIn PitType has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetBuyInPitType(); // reset BuyInPitType
+                    BuyInPitType(); // Bind BuyInPitType
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End BuyInPitType
+    // CashoutTableNumber
+    function CashoutTableNumber() {
+        $("#CashoutTableNumberTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/MasterCashoutTableNumber_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#CashoutTableNumberTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditCashoutTableNumber(id, name)
+    {
+        if (EditConfirm('@ViewBag.Action')) {
+            $('#hdCashoutTableNumberID').val(id);
+            $('#CashoutTableNumber').val(name);
+        }
+    }
+
+    function resetCashoutTableNumber() {
+        $('#hdCashoutTableNumberID').val(0);
+        $('#CashoutTableNumber').val('');
+    }
+
+    function submitCashoutTableNumber() {
+        if (AddConfirm('@ViewBag.Action')) {
+            var id = $('#hdCashoutTableNumberID').val();
+            var tablenumber = $('#CashoutTableNumber').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterCashoutTableNumber_IU")',
+                data: JSON.stringify({ 'ID': id, 'TableNumber': tablenumber }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Table Number saved Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetCashoutTableNumber(); // reset CashoutTableNumber
+                    CashoutTableNumber(); // Bind CashoutTableNumber
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function DeleteCashoutTableNumber(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/MasterCashoutTableNumber_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Table Number has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetCashoutTableNumber(); // reset CashoutTableNumber
+                    CashoutTableNumber(); // Bind CashoutTableNumber
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End CashoutTableNumber
+</script>

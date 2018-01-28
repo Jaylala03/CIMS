@@ -1,0 +1,568 @@
+﻿@model CIMS.Models.VisitorModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+<link href="~/Content/Custom.css" rel="stylesheet" />
+
+<style>
+    .cmbSub {
+        pointer-events: none;
+        opacity: 0.40;
+    }
+</style>
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Vistor Log</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Visitor</li>
+        </ol>
+    </div>
+</div>
+<script src="~/assets/js/Jspdf/FileSaver.js"></script>
+<script src="~/assets/js/Jspdf/jspdf.js"></script>
+<script src="~/assets/js/Jspdf/jspdfplugintable.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="right-tab">
+            <div class="col-md-12">
+                <div class="white-box">
+                    <ul class="nav nav-pills custom-tabs" id="myTab">
+                        <li class="active">
+                            <a href="#visitorDetails" data-toggle="tab">
+                                <span>Detail</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#visitorList" data-toggle="tab">
+                                <span>List</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="visitorDetails">
+                    <div class="large-title">Details </div>
+                    @using (Html.BeginForm("Index", "Visitor", FormMethod.Post, new { area = "Visitor" }))
+                    {
+                        @Html.HiddenFor(p => p.VisitorID)
+
+                        <input type="hidden" id="hdnGIdentifire" value="@Model.GroupIdentifier" />
+
+                        <div class="col-md-6">
+                            <div class="white-box">
+                                <div class="form-group">
+                                    <label class="control-label">Date</label>
+                                    @Html.TextBoxFor(p => p.VisitorDate, null, new { @class = "form-control" })
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Arrival</label>
+
+                                    @Html.TextBoxFor(p => p.FromHoursMinutes, null, new { @class = "form-control" })
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Departure</label>
+                                    @Html.TextBoxFor(p => p.ToHoursMinutes, null, new { @class = "form-control" })
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Visitor Name</label>
+                                    @Html.TextBoxFor(p => p.VisitorName, null, new { @class = "form-control" })
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <div class="white-box" style="min-height: 402px;">
+
+                                <div class="form-group">
+                                    <input type="checkbox" name="isGroupIdentifire" id="isGroupIdentifire">
+                                    <label class="control-label"> Group of Visitors</label>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="control-label">Group Identifire</label>
+                                    @Html.TextBoxFor(p => p.GroupIdentifier, null, new { @class = "form-control" })
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Description</label>
+                                    @Html.TextAreaFor(p => p.Description, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-12">
+<div class="white-box">
+    <button type="submit" class="btn btn-success@(Model.VisitorID>0?" edit":" add")">Save</button>
+
+    <a href='@Url.Content("~/Visitor/Visitor/Index")' class="btn btn-default">Reset</a>
+</div>
+    
+
+</div>
+
+                    }
+                </div>
+                <div class="tab-pane" id="visitorList">
+                    <div class="large-title">Visitor List </div>
+                    <div class="col-md-12">
+                        <div class="white-box">
+                            <div class="row">
+
+
+                                <div style="border: 1px solid #eee; padding-top: 18px; margin-bottom: 30px;" class="clearfix">
+                                    <div class="col-md-2"></div>
+                                    <div class="col-md-3">
+                                        <div class="form-inline">
+                                            <div class="form-group clearfix" style="margin-bottom: 10px;">
+                                                <label class="col-md-5">Start Date:</label>
+                                                <div class="col-md-7">
+                                                    <input type="text" name="startDate" id="startDate" class="form-control" style="height: 31px;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-inline">
+                                            <div class="form-group clearfix" style="margin-bottom: 10px;">
+                                                <label class="col-md-5">End Date:</label>
+                                                <div class="col-md-7">
+                                                    <input type="text" name="endDate" id="endDate" class="form-control" style="height: 31px;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group clearfix" style="margin-bottom: 10px;">
+
+                                        <input type="button" onclick="VisitorFilter();" value="Load Data" class="btn btn-primary">
+                                    </div>
+                                    <div class="col-md-2"></div>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <div id="printDivData">
+                                    <table id="visitorTable" class="table table-bordered dataTable no-footer Tableview" style="border-collapse:collapse">
+
+                                        <thead>
+                                            <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                                <th class="td-border header headerSortDown">
+                                                    Date
+                                                </th>
+                                                <th class="td-border header">
+                                                    Name
+                                                </th>
+
+                                                <th style="width:220px;" class="td-border header">
+                                                    Group Identifier
+                                                </th>
+                                                <th class="td-border header">
+                                                    From
+                                                </th>
+                                                <th class="td-border header">
+                                                    To
+                                                </th>
+                                                <th class="removefromtable header" style="width:320px;">
+                                                    Actions
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.VisitorList.Count() > 0)
+                                            {
+                                                foreach (var items in Model.VisitorList)
+                                                {
+                                                    <tr class="empTR tableRow" data-id="@items.VisitorID" style="cursor: pointer">
+                                                        <td class="tableCell" style="width:220px">@items.VisitorDate </td>
+                                                        <td class="tableCell" style="width:220px">@items.VisitorName</td>
+                                                        <td class="tableCell" style="width:220px">@items.GroupIdentifier</td>
+                                                        <td class="tableCell" style="width:220px">@items.FromHoursMinutes</td>
+                                                        <td class="tableCell" style="width:220px">@items.ToHoursMinutes</td>
+                                                        <td class="removefromtable">
+                                                            <a href='@Url.Content("~/Visitor/Visitor/Index?visitorID="+items.VisitorID+"")' class="btn small btn-info btn-sm btn-icon " title="Edit Visitor"><i class="fa fa-pencil"></i></a>
+                                                            <a class="btn btn-danger small btn-sm delete-sm" href='javascript:;' onclick='DeleteVisitor(@items.VisitorID,this);' title="Delete Visitor"><i class='fa fa-trash'></i></a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-12">
+                                    <input type="button" onclick="PrintTable();" value="Print" class="btn btn-primary">
+                                    <input type="button" onclick="PreviewTable();" value="Preview" class="btn btn-primary">
+                                    <input type="button" onclick="SaveASPDFTable();" value="Save as PDF " class="btn btn-primary">
+                                    <a href="#myModal1" data-toggle="modal" class="btn btn-success" style="padding: 7px 8px;" id="SendEmail">Send Email</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Send Email</h4>
+            </div>
+
+            <div class="modal-body row">
+                <div class="col-md-12 right-label">
+                    <div class="form-group clearfix">
+                        @Html.Label("To", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="To" id="To" class="form-control">
+                        </div>
+                    </div>
+
+                    @*<div class="form-group clearfix">
+                            @Html.Label("CC", new { @class = "col-md-3" })
+                            <div class="col-md-9">
+                                <input type="text" name="CC" id="CC" class="form-control">
+                            </div>
+                        </div>*@
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Subject", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Subject" id="Subject" class="form-control">
+                        </div>
+                    </div>
+
+                    @*<div class="form-group clearfix">
+                            @Html.Label("Attachment", new { @class = "col-md-3" })
+                            <div class="col-md-5">
+                                <div id="Attachment" class="form-control"></div>
+                            </div>
+                        </div>*@
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Desciption", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Desciption" id="Desciption" class="form-control">
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group col-md-12 text-right">
+
+                        <button type="submit" class="btn btn-success" id="SendEmailData">Send Email</button>
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-12">
+                    <div class="visitor-log">
+
+                        <div class="table-responsive">
+                            <div id="Attachment"></div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+@*<script src="https://code.jquery.com/jquery-1.12.3.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>*@
+
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#visitorTable').dataTable({
+            //dom: 'Bfrtip',
+            //"mColumns": [0, 1, 2, 3, 4],
+            //buttons: ['pdf', 'print']
+        });
+        $(".buttons-print").addClass("btn btn-primary");
+        $(".buttons-pdf").addClass("btn btn-primary");
+
+        $(document).on('click', '.empty', function () { $('#visitorTable>tbody tr.alphabet_group').remove(); });
+        $(document).on('click', '.data', function () { $('#visitorTable>tbody tr.alphabet_group').remove(); });
+        $(document).on('click', '.active', function () { $('#visitorTable>tbody tr.alphabet_group').remove(); });
+        //$('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+        //    localStorage.setItem('activeTab', $(e.target).attr('href'));
+        //});
+        //var activeTab = localStorage.getItem('activeTab');
+        //if (activeTab) {
+        //    $('#myTab a[href="' + activeTab + '"]').tab('show');
+        //}
+        $('#VisitorDate').datepicker({ autoclose: true });
+        $('#startDate').datepicker();
+        $('#endDate').datepicker();
+        $('#FromHoursMinutes').timepicker();
+        $('#ToHoursMinutes').timepicker();
+
+
+        if ($('#hdnGIdentifire').val().length > 0 && parseInt($('#VisitorID').val()) > 0) {
+
+            $("#isGroupIdentifire").attr("checked", "checked");
+        }
+        else {
+            $('#GroupIdentifier').val('');
+            $("#GroupIdentifier").attr("disabled", "true");
+        }
+
+        $('#isGroupIdentifire').click(function () {
+
+            if ($(this).is(':checked')) {
+                $("#GroupIdentifier").removeAttr("disabled");
+                $('#GroupIdentifier').val($('#hdnGIdentifire').val());
+            } else {
+
+                $('#GroupIdentifier').val('');
+                $("#GroupIdentifier").attr("disabled", "true");
+            }
+        });
+    });
+
+    function DeleteVisitor(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Visitor/Visitor/DeleteVisitor")',
+                data: JSON.stringify({ 'visitorID': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "Success") {
+                        if ($('#visitorTable>tbody tr').length == 1) {
+                            $('#visitorTable').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Visitor Details has been deleted Successfully.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Visitor Details has been deleted Successfully.</div>');
+
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                            window.scrollTo(0, 0);
+                        }
+
+                    } else {
+                        alert('error')
+
+                    }
+
+                }
+            });
+        }
+    }
+
+
+    function VisitorFilter() {
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+
+        $("#visitorTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Visitor/Visitor/Visitor_Filter")',
+            data: JSON.stringify({ 'startDate': startDate, 'endDate': endDate }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#visitorTable tbody').append(data);
+
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function PrintTable() {
+        var NewTabledata1 = $('#printDivData .removefromtable').remove();
+        var NewTabledata2 = $('#printDivData #visitorTable_length,#visitorTable_filter,#visitorTable_info,#visitorTable_paginate').remove();
+        var newdata = $('#printDivData').html();
+
+        var printWindow = window.open('', '', 'width=1000,height=1000,location=no,left=200px');
+        printWindow.document.open();
+        printWindow.document.write('<html><head><title></title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write('<style>.td-border{border:1px solid #999999;padding:10px;}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+        printWindow.document.write(newdata);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+        printWindow.close();
+        $('#printDivData').append($('#visitorTable_length').html());
+        $('#visitorTable_filter').show();
+    }
+    function PreviewTable() {
+        var NewTabledata1 = $('#printDivData .removefromtable').remove();
+        var NewTabledata2 = $('#printDivData #visitorTable_length,#visitorTable_filter,#visitorTable_info,#visitorTable_paginate').remove();
+        var newdata = $('#printDivData').html();
+
+        var printWindow = window.open('', '', 'width=1000,height=1000,location=no,left=200px');
+        printWindow.document.open();
+        printWindow.document.write('<html><head><title></title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write('<style>.td-border{border:1px solid #999999;padding:10px;}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+        printWindow.document.write(newdata);
+        printWindow.document.write('</body></html>');
+    }
+    function SaveASPDFTable() {
+        var NewTabledata = $('#visitorTable .removefromtable').remove();
+        var NewTabledata1 = $('#visitorTable').html();
+        $('#visitorTable').html(NewTabledata1);
+        var columns = ["ID", "Name", "Country"];
+        var data = [], fontSize = 8, height = 0, doc;
+        doc = new jsPDF('p', 'pt', 'a4', true);
+        doc.setFont("times", "normal");
+        doc.setFontSize(fontSize);
+
+        data = [];
+        data = doc.tableToJson('visitorTable');
+        height = doc.drawTable(data, {
+            //xstart: 10,
+            //ystart: 10,
+            //tablestart: 40,
+            //marginleft: 10,
+            //xOffset: 10,
+            //yOffset: 15
+        });
+        doc.save("Event.pdf");
+
+    }
+    $('#SendEmail').click(function () {
+        var NewTabledata1 = $('#printDivData .removefromtable').remove();
+        var NewTabledata2 = $('#printDivData #visitorTable_length,#visitorTable_filter,#visitorTable_info,#visitorTable_paginate').remove();
+        var newdata = $('#printDivData').html();
+        $('#Attachment').html(newdata);
+    });
+
+    $('#SendEmailData').click(function () {
+        if ($("#To").val() == "") {
+            alert("Enter email address.");
+        }
+        else {
+            if (!ValidateEmail($("#To").val())) {
+                alert("Invalid email address.");
+            }
+            else {
+
+                var NewTabledata = $('#visitorTable .removefromtable').remove();
+                var NewTabledata1 = $('#visitorTable').html();
+                $('#newtable').html(NewTabledata1);
+                var data = [], fontSize = 8, height = 0, doc;
+                doc = new jsPDF('p', 'pt', 'a4', true);
+                doc.setFont("times", "normal");
+                doc.setFontSize(fontSize);
+
+                data = [];
+                data = doc.tableToJson('newtable');
+                height = doc.drawTable(data, {
+                    //xstart: 10,
+                    //ystart: 10,
+                    //tablestart: 40,
+                    //marginleft: 10,
+                    //xOffset: 10,
+                    //yOffset: 15
+                });                
+
+                var binary = doc.output();
+
+                var NewTabledata1 = $('#printDivData .removefromtable').remove();
+                var newdata = $('#printDivData').html();
+                html2canvas($("#printDivData"), {
+                    onrendered: function (canvas) {
+                        var myImage = canvas.toDataURL("img/png");
+
+                        var Subject = $('#Subject').val();
+                        var Desciption = $('#Desciption').val();
+                        var To = $('#To').val();
+                        var Attachment = binary ? btoa(binary) : "";
+                        $.ajax({
+                            url: '@Url.Content("~/Visitor/Visitor/SendEmailData")',
+                            data: JSON.stringify({ 'Attachment': Attachment, 'Subject': Subject, 'Desciption': Desciption, 'To': To }),
+                            type: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (data) {
+                                $('.close').click();
+                                $('#To').val('');
+                                $('#Subject').val('');
+                                $('#Desciption').val('');
+                                alert("Email send Successfully");
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+
+    function ValidateEmail(email) {
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        return expr.test(email);
+    };
+
+    //if (!ValidateEmail($("#To").val())) {
+    //    alert("Invalid email address.");
+    //}
+    //else {
+    //    alert("Valid email address.");
+    //}
+    //});
+</script>
+
+<script src="~/Content/Custom.js"></script>
+
+<table id="newtable" style="display: none;"></table>
+
+<div id="newdata"><table></table></div>
+

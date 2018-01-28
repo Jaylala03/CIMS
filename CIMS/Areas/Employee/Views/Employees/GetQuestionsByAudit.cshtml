@@ -1,0 +1,45 @@
+﻿@model CIMS.Models.EmployeeIncidentModel
+<tr>
+    <td colspan="3" style="display:none;">
+        <input type="hidden" name="hdnCount" value="@Model.QuestionListNew.Count" />
+    </td>
+    </tr>
+    @for (int i = 0; i < Model.QuestionListNew.Count; i++)
+    {
+    <tr>
+        <td width="30%">
+            @Html.HiddenFor(m => m.QuestionListNew[i].QuestionID)
+            @Model.QuestionListNew[i].Question
+        </td>
+        <td width="20%">
+            @if (Model.QuestionListNew[i].QuestionType == 2)
+            {
+                @Html.TextBoxFor(m => m.QuestionListNew[i].AnswerOrScore, new { @type = "number", @min = 1, @max = 10 })
+            }
+            else
+            {
+                @*@Html.DropDownListFor(m => m.QuestionListNew[i].AnswerOrScore, ViewBag.AnswerList as List<SelectListItem>, Model.QuestionListNew[i].AnswerOrScore, new { @class = "form-control" })*@
+                @Html.DropDownListFor(m => m.QuestionListNew[i].AnswerOrScore, Model.QuestionListNew[i].AnswerList, "", new { @class = "form-control" })
+            }
+        </td>
+        @*<td></td>*@
+        <td width="50%">
+            @Html.TextAreaFor(m => m.QuestionListNew[i].Comment, new { @class = "Questionckeditor" })
+        </td>
+    </tr>
+    }
+
+
+    <script src="~/assets/js/ckeditor/adapters/jquery.js"></script>
+    <script src="~/assets/js/ckeditor/ckeditor.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.Questionckeditor').ckeditor();
+
+        });
+    </script>
+    <style>
+        .cke_contents {
+            height: 70px !important;
+        }
+    </style>

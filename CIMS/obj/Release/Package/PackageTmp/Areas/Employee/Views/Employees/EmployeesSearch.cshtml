@@ -1,0 +1,1696 @@
+﻿@model CIMS.Models.EmployeeModel
+@{
+    ViewBag.Title = "Employees Search";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+<link href="~/Content/crop-avatar/css/cropper.css" rel="stylesheet" />
+<link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script src="~/Content/crop-avatar/js/cropper.js"></script>
+<link href="~/Content/Custom.css" rel="stylesheet" />
+
+<style>
+    .groupOfTexbox {
+    }
+
+    .groupOfTexbox1 {
+    }
+
+    .disabled {
+        pointer-events: none;
+        cursor: default;
+    }
+
+    .ShowBorderRed {
+        border: 6px solid blue;
+    }
+</style>
+<style>
+    .cmbEmp {
+        pointer-events: none;
+        opacity: 0.40;
+    }
+
+    .dataTables_filter {
+        display: none;
+    }
+
+    .alphabet {
+        display: none !important;
+    }
+
+    #employeeTable_length {
+        display: none !important;
+    }
+
+    #employeeTable_filter {
+        display: none !important;
+    }
+</style>
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Employee Search</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Employee</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="right-tab row">
+
+            <div class="col-md-12">
+                <div class="white-box">
+                    <ul class="nav nav-pills custom-tabs" id="myTab">
+
+                        <li class="active">
+                            <a href="#Details" id="#Details" data-toggle="tab">
+
+                                <span>Details</span>
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a href="#addresses" id="#addresses" data-toggle="tab">
+
+                                <span>Addresses</span>
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a href="#License" id="#License" data-toggle="tab">
+
+                                <span>License</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+
+            <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+            <input type="hidden" id="hdType" name="hdType" value='@(Request.QueryString["Type"])' />
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="Details">
+
+                    <div class="large-title">Details </div>
+
+
+                    @using (Html.BeginForm("Employees", "Employees", new { Area = "EmployeesSearch" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                    {
+                    <div class="col-md-6">
+                        <div class="white-box">
+                            <div class="form-group">
+                                <label class="control-label">Employee Number</label>
+                                @Html.TextBoxFor(m => m.EmpNumber, null, new { @class = "form-control"})
+
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">First Name </label>
+
+                                @Html.TextBoxFor(m => m.FirstName, null, new { @class = "form-control" })
+                                @*@Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })*@
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Middle Name</label>
+
+                                @Html.TextBoxFor(m => m.MiddleName, null, new { @class = "form-control" })
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Last Name</label>
+
+                                @Html.TextBoxFor(m => m.LastName, null, new { @class = "form-control" })
+                                @*@Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })*@
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Sex</label>
+                                @Html.DropDownListFor(model => model.Sex, ViewBag.GenderList as List<SelectListItem>, "Unknown",new { @class = "form-control" })
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Race </label>
+                                @Html.DropDownListFor(model => model.Race, ViewBag.RaceList as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Complexion</label>
+                                @Html.DropDownListFor(model => model.Complexion, ViewBag.ComplexionList as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="white-box" style="min-height:665px;">
+
+                            <div class="form-group">
+                                <label class="control-label">Height</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">@ViewBag.ActiveMetricsHeight</span>
+                                    @Html.TextBoxFor(m => m.Height, null, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Weight</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">@ViewBag.ActiveMetricsWeight</span>
+                                    @Html.TextBoxFor(m => m.Weight, null, new { @class = "form-control", @maxlength = "3" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Eyes</label>
+                                @Html.DropDownListFor(model => model.Eyes, ViewBag.EyesStyleList as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Build</label>
+                                @Html.DropDownListFor(model => model.Build, ViewBag.BuildList as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="control-label">Glasses</label>
+                                @Html.DropDownListFor(model => model.Glasses, ViewBag.GlassesList as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Position</label>
+                                @Html.DropDownListFor(model => model.StaffPosition, ViewBag.EmployeePosition as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="white-box clearfix">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-success" value="employee" name="searchtype">Search</button>
+                                <button type="reset" class="btn btn-white">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    }
+
+
+
+                </div>
+
+                <div class="tab-pane" id="addresses">
+                    <div class="large-title">Address </div>
+                    @using (Html.BeginForm("Employees", "Employees", new { Area = "EmployeesSearch" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                   {
+
+                    <div class="col-md-12">
+                        <div class="white-box">
+                            <input type="hidden" id="addressIdHdn" value="0" />
+                            <div class="form-group">
+                                <label class="control-label">Address Type</label>
+                                @Html.DropDownListFor(m => m.AddressType, Model.AddressTypeList as List<SelectListItem>, "-- Select Address Type --", new { @class = "form-control" })
+
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Apartment </label>
+
+                                <input type="text" class="form-control" name="Apartment" id="Apartment" />
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="control-label">Address </label>
+
+                                <input type="text" class="form-control" name="Address" id="Address" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Country</label>
+                                <div class="row" id="radio_div">
+                                    <div class="col-md-6">
+                                        <input type="radio" name="Radio1" value="231" id="rbUS" checked="checked" class="active">US
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="radio" name="Radio1" value="38" id="rbCanada" class="">Canada
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Proviance/State</label>
+                                <select id="State" name="State" class="form-control" onchange="GetCities(this.value)"></select>
+
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">City </label>
+                                <select id="City" name="City" class="form-control"></select>
+
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Portal /ZipCode</label>
+
+                                <input type="text" class="form-control groupOfTexbox" name="ZipCode" id="ZipCode" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Phone</label>
+
+                                <input type="text" class="form-control" name="Phone" id="Phone" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="white-box clearfix">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-success" id="AddressBtn" value="adress" name="searchtype">Search</button>
+                                <button type="reset" class="btn btn-white" onclick="resetData();">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    }
+
+                </div>
+
+                <div class="tab-pane" id="License">
+
+                    <div class="large-title">License </div>
+
+                    @using (Html.BeginForm("Employees", "Employees", new { Area = "EmployeesSearch" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                    {
+                        <div class="col-md-6">
+                            <div class="white-box clearfix">
+                                <input type="hidden" id="LicenseIdHdn" value="0" />
+                                <div class="form-group">
+                                    <label class="control-label">Date of Hire</label>
+
+                                    <input type="text" class="form-control" name="DateOfhire" id="DateOfhire" data-validate="required" data-message-required="User Name is required field." />
+                                    <span id="dateOfHireSpan" class="text-danger" style="display: none;">Date of Hire is required.</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Termination Date </label>
+
+                                    <input type="text" class="form-control" name="TerminationDate" id="TerminationDate" data-validate="required" data-message-required="password is required field." />
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">License Expiration Date </label>
+
+                                    <input type="text" class="form-control" name="LicenseExpirationDate" id="LicenseExpirationDate" data-validate="required" data-message-required="password is required field." />
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="white-box clearfix">
+                                <div class="form-group">
+                                    <label class="control-label">Department Type</label>
+                                    @Html.DropDownListFor(m => m.Department, Model.DepartmentTypeList as List<SelectListItem>, "Select Department Type", new { @class = "form-control" })
+                                    @*<input type="text" class="form-control" name="DepartmentType" id="DepartmentType" data-validate="required" data-message-required="User Name is required field." />*@
+                                    <span id="departmentSpan" class="text-danger" style="display: none;">Department Type is required.</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">License Type</label>
+                                    @Html.DropDownListFor(m => m.LicenseType, Model.LicenseTypeList as List<SelectListItem>, "Select License Type", new { @class = "form-control" })
+                                    @*<input type="text" class="form-control" name="LicenseType" id="LicenseType" data-validate="required" data-message-required="User Name is required field." />*@
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">License Status</label>
+                                    @Html.DropDownListFor(m => m.LicenseStatus, Model.LicenseStatusList as List<SelectListItem>, "Select License Status", new { @class = "form-control" })
+                                    @*<input type="text" class="form-control" name="LicenseStatus" id="LicenseStatus" data-validate="required" data-message-required="User Name is required field." />*@
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="white-box clearfix">
+
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-success" id="LicenseBtn" value="licence" name="searchtype">Search</button>
+                                    <button type="reset" class="btn btn-white">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+
+                </div>
+
+            </div>
+            <div class="large-title">Result </div>
+            <div class="white-box clearfix">
+                <div class="table-responsive table-fixes col-md-12">
+                    <table id="employeeTable" class="table table-bordered dataTable no-footer Tableview ">
+                        <thead>
+                            <tr>
+                                <th class="header">
+                                    Media
+                                </th>
+                                <th class="header">
+                                    Employee
+                                </th>
+
+                                <th class="header">
+                                    First Name
+                                </th>
+                                <th class="header">
+                                    Last Name
+                                </th>
+                                <th class="header headerSortDown">
+                                    Created Date
+                                </th>
+                            </tr>
+                        </thead>
+
+                        @if (Model.EmployeeList.Count() > 0)
+                        {
+                            foreach (var items in Model.EmployeeList)
+                            {
+
+                                <tr class="empTR" data-id="@items.EmployeeID" style="cursor:pointer">
+
+
+                                    @if (ViewBag.Action == 4 || ViewBag.Action == 5 || ViewBag.Action == 6 || ViewBag.Action == 7 || ViewBag.Action == 12 || ViewBag.Action == 13 || ViewBag.Action == 14 || ViewBag.Action == 15)
+                                    {
+                                        <td style="width: 100px;">
+                                            <a href='@Url.Content("~/Employee/Employees/Employees?Type=Employee&Id="+items.EmployeeID+"")' title="View Employee">
+                                                <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.FilePath) ? items.FilePath: Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                            </a>
+                                        </td>
+                                        <td onclick="document.location.href='@Url.Content("~/Employee/Employees/Employees?Type=Employee&Id="+items.EmployeeID+"")'">@items.EmpNumber</td>
+                                        <td onclick="document.location.href='@Url.Content("~/Employee/Employees/Employees?Type=Employee&Id="+items.EmployeeID+"")'">@items.FirstName</td>
+                                        <td onclick="document.location.href='@Url.Content("~/Employee/Employees/Employees?Type=Employee&Id="+items.EmployeeID+"")'">@items.LastName</td>
+                                        <td onclick="document.location.href='@Url.Content("~/Employee/Employees/Employees?Type=Employee&Id="+items.EmployeeID+"")'">@items.CreatedDate</td>
+                                    }
+                                    else
+                                    {
+                                        <td style="width: 100px;">
+                                            <a href='@Url.Content("~/Employee/Employees/Employees?Show=View&Type=Employee&Id="+items.EmployeeID+"")' title="View Employee">
+                                                <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.FilePath) ? items.FilePath: Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                            </a>
+                                        </td>
+                                        <td onclick="document.location.href='@Url.Content("~/Employee/Employees/Employees?Show=View&Type=Employee&Id="+items.EmployeeID+"")'">@items.EmpNumber</td>
+                                        <td onclick="document.location.href='@Url.Content("~/Employee/Employees/Employees?Show=View&Type=Employee&Id="+items.EmployeeID+"")'">@items.FirstName</td>
+                                        <td onclick="document.location.href='@Url.Content("~/Employee/Employees/Employees?Show=View&Type=Employee&Id="+items.EmployeeID+"")'">@items.LastName</td>
+                                        <td onclick="document.location.href='@Url.Content("~/Employee/Employees/Employees?Show=View&Type=Employee&Id="+items.EmployeeID+"")'">@items.CreatedDate</td>
+
+                                    }
+
+
+
+                                </tr>
+                            }
+                        }
+
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-8">
+    </div>
+</div>
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+
+@*<link href="~/Content/data-tables/dataTables.alphabetSearch.css" rel="stylesheet" />
+    <script src="~/Content/data-tables/dataTables.alphabetSearch.min.js"></script>*@
+<style type="text/css">
+    .dataTables_filter {
+        display: block;
+    }
+</style>
+
+
+<script src="~/assets/js/jquery.maskedinput.min.js"></script>
+<script src="~/Content/Custom.js"></script>
+@*
+    <script src="~/Content/data-tables/jquery.dataTables.js"></script>
+    <script src="~/Content/data-tables/tabletools/js/dataTables.tableTools.js"></script>
+    <script src="~/Content/data-tables/DT_bootstrap.js"></script>
+    <script src="~/Content/data-tables/table-advanced.js"></script>*@
+
+<script>
+
+
+    $(document).ready(function () {
+
+        var table = $('#employeeTable').DataTable({
+            dom: 'Alfrtip'
+        });
+
+        table.columns(2).every(function () {
+            var that = this;
+
+            $('input', this.footer()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search('^' + this.value, true, false)
+                        .draw();
+                }
+            });
+        });
+
+        $('.ToggleCls').addClass('cmbEmp');
+        $('.empTR').on('click', function () {
+
+            var employeeID = $(this).attr('data-id');
+            //var url = "/Employee/Employees/SearchEmployee/" + employeeID;
+            var url = "/Employee/Employees/SearchEmployee/" + employeeID;
+            // var mediaUrl = "/CIMS/Media/Media/Index?Type=Employee&id=" + employeeID;
+            // $('#mediaBtn').attr('href', mediaUrl);
+            $('#combineBtn').attr('href', url);
+            $('.ToggleCls').removeClass('cmbEmp');
+        });
+
+        $('#EmpNumber').val('');
+
+    });
+
+
+    $(function () {
+
+        $('#DateOfBirth').datepicker({ autoclose: true });
+        $('#DateOfhire').datepicker({ autoclose: true });
+        $('#TerminationDate').datepicker({ autoclose: true });
+        $('#LicenseExpirationDate').datepicker({ autoclose: true });
+
+        $("#FirstName").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/Employees/FirstNameList",
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.FirstName, value: item.FirstName };
+                        }))
+
+                    }
+                });
+            },
+            messages: {
+                noResults: "", results: ""
+            },
+            select: function (event, ui) {
+                $.ajax({
+                    url: "/Employees/SelectionList",
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: ui.item.value },
+                    success: function (data) {
+                        var partdata = data.split("/");
+
+                        $('#EmpNumber').val(partdata[3]);
+                        $('#FirstName').val(partdata[0]);
+                        $('#LastName').val(partdata[1]);
+                        $('#MiddleName').val(partdata[2]);
+
+                        var sex1 = partdata[4];
+
+                        $('#Sex option').each(function () {
+                            debugger;
+                            if ($(this).text().toLowerCase() == sex1.toLowerCase()) {
+                                this.selected = true;
+                                return;
+                            }
+                        });
+
+                    }
+                });
+                
+            }
+        });
+
+
+        //Ankur
+        $("#LastName").autocomplete({
+            source: function (request, response) {
+                debugger;
+                $.ajax({
+                    url: "/Employees/LastNameList",
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: request.term, "FirstNameGet": $("#FirstName").val() },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.LastName, value: item.LastName };
+                        }))
+
+                    }
+                })
+            },
+            messages: {
+                noResults: "", results: ""
+            }
+        });
+
+    });
+
+
+
+</script>
+<script>
+
+    $(document).ready(function () {
+
+        // Bind Year,Month and Days Script
+
+        $(function() {
+
+            //populate our years select box
+            for (i = 1900; i <=new Date().getFullYear(); i++){
+                $('#years').append($('<option />').val(i).html(i));
+            }
+            $("#years > [value='1998']").attr("selected", "true");
+
+            //populate our months select box
+            for (i = 1; i < 13; i++){
+                $('#months').append($('<option />').val(i).html(i));
+            }
+            //populate our Days select box
+            updateNumberOfDays();
+
+            //"listen" for change events
+            $('#years, #months').change(function(){
+                updateNumberOfDays();
+            });
+
+        });
+
+        //function to update the days based on the current values of month and year
+        function updateNumberOfDays(){
+            $('#days').html('');
+            month = $('#months').val();
+            year = $('#years').val();
+            days = daysInMonth(month, year);
+
+            for(i=1; i < days+1 ; i++){
+                $('#days').append($('<option />').val(i).html(i));
+            }
+        }
+
+        //helper function
+        function daysInMonth(month, year) {
+            return new Date(year, month, 0).getDate();
+        }
+        //------------------ End Bind Year,Month and Days Script -------------------------
+
+
+        var type=$('#hdType').val();
+        var id=$('#EmployeeID').val();
+        var subFeatureid = "0";
+
+        //$("#Phone").mask("(99) 9999-9999");
+        $("#Phone").mask("(999) 999-9999");
+
+        BindPictureList(type, id, subFeatureid);
+        GetStates();
+
+        if($('#hdShow').val()=='View')
+        {
+            $(".form-control").attr("disabled","disabled");
+            $(".btn").hide(true);
+            $(".flubtn").attr("disabled","disabled");
+            $(document).find("input[type=checkbox]").attr("disabled","disabled");
+            $(document).find("input[type=radio]").attr("disabled","disabled");
+            $(document).find('.enablebtn>a').removeAttr("style");
+
+            $(document).find('.newbtncls').addClass('disabled');
+            $('.disabled').click(function(e){
+                e.preventDefault();
+            });
+
+            $(document).find('#permission').hide(true);
+        }
+        else
+        {
+            //$(".btn").removeAttr("style");
+            $(".form-control").attr("disabled",false);
+            //$(".btn").attr("disabled",false);
+            $(document).find('.newbtncls').removeClass('disabled');
+            $(document).find('#permission').hide(true);
+        }
+
+        $('input:radio').click(function () {
+            $('input:radio:checked').addClass('active');
+            $('input:radio:not(:checked)').removeClass('active');
+
+        });
+
+        $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
+            //var active=localStorage.getItem('activeTab');
+            //if(localStorage.getItem('activeTab')!="javascript:;")
+            //{
+            //    localStorage.setItem('activeTab',active );
+            //}
+            //else{
+                localStorage.setItem('activeTab', $(e.target).attr('href'));
+            //}
+        });
+
+        $('.checkAlert').on('click', function () {
+
+            var firstname= "";
+            firstname=$("input#FirstName").val();
+            if(firstname=="")
+            {
+                firstname="Unknown";
+            }
+            var r = confirm("Are you sure to create "+ firstname +" Employee ?");
+            if (r == true) {
+                //var active=$(this).attr("id");
+                //localStorage.setItem('activeTab',active);
+                $('#fromEmployee').click();
+            }
+            else
+            {
+                $('#msgDiv').html("<div class='alert alert-danger'>Please Employee Details First</div>");
+                setTimeout(function () {
+                    $('#msgDiv').fadeOut();
+                }, 5000);
+            }
+        });
+
+        var activeTab = localStorage.getItem('activeTab');
+        if(activeTab){
+            if(activeTab=="javascript:;")
+            {
+                activeTab="#Details";
+            }
+            $('#myTab a[href="' + activeTab + '"]').tab('show');
+        }
+
+        //$("#sample_2").dataTable();
+        //$('#Sex').editableSelect({ effects: 'default' });
+        //$("#Height").mask("9'99''");
+        loadAddress();
+        loadLicense();
+        $('#DateOfBirth').datepicker({ autoclose: true });
+        $('#DateOfhire').datepicker({ autoclose: true });
+        $('#TerminationDate').datepicker({ autoclose: true });
+        $('#LicenseExpirationDate').datepicker({ autoclose: true });
+
+        $("a.product-item").click(function() {
+            url_to_open = $(this).attr("href");
+            window.open(url_to_open, '_blank');
+            return false;
+        });
+
+
+        $('#fileUpload').on('change', function (event) {
+            //$('#Description').val($(this).val());
+            $('#FilePath').val('/Content/Employee/LinkedFiles/' + $(this).val());
+            $('#spanDesc').html('');
+            $('#spanUpload').html('');
+
+        });
+        $('#Description').keyup(function () {
+            if ($(this).val() == '') {
+                $('#spanDesc').html('Description is required');
+
+            }
+            else {
+                $('#spanDesc').html('');
+            }
+        });
+        $('#ResetButton').click(function () {
+            $('#Description').val('');
+            $('#fileUpload').val('');
+            $('#spanDesc').html('');
+            $('#spanUpload').html('');
+            $('#fileUpload').show();
+            $('#LinkedId').val('');
+        });
+        $('#LinkedButton').click(function () {
+            var x;
+            if(parseInt($('#LinkedId').val())>0)
+            {
+                x=EditConfirm('@ViewBag.Action');
+            }
+            else{
+                x=AddConfirm('@ViewBag.Action');
+            }
+            if(x)
+            {
+                var count = 0;
+                if ($('#Description').val() == '') {
+                    $('#spanDesc').html('Description is required');
+                    count++;
+                }
+                if ($('#fileUpload').val() == '' && $('#LinkedId').val() == 0) {
+                    $('#spanUpload').html('Please select a file');
+                    count++;
+                }
+                if (count > 0) {
+                    return false;
+                }
+                else {
+                    $('#spanDesc').html('');
+                    $('#spanUpload').html('');
+                }
+            }
+            else
+            {
+                return false;
+            }
+        });
+
+        $('.groupOfTexbox').keypress(function (event) {
+            return isNumberAndDecimal(event, this)
+        });
+
+        $('.groupOfTexbox1').keypress(function (event) {
+            return isNumber(event, this)
+        });
+
+        $('#Weight').keyup(function(e)
+        {
+            if (/\D/g.test(this.value))
+            {
+                // Filter non-digits from input value.
+                this.value = this.value.replace(/\D/g, '');
+            }
+            //alert(this.value.length);
+            //if (this.value.length>3)
+            //{
+            //    alert('L');
+            //    // Filter non-digits from input value.
+            //    this.value = this.value.replace(/\D/g, '');
+            //}
+        });
+
+        //$("#radio_div input[type=radio][name=Radio1].active").click(function() {
+        //    GetStates();
+
+        //});
+
+        $("input[name=Radio1]:radio").change(function (){
+
+            GetStates();
+        });
+
+
+        // ddl Change event Year, month, days
+
+        if ('@Model.EmployeeID' > 0) {
+            $('#years').val($('#Year').val());
+            $('#months').val($('#Month').val());
+            $('#days').val($('#Day').val());
+        }
+
+        $('#years').change(function() {
+            $('#Year').val($('#years').val());
+        });
+        $('#months').change(function() {
+            $('#Month').val($('#months').val());
+        });
+        $('#days').change(function() {
+            $('#Day').val($('#days').val());
+        });
+        // End ddl Change event Year, month, days
+
+        //$("#myTab> li > a").click(function(){
+        //    $(this).tab('show');
+        //});
+
+
+        if($('#hdShow').val()!='View')
+        {
+            var somethingChanged = false;
+            var submitform="";
+            var activetarget="";
+            var button="";
+            $("#myTab> li > a").on('shown.bs.tab', function(event){
+                activetarget = $(event.target).attr("href");         // active tab
+                var previoustarget = $(event.relatedTarget).attr("href");  // previous tab
+                if(somethingChanged== true)
+                {
+                    formSubmitByTab(previoustarget,somethingChanged);
+                }
+                activetargets(activetarget);
+                somethingChanged = false;
+            });
+            if(activetarget!="")
+            {
+                activetargets(activetarget);
+            }
+            else
+            {
+                activetarget = $("#myTab li.active a").attr('href');
+                activetargets(activetarget);
+            }
+        }
+
+        function activetargets(target)
+        {
+            if(target=="#Details")
+            {
+                button = $('#fromEmployee');
+            }
+            else if(target=="#addresses")
+            {
+                button = $('#addAddressBtn');
+            }
+            else if(target=="#License")
+            {
+                button = $('#addLicenseBtn');
+            }
+            else if(target=="#Employees")
+            {
+                button = $('#formEmployeesPersonal');
+            }
+            else if(target=="#Links")
+            {
+                button = $('#LinkedButton');
+            }
+        }
+
+        var orig = [];
+
+        $.fn.getType = function () {
+            return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
+        }
+
+        $("form :input").each(function () {
+            var type = $(this).getType();
+            var tmp = {
+                'type': type,
+                'value': $(this).val()
+            };
+            if (type == 'radio') {
+                tmp.checked = $(this).is(':checked');
+            }
+            orig[$(this).attr('id')] = tmp;
+        });
+
+        $('form').bind('change keyup', function () {
+
+            somethingChanged = false;
+            var disable = true;
+            $("form :input").each(function () {
+                var type = $(this).getType();
+                var id = $(this).attr('id');
+
+                if (type == 'text' || type == 'select') {
+                    disable = (orig[id].value == $(this).val());
+                } else if (type == 'radio') {
+                    disable = (orig[id].checked == $(this).is(':checked'));
+                }
+
+                if (!disable) {
+                    return false; // break out of loop
+                }
+            });
+            somethingChanged = true;
+            button.prop('disabled', disable);
+        });
+    });
+    // End
+
+
+    function showAlert() {
+        var firstname= "";
+        firstname=$("input#FirstName").val();
+        if(firstname=="")
+        {
+            firstname="Unknown";
+        }
+        var r = confirm("Are you sure to create "+ firstname +" Employee ?");
+        if (r == true) {
+            $('#fromEmployee').click();
+        }
+        else
+        {
+            $('#msgDiv').html("<div class='alert alert-danger'>Please Employee Details First</div>");
+            setTimeout(function () {
+                $('#msgDiv').fadeOut();
+            }, 5000);
+        }
+    }
+    //$("#something").click( function(){
+
+    //});
+
+    $('#something').change(function(){
+        if(this.checked)
+        {
+            $('#MediaGallery').removeAttr("style");
+            BindMediaList();
+        }
+        else
+        {
+            $('#MediaGallery').hide(true);
+        }
+    });
+
+
+    $('#addAddressBtn').on('click', function (e) {
+        var country = $('input[type=radio][name=Radio1].active').val();
+        var x;
+        if(parseInt($('#addressIdHdn').val())>0)
+        {
+            x=EditConfirm('@ViewBag.Action');
+        }
+        else{
+            x=AddConfirm('@ViewBag.Action');
+        }
+        if(x)
+        {
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/AddEditAddress")',
+                type: 'Post',
+                data: {EmployeeID: @Model.EmployeeID, addressType: $('#AddressType').val(), apartment: $('#Apartment').val(), address: $('#Address').val(),country: country ,city: $('#City').val(), state: $('#State').val(), addressId: $('#addressIdHdn').val(), zipCode: $('#ZipCode').val(), phone: $('#Phone').val() },
+                dataType: 'json',
+                success: function (data) {
+                    $('#AddressType').val("");
+                    $('#Apartment').val("");
+                    $('#Address').val("");
+                    $('#City').val("");
+                    $('#State').val("");
+                    $('#ZipCode').val("");
+                    $('#Phone').val("");
+                    $('#addressIdHdn').val("0");
+                    loadAddress();
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    });
+
+    function loadAddress() {
+
+        $("#sample_2").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/GetAddress")',
+            type: 'Post',
+            data: { EmployeeID: @Model.EmployeeID },
+            dataType: 'json',
+            success: function (data) {
+
+                $('#sample_2 tbody').append(data);
+                if($('#hdShow').val()=='View')
+                {
+                    $(document).find('#sample_2 tbody>tr>td>a').attr("disabled","disabled").addClass('disabled');
+                }
+
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteAddress(addressID) {
+        var x=DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $("#sample_2").find("tr:not(:first)").remove();
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/DeleteAddress")',
+                type: 'Post',
+                data: { addressID: addressID },
+                dataType: 'json',
+                success: function (data) {
+                    $('#AddressType').val("");
+                    $('#Apartment').val("");
+                    $('#Address').val("");
+                    $('#City').val("");
+                    $('#State').val("");
+                    $('#ZipCode').val("");
+                    $('#Phone').val("");
+                    $('#addressIdHdn').val("0");
+                    loadAddress();
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function deleteItem() {
+        var x=DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            return true;
+        }
+        return false;
+    }
+
+    function EditAddress(addressID, addType, apart, add,CountryID, city, state, zip, phone) {
+
+        if(EditConfirm('@ViewBag.Action'))
+        {
+            $('#addressIdHdn').val(addressID);
+            $('#AddressType').val(addType);
+            $('#Apartment').val(apart);
+            $('#Address').val(add);
+
+            if(CountryID=='231')
+            {
+                document.getElementById("rbUS").checked = true;
+                $('#rbUS').addClass('active');
+                $('#rbCanada').removeClass('active');
+                GetStates();
+
+            }
+            else
+            {
+                document.getElementById("rbCanada").checked = true;
+                $('#rbCanada').addClass('active');
+                $('#rbUS').removeClass('active');
+                GetStates();
+            }
+            $('#State').val(state);
+
+            GetCities(state);
+            setTimeout(function(){
+                $('#State').val(state);
+                $('#City').val(city);
+            }, 1000);
+            // alert(state);
+            // $('#City').val(city);
+            $('#ZipCode').val(zip);
+            $('#Phone').val(phone);
+        }
+    }
+
+    function resetData() {
+        $('#addressIdHdn').val("0");
+    }
+
+    $('#addLicenseBtn').on('click', function (e) {
+        var x;
+        if(parseInt($('#LicenseIdHdn').val())>0)
+        {
+            x=EditConfirm('@ViewBag.Action');
+        }
+        else{
+            x=AddConfirm('@ViewBag.Action');
+        }
+        if(x)
+        {
+            $('#dateOfHireSpan').css('display', 'none');
+            //$('#departmentSpan').css('display', 'none');
+            //if ($('#DateOfhire').val().trim() == '') {
+            //    $('#dateOfHireSpan').css('display', 'block');
+            //}
+            //else if ($('#Department').val().trim() == '') {
+            //    $('#departmentSpan').css('display', 'block');
+            //}
+            //else {
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/AddEditLicense")',
+                type: 'Post',
+                data: { EmployeeID:@Model.EmployeeID, dateOfHire: $('#DateOfhire').val(), terminationDate: $('#TerminationDate').val(), licenseExpirationDate: $('#LicenseExpirationDate').val(), department: $('#Department').val(), licenseType: $('#LicenseType').val(), licenseStatus: $('#LicenseStatus').val(), reasonForLeaving: $('#ReasonForLeaving').val(), licenseId: $('#LicenseIdHdn').val() },
+                dataType: 'json',
+                success: function (data) {
+                    //$('#DateOfhire').val("");
+                    //$('#TerminationDate').val("");
+                    //$('#LicenseExpirationDate').val("");
+                    //$('#DepartmentType').val("");
+                    //$('#LicenseType').val("");
+                    //$('#LicenseStatus').val("");
+                    //$('#ReasonForLeaving').val("");
+                    $('#LicenseIdHdn').val("0");
+                    $('#msgDiv').html('<div class="alert alert-success"> License information Save Successfully.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+            //}
+        }
+    });
+
+    function BindPictureList(type, id, subFeatureid) {
+
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/GetAllPictures")',
+            data: { 'type': type, 'id': id, 'subFeatureid': subFeatureid },
+            type: 'Post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                var temphtml = "";
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    for (i = 0; i < jsonData.length; i++) {
+                        temphtml += ' <div class="col-md-2"> <div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
+                        temphtml += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                        temphtml += '<div class="btn-show">';
+                        temphtml += '<input type="button" value="Assign Picture" id="AssignPicture" class="btn btn-success add" onclick="AssignPictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        temphtml += '<input type="button" value="Edit" id="EditPicture" class="btn btn-primary add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="EditPictur(&#39;' + jsonData[i].FilePath + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        temphtml += '<input type="button" value="Delete" id="DeletePicture" class="btn btn-danger add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="DeletePictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;,&#39;' + subFeatureid + '&#39;);">';
+                        temphtml += '</div></div></div>';
+                    }
+                }
+                $('#pictureTable').html(temphtml);
+
+                $('.pictureTr').hover(function () {
+                    var ImgeSrc = $(this).children('img').attr('src');
+                    var mediaId = $(this).attr('data-id');
+                    $(this).on('click', function () {
+                        $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
+                        $(this).addClass('ShowBorderRed');
+                    });
+                });
+
+            }
+        });
+    }
+
+    function AssignPictures(type, id, mediaId) {
+
+        if (EditConfirmMedia('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/AssignPictures")',
+                data: { MediaType: type, Type: type, ID: id, IncidentID: 0, MediaID: mediaId, QuestionID: 0, Observation: 0 },
+                type: 'post',
+                datatype: 'json',
+
+                contenttype: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        alert('Image Assign successfuly!!');
+                    }
+                    else {
+                        alert(' Error in Request!!');
+                    }
+                }
+            });
+        }
+    }
+    function DeletePictures(type, id, mediaId, subFeatureid) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/DeletePicture")',
+                data: { MediaID: mediaId },
+                type: 'post',
+                datatype: 'json',
+                contenttype: 'application/json',
+                success: function (data) {
+                    if (data == 'success') {
+                        BindPictureList(type, id, subFeatureid)
+                    }
+                    else {
+                        alert(' Error in Request!!');
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+                failure: function (response) {
+                    console.log(response);
+                },
+            });
+        };
+    };
+
+    function DeleteConfirm(action) {
+        //return true;
+        var control = action;
+        if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
+            var a = confirm('Are you sure to delete?');
+            if (a == true) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            var a = alert('You dont have permission to delete');
+            return false;
+        }
+    };
+
+    function EditConfirmMedia(action) {
+
+        var control = action;
+
+        if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
+
+
+            return true;
+
+        }
+        else {
+
+            var a = alert('You dont have permission to assign media');
+
+
+            return false;
+        }
+
+    }
+
+    function MoveToPic() {
+        var subFeatureid='0';
+        var value=$('#EmployeeID').val();
+        $('#mediaTable input[type=checkbox]').each(function () {
+            if (this.checked) {
+                var mediaId=$(this).val();
+                $.ajax({
+                    url: '@Url.Content("~/Media/Media/MoveToPicture")',
+                    data: { type: 'Employee',id: value, MediaID: mediaId },
+                    type: 'post',
+                    datatype: 'json',
+                    contenttype: 'application/json',
+                    success: function (data) {
+                        if (data == 'success') {
+                        }
+                        else {
+                            alert(' Error in Request!!');
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                    failure: function (response) {
+                        console.log(response);
+                    },
+                });
+            }
+            BindPictureList('Employee', value, subFeatureid);
+            BindMediaList();
+        });
+    }
+
+    function EditPictur(ImgeSrc, mediaId) {
+        getDataUri(ImgeSrc, function (dataUri) {
+            $('#image').attr('src', dataUri);
+            $('.cropper-view-box').find('img').attr('src', dataUri);
+            $('.cropper-canvas').find('img').attr('src', dataUri);
+            $('.preview-lg').find('img').attr('src', dataUri);
+            $('.dataId').val(mediaId);
+        });
+
+        $('#avatar-modal').modal('show');
+
+        setTimeout(function () {
+
+            $('script').each(function () {
+
+                if (this.src.split('?') === '/Content/crop-avatar/js/main.js') {
+
+                    $(this).remove();
+                }
+                if (this.src.split('?') === '/Content/crop-avatar/js/cropper.js') {
+
+                    $(this).remove();
+                }
+            });
+            $.getScript('/Content/crop-avatar/js/main.js').done(function () {
+
+
+            });
+            $.getScript('/Content/crop-avatar/js/cropper.js').done(function () {
+
+
+            });
+        }, 100);
+    }
+
+    function getDataUri(url, callback) {
+        var image = new Image();
+
+        image.onload = function () {
+            var canvas = document.createElement('canvas');
+            canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
+            canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
+
+            canvas.getContext('2d').drawImage(this, 0, 0);
+
+            // Get raw image data
+            callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
+
+            // ... or get as Data URI
+            callback(canvas.toDataURL('image/png'));
+        };
+
+        image.src = url;
+    }
+
+    function loadLicense() {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/GetLicense")',
+            data: { EmployeeID: @Model.EmployeeID },
+            type: 'get',
+            dataType: 'json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    $('#DateOfhire').val(jsonData.DateOfHire);
+                    $('#TerminationDate').val(jsonData.TerminationDate);
+                    $('#LicenseExpirationDate').val(jsonData.LicenseExpirationDate)
+                    $('#Department').val(jsonData.Department);
+                    $('#LicenseType').val(jsonData.LicenseType);
+                    $('#LicenseStatus').val(jsonData.LicenseStatus);
+                    $('#ReasonForLeaving').val(jsonData.ReasonForLeaving);
+                    $('#LicenseIdHdn').val(jsonData.LicenseID);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function bindLinkedData(Id, DEscription, FilePath) {
+
+        if(EditConfirm('@ViewBag.Action'))
+        {
+            $('#LinkedId').val(Id);
+            $('#FilePath').val(FilePath);
+            $('#fileUpload').hide();
+            $('#Description').val(DEscription);
+            $('#LinkedButton').val('Update');
+            $('#spanDesc').html('');
+            $('#spanUpload').html('');
+        }
+    }
+    function DeleteLinkedItem(id) {
+        var x=DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/DeleteLinkedItem")',
+                type: 'Post',
+                data: { ID: id },
+                dataType: 'json',
+                success: function (data) {
+                    $('#Linked' + id).remove();
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+
+    function MoveToPicture(type, id, mediaId) {
+        var subFeatureid='0';
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/MoveToPicture")',
+            data: { type: type,id: id, MediaID: mediaId },
+            type: 'post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                if (data == 'success') {
+                    BindPictureList(type, id, subFeatureid);
+                    BindMediaList();
+
+                }
+                else {
+                    alert(' Error in Request!!');
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            },
+            failure: function (response) {
+                console.log(response);
+            },
+        });
+    };
+
+    function BindMediaList() {
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/GetAllMoveToPicture")',
+            data: { 'type': 'Media', 'id': '0', 'subFeatureid': '0' },
+            type: 'Post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                var types=$('#hdType').val();
+                var value=$('#EmployeeID').val();
+                var subFeatureid = "0";
+                var temph = "";
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    for (i = 0; i < jsonData.length; i++) {
+                        temph += ' <div class="col-md-2">';
+                        temph += '<input id="' + jsonData[i].MediaID + '" value="' + jsonData[i].MediaID + '" type="checkbox" class="chkall">';
+                        temph += '<div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
+                        temph += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                        temph += '<div class="btn-show">';
+                        if ($('#hdType').val() != 'Media') {
+                            temph += '<input type="button" value="MoveTo" id="MoveToPicture" class="btn btn-info add" onclick="MoveToPicture(&#39;' + types + '&#39;,&#39;' + value + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        }
+                        temph += '</div></div></div>';
+                    }
+
+                    $('#btnMoveImage').attr("disabled",false);
+                }
+                else
+                {
+                    $('#btnMoveImage').attr("disabled","disabled");
+                }
+                $('#mediaTable').html(temph);
+                $('.pictureTr').hover(function () {
+                    var ImgeSrc = $(this).children('img').attr('src');
+                    var mediaId = $(this).attr('data-id');
+                    $(this).on('click', function () {
+                        $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
+                        $(this).addClass('ShowBorderRed');
+                    });
+                });
+            }
+        });
+    }
+
+    function isNumberAndDecimal(evt, element) {
+
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        //alert(charCode);
+        if (charCode ==8)
+        {
+            return true;
+        }
+        if (charCode > 31 && (charCode < 48 || charCode > 57) && (charCode != 46 || $(element).val().indexOf('.') != -1))
+        {
+            return false;
+        }
+        else {
+            var len = $('#Age').val().length;
+            var index = $('#Age').val().indexOf('.');
+            //alert(len+' '+index);
+            if (len > 2) {
+                return false;
+            }
+            if (len == 0 && charCode == 46) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function GetStates() {
+        var id = $('input[type=radio][name=Radio1].active').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/GetStates")',
+            type: 'get',
+            data: { ID: id },
+            dataType: 'json',
+            success: function (data) {
+                if (data.length > 0)
+                {
+                    $("#State").html('');
+                    $("#City").html('');
+                    var optionhtml1 = '<option value="' + 0 + '">' + "-- Select State --" + '</option>';
+                    $("#State").append(optionhtml1);
+
+                    $.each(data, function (i) {
+                        var optionhtml = '<option value="' + data[i].Value + '">' +data[i].Text + '</option>';
+                        $("#State").append(optionhtml);
+                    });
+                }
+                else
+                {
+                    $("#State").html('');
+                    $("#City").html('');
+                    var optionhtml1 = '<option value="' + 0 + '">' + "-- Select State --" + '</option>';
+                    $("#State").append(optionhtml1);
+                }
+
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function GetCities(sid) {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/GetCities")',
+            type: 'get',
+            data: { ID: sid },
+            dataType: 'json',
+            success: function (data) {
+                if(data.length>0)
+                {
+                    $("#City").html('');
+                    var optionhtml1 = '<option value="' + 0 + '">' + "-- Select City --" + '</option>';
+                    $("#City").append(optionhtml1);
+
+                    $.each(data, function (i) {
+                        var optionhtml = '<option value="' + data[i].Value + '">' +data[i].Text + '</option>';
+                        $("#City").append(optionhtml);
+                    });
+                }
+                else
+                {
+                    $("#City").html('');
+                    var optionhtml1 = '<option value="' + 0 + '">' + "-- Select City --" + '</option>';
+                    $("#City").append(optionhtml1);
+                }
+
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteEmployee(id, caller) {
+
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/DeleteEmployee")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Employee has been deleted Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                        location.replace('@Url.Content("~/Employee/Employees/EmployeeList")');
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function isNumber(evt, element) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if ((charCode > 47 || charCode < 58) || charCode == 8)
+            return true;
+        return false;
+    }
+
+    // Check permission
+    $("#permission").click(function(){
+        if(EditConfirm('@ViewBag.Action'))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }); //End Check permission
+
+
+    // ddl Change event Year, month, days
+    $(window).load(function () {
+        if($('#Year').val()!='')
+        {
+            $('#years').val($('#Year').val());
+        }
+        if($('#Month').val()!='')
+        {
+            $('#months').val($('#Month').val());
+        }
+        if($('#Day').val()!='')
+        {
+            $('#days').val($('#Day').val());
+        }
+    });
+
+    // Convert to employee to subject
+    function ConvertToSubjct(ConvertEmployeeID, caller) {
+        $.ajax({
+            url: '@Url.Content("~/Employee/Employees/ConvertEmployeeToSubject")',
+            data: JSON.stringify({ 'EmpId': ConvertEmployeeID }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Successfully created new subject record.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+
+                    $('#convertSubject').html('');
+                    $('#convertSubject').append('<a class="btn btn-success" href="javascript:;" title="Already Convert">Already Convert</a>');
+                }
+                else {
+                    $('#msgDiv').html('<div class="alert alert-success">Reports not Successfully Saved.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            },
+            failure: function (response) {
+                console.log(response);
+            },
+        });
+    }
+
+</script>

@@ -1,0 +1,1137 @@
+﻿@model CIMS.Models.SubjectModel
+@{
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+    ViewBag.Title = "Subject";
+}
+
+
+<link href="~/Content/crop-avatar/css/cropper.css" rel="stylesheet" />
+<script src="~/Content/crop-avatar/js/cropper.js"></script>
+
+<style>
+    .ShowBorderRed {
+        border: 6px solid blue;
+    }
+</style>
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Subject</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Subject</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+<div class="row">
+    <div class="col-md-12">
+        @if (Model.SubjectID > 0)
+        {
+            <div class="col-md-12 enablebtn btn-enable-main">
+                <h3 class="box-title inline-head">@Model.FirstName @Model.MiddleName @Model.LastName</h3>
+
+                <a style="display:none;" href='@Url.Content("~/Subject/Subject/AddSubject?Type=Subject&Id=" + Model.SubjectID + "")' id="permission" class="btn btn-info edit" title="Edit Subject">
+                    <i class="fa fa-pencil"></i> Edit
+                </a>
+                <a class="btn btn-danger" href='javascript:;' onclick='DeleteSubject(@Model.SubjectID, this);' title="Delete Subject">
+                    <i class='fa fa-trash'></i> Delete
+                </a>
+                <a class="btn btn-primary" href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))">
+                    <i class="fa fa-plus"></i> Add Reports
+                </a>
+                <a class="btn btn-primary" href='@Url.Content("~/Subject/Subject/SubjectIncidentsList?SubId=" + Model.SubjectID + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))">
+                    <i class="fa fa-eye"></i> View Reports
+                </a>
+                <a class="btn btn-info" href='@Url.Content("~/Subject/Subject/SearchSubject/" + Model.SubjectID + "")'>
+                    <i class="fa fa-plus"></i>
+                    Combine Subject
+                </a>
+            </div>
+        }
+
+        @if (Model.SubjectID > 0)
+        {
+            <div class="col-md-12">
+                <div class="white-box clearfix">
+                    <ul class="nav nav-pills custom-tabs" id="myTab">
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+                            <li class="active">
+                                <a href="javascript:;">
+
+                                    <span>Subject</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Addresses", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+                            <li class="">
+                                <a href='@Url.Content("~/Subject/Subject/SubjectAddress?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                                    <span>Addresses</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Aliases", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+                            <li class="">
+                                <a href='@Url.Content("~/Subject/Subject/SubjectAlias?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+
+                                    <span>Aliases</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Features", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+                            <li class="">
+                                <a href='@Url.Content("~/Subject/Subject/SubjectFeatures?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                                    <span>Features</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Identification", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+                            <li class="">
+                                <a href='@Url.Content("~/Subject/Subject/SubjectIdentification?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                                    <span>Identification</span>
+                                </a>
+                            </li>
+                        }
+@if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject LCT Totals", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+{
+                        <li class="" style="display:none;">
+                            <a href='@Url.Content("~/Subject/Subject/SubjectLCTTotals?" + (Request.QueryString["Show"] == "View" ? "Show=View&" : "") + "Type=Subject&Id=" + Model.SubjectID + "")'>
+                                <span>LCT Totals</span>
+                            </a>
+                        </li>
+}
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Watch List", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+                            <li class="">
+                                <a href='@Url.Content("~/Subject/Subject/SubjectWatchList?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+
+                                    <span>Watch List</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Linked", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+                            <li class="">
+                                <a href='@Url.Content("~/Subject/Subject/SubjectLinked?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+
+                                    <span>Linked</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-md-12">
+                <div class="white-box clearfix">
+                    <ul class="nav nav-pills custom-tabs">
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+                            <li class="active">
+                                <a href="javascript:;" id="tabSubject">
+                                    <span>Subject</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Addresses", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+                            <li class="">
+                                <a href="javascript:;" class="checkAlert" id="tabAddresses">
+                                    <span>Addresses</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Aliases", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+                            <li class="">
+                                <a href="javascript:;" class="checkAlert" id="tabAliases">
+                                    <span>Aliases</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Features", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+                            <li class="">
+                                <a href="javascript:;" class="checkAlert" id="tabFeatures">
+                                    <span>Features</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Identification", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+                            <li class="">
+                                <a href="javascript:;" class="checkAlert" id="tabIdentification">
+                                    <span>Identification</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Watch List", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+
+                            @*<li class="">
+                                    <a href="javascript:;" class="checkAlert">
+                                        <span>LCT Totals</span>
+                                    </a>
+                                </li>*@
+                            <li class="">
+                                <a href="javascript:;" class="checkAlert" id="tabWatchList">
+                                    <span>Watch List</span>
+                                </a>
+                            </li>
+                        }
+                        @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Linked", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
+
+                            <li class="">
+                                <a href="javascript:;" class="checkAlert" id="tabLinked">
+                                    <span>Linked</span>
+                                </a>
+                            </li>
+                        }
+
+                    </ul>
+                </div>
+            </div>
+        }
+
+
+        <div class="large-title">
+            @(Model.SubjectID > 0 ? "Update" : "Add") Subject
+        </div>
+
+        <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+        <input type="hidden" id="hdType" name="hdType" value='@(Request.QueryString["Type"])' />
+
+        @using (Html.BeginForm("AddSubject", "Subject", FormMethod.Post, new { area = "Subject", id = "AddSubjectForm" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="col-md-6">
+                <div class="white-box clearfix">
+                    <div class="row">
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.VIP, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @*<input type="text" value="@ViewBag.SujectID" class="form-control" readonly>*@
+                                @Html.TextBoxFor(m => m.VIP, new { @class = "form-control", @readonly = "readonly" })
+                                @Html.HiddenFor(m => m.SubjectID)
+                            </div>
+                        </div>
+
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.FirstName, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.MiddleName, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(m => m.MiddleName, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.LastName, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+
+                            </div>
+                        </div>
+
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.Sex, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.Sex, ViewBag.lstGender as List<SelectListItem>,"Unknown", new { @class = "form-control" })
+
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.Race, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.Race, ViewBag.lstRace as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.Eyes, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.Eyes, ViewBag.lstEyes as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.Build, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.Build, ViewBag.lstBuild as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.Complexion, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.Complexion, ViewBag.lstComplexion as List<SelectListItem>,"Unknown", new { @class = "form-control" })
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="white-box clearfix" style="min-height:842px">
+                    <div class="row">
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.DateOfBirth, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(m => m.DateOfBirth, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.Age, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(m => m.Age, new { @class = "form-control age" })
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.Height, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                <div class="input-group">
+                                    <span class="input-group-addon">@ViewBag.ActiveMetricsHeight</span>
+                                    @Html.TextBoxFor(m => m.Height, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.Weight, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                <div class="input-group">
+                                    <span class="input-group-addon">@ViewBag.ActiveMetricsWeight</span>
+                                    @Html.TextBoxFor(m => m.Weight, null, new { @class = "form-control", @maxlength = "3" })
+                                </div>
+                                @*@Html.TextBoxFor(m => m.Weight, new { @class = "form-control", @maxlength = "3" })*@
+
+
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            <div class="col-md-12 form-padd">
+                                @Html.LabelFor(m => m.Glasses, new { @class = "control-label" })
+
+                                @Html.CheckBoxFor(m => m.Glasses, new { @class = "custom-check-space" })
+                            </div>
+                        </div>
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.HairLength, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.HairLength, ViewBag.lstHairLength as List<SelectListItem>,"Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.HairColor, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.HairColor, ViewBag.lstHairColor as List<SelectListItem>,"Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.FacialHair, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.FacialHair, ViewBag.lstFacial as List<SelectListItem>, "Unknown",new { @class = "form-control" })
+                            </div>
+                        </div>
+
+
+
+                        @*<div class="form-group clearfix">
+                                @Html.LabelFor(m => m.Restricted, new { @class = "control-label col-md-12" })
+                                <div class="col-md-12">
+                                    @Html.TextBoxFor(m => m.Restricted, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Restricted, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+
+                            <div class="form-group clearfix">
+                                @Html.LabelFor(m => m.Status, new { @class = "control-label col-md-12" })
+                                <div class="col-md-12">
+                                    @Html.TextBoxFor(m => m.Status, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger" })
+                                </div>
+                            </div>*@
+
+                        @*<div class="form-group clearfix">
+                                @Html.LabelFor(m => m.RoleName, new { @class = "control-label col-md-12" })
+                                <div class="col-md-12">
+                                    @Html.TextBoxFor(m => m.RoleName, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.RoleName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>*@
+
+                        @*<div class="form-group clearfix">
+                                @Html.LabelFor(m => m.CIDPersonID, new { @class = "control-label col-md-12" })
+                                <div class="col-md-12">
+                                    @Html.TextBoxFor(m => m.CIDPersonID, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.CIDPersonID, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+
+
+                            <div class="form-group clearfix">
+                                @Html.LabelFor(m => m.CIDSubject, new { @class = "control-label col-md-12" })
+                                <div class="col-md-12">
+                                    @Html.TextBoxFor(m => m.CIDSubject, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.CIDSubject, "", new { @class = "text-danger" })
+                                </div>
+                            </div>*@
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="white-box clearfix">
+                    <div class="btn-main clearfix">
+                        <input type="submit" class="btn btn-success@(Model.SubjectID > 0 ? " edit" : " add")" value="@(Model.SubjectID > 0 ? "Update" :"Create")" id="submit-data" />
+                        <input type="button" class="btn btn-blue" id="clearBtn" value="Clear" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (Model.SubjectID > 0)
+        {
+            <div class="col-md-12">
+                <div class="white-box clearfix">
+
+                    <div class="col-md-12 media-main" style="padding-bottom: 8px;">
+                        <div class="col-md-2">
+                            <div class="large-title no-padding">Media</div>
+                        </div>
+
+                        @*<div class="col-md-2">
+                            <a href='@Url.Content("~/Media/Media/Index?Type=Subject&typeid=" + Model.SubjectID + "")' class="btn btn-info small btn-sm btn-icon" title="Media"><i class="fa fa-camera fa-2x"></i></a>
+                        </div>
+                        <div class="pull-right">
+                            <label class="large-title no-padding">View General Media Gallery :</label>
+                            <input type="checkbox" id="something" />
+                        </div>*@
+
+                    </div>
+                    <div class="col-md-12">
+                        <div class="large-title no-padding">Subject Gallery</div>
+                        <div id="pictureTable">
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-12" id="MediaGallery" style="display: none;">
+                        <div class="large-title no-padding">
+                            General Media Gallery
+                            <input style="display:none;" type="button" value="Move To Employee Gallery" id="btnMoveImage" class="btn btn-info add pull-right" onclick="MoveToPic();">
+                        </div>
+                        <div id="mediaTable">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+<div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            @*<form class="avatar-form" action="Update_Picture" enctype="multipart/form-data" method="post">*@
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="avatar-modal-label">Change Profile Picture</h4>
+            </div>
+            <div class="modal-body">
+                <div class="avatar-body">
+
+                    <!-- Upload image and data -->
+                    <div class="avatar-upload">
+                        <input type="hidden" class="avatar-src" name="avatar_src">
+                        <input type="hidden" class="avatar-data" name="avatar_data">
+                        <input type="hidden" class="dataId" name="dataId">
+                        @*<label for="avatarInput">Select an Image</label>
+                            <input type="file" class="avatar-input" id="avatarInput" name="avatar_file">*@
+                    </div>
+
+                    <!-- Crop and preview -->
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="img-container">
+                                <img id="image" src="" alt="Picture" height="500" width="500">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-9 docs-buttons">
+                            <!-- <h3 class="page-header">Toolbar:</h3> -->
+
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" data-method="zoom" data-option="0.1" title="Zoom In">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;zoom&quot;, 0.1)">
+                                        <span class="fa fa-search-plus"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="zoom" data-option="-0.1" title="Zoom Out">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;zoom&quot;, -0.1)">
+                                        <span class="fa fa-search-minus"></span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" data-method="move" data-option="-10" data-second-option="0" title="Move Left">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, -10, 0)">
+                                        <span class="fa fa-arrow-left"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="move" data-option="10" data-second-option="0" title="Move Right">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, 10, 0)">
+                                        <span class="fa fa-arrow-right"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="-10" title="Move Up">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, 0, -10)">
+                                        <span class="fa fa-arrow-up"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="move" data-option="0" data-second-option="10" title="Move Down">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;move&quot;, 0, 10)">
+                                        <span class="fa fa-arrow-down"></span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" data-method="rotate" data-option="-45" title="Rotate Left">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;rotate&quot;, -45)">
+                                        <span class="fa fa-rotate-left"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="rotate" data-option="45" title="Rotate Right">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;rotate&quot;, 45)">
+                                        <span class="fa fa-rotate-right"></span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" data-method="scaleX" data-option="-1" title="Flip Horizontal">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;scaleX&quot;, -1)">
+                                        <span class="fa fa-arrows-h"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-primary" data-method="scaleY" data-option="-1" title="Flip Vertical">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;scaleY&quot;-1)">
+                                        <span class="fa fa-arrows-v"></span>
+                                    </span>
+                                </button>
+                            </div>
+
+
+
+
+
+                            <div class="btn-group btn-group-crop">
+                                <button type="button" class="btn btn-primary" data-method="getCroppedCanvas">
+                                    <span class="docs-tooltip" data-toggle="tooltip" title="$().cropper(&quot;getCroppedCanvas&quot;)">
+                                        Done
+                                    </span>
+                                </button>
+
+                            </div>
+
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div> -->
+            @*</form>*@
+        </div>
+    </div>
+</div>
+
+<link href="~/Content/data-tables/dataTables.alphabetSearch.css" rel="stylesheet" />
+<script src="~/Content/data-tables/dataTables.alphabetSearch.min.js"></script>
+<script src="~/assets/js/jquery.maskedinput.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        var type = $('#hdType').val();
+        var id = $('#SubjectID').val();
+        var subFeatureid = "0";
+
+        BindPictureList(type, id, subFeatureid);
+
+        if ($('#hdShow').val() == 'View') {
+            $(".form-control").attr("disabled", "disabled");
+            $(".btn").hide(true);
+            $(document).find("input[type=checkbox]").attr("disabled", "disabled");
+            $(document).find('.enablebtn>a').removeAttr("style");
+            $(document).find('#permission').hide(true);
+        }
+        else {
+            //$(".btn").removeAttr("style");
+            $(".form-control").attr("disabled", false);
+            //$(".btn").attr("disabled", false);
+        
+            $(document).find('#permission').hide(true);
+        }
+
+        $("#Height").mask("9'99''");
+        $('#DateOfBirth').datepicker();
+
+        $('.age').on('keydown', function (e) {
+            key = e.which
+            if (key == 8 || key == 9 || key == 13 || key == 46 || key == 110 || (key >= 35 && key <= 40) || (key >= 48 && key <= 57) || (key >= 96 && key <= 105)) {
+                $('#DateOfBirth').val('');
+                if (key != 8) {
+                    if ($(this).val().length < 2) {
+                    }
+                    else { return false }
+                }
+            }
+            else { return false }
+        });
+
+        $('#Weight').on('keydown', function (e) {
+            key = e.which
+            if (key == 8 || key == 9 || key == 13 || key == 46 || key == 110 || (key >= 35 && key <= 40) || (key >= 48 && key <= 57) || (key >= 96 && key <= 105)) {
+                if (key != 8) {
+                    if ($(this).val().length < 3) {
+                    }
+                    else { return false }
+                }
+            }
+            else { return false }
+        });
+
+        $('#DateOfBirth').on('change', function () {
+            var dob = new Date($(this).val());
+            var today = new Date();
+            var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
+            $('#Age').val(age);
+        });
+
+        //$('#Sex').editableSelect({ effects: 'default' });
+        //$('#Race').editableSelect({ effects: 'default' });
+        //$('#Eyes').editableSelect({ effects: 'default' });
+        //$('#Build').editableSelect({ effects: 'default' });
+        //$('#Complexion').editableSelect({ effects: 'default' });
+        //$('#HairLength').editableSelect({ effects: 'default' });
+        //$('#HairColor').editableSelect({ effects: 'default' });
+        //$('#FacialHair').editableSelect({ effects: 'default' });
+
+        if ('@Model.SubjectID' > 0) {
+            $('#Sex').val('@Model.Sex');
+            $('#Race').val('@Model.Race');
+            $('#Eyes').val('@Model.Eyes');
+            $('#Build').val('@Model.Build');
+            $('#Complexion').val('@Model.Complexion');
+            $('#HairLength').val('@Model.HairLength');
+            $('#HairColor').val('@Model.HairColor');
+            $('#FacialHair').val('@Model.FacialHair');
+        }
+
+        $('#clearBtn').on('click', function () {
+            Reset();
+        });
+
+        $('.checkAlert').on('click', function () {
+            var firstname = "";
+            firstname = $("input#FirstName").val();
+            if (firstname == "") {
+                firstname = "Unknown";
+            }
+            var r = confirm("Are you sure to create " + firstname + " Subject ?");
+            if (r == true) {
+                $('#submit-data').click();
+                @*var active = $(this).attr("id");
+                if (active == "tabAddresses") {
+                    location.replace('@Url.Content("~/Subject/Subject/SubjectAddress?Type=Subject&Id="+Model.SubjectID+"")');
+                }
+                if (active == "tabAliases") {
+                    location.replace('@Url.Content("~/Subject/Subject/SubjectAlias?Type=Subject&Id="+Model.SubjectID+"")');
+                }
+                if (active == "tabFeatures") {
+                    location.replace('@Url.Content("~/Subject/Subject/SubjectFeatures?Type=Subject&Id="+Model.SubjectID+"")');
+                }
+                if (active == "tabIdentification") {
+                    location.replace('@Url.Content("~/Subject/Subject/SubjectIdentification?Type=Subject&Id=" + Model.SubjectID+"")');
+                }
+                if (active == "tabWatchList") {
+                    location.replace('@Url.Content("~/Subject/Subject/SubjectWatchList?Type=Subject&Id=" + Model.SubjectID+"")');
+                }
+                if (active == "tabLinked") {
+                    location.replace('@Url.Content("~/Subject/Subject/SubjectLinked?Type=Subject&Id=" + Model.SubjectID+"")');
+                }*@
+
+            }
+            else {
+                $('#msgDiv').html("<div class='alert alert-danger'>Please Add Subject Details First</div>");
+            }
+        });
+
+        // Page Change
+        var somethingChanged = false;
+        var button = $('#submit-data');
+        var orig = [];
+
+        $.fn.getType = function () {
+            return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
+        }
+
+        $("#AddSubjectForm :input").each(function () {
+            var type = $(this).getType();
+            var tmp = {
+                'type': type,
+                'value': $(this).val()
+            };
+            if (type == 'radio') {
+                tmp.checked = $(this).is(':checked');
+            }
+            orig[$(this).attr('id')] = tmp;
+        });
+
+        $('#AddSubjectForm').bind('change keyup', function () {
+            var disable = true;
+            somethingChanged = false;
+            $("#AddSubjectForm :input").each(function () {
+                var type = $(this).getType();
+                var id = $(this).attr('id');
+
+                if (type == 'text' || type == 'select') {
+                    disable = (orig[id].value == $(this).val());
+                } else if (type == 'radio') {
+                    disable = (orig[id].checked == $(this).is(':checked'));
+                }
+
+                if (!disable) {
+                    return false; // break out of loop
+
+                }
+            });
+            somethingChanged = true;
+            button.prop('disabled', disable);
+        }); // End Page Change
+
+        // Save changes
+        $('#myTab > li > a ').click(function (e) {
+            if ($('#hdShow').val() != 'View') {
+                if (somethingChanged == true) {
+                    formSubmitByTab(somethingChanged);
+                    somethingChanged = false;
+                    return false;
+                }
+            }
+        });
+        // end save change script
+    });
+    // End-------------------------------
+
+    function Reset() {
+        $('#Sex').val('');
+        $('#Race').val('');
+        $('#Eyes').val('');
+        $('#Build').val('');
+        $('#Complexion').val('');
+        $('#HairLength').val('');
+        $('#HairColor').val('');
+        $('#FacialHair').val('');
+        $('#VIP').val('');
+        $('#FirstName').val('');
+        $('#MiddleName').val('');
+        $('#LastName').val('');
+        $('#DateOfBirth').val('');
+        $('#Age').val('');
+        $('#Height').val('');
+        $('#Weight').val('');
+        //$('#Glasses').val(false);
+    }
+
+    //function showAlert() {
+    //}
+
+    function DeleteSubject(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/DeleteSubject")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Subject has been deleted Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                        location.replace('@Url.Content("~/Subject/Subject/Index")');
+                    } else {
+
+                    }
+                }
+            });
+        }
+    }
+
+    function BindPictureList(type, id, subFeatureid) {
+
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/GetAllPictures")',
+            data: { 'type': type, 'id': id, 'subFeatureid': subFeatureid },
+            type: 'Post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                var temphtml = "";
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    for (i = 0; i < jsonData.length; i++) {
+                        temphtml += ' <div class="col-md-2"> <div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
+                        temphtml += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                        temphtml += '<div class="btn-show">';
+                        temphtml += '<input type="button" value="Assign Picture" id="AssignPicture" class="btn btn-success add" onclick="AssignPictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        temphtml += '<input type="button" value="Edit" id="EditPicture" class="btn btn-primary add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="EditPictur(&#39;' + jsonData[i].FilePath + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        temphtml += '<input type="button" value="Delete" id="DeletePicture" class="btn btn-danger add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="DeletePictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;,&#39;' + subFeatureid + '&#39;);">';
+                        temphtml += '</div></div></div>';
+                    }
+                }
+                $('#pictureTable').html(temphtml);
+                $('.pictureTr').hover(function () {
+                    var ImgeSrc = $(this).children('img').attr('src');
+                    var mediaId = $(this).attr('data-id');
+                    $(this).on('click', function () {
+                        $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
+                        $(this).addClass('ShowBorderRed');
+                    });
+                });
+
+            }
+        });
+    }
+
+    function AssignPictures(type, id, mediaId) {
+
+        if (EditConfirmMedia('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/AssignPictures")',
+                data: { MediaType: type, Type: type, ID: id, IncidentID: 0, MediaID: mediaId, QuestionID: 0, Observation: 0 },
+                type: 'post',
+                datatype: 'json',
+
+                contenttype: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        alert('Image Assign successfuly!!');
+                    }
+                    else {
+                        alert(' Error in Request!!');
+                    }
+                }
+            });
+        }
+    }
+    function DeletePictures(type, id, mediaId, subFeatureid) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/DeletePicture")',
+                data: { MediaID: mediaId },
+                type: 'post',
+                datatype: 'json',
+                contenttype: 'application/json',
+                success: function (data) {
+                    if (data == 'success') {
+                        BindPictureList(type, id, subFeatureid)
+                    }
+                    else {
+                        alert(' Error in Request!!');
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+                failure: function (response) {
+                    console.log(response);
+                },
+            });
+        };
+    };
+
+    function DeleteConfirm(action) {
+        //return true;
+        var control = action;
+        if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
+            var a = confirm('Are you sure to delete?');
+            if (a == true) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            var a = alert('You dont have permission to delete');
+            return false;
+        }
+    };
+
+    function EditConfirmMedia(action) {
+
+        var control = action;
+
+        if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
+
+
+            return true;
+
+        }
+        else {
+
+            var a = alert('You dont have permission to assign media');
+
+
+            return false;
+        }
+
+    }
+
+    function EditPictur(ImgeSrc, mediaId) {
+        getDataUri(ImgeSrc, function (dataUri) {
+            $('#image').attr('src', dataUri);
+            $('.cropper-view-box').find('img').attr('src', dataUri);
+            $('.cropper-canvas').find('img').attr('src', dataUri);
+            $('.preview-lg').find('img').attr('src', dataUri);
+            $('.dataId').val(mediaId);
+        });
+
+        $('#avatar-modal').modal('show');
+
+        setTimeout(function () {
+
+            $('script').each(function () {
+
+                if (this.src.split('?') === '/Content/crop-avatar/js/main.js') {
+
+                    $(this).remove();
+                }
+                if (this.src.split('?') === '/Content/crop-avatar/js/cropper.js') {
+
+                    $(this).remove();
+                }
+            });
+            $.getScript('/Content/crop-avatar/js/main.js').done(function () {
+
+
+            });
+            $.getScript('/Content/crop-avatar/js/cropper.js').done(function () {
+
+
+            });
+        }, 100);
+    }
+
+    function getDataUri(url, callback) {
+        var image = new Image();
+
+        image.onload = function () {
+            var canvas = document.createElement('canvas');
+            canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
+            canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
+
+            canvas.getContext('2d').drawImage(this, 0, 0);
+
+            // Get raw image data
+            callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
+
+            // ... or get as Data URI
+            callback(canvas.toDataURL('image/png'));
+        };
+
+        image.src = url;
+    }
+
+    //$('#something').change(function () {
+    //    if (this.checked) {
+    //        $('#MediaGallery').removeAttr("style");
+    //        BindMediaList();
+    //    }
+    //    else {
+    //        $('#MediaGallery').hide(true);
+    //    }
+    //});
+
+    $('#MediaGallery').removeAttr("style");
+    BindMediaList();
+
+    function MoveToPicture(type, id, mediaId) {
+        var subFeatureid = '0';
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/MoveToPicture")',
+            data: { type: type, id: id, MediaID: mediaId },
+            type: 'post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                if (data == 'success') {
+                    BindPictureList(type, id, subFeatureid);
+                    BindMediaList();
+
+                }
+                else {
+                    alert(' Error in Request!!');
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            },
+            failure: function (response) {
+                console.log(response);
+            },
+        });
+    };
+
+    function MoveToPic() {
+        var subFeatureid = '0';
+        var value = $('#SubjectID').val();
+        $('#mediaTable input[type=checkbox]').each(function () {
+            if (this.checked) {
+                var mediaId = $(this).val();
+                $.ajax({
+                    url: '@Url.Content("~/Media/Media/MoveToPicture")',
+                    data: { type: 'Subject', id: value, MediaID: mediaId },
+                    type: 'post',
+                    datatype: 'json',
+                    contenttype: 'application/json',
+                    success: function (data) {
+                        if (data == 'success') {
+                        }
+                        else {
+                            alert(' Error in Request!!');
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                    failure: function (response) {
+                        console.log(response);
+                    },
+                });
+            }
+        });
+        BindPictureList('Subject', value, subFeatureid);
+        BindMediaList();
+    }
+
+    function BindMediaList() {
+
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/GetAllMoveToPicture")',
+            data: { 'type': 'Media', 'id': '0', 'subFeatureid': '0' },
+            type: 'Post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                var types = $('#hdType').val();
+                var value = $('#SubjectID').val();
+                var subFeatureid = "0";
+                var temph = "";
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    for (i = 0; i < jsonData.length; i++) {
+                        temph += ' <div class="col-md-2"> ';
+                        temph += '<input id="' + jsonData[i].MediaID + '" value="' + jsonData[i].MediaID + '" type="checkbox">';
+                        temph += '<div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
+                        temph += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                        temph += '<div class="btn-show">';
+                        if ($('#hdType').val() != 'Media') {
+                            temph += '<input type="button" value="MoveTo" id="MoveToPicture" class="btn btn-info add" onclick="MoveToPicture(&#39;' + types + '&#39;,&#39;' + value + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        }
+                        temph += '</div></div></div>';
+                    }
+                }
+                $('#mediaTable').html(temph);
+                $('.pictureTr').hover(function () {
+                    var ImgeSrc = $(this).children('img').attr('src');
+                    var mediaId = $(this).attr('data-id');
+                    $(this).on('click', function () {
+                        $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
+                        $(this).addClass('ShowBorderRed');
+                    });
+                });
+
+            }
+        });
+    }
+
+    $("#permission").click(function () {
+        if (EditConfirm('@ViewBag.Action')) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+
+    // Submit form on tab change Script
+    function formSubmitByTab(valueChanged) {
+        if (valueChanged == true) {
+            var r = confirm("Do you want to save changes?");
+            if (r == true) {
+                $('#submit-data').click();
+            }
+        }
+
+    }// End Submit form on tab change Script
+
+</script>

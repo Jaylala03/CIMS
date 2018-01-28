@@ -1,0 +1,26 @@
+﻿@model IEnumerable<CIMS.Models.imagesviewmodel>
+@{
+    //ViewBag.Title = "uploadPartial";
+    //Layout = "~/Views/Shared/_InternalLayout.cshtml";
+    Layout = null;
+}
+
+<h2>Upload Pic</h2>
+
+@foreach (var image in Model)
+{
+    <a href="#" class="returnImage" data-url="@Request.Url.GetLeftPart(UriPartial.Authority)@image.Url">
+        <img src="@image.Url" alt="Hejsan" id="#image" data-source="@image.Url" width="200" height="200" />
+    </a>
+}
+<script src='@Url.Content("~/assets/js/jquery-1.11.1.min.js")'></script>
+<script type="text/javascript">
+
+    $(document).on('click', ".returnImage", function (e) {
+            var urlImage = $(this).attr("data-url");
+            //This takes the data value and id of the editor and sends the data(i.e.,image url) back to the caller page
+            window.opener.updateValue("cke_73_textInput", urlImage);
+            window.close();
+        });
+
+</script>

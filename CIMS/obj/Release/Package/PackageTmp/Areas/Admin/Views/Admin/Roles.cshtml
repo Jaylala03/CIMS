@@ -1,0 +1,32 @@
+﻿@model CIMS.Models.ManageRolemodel
+@{
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+
+}
+
+
+@if (Model.RoleList != null && Model.RoleList.Count > 0)
+{
+
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <div>No Record Found</div>
+}
+
+
+@Html.LabelFor(m=>m.roleModel.RoleName)
+@Html.TextBoxFor(m => m.roleModel.RoleName)
+<input type="submit" value="Create" />

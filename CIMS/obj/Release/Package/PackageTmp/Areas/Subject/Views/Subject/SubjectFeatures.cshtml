@@ -1,0 +1,477 @@
+﻿@model CIMS.Models.ManageSubjectMarkModel
+@{
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+    ViewBag.Title = "Subject";
+}
+
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Subject</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Subject</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+<div class="row">
+    @if (Model.subFeatureModel.SubjectID > 0)
+    {
+        <div class="col-md-12 enablebtn btn-enable-main">
+            <h3 class="box-title inline-head">@Model.subFeatureModel.LogoFirstName @Model.subFeatureModel.LogoMiddleName @Model.subFeatureModel.LogoLastName</h3>
+
+            <a href='@Url.Content("~/Subject/Subject/SubjectFeatures?Type=Subject&Id=" + Model.subFeatureModel.SubjectID + "")' id="permission" class="btn btn-info edit" title="Edit Subject">
+                <i class="fa fa-pencil"></i> Edit
+            </a>
+            <a class="btn btn-danger" href='javascript:;' onclick='DeleteSubject(@Model.subFeatureModel.SubjectID, this);' title="Delete Subject">
+                <i class='fa fa-trash'></i> Delete
+            </a>
+            <a class="btn btn-primary" href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.subFeatureModel.SubjectID + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))">
+                <i class="fa fa-plus"></i> Add Reports
+            </a>
+            <a class="btn btn-primary" href='@Url.Content("~/Subject/Subject/SubjectIncidentsList?SubId=" + Model.subFeatureModel.SubjectID + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))">
+                <i class="fa fa-eye"></i> View Reports
+            </a>
+           
+            <a class="btn btn-info" href='@Url.Content("~/Subject/Subject/SearchSubject/" + Model.subFeatureModel.SubjectID + "")'>
+                <i class="fa fa-plus"></i>
+                Combine Subject
+            </a>
+        </div>
+    }
+
+    <div class="col-md-12">
+        <div class="white-box clearfix">
+            <ul class="nav nav-pills custom-tabs">
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li>
+                        <a href='@Url.Content("~/Subject/Subject/AddSubject?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.subFeatureModel.SubjectID+"")'>
+
+                            <span>Subject</span>
+                        </a>
+                    </li>
+                }
+
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Addresses", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectAddress?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.subFeatureModel.SubjectID+"")'>
+
+                            <span>Addresses</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Aliases", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+
+                        <a href='@Url.Content("~/Subject/Subject/SubjectAlias?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.subFeatureModel.SubjectID+"")'>
+                            <span>Aliases</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Features", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="active">
+                        <a href="javascript:;">
+                            <span>Features</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Identification", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectIdentification?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.subFeatureModel.SubjectID+"")'>
+                            <span>Identification</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject LCT Totals", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a style="display:none;" href='@Url.Content("~/Subject/Subject/SubjectLCTTotals?" + (Request.QueryString["Show"] == "View" ? "Show=View&" : "") + "Type=Subject&Id=" + Model.subFeatureModel.SubjectID + "")'>
+                            <span>LCT Totals</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Watch List", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectWatchList?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.subFeatureModel.SubjectID+"")'>
+
+                            <span>Watch List</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Linked", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectLinked?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.subFeatureModel.SubjectID+"")'>
+
+                            <span>Linked</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+
+        <div id="featureTitle" class="large-title no-margin">Add Subject Features</div>
+
+
+        <div class="white-box clearfix">
+            @using (Html.BeginForm("SubjectFeatures", "Subject", FormMethod.Post, new { area = "Subject", id = "SubjectFeatures" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.subFeatureModel.SubjectID)
+                @Html.HiddenFor(m => m.subFeatureModel.MarkID)
+
+                <div class="col-md-6">
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.subFeatureModel.FeatureType)
+                        @Html.DropDownListFor(m => m.subFeatureModel.FeatureType, ViewBag.lstFType as List<SelectListItem>, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.subFeatureModel.FeatureType, "", new { @class = "text-danger" })
+                    </div>
+
+
+                    @*<div class="form-group clearfix">
+                            <label>Upload Picture</label>
+                            <input type="file" class="" />
+                        </div>
+                    *@
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.subFeatureModel.FeatureLocation)
+                        @Html.DropDownListFor(m => m.subFeatureModel.FeatureLocation, ViewBag.lstFLocation as List<SelectListItem>, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.subFeatureModel.FeatureLocation, "", new { @class = "text-danger" })
+                    </div>
+
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group clearfix">
+                        @Html.TextAreaFor(m => m.subFeatureModel.Description, new { @class = "form-control ckeditor" })
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group1 clearfix">
+                        <input type="submit" id="btnSubmit" value="Add" class="btn btn-success" />
+                        <input type="button" class="btn btn-blue" id="clearBtn" value="Clear" />
+                    </div>
+                </div>
+
+
+
+            }
+        </div>
+    </div>
+
+
+    @*<div class="col-md-12">
+            <div class="white-box clearfix">
+                <div class="media-main" style="padding-bottom: 8px;">
+                    <div class="col-md-1">
+                        <div class="large-title no-padding">Media</div>
+                    </div>
+
+                    <div class="col-md-11">
+                        <a href='@Url.Content("~/Media/Media/Index?Type=Subject&SubType=Features&typeid=" + Model.subFeatureModel.SubjectID + "")' class="btn btn-info small btn-sm btn-icon" title="Media"><i class="fa fa-camera fa-2x"></i></a>
+                    </div>
+
+                </div>
+            </div>
+        </div>*@
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-12">
+                <div class="white-box clearfix">
+
+
+
+                    <div class="large-title no-padding">Subject Features List</div>
+                    @if (Model.subFeatureList != null && Model.subFeatureList.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table id="featureTable" class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Feature Type</th>
+                                        <th>Feature Location</th>
+                                        <th>Feature Image</th>
+                                        <th>Action</th>
+                                        <th>Media</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.subFeatureList)
+                                    {
+                                        <tr>
+                                            <td>@item.FeatureType</td>
+                                            <td>@item.FeatureLocation</td>
+                                            <td>
+                                                <img style="width: 100px;" src="@(!String.IsNullOrEmpty(item.ImagePath) ? item.ImagePath: Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                            </td>
+                                            <td><a href='javascript:;' data-id="@item.MarkID" class="btn small btn-info btn-sm btn-icon subjectTr"><i class='fa fa-pencil'></i></a><a href='javascript:;' class="btn small btn-danger btn-sm delete-sm" onclick='DeleteFeature(@item.MarkID,this);'><i class='fa fa-trash'></i></a></td>
+                                            <td><a href='@Url.Content("~/Media/Media/Index?Type=Subject&SubType=Features&typeid=" + Model.subFeatureModel.SubjectID + "&SubFeatureid="+@item.MarkID+"")' class="btn btn-info small btn-sm btn-icon" title="Media"><i class="fa fa-camera"></i></a></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src='@Url.Content("~/assets/js/ckeditor/ckeditor.js")'></script>
+<script type="text/javascript">
+    CKEDITOR.replace('subFeatureModel_Description', {
+        filebrowserImageBrowseUrl: '@Url.Content("~/Subject/Subject/uploadPartial")',
+        filebrowserImageUploadUrl: '@Url.Content("~/Subject/Subject/uploadnow")'
+    });
+    function updateValue(id, value) {
+        // this gets called from the popup window and updates the field with a new value
+        var jqueryObjectByClass = $(".cke_dialog_ui_input_text")[1];
+        jqueryObjectByClass.value = value;
+    }
+
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        if ($('#hdShow').val() == 'View') {
+            $(".form-control").attr("disabled", "disabled");
+            $(".btn").hide(true);
+            $(document).find('.enablebtn>a').removeAttr("style");
+        }
+        else {
+            //$(".btn").removeAttr("style");
+            $(".form-control").attr("disabled", false);
+            //$(".btn").attr("disabled", false);
+            $(document).find('#permission').hide(true);
+        }
+
+        $('.subjectTr').on('click', function () {
+            if (EditConfirm('@ViewBag.Action')) {
+                var Id = $(this).attr('data-id');
+                $.ajax({
+                    url: '@Url.Content("~/Subject/Subject/GetSubjectFeatureById")',
+                    data: { Id: Id },
+                    type: 'get',
+                    datatype: 'json',
+                    contenttype: 'application/json',
+                    success: function (data) {
+                        if (data.length > 0) {
+                            var jsondata = JSON.parse(data);
+                            $('#subFeatureModel_SubjectID').val(jsondata.SubjectID);
+                            $('#subFeatureModel_MarkID').val(jsondata.MarkID);
+                            $('#subFeatureModel_FeatureType').val(jsondata.FeatureType);
+                            $('#subFeatureModel_FeatureLocation').val(jsondata.FeatureLocation);
+                            // $('#subFeatureModel_Description').val(jsondata.Description);
+                            CKEDITOR.instances.subFeatureModel_Description.setData(jsondata.Description);
+                            $('#btnSubmit').val('Update');
+                            $('#featureTitle').text('Update Subject Feature');
+                        }
+
+                    }
+                });
+            }
+        });
+
+        $('#clearBtn').on('click', function () {
+            Reset();
+        });
+        $('#btnSubmit').click(function () {
+            var x;
+            if (parseInt($('#subFeatureModel_MarkID').val()) > 0) {
+                x = EditConfirm('@ViewBag.Action');
+            }
+            else {
+                x = AddConfirm('@ViewBag.Action');
+            }
+            if (x) {
+                return true;
+            }
+            else {
+
+                return false;
+            }
+        });
+
+
+        //$('#subFeatureModel_FeatureType').editableSelect({ effects: 'default' });
+        //$('#subFeatureModel_FeatureLocation').editableSelect({ effects: 'default' });
+
+
+        // Page Change
+        var somethingChanged = false;
+        var button = $('#btnSubmit');
+        var orig = [];
+
+        $.fn.getType = function () {
+            return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
+        }
+
+        $("#SubjectFeatures :input").each(function () {
+            var type = $(this).getType();
+            var tmp = {
+                'type': type,
+                'value': $(this).val()
+            };
+            if (type == 'radio') {
+                tmp.checked = $(this).is(':checked');
+            }
+            orig[$(this).attr('id')] = tmp;
+        });
+
+        $('#SubjectFeatures').bind('change keyup', function () {
+            var disable = true;
+            somethingChanged = false;
+            $("#SubjectFeatures :input").each(function () {
+                var type = $(this).getType();
+                var id = $(this).attr('id');
+
+                if (type == 'text' || type == 'select') {
+                    disable = (orig[id].value == $(this).val());
+                } else if (type == 'radio') {
+                    disable = (orig[id].checked == $(this).is(':checked'));
+                }
+
+                if (!disable) {
+                    return false; // break out of loop
+
+                }
+            });
+            somethingChanged = true;
+            button.prop('disabled', disable);
+        }); // End Page Change
+
+        // save change script
+        $('#myTab > li > a ').click(function (e) {
+            if ($('#hdShow').val() != 'View') {
+                if (somethingChanged == true) {
+                    formSubmitByTab(somethingChanged);
+                    somethingChanged = false;
+                    return false;
+                }
+            }
+        });
+        // end save change script
+
+    });// end
+
+    function DeleteFeature(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/DeleteSubjectFeature")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#subFeatureModel_FeatureType').val('');
+                        $('#subFeatureModel_FeatureLocation').val('');
+                        $('#subFeatureModel_MarkID').val('');
+                        CKEDITOR.instances.subFeatureModel_Description.setData('');
+                        $('#btnSubmit').val('Add');
+                        if ($('#featureTable>tbody tr').length == 1) {
+                            $('#featureTable').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Subject Feature Deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Subject Feature Deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function DeleteSubject(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/DeleteSubject")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Subject has been deleted Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                        location.replace('@Url.Content("~/Subject/Subject/Index")');
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function Reset() {
+        $('#subFeatureModel_FeatureType').val('');
+        $('#subFeatureModel_FeatureLocation').val('');
+        $('#subFeatureModel_MarkID').val('');
+        CKEDITOR.instances.subFeatureModel_Description.setData('');
+        $('#btnSubmit').val('Add');
+    }
+    $("#permission").click(function () {
+        if (EditConfirm('@ViewBag.Action')) {
+            return true;
+        }
+        else {
+
+            return false;
+        }
+    });
+
+    // Submit form on tab change Script
+    function formSubmitByTab(valueChanged) {
+        if (valueChanged == true) {
+            var r = confirm("Do you want to save changes?");
+            if (r == true) {
+                $('#btnSubmit').click();
+            }
+        }
+
+    }// End Submit form on tab change Script
+</script>

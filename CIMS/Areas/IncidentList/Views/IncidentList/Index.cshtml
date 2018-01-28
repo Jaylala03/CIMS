@@ -1,0 +1,310 @@
+﻿@model CIMS.Models.IncidentListModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+@*<h2>Index</h2>*@
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+<script src="~/assets/js/Jspdf/FileSaver.js"></script>
+<script src="~/assets/js/Jspdf/jspdf.js"></script>
+<script src="~/assets/js/Jspdf/jspdfplugintable.js"></script>
+
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Incident List</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Incident List</li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="col-md-12">
+            <div class="white-box clearfix">
+
+                <div class="col-md-4">
+                    <fieldset>
+                        <legend>Type</legend>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <input type="radio" name="Radio1" value="Subject" id="rbSubject" checked="checked" class="active">
+                                <label class="control-label" for="rbSubject">Subject</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="radio" name="Radio1" value="Employee" id="rbEmployee">
+                                <label class="control-label" for="rbEmployee">Employee</label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="col-md-6">
+                    <fieldset>
+                        <legend>Date Range</legend>
+                        <div class="form-group clearfix">
+                            <label class="control-label col-md-4">Start Date </label>
+                            <div class="col-md-8">
+                                <input type="text" id="startDate" name="startDate" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group clearfix">
+                            <label class="control-label col-md-4">End Date </label>
+                            <div class="col-md-8">
+                                <input type="text" id="endDate" name="endDate" class="form-control" />
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="col-md-2 top-10">
+                    <button type="button" class="btn btn-success" id="Load" onclick="IncidentList()">Load</button>
+                </div>
+                <div class="col-md-12 top-10">
+                    <div class="white-box">
+                        <div class="row">
+                            <div class="table-responsive">
+                                <div id="printDivData">
+                                    <table id="incidentListTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+
+                                        <thead class="tableHead" style="width:100%;">
+                                            <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                                <td class="td-border">
+                                                    Date
+                                                </td>
+                                                <td class="td-border">
+                                                    Name
+                                                </td>
+
+                                                <td style="width:220px;" class="td-border">
+                                                    Nature Of Incident
+                                                </td>
+                                                <td class="td-border">
+                                                    Short Description
+                                                </td>
+                                                <td class="td-border">
+                                                    Incident Status
+                                                </td>
+                                                <td class="td-border">
+                                                    Location
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="button" onclick="PrintTable();" value="Print" class="btn btn-success">
+                        <input type="button" onclick="PreviewTable();" value="Preview" class="btn btn-primary">
+                        <input type="button" onclick="SaveASPDFTable();" value="Save as PDF " class="btn btn-info">
+                        <a href="#myModalSendEmail" data-toggle="modal" class="btn btn-warning" style="padding: 7px 8px;" id="SendEmail">Send Email</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Send Email Model-->
+<div class="modal fade" id="myModalSendEmail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Send Email</h4>
+            </div>
+
+            <div class="modal-body row">
+                <div class="col-md-12 right-label">
+                    <div class="form-group clearfix">
+                        @Html.Label("To", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="To" id="To" class="form-control">
+                            <label id="EmailTo" style="color:red;"></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Subject", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Subject" id="Subject" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Desciption", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Desciption" id="Desciption" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12 text-right">
+                        <button type="submit" class="btn btn-success" id="SendEmailData">Send Email</button>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="Picture-log">
+
+                        <div class="table-responsive">
+                            <div id="Attachment"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.Send Email Model-->
+
+
+<div id="Printdiv" style="text-align: center; display:none;">
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('#startDate').datepicker();
+        $('#endDate').datepicker();
+    });
+
+    $('input:radio').click(function () {
+        $('input:radio:checked').addClass('active');
+        $('input:radio:not(:checked)').removeClass('active');
+
+    });
+
+    function IncidentList() {
+        var type = $('input[type=radio][name=Radio1].active').val();
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+
+        $("#incidentListTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/IncidentList/IncidentList/IncidentList_print")',
+            data: JSON.stringify({ 'type': type, 'startDate': startDate, 'endDate': endDate }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#incidentListTable>tbody').append(data);
+
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function PrintTable() {
+        var NewTabledata1 = $('#printDivData .removefromtable').remove();
+        var newdata = $('#printDivData').html();
+
+        var printWindow = window.open('', '', 'width=1000,height=1000,location=no,left=200px');
+        printWindow.document.open();
+        printWindow.document.write('<html><head><title></title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write('<style>.td-border{border:1px solid #999999;padding:10px;}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead {font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; }</style>');
+        printWindow.document.write(newdata);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+        printWindow.close();
+
+    }
+
+    function PreviewTable() {
+        var NewTabledata1 = $('#printDivData .removefromtable').remove();
+        var newdata = $('#printDivData').html();
+        var printWindow = window.open('', '', 'width=1000,height=1000,location=no,left=200px');
+        printWindow.document.open();
+        printWindow.document.write('<html><head><title></title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write('<style>.td-border{border:1px solid #999999;padding:10px;}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead {font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; }</style>');
+        printWindow.document.write(newdata);
+        printWindow.document.write('</body></html>');
+    }
+    function SaveASPDFTable() {
+        var NewTabledata = $('#incidentListTable .removefromtable').remove();
+        var NewTabledata1 = $('#incidentListTable').html();
+        $('#newtable').html(NewTabledata1);
+        var data = [], fontSize = 8, height = 0, doc;
+        doc = new jsPDF('p', 'pt', 'a4', true);
+        doc.setFont("times", "normal");
+        doc.setFontSize(fontSize);
+
+        data = [];
+        data = doc.tableToJson('newtable');
+        height = doc.drawTable(data, {
+            xstart: 10,
+            ystart: 10,
+            tablestart: 40,
+            marginleft: 10,
+            xOffset: 10,
+            yOffset: 15
+        });
+
+        doc.save("IncidentList.pdf");
+
+    }
+    $('#SendEmail').click(function () {
+        var NewTabledata1 = $('#printDivData .removefromtable').remove();
+        var newdata = $('#printDivData').html();
+        $('#Attachment').html(newdata);
+    });
+
+    $('#SendEmailData').click(function () {
+        if ($("#To").val() == "") {
+            alert("Enter email address.");
+        }
+        else {
+            if (!ValidateEmail($("#To").val())) {
+                alert("Invalid email address.");
+            }
+            else {
+                var NewTabledata1 = $('#printDivData .removefromtable').remove();
+                var newdata = $('#printDivData').html();
+                html2canvas($("#printDivData"), {
+                    onrendered: function (canvas) {
+                        var myImage = canvas.toDataURL("img/png");
+
+                        var Subject = $('#Subject').val();
+                        var Desciption = $('#Desciption').val();
+                        var To = $('#To').val();
+                        var pic = myImage.replace(/^data:image\/png;base64,/, "")
+                        var Attachment = pic;
+                        $.ajax({
+                            url: '@Url.Content("~/Events/Event/SendEmailData")',
+                            data: JSON.stringify({ 'Attachment': Attachment, 'Subject': Subject, 'Desciption': Desciption, 'To': To }),
+                            type: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (data) {
+                                $('.close').click();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+
+    function ValidateEmail(email) {
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        return expr.test(email);
+    };
+</script>
+<table id="newtable" style="display: none;"></table>
+
+<div id="newdata"><table></table></div>

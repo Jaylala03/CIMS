@@ -1,0 +1,212 @@
+﻿@model CIMS.Models.EmployeeIncidentModel
+
+<style>
+    .cmbEmp {
+        pointer-events: none;
+        opacity: 0.65;
+    }
+</style>
+
+
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix custom-head">
+        <h3 class="box-title m-b-0">Employee Reports List</h3>
+        <button type="submit" class="btn btn-success pull-right" id="submitEmployee_button">Link Reports</button>
+        @*<div class="panel-options">
+            <div class="right-btn">
+
+                <a href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId+"")' class="btn btn-primary add"><i class="fa fa-plus"></i> Add Report</a>
+            </div>
+        </div>*@
+    </div>
+    <div id="msgDiv">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+
+            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+        }
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive col-md-12">
+            <table id="employeeTable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="desktop" style="text-align:center;">Select</th>
+                        <th>
+                            Image
+                        </th>
+                        <th>
+                            Employee
+                        </th>
+                        <th>
+                            Nature of incident
+                        </th>
+                        <th>
+                            Report Number
+                        </th>
+                        <th>
+                            Short Description
+                        </th>
+                        <th>
+                            Short description text
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                        @*<th>
+                            Reports CreatedBy (UserName)
+                        </th>*@
+                        @*<th>
+                            Creation Date
+                        </th>*@
+                        @*<th>Action</th>*@
+
+                    </tr>
+                </thead>
+                @if (Model.EmployeeIncidentList.Count() > 0)
+                {
+                    foreach (var items in Model.EmployeeIncidentList)
+                    {
+                        <tr class="empTR" data-id="@items.EmployeeId" style="cursor:pointer">
+                           
+                            @if (ViewBag.Action == 4 || ViewBag.Action == 5 || ViewBag.Action == 6 || ViewBag.Action == 7 || ViewBag.Action == 12 || ViewBag.Action == 13 || ViewBag.Action == 14 || ViewBag.Action == 15)
+                            {
+                                <td style="text-align:center;">
+                                    <input type="checkbox" name="chkemployeereports" id="chk'@items.IncidentID'" class="bigCheckbox"
+                                           data-employeeid="@items.EmployeeId" data-incidentid="@items.IncidentID" checked="@items.isLinkedEvent" />
+                                </td>
+                                <td style="width: 100px;">
+                                        <a href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + items.EmployeeId + "&Id=" + items.IncidentID + "")' title="Employee Report">
+                                            <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.ImagePath) ? items.ImagePath : (!String.IsNullOrEmpty(items.DefaultImage) ? Url.Content("~/assets/images/"+items.DefaultImage+"") : Url.Content("~/asset/plugins/images/no-image.jpg")))" />
+                                        </a>
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + items.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.FirstName @items.LastName</td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + items.EmployeeId + "&Id=" + items.IncidentID + "")'">
+                                    @items.NatureOfIncident
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + items.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.IncidentNumber</td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + items.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ShortDescriptionName</td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + items.EmployeeId + "&Id=" + items.IncidentID + "")'">@Html.Raw(@items.Description) </td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + items.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.Status</td>
+                                @*if (items.ReportCreatorUser == Session["UserName"].ToString())
+                                {
+                                    <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ReportCreatorUser</td>
+                                }
+                                else
+                                {
+                                    <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ReportCreatorUser</td>
+                                }
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ReportCreateDate</td>*@
+                            }
+                            else
+                            {
+                                <td style="text-align:center;">
+                                    <input type="checkbox" name="chkemployeereports" id="chk'@items.IncidentID'" class="bigCheckbox" checked="@items.isLinkedEvent" disabled />
+                                </td>
+                                <td style="width: 100px;">
+                                    <a href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + items.EmployeeId + "&Id=" + items.IncidentID + "")' title="Employee Report">
+                                        <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.ImagePath) ? items.ImagePath : (!String.IsNullOrEmpty(items.DefaultImage) ? Url.Content("~/assets/images/"+items.DefaultImage+"") : Url.Content("~/asset/plugins/images/no-image.jpg")))" />
+                                    </a>
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + items.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.FirstName @items.LastName</td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + items.EmployeeId + "&Id=" + items.IncidentID + "")'">
+                                    @items.NatureOfIncident
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + items.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.IncidentNumber</td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + items.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ShortDescriptionName</td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + items.EmployeeId + "&Id=" + items.IncidentID + "")'">@Html.Raw(@items.Description) </td>
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + items.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.Status</td>
+                                @*if (items.ReportCreatorUser == Session["UserName"].ToString())
+                                {
+                                    <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ReportCreatorUser</td>
+                                }
+                                else
+                                {
+                                    <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ReportCreatorUser</td>
+                                }
+                                <td onclick="document.location.href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=View&EmpId=" + Model.EmployeeId + "&Id=" + items.IncidentID + "")'">@items.ReportCreateDate</td>*@
+                            }
+                        </tr>
+                    }
+                }
+
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+
+@*<link href="~/Content/data-tables/dataTables.alphabetSearch.css" rel="stylesheet" />
+    <script src="~/Content/data-tables/dataTables.alphabetSearch.min.js"></script>*@
+<script>
+
+    $(document).ready(function () {
+        $("#employeeTable").dataTable();
+        SetFormView();
+    });
+    container = $('#msgDiv');
+    $('#submitEmployee_button').click(function (e) {
+        var tableControl = document.getElementById('employeeTable');
+        var arrayOfValues = [];
+        var isSubRptSelected = false;
+        var arr = [];
+
+        $('input:checkbox[name="chkemployeereports"]:checked', tableControl).each(function () {
+            isSubRptSelected = true;
+            arr.push({
+                employeeid: this.dataset.employeeid,
+                incidentid: this.dataset.incidentid
+            });
+
+        });
+        //if (!isSubRptSelected) {
+        //    alert('Please select employee reports.');
+        //    return false;
+        //}
+
+        e.preventDefault();
+
+        objs = JSON.stringify({ 'eventid': $('#EventID').val(), 'employeereports': arr });
+        //alert(objs);
+        $.ajax({
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'html',
+            type: 'POST',
+            url: '/Event/LinkEmployeeReports',
+            data: objs,
+            cache: false,
+            async: false,
+            beforeSend: function () {
+                // cog placed
+                container.html('<h1><i class="fa fa-cog fa-spin"></i> Loading...</h1>');
+            },
+            success: function (data) {
+                // update hash and avoid a third request since i already have 2 request
+                // i'm updating the content!
+                container.css({
+                    opacity: '0.0'
+                }).html('<div class="alert alert-success">' + JSON.parse(data) + '</div>').delay(50).animate({
+                    opacity: '1.0'
+                }, 300);
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                //var obj = JSON.parse(xhr.responseText);
+                //if (obj.error)
+                //{
+                container.html('<div class="alert alert-error">' + JSON.parse(data) + '</div>');
+                //}
+            }
+        });
+
+        return false; // keeps the page from not refreshing
+    });
+
+</script>

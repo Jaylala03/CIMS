@@ -1,0 +1,295 @@
+﻿@model CIMS.Models.MessageGroupsModel
+@{
+    ViewBag.Title = "MessageDistribution";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+@*<h2>MessageDistribution</h2>*@
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Messages</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Messages</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<div class="row">
+   
+        <div class="col-md-4">
+            <div class="white-box">
+                <h3>Distribution List</h3>
+                <div class="panel-body">
+                    <div class="table-responsive col-md-12">
+                        <div class="form-group">
+                        <select name="MessageGroupTable" id="MessageGroupTable" size="5" class="form-control" style="width: 411px; height: 200px;"></select>
+                            </div>
+                        <div class="form-group">
+                            <label class="control-label">Group Name </label>
+                            <input type="text" id="GroupName" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" id="btnAddGroup" value="Add" class="btn btn-primary" onclick="AddGroup();" />
+                            @*<button onclick="AddGroup();" type="button" class="btn btn-primary">Add</button>*@
+                            <button onclick="DeleteGroup();" type="button" class="btn btn-danger">Delete</button>
+                            <button type="reset" id="ResetButton" class="btn btn-white">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="col-md-4">
+        <div class="white-box" style="min-height:500px;">
+            <div class="col-md-12">
+                <h3>Members</h3>
+            </div>
+            <div class="panel-body">
+                <select name="MembersTable" multiple="multiple" id="MembersTable" size="5" class="form-control" style="width: 411px; height: 200px;"></select>
+                <label id="DeletedName" style="visibility:hidden"></label>
+                <label id="DeletedUserId" style="visibility:hidden"></label>
+            </div>
+        </div>
+    </div>
+
+        <div class="col-md-1">
+            <div class="white-box custom-top-margin">
+                <button onclick="AddMemberGroup();" type="button" class="btn btn-success"> << </button>
+                <br />
+                <button onclick="DeleteMember();" type="button" class="btn btn-danger"> >> </button>
+
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="white-box" style="min-height:500px;">
+                <div class="col-md-12">
+                    <h3> All Users</h3>
+                </div>
+                <div class="panel-body">
+
+                    @Html.ListBox("userList", new MultiSelectList(Model.userList, "UserID", "FullName"))
+
+
+                    <div class="table-responsive col-md-12">
+                        <table id="AllUsersTable" class="table table-bordered dataTable no-footer">
+                            <tbody>
+                                <tr></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <label id="SelectedName" style="visibility:hidden"></label>
+                    <label id="SelectedUserId" style="visibility:hidden"></label>
+                    <input type="hidden" id="oldGroupName" name="oldGroupName" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        LoadGroup();
+        LoadMembers();
+        $('#ResetButton').click(function () {
+            Reset();
+        });
+    });
+    function Fillgroup(GroupName) {
+
+        $("#GroupName").val(GroupName);
+        $("#btnAddGroup").val('Update');
+        $("#oldGroupName").val(GroupName);
+        LoadMembers();
+
+    }
+    function SelectUser(SelectedName, UserId) {
+        $("#SelectedName").text(SelectedName);
+        $("#SelectedUserId").text(UserId);
+    }
+    function SelectUserToDelete(SelectedName, UserId) {
+        $("#DeletedName").text(SelectedName);
+        $("#DeletedUserId").text(UserId);
+    }
+    function Reset() {
+        $('#GroupName').val('');
+        $("#oldGroupName").val('');
+        $("#btnAddGroup").val('Add');
+        LoadGroup();
+        LoadMembers();
+    }
+
+    function DeleteMember() {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            var groupName = $("#GroupName").val();
+            var UserId = $("#MembersTable").val();
+            var values = [];
+            values.push(UserId);
+            var datacolumn = values.join(',');
+            $.ajax({
+                url: '@Url.Content("~/Messages/Messages/MessageGroups_DeleteByGroupName")',
+                data: JSON.stringify({ 'GroupName': groupName, 'userID': datacolumn }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#GroupName').val('');
+                        $('#msgDiv').html('<div class="alert alert-success">Member has been deleted Suceesfully.</div>');
+                        LoadMembers();
+                    }
+                    else {
+                        $('#msgDiv').html('<div class="alert alert-success">Member has been deleted Suceesfully.</div>');
+                    }
+                }
+            });
+        }
+    }
+
+    function LoadMembers() {
+        var groupName = $("#GroupName").val();
+        $.ajax({
+            url: '@Url.Content("~/Messages/Messages/Load_MessageMembers")',
+            data: JSON.stringify({ 'GroupName': groupName }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                if (data.length > 0) {
+                    $("#MembersTable").html("");
+                    $('#MembersTable').append(data);
+                }
+                else { $("#MembersTable").html(""); }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function LoadGroup() {
+
+        $("#MessageGroupTable").html("");
+        $.ajax({
+            url: '@Url.Content("~/Messages/Messages/LoadMessageDistribution")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#MessageGroupTable').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function AddMemberGroup() {
+        var GroupName = $("#GroupName").val();
+        var UserId = $("#userList").val();
+        var values = [];
+        values.push(UserId);
+        var datacolumn = values.join(',');
+        if (UserId == "") {
+            alert("Please select a user");
+            return;
+        }
+        else if (GroupName == "") {
+            alert("Please select a Group Name");
+            return;
+        }
+        else {
+            $.ajax({
+                url: '@Url.Content("~/Messages/Messages/MessageGroups_Insert")',
+                data: JSON.stringify({ 'GroupName': GroupName, 'UserID': datacolumn }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Message Group has been added Suceesfully.</div>');
+                        LoadMembers();
+                    }
+                    else {
+                        $('#msgDiv').html('<div class="alert alert-success">Error in request.</div>');
+                    }
+                }
+            });
+        }
+    }
+
+    function DeleteGroup() {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            var GroupName = $("#GroupName").val();
+            $.ajax({
+                url: '@Url.Content("~/Messages/Messages/MessageGroups_DeleteByGroup")',
+                data: JSON.stringify({ 'GroupName': GroupName }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Message Group has been deleted Suceesfully.</div>');
+                        LoadGroup();
+                        LoadMembers();
+                        $('#GroupName').val('');
+                    }
+                    else {
+                        $('#msgDiv').html('<div class="alert alert-success">Message Group has been deleted Suceesfully.</div>');
+                    }
+                }
+            });
+        }
+    }
+
+
+    function AddGroup() {
+        var groupName = $("#GroupName").val();
+        var oldGroupName = $("#oldGroupName").val();
+
+        if (groupName == "") {
+            alert("Please select a Group Name");
+            return;
+        }
+        else {
+            $.ajax({
+                url: '@Url.Content("~/Messages/Messages/MessageGroups_AddEdit")',
+                data: JSON.stringify({ 'GroupName': groupName, 'oldGroupName': oldGroupName }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Message Group has been added Suceesfully.</div>');
+                        LoadGroup();
+                        LoadMembers();
+                        $('#GroupName').val('');
+                    }
+                    else {
+                        $('#msgDiv').html('<div class="alert alert-success">Error in request.</div>');
+                    }
+                }
+            });
+        }
+    }
+</script>

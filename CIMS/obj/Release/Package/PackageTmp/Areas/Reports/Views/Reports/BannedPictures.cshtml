@@ -1,0 +1,459 @@
+﻿@model CIMS.Models.ReportsModel
+@{
+    ViewBag.Title = "BannedPictures";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+@*<h2>BannedPictures</h2>
+*@
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+<script src="~/assets/js/Jspdf/FileSaver.js"></script>
+<script src="~/assets/js/Jspdf/jspdf.js"></script>
+<script src="~/assets/js/Jspdf/jspdfplugintable.js"></script>
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Banned Pictures</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Banned Pictures</li>
+        </ol>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="col-md-12">
+            <div class="white-box clearfix">
+                <div class="col-md-12">
+                    <fieldset>
+                        <legend>Banned End Date Between</legend>
+                        <div class="form-group clearfix">
+                            <label class="control-label col-md-2  col-sm-3">Start Date </label>
+                            <div class="col-md-3  col-sm-4">
+                                <input type="text" id="startDate" name="startDate" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group clearfix">
+                            <label class="control-label col-md-2  col-sm-3">End Date </label>
+                              <div class="col-md-3  col-sm-4">
+                            <input type="text" id="endDate" name="endDate" class="form-control" />
+                              </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="col-md-12 top-10">
+                    <fieldset>
+                        <legend>Type of Ban</legend>
+
+                        <input type="hidden" value="@Model.BanTypeList" name="Count" id="BannedList" />
+
+                        @for (int i = 0; i < Model.BanTypeList.ToList().Count; i++)
+                        {
+                            if (Model.BanTypeList != null && Model.BanTypeList.Count > 0)
+                            {
+
+
+                                if (Model.BanTypeList.Where(m => m.Text == Model.BanTypeList[i].Text).FirstOrDefault() != null)
+                                {
+                                    <input type="checkbox" id="BanTypeList_(@i)__TypeOfBan" name="BanTypeList[@i].TypeOfBan" value="@Model.BanTypeList[i].Text" />
+                        }
+                                else
+                                {
+                                    <input type="checkbox" id="BanTypeList_(@i)__TypeOfBan" name="BanTypeList[@i].TypeOfBan" value="@Model.BanTypeList[i].Text" />
+
+                        }
+
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="BanTypeList_(@i)__TypeOfBan" name="BanTypeList[@i].TypeOfBan" value="@Model.BanTypeList[i].Text" />
+
+                        }
+
+
+                            <input type="hidden" id="BanTypeList_(@i)__Text" name="BanTypeList[@i].__Text" value="@Model.BanTypeList[i].Text" />
+                        @Model.BanTypeList[i].Text
+                        <br />
+
+                        }
+
+                    </fieldset>
+                </div>
+                <br />
+                <div class="col-md-12 top-10">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success" id="PrintBanPicSubmit">Print</button>
+                        <button type="button" class="btn btn-primary" id="PreviewBannedPicSubmit">Preview</button>
+                        <a href="#myModalSendEmail" data-toggle="modal" class="btn btn-info" style="padding: 7px 8px;" id="SendEmailBannedPic">Send Email</a>
+                        <button type="button" class="btn btn-warning" id="PdfBannedPicSubmit">Save As Pdf</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Send Email Model-->
+<div class="modal fade" id="myModalSendEmail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Send Email</h4>
+            </div>
+
+            <div class="modal-body row">
+                <div class="col-md-12 right-label">
+                    <div class="form-group clearfix">
+                        @Html.Label("To", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="To" id="ToBan" class="form-control">
+                            <label id="EmailTo" style="color: red;"></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Subject", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Subject" id="SubjectBan" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Desciption", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Desciption" id="DesciptionBan" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12 text-right">
+                        <button type="submit" class="btn btn-success" id="SendEmailBanPicData">Send Email</button>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="BannedPicture-log">
+
+                        <div class="table-responsive">
+                            <div id="AttachmentBannedPic"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+<!-- /.Send Email Model-->
+
+
+<div id="PrintBannedPicdiv" style="text-align: center; border: 1px solid #ccc; display: none;">
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#startDate').datepicker();
+        $('#endDate').datepicker();
+    });
+
+    $('input:checkbox').change(function () {
+        if ($(this).is(':checked'))
+            $(this).addClass('selectedBan');
+        else
+            $(this).removeClass('selectedBan');
+
+    });
+
+    //print--
+    $('#PrintBanPicSubmit').click(function () {
+        var values = [];
+        $('.selectedBan').each(function () {
+            values.push($(this).val());
+        });
+
+        var datacolumn = values.join(',');
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        $.ajax({
+            url: '@Url.Content("~/Reports/Reports/BannedPictures_print")',
+            data: JSON.stringify({ 'startDate': startDate, 'endDate': endDate, 'datacolumn': datacolumn }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var Column = datacolumn.split(',');
+
+                var sOut = '<table id="dynamicTable" style="border-collapse:collapse"><thead><tr class="head-bg">';
+
+                sOut += '</tr><thead><tbody>';
+                for (var i = 0; i < data.length; i += 1) {
+                    if (data[i]["Picture"] == null) {
+                        Picture = "No Picture"
+                    }
+                    else {
+                        Picture = data[i]["Picture"];
+                    }
+                    sOut += '<tr><td class="td-border" height="150" width="200" align="center">' + Picture + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Name:' + data[i]["FirstName"] + ' ' + data[i]["MiddleName"] + '' + data[i]["LastName"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Race:' + data[i]["Race"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Sex:' + String(data[i]["Sex"]) + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Status:' + data[i]["Status"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Type of Ban:' + data[i]["BanName"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Start Date:' + data[i]["StartDate"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">End Date:' + data[i]["EndDate"] + '</td></tr>';
+                }
+                sOut += '<tbody></table>';
+                $('#PrintBannedPicdiv').html(sOut);
+                var divContents = $('#PrintBannedPicdiv').html();
+                var printWindow = window.open('', '_blank', 'width=350,height=150,location=no,left=200px');
+                printWindow.document.open();
+                printWindow.document.write('<html><head><title></title>');
+                printWindow.document.write('</head><body >');
+                printWindow.document.write('<style>.head-bg{background:#f2f2f2}.td-border{outline:1px solid #ccc;padding:5px}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+                printWindow.document.write(divContents);
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.print();
+
+
+                printWindow.close();
+
+
+
+
+            }
+        });
+
+    });
+
+    //Preview
+    $('#PreviewBannedPicSubmit').click(function () {
+        var values = [];
+        $('.selectedBan').each(function () {
+            values.push($(this).val());
+        });
+
+        var datacolumn = values.join(',');
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        $.ajax({
+            url: '@Url.Content("~/Reports/Reports/BannedPictures_print")',
+            data: JSON.stringify({ 'startDate': startDate, 'endDate': endDate, 'datacolumn': datacolumn }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var Column = datacolumn.split(',');
+
+                var sOut = '<table id="dynamicTable" style="border-collapse:collapse"><thead><tr class="head-bg">';
+
+                sOut += '</tr><thead><tbody>';
+
+                for (var i = 0; i < data.length; i += 1) {
+
+                    if (data[i]["Picture"] == null) {
+                        Picture = "No Picture"
+                    }
+                    else {
+                        Picture = data[i]["Picture"];
+                    }
+                    sOut += '<tr><td class="td-border" height="150" width="200" align="center">' + Picture + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Name:' + data[i]["FirstName"] + ' ' + data[i]["MiddleName"] + '' + data[i]["LastName"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Race:' + data[i]["Race"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Sex:' + String(data[i]["Sex"]) + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Status:' + data[i]["Status"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Type of Ban:' + data[i]["BanName"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Start Date:' + data[i]["StartDate"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">End Date:' + data[i]["EndDate"] + '</td></tr>';
+                }
+                sOut += '<tbody></table>';
+
+                $('#PrintBannedPicdiv').html(sOut);
+
+                var divContents = $('#PrintBannedPicdiv').html();
+
+                var printWindow = window.open('', '_blank', 'width=350,height=150,location=no,left=200px');
+                printWindow.document.open();
+                printWindow.document.write('<html><head><title></title>');
+                printWindow.document.write('</head><body >');
+                printWindow.document.write('<style>.head-bg{background:#f2f2f2}.td-border{outline:1px solid #ccc;padding:5px}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+                printWindow.document.write(divContents);
+                printWindow.document.write('</body></html>');
+
+            }
+        });
+
+    });
+
+
+    // Email
+    $('#SendEmailBannedPic').click(function () {
+        var values = [];
+        $('.selectedBan').each(function () {
+            values.push($(this).val());
+        });
+
+        var datacolumn = values.join(',');
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        $.ajax({
+            url: '@Url.Content("~/Reports/Reports/BannedPictures_print")',
+            data: JSON.stringify({ 'startDate': startDate, 'endDate': endDate, 'datacolumn': datacolumn }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var Column = datacolumn.split(',');
+
+                var sOut = '<table id="dynamicTable" style="border-collapse:collapse"><thead><tr class="head-bg">';
+                sOut += '</tr><thead><tbody>';
+
+                for (var i = 0; i < data.length; i += 1) {
+                    if (data[i]["Picture"] == null) {
+                        Picture = "No Picture"
+                    }
+                    else {
+                        Picture = data[i]["Picture"];
+                    }
+                    sOut += '<tr><td class="td-border" height="150" width="200" align="center">' + Picture + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Name:' + data[i]["FirstName"] + ' ' + data[i]["MiddleName"] + '' + data[i]["LastName"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Race:' + data[i]["Race"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Sex:' + String(data[i]["Sex"]) + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Status:' + data[i]["Status"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Type of Ban:' + data[i]["BanName"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Start Date:' + data[i]["StartDate"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">End Date:' + data[i]["EndDate"] + '</td></tr>';
+                }
+                sOut += '<tbody></table>';
+
+                $('#PrintBannedPicdiv').html(sOut);
+
+                var divContents = $('#PrintBannedPicdiv').html();
+                $('#AttachmentBannedPic').html(divContents);
+
+            }
+        });
+    });
+
+    $('#SendEmailBanPicData').click(function () {
+        if ($("#ToBan").val() == "") {
+            alert("Enter email address.");
+        }
+        else {
+            if (!ValidateEmail($("#ToBan").val())) {
+                alert("Invalid email address.");
+            }
+            else {
+                html2canvas($("#AttachmentBannedPic"), {
+                    onrendered: function (canvas) {
+                        var myImageBan = canvas.toDataURL("img/png");
+
+                        var Subject = $('#SubjectBan').val();
+                        var Desciption = $('#DesciptionBan').val();
+                        var To = $('#ToBan').val();
+                        var picBan = myImageBan.replace(/^data:image\/png;base64,/, "")
+                        var Attachment = picBan;
+
+                        $.ajax({
+                            url: '@Url.Content("~/Events/Event/SendEmailData")',
+                            data: JSON.stringify({ 'Attachment': Attachment, 'Subject': Subject, 'Desciption': Desciption, 'To': To }),
+                            type: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (data) {
+                                $('.close').click();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+
+    function ValidateEmail(email) {
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        return expr.test(email);
+    };
+
+    // PDF
+    $('#PdfBannedPicSubmit').click(function () {
+        var values = [];
+        $('.selectedBan').each(function () {
+            values.push($(this).val());
+        });
+
+        var datacolumn = values.join(',');
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        $.ajax({
+            url: '@Url.Content("~/Reports/Reports/BannedPictures_print")',
+            data: JSON.stringify({ 'startDate': startDate, 'endDate': endDate, 'datacolumn': datacolumn }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var Column = datacolumn.split(',');
+
+                var sOut = '<table id="dynamicTable" style="border-collapse:collapse"><thead><tr class="head-bg">';
+                sOut += '</tr><thead><tbody>';
+
+                for (var i = 0; i < data.length; i += 1) {
+                    if (data[i]["Picture"] == null) {
+                        Picture = "No Picture"
+                    }
+                    else {
+                        Picture = data[i]["Picture"];
+                    }
+                    sOut += '<tr><td class="td-border" height="150" width="200" align="center">' + Picture + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Name:' + data[i]["FirstName"] + ' ' + data[i]["MiddleName"] + '' + data[i]["LastName"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Race:' + data[i]["Race"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Sex:' + String(data[i]["Sex"]) + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Status:' + data[i]["Status"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Type of Ban:' + data[i]["BanName"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Start Date:' + data[i]["StartDate"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">End Date:' + data[i]["EndDate"] + '</td></tr>';
+                }
+                sOut += '<tbody></table>';
+
+                $('#PrintBannedPicdiv').html(sOut);
+
+                var htmldata = $('#PrintBannedPicdiv').html();
+
+                $('#dynamicTable').html(htmldata);
+
+                var data = [], fontSize = 12, height = 0, doc;
+                doc = new jsPDF('p', 'pt', 'a4', true);
+                doc.setFont("times", "normal");
+                doc.setFontSize(fontSize);
+
+                data = [];
+                data = doc.tableToJson('dynamicTable');
+                height = doc.drawTable(data, {
+                    xstart: 10,
+                    ystart: 10,
+                    tablestart: 40,
+                    marginleft: 10,
+                    xOffset: 10,
+                    yOffset: 15
+                });
+                doc.save("BannedPictures.pdf");
+
+            }
+        });
+    });
+
+</script>
+
+

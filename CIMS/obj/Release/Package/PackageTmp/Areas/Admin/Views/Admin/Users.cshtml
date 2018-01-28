@@ -1,0 +1,92 @@
+﻿@model CIMS.Models.ManageUserModel
+@{
+   Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Users</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Users</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix custom-head">
+                <h3 class="box-title m-b-0">Users List</h3>
+
+
+                <div class="panel-options">
+                    <div class="right-btn">
+
+                        <a href='/Admin/Admin/ManageUsers'  class="btn btn-primary " ><i class="fa fa-plus"></i> Add User</a>
+                    </div>
+                </div>
+            </div>
+            @if (Model.UserList != null && Model.UserList.Count > 0)
+            {
+                <div class="panel-body"> 
+                <div class="table-responsive">
+                    <table id="employeeTable" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Initials</th>
+                                <th>Gaming ID</th>
+                                <th>User Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var itm in Model.UserList)
+                    {
+                    <tr>
+                        <td>@itm.FirstName</td>
+                        <td>@itm.LastName</td>
+                        <td>@itm.Initials</td>
+                        <td>@itm.UnitID</td>
+                        <td>@itm.UserName</td>
+                        <td>
+                            <a href='/Admin/Admin/ManageUsers?Id=@itm.ID' class="btn btn-info small btn-sm btn-icon" title="Edit Role"><i class="fa fa-pencil"></i></a>
+                            <a class="btn btn-danger btn-sm delete-sm  small" href='javascript:;' onclick='DeleteRole(@itm.ID,this);' title="Delete Role"><i class='fa fa-trash'></i></a>
+                        </td>
+                    </tr>
+                    }
+                        </tbody>
+                    </table>
+                </div>
+                    </div>
+            }
+            else
+            {
+                <div>No Record Found</div>
+            }
+
+            </div>
+        </div>
+    </div>
+
+
+
+        
+

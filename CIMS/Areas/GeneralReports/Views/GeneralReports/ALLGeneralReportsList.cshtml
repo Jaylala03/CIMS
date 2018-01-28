@@ -1,0 +1,188 @@
+﻿@model CIMS.Models.GeneralReportsModel
+
+<link href="~/Content/Custom.css" rel="stylesheet" />
+
+<style>
+    .alphabet {
+        display: none !important;
+    }
+</style>
+
+@*<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">General Reports List</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">General Reports List</li>
+        </ol>
+    </div>
+</div>*@
+
+<div class="panel panel-default">
+    <div class="panel-heading  custom-head">
+        <h3 class="box-title m-b-0">General Reports List</h3>
+        <button type="submit" class="btn btn-success pull-right" id="submitGenReports_button">Link Reports</button>
+        @*<div class="panel-options">
+            <div class="right-btn">
+                <a href='@Url.Content("~/GeneralReports/GeneralReports/Index")' class="btn btn-primary add"><i class="fa fa-plus"></i> Add General Reports</a>
+            </div>
+        </div>*@
+    </div>
+
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="generalReportsTable" class="table table-bordered Tableview">
+                <thead>
+                    <tr>
+                        <th class="desktop header" style="text-align:center;">Select</th>
+                        <th class="header">
+                            Media
+                        </th>
+                        <th class="header">
+                            Nature of incident
+                        </th>
+                        <th class="header headerSortDown">
+                            Report Number
+                        </th>
+                        <th class="header">
+                            Short Description
+                        </th>
+                        <th class="header">
+                            Short description text
+                        </th>
+                        <th class="header">
+                            Status
+                        </th>
+                        @*<th class="header">
+                            Reports CreatedBy (UserName)
+                        </th>*@
+                        @*<th>Action</th>*@
+
+                    </tr>
+                </thead>
+                @if (Model.ListGeneralReports.Count() > 0)
+                {
+                    foreach (var items in Model.ListGeneralReports)
+                    {
+                        <tr class="subTR" data-id="@items.ReportID" style="cursor:pointer">
+                            <td style="text-align:center;">
+                                <input type="checkbox" name="chkgeneralreports" id="chk'@items.ReportID'" class="bigCheckbox"
+                                       data-reportid="@items.ReportID" checked="@items.isLinkedEvent" />
+                            </td>
+                            <td>
+                                <a href='@Url.Content("~/GeneralReports/GeneralReports/Index?Show=View&Id=" + items.ReportID + "")' title="View General Report">
+                                    @*Ankur New 1*@
+                                    <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.DefaultImage) ? Url.Content("~/assets/images/"+items.DefaultImage+"") : Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                </a>
+                            </td>
+                            <td onclick="document.location.href='@Url.Content("~/GeneralReports/GeneralReports/Index?Show=View&Id=" + items.ReportID + "")'">
+                                @items.NatureOfEvent
+                            </td>
+                            <td onclick="document.location.href='@Url.Content("~/GeneralReports/GeneralReports/Index?Show=View&Id=" + items.ReportID + "")'">@items.ReportNumber</td>
+                            <td onclick="document.location.href='@Url.Content("~/GeneralReports/GeneralReports/Index?Show=View&Id=" + items.ReportID + "")'">@items.ShortDescriptorName</td>
+                            <td onclick="document.location.href='@Url.Content("~/GeneralReports/GeneralReports/Index?Show=View&Id=" + items.ReportID + "")'">@Html.Raw(@items.Description) </td>
+                            <td onclick="document.location.href='@Url.Content("~/GeneralReports/GeneralReports/Index?Show=View&Id=" + items.ReportID + "")'">@items.StatusName</td>
+                            @*@if (items.UserName == Session["UserName"].ToString())
+                            {
+                                <td onclick="document.location.href='@Url.Content("~/GeneralReports/GeneralReports/Index?Show=View&Id=" + items.ReportID + "")'">Me</td>
+                            }
+                            else
+                            {
+                                <td onclick="document.location.href='@Url.Content("~/GeneralReports/GeneralReports/Index?Show=View&Id=" + items.ReportID + "")'">@items.UserName</td>
+                            }*@
+                        </tr>
+                    }
+                }
+
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+<link href="~/Content/data-tables/dataTables.alphabetSearch.css" rel="stylesheet" />
+<script src="~/Content/data-tables/dataTables.alphabetSearch.min.js"></script>
+<script src="~/Content/Custom.js"></script>
+<script type="text/javascript">
+        $(document).ready(function () {
+            var table = $('#generalReportsTable').DataTable({
+                dom: 'Alfrtip',
+                alphabetSearch: {
+                    column: 3
+                },
+            });
+            SetFormView();
+
+            $(document).on('click', '.empty', function () { $('#generalReportsTable>tbody tr.alphabet_group').remove(); });
+            $(document).on('click', '.data', function () { $('#generalReportsTable>tbody tr.alphabet_group').remove(); });
+            $(document).on('click', '.active', function () { $('#generalReportsTable>tbody tr.alphabet_group').remove(); });
+            $(document).on('keyup', '#generalReportsTable_filter input[type=search]', function () {
+                $(document).find('.alphabet-clear').click();
+            });
+        });
+        container = $('#msgDiv');
+        $('#submitGenReports_button').click(function (e) {
+            var tableControl = document.getElementById('generalReportsTable');
+            var arrayOfValues = [];
+            var isSubRptSelected = false;
+            var arr = [];
+
+            $('input:checkbox[name="chkgeneralreports"]:checked', tableControl).each(function () {
+                isSubRptSelected = true;
+                arr.push({
+                    reportid: this.dataset.reportid
+                });
+
+            });
+            //if (!isSubRptSelected) {
+            //    alert('Please select general reports.');
+            //    return false;
+            //}
+
+            e.preventDefault();
+
+            objs = JSON.stringify({ 'eventid': $('#EventID').val(), 'generalreports': arr });
+            //alert(objs);
+            $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'html',
+                type: 'POST',
+                url: '/Event/LinkGeneralReports',
+                data: objs,
+                cache: false,
+                async: false,
+                beforeSend: function () {
+                    // cog placed
+                    container.html('<h1><i class="fa fa-cog fa-spin"></i> Loading...</h1>');
+                },
+                success: function (data) {
+                    // update hash and avoid a third request since i already have 2 request
+                    // i'm updating the content!
+                    container.css({
+                        opacity: '0.0'
+                    }).html('<div class="alert alert-success">' + JSON.parse(data) + '</div>').delay(50).animate({
+                        opacity: '1.0'
+                    }, 300);
+
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    //var obj = JSON.parse(xhr.responseText);
+                    //if (obj.error)
+                    //{
+                    container.html('<div class="alert alert-error">' + JSON.parse(data) + '</div>');
+                    //}
+                }
+            });
+
+            return false; // keeps the page from not refreshing
+        });
+</script>
+<style>
+    .alphabet_group {
+        display: none;
+    }
+</style>
+

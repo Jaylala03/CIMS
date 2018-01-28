@@ -1,0 +1,931 @@
+﻿@model CIMS.Models.SubjectModel
+
+@{
+    ViewBag.Title = "SearchInSubject";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+<link href="~/Content/crop-avatar/css/cropper.css" rel="stylesheet" />
+<link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script src="~/Content/crop-avatar/js/cropper.js"></script>
+<link href="~/Content/Custom.css" rel="stylesheet" />
+
+<style>
+    .cmbSub {
+        pointer-events: none;
+        opacity: 0.40;
+    }
+
+    .alphabet_group {
+        display: none;
+    }
+
+    .dataTables_filter {
+        display: none;
+    }
+
+    .alphabet {
+        display: none !important;
+    }
+</style>
+
+<style>
+    .cmbEmp {
+        pointer-events: none;
+        opacity: 0.40;
+    }
+
+    .dataTables_filter {
+        display: none;
+    }
+
+    .alphabet {
+        display: none !important;
+    }
+
+    #subjectTable_length {
+        display: none !important;
+    }
+
+    #subjectTable_filter {
+        display: none !important;
+    }
+</style>
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Search Subject</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Search Subject</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="col-md-12">
+            <div class="white-box clearfix">
+                <ul class="nav nav-pills custom-tabs" id="myTab">
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                    {
+                        <li class="active">
+                            <a href='@Url.Action("SearchInSubject")'>
+                                <span>Subject</span>
+                            </a>
+                        </li>
+                    }
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Addresses", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                    {
+                        <li class="">
+                            <a href="@Url.Action("SearchInSubjectAddress")">
+                                <span>Addresses</span>
+                            </a>
+                        </li>
+                    }
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Aliases", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                    {
+                        <li class="">
+                            <a href="@Url.Action("SearchInSubjectAlias")">
+                                <span>Aliases</span>
+                            </a>
+                        </li>
+                    }
+                    @*Ankur New 1*@
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Aliases", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                    {
+                        <li class="">
+                            <a href='@Url.Action("SearchInSubjectFeatures")'>
+                                <span>Features</span>
+                            </a>
+                        </li>
+                    }
+                    @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Aliases", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                    {
+                        <li class="">
+                            <a href='@Url.Action("SearchInWatchList")'>
+                                <span>Watch List</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+
+        <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+        <input type="hidden" id="hdType" name="hdType" value='@(Request.QueryString["Type"])' />
+
+
+    </div>
+</div>
+<div class="row">
+    @using (Html.BeginForm("SearchInSubject", "Subject", FormMethod.Post, new { area = "Subject", id = "SubjectAddress" }))
+    {
+        @Html.AntiForgeryToken()
+
+
+        <div class="tab-pane active" id="Subject">
+            <div class="large-title">Subject </div>
+            <div class="col-md-6">
+                <div class="white-box clearfix">
+                    <div class="row">
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.VIP, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(m => m.VIP, new { @class = "form-control", @onkeypress = "return isNumber(event)" })
+                            </div>
+                        </div>
+
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.FirstName, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.MiddleName, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(m => m.MiddleName, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.LastName, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.Sex, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.Sex, ViewBag.lstGender as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.Race, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.Race, ViewBag.lstRace as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.Eyes, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.Eyes, ViewBag.lstEyes as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="white-box clearfix" style="min-height:665px;">
+                    <div class="row">
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.Build, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.Build, ViewBag.lstBuild as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.Complexion, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.Complexion, ViewBag.lstComplexion as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.DateOfBirth, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(m => m.DateOfBirth, new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.HairLength, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.HairLength, ViewBag.lstHairLength as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.HairColor, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.HairColor, ViewBag.lstHairColor as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+
+
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.FacialHair, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.FacialHair, ViewBag.lstFacial as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="white-box clearfix">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-success">Search</button>
+                        <button type="reset" class="btn btn-white">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    }
+    <div class="large-title">Result </div>
+    <div class="white-box clearfix">
+        <div class="table-responsive table-fixes col-md-12">
+            <table id="subjectTable" class="table table-bordered Tableview">
+                <thead>
+                    <tr>
+                        <th class="header">Image</th>
+                        <th class="header">First Name</th>
+                        <th class="header">Last Name</th>
+                        <th class="header">ID #</th>
+                        <th class="header headerSortDown">
+                            Created Date
+                        </th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model != null && Model.SubjectList.Count > 0)
+                    {
+                        foreach (var itm in Model.SubjectList)
+                        {
+                            <tr class="subjectTR" data-id="@itm.SubjectID" style="cursor:pointer">
+                                @if (ViewBag.Action == 4 || ViewBag.Action == 5 || ViewBag.Action == 6 || ViewBag.Action == 7 || ViewBag.Action == 12 || ViewBag.Action == 13 || ViewBag.Action == 14 || ViewBag.Action == 15)
+                                {
+
+                                <td style="width: 100px;">
+                                    <a href='@Url.Content("~/Subject/Subject/AddSubject?Type=Subject&Id="+itm.SubjectID+"")'>
+                                        <img style="width: 100px;" src="@(!String.IsNullOrEmpty(itm.FilePath) ? itm.FilePath: Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                    </a>
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Type=Subject&Id=" + itm.SubjectID + "")'">@itm.FirstName</td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Type=Subject&Id=" + itm.SubjectID + "")'">@itm.LastName</td>
+
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Type=Subject&Id=" + itm.SubjectID + "")'">@itm.VIP</td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Type=Subject&Id=" + itm.SubjectID + "")'">
+
+                                    @itm.ModifiedDate
+
+                                </td>
+
+                                }
+                                else
+                                {
+
+                                <td style="width: 100px;">
+                                    <a href='@Url.Content("~/Subject/Subject/AddSubject?Type=&Show=View&Subject&Id="+itm.SubjectID+"")'>
+                                        <img style="width: 100px;" src="@(!String.IsNullOrEmpty(itm.FilePath) ? itm.FilePath: Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                    </a>
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Show=View&Type=Subject&Id=" + itm.SubjectID + "")'">@itm.FirstName</td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Show=View&Type=Subject&Id=" + itm.SubjectID + "")'">@itm.LastName</td>
+
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Show=View&Type=Subject&Id=" + itm.SubjectID + "")'">@itm.VIP</td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/AddSubject?Show=View&Type=Subject&Id=" + itm.SubjectID + "")'">
+
+                                    @itm.ModifiedDate
+
+                                </td>
+
+                                }
+
+                            </tr>
+                        }
+                    }
+                    @*else
+                    {
+                        <tr><td colspan="5">No Record Found</td></tr>
+                    }*@
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-8">
+    </div>
+</div>
+
+
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+
+<script src="~/assets/js/jquery.maskedinput.min.js"></script>
+<script src="~/Content/Custom.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        var table = $('#subjectTable').DataTable({
+            dom: 'Alfrtip'
+
+        });
+        table.columns(2).every(function () {
+            var that = this;
+            $('input', this.footer()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                         .search('^' + this.value, true, false)
+                        .draw();
+                }
+            });
+        });
+
+        $('.ToggleCls').addClass('cmbSub');
+        $('.subjectTR').on('click', function () {
+            var subjectID = $(this).attr('data-id');
+            var url = "/Subject/Subject/SearchSubject/" + subjectID;
+            $('#combineBtn').attr('href', url);
+            $('.ToggleCls').removeClass('cmbSub');
+        });
+
+        var type = $('#hdType').val();
+        var id = $('#SubjectID').val();
+        var subFeatureid = "0";
+
+        BindPictureList(type, id, subFeatureid);
+        //Ankur New
+        $("#FirstName").autocomplete({
+
+            source: function (request, response) {
+                $.ajax({
+                    url: "/Subject/Subject/FirstNameList",
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.FirstName, value: item.FirstName };
+                        }))
+
+                    }
+                })
+            },
+            messages: {
+                noResults: "", results: ""
+            },
+            select: function (event, ui) {
+                $.ajax({
+                    url: "/Subject/Subject/SelectionList",
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: ui.item.value },
+                    success: function (data) {
+                        var partdata = data.split("/");
+
+                        $('#VIP').val(partdata[3]);
+                        $('#FirstName').val(partdata[0]);
+                        $('#LastName').val(partdata[1]);
+                        $('#MiddleName').val(partdata[2]);
+
+                        var sex1 = partdata[4];
+
+                        $('#Sex option').each(function () {
+                            debugger;
+                            if ($(this).text().toLowerCase() == sex1.toLowerCase()) {
+                                this.selected = true;
+                                return;
+                            }
+                        });
+
+                    }
+                });
+
+            }
+        });
+
+        //Ankur New
+        $("#LastName").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/Subject/Subject/LastNameList",
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: request.term, "FirstNameGet": $("#FirstName").val() },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.LastName, value: item.LastName };
+                        }))
+
+                    }
+                })
+            },
+            messages: {
+                noResults: "", results: ""
+            }
+        });
+
+        if ($('#hdShow').val() == 'View') {
+            $(".form-control").attr("disabled", "disabled");
+            $(".btn").hide(true);
+            $(document).find("input[type=checkbox]").attr("disabled", "disabled");
+            $(document).find('.enablebtn>a').removeAttr("style");
+        }
+        else {
+            //$(".btn").removeAttr("style");
+            $(".form-control").attr("disabled", false);
+            //$(".btn").attr("disabled", false);
+            $(document).find('#permission').hide(true);
+        }
+
+        $("#Height").mask("9'99''");
+        $('#DateOfBirth').datepicker();
+
+        $('.age').on('keydown', function (e) {
+            key = e.which
+            if (key == 8 || key == 9 || key == 13 || key == 46 || key == 110 || (key >= 35 && key <= 40) || (key >= 48 && key <= 57) || (key >= 96 && key <= 105)) {
+                $('#DateOfBirth').val('');
+                if (key != 8) {
+                    if ($(this).val().length < 2) {
+                    }
+                    else { return false }
+                }
+            }
+            else { return false }
+        });
+
+        $('#Weight').on('keydown', function (e) {
+            key = e.which
+            if (key == 8 || key == 9 || key == 13 || key == 46 || key == 110 || (key >= 35 && key <= 40) || (key >= 48 && key <= 57) || (key >= 96 && key <= 105)) {
+                if (key != 8) {
+                    if ($(this).val().length < 3) {
+                    }
+                    else { return false }
+                }
+            }
+            else { return false }
+        });
+
+        $('#DateOfBirth').on('change', function () {
+            var dob = new Date($(this).val());
+            var today = new Date();
+            var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
+            $('#Age').val(age);
+        });
+
+
+        $('#clearBtn').on('click', function () {
+            Reset();
+        });
+
+        $('.checkAlert').on('click', function () {
+            var firstname = "";
+            firstname = $("input#FirstName").val();
+            if (firstname == "") {
+                firstname = "Unknown";
+            }
+            var r = confirm("Are you sure to create " + firstname + " Subject ?");
+            if (r == true) {
+                $('#submit-data').click();
+            }
+            else {
+                $('#msgDiv').html("<div class='alert alert-danger'>Please Add Subject Details First</div>");
+            }
+        });
+
+        // Page Change
+        var somethingChanged = false;
+        var button = $('#submit-data');
+        var orig = [];
+
+        $.fn.getType = function () {
+            return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
+        }
+
+        $("#AddSubjectForm :input").each(function () {
+            var type = $(this).getType();
+            var tmp = {
+                'type': type,
+                'value': $(this).val()
+            };
+            if (type == 'radio') {
+                tmp.checked = $(this).is(':checked');
+            }
+            orig[$(this).attr('id')] = tmp;
+        });
+
+        $('#AddSubjectForm').bind('change keyup', function () {
+            var disable = true;
+            somethingChanged = false;
+            $("#AddSubjectForm :input").each(function () {
+                var type = $(this).getType();
+                var id = $(this).attr('id');
+
+                if (type == 'text' || type == 'select') {
+                    disable = (orig[id].value == $(this).val());
+                } else if (type == 'radio') {
+                    disable = (orig[id].checked == $(this).is(':checked'));
+                }
+
+                if (!disable) {
+                    return false; // break out of loop
+
+                }
+            });
+            somethingChanged = true;
+            button.prop('disabled', disable);
+        }); // End Page Change
+
+        // Save changes
+        $('#myTab > li > a ').click(function (e) {
+            if ($('#hdShow').val() != 'View') {
+                if (somethingChanged == true) {
+                    formSubmitByTab(somethingChanged);
+                    somethingChanged = false;
+                    return false;
+                }
+            }
+        });
+        // end save change script
+    });
+    // End-------------------------------
+
+    //function Reset() {
+    //    $('#Sex').val('');
+    //    $('#Race').val('');
+    //    $('#Eyes').val('');
+    //    $('#Build').val('');
+    //    $('#Complexion').val('');
+    //    $('#HairLength').val('');
+    //    $('#HairColor').val('');
+    //    $('#FacialHair').val('');
+    //    $('#VIP').val('');
+    //    $('#FirstName').val('');
+    //    $('#MiddleName').val('');
+    //    $('#LastName').val('');
+    //    $('#DateOfBirth').val('');
+    //    $('#Age').val('');
+    //    $('#Height').val('');
+    //    $('#Weight').val('');
+    //    //$('#Glasses').val(false);
+    //}
+
+    //function showAlert() {
+    //}
+
+    function DeleteSubject(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/DeleteSubject")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Subject has been deleted Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                        location.replace('@Url.Content("~/Subject/Subject/Index")');
+                    } else {
+
+                    }
+                }
+            });
+        }
+    }
+
+    function BindPictureList(type, id, subFeatureid) {
+
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/GetAllPictures")',
+            data: { 'type': type, 'id': id, 'subFeatureid': subFeatureid },
+            type: 'Post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                var temphtml = "";
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    for (i = 0; i < jsonData.length; i++) {
+                        temphtml += ' <div class="col-md-2"> <div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
+                        temphtml += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                        temphtml += '<div class="btn-show">';
+                        temphtml += '<input type="button" value="Assign Picture" id="AssignPicture" class="btn btn-success add" onclick="AssignPictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        temphtml += '<input type="button" value="Edit" id="EditPicture" class="btn btn-primary add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="EditPictur(&#39;' + jsonData[i].FilePath + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        temphtml += '<input type="button" value="Delete" id="DeletePicture" class="btn btn-danger add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="DeletePictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;,&#39;' + subFeatureid + '&#39;);">';
+                        temphtml += '</div></div></div>';
+                    }
+                }
+                $('#pictureTable').html(temphtml);
+                $('.pictureTr').hover(function () {
+                    var ImgeSrc = $(this).children('img').attr('src');
+                    var mediaId = $(this).attr('data-id');
+                    $(this).on('click', function () {
+                        $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
+                        $(this).addClass('ShowBorderRed');
+                    });
+                });
+
+            }
+        });
+    }
+
+    function AssignPictures(type, id, mediaId) {
+
+        if (EditConfirmMedia('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/AssignPictures")',
+                data: { MediaType: type, Type: type, ID: id, IncidentID: 0, MediaID: mediaId, QuestionID: 0, Observation: 0 },
+                type: 'post',
+                datatype: 'json',
+
+                contenttype: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        alert('Image Assign successfuly!!');
+                    }
+                    else {
+                        alert(' Error in Request!!');
+                    }
+                }
+            });
+        }
+    }
+    function DeletePictures(type, id, mediaId, subFeatureid) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/DeletePicture")',
+                data: { MediaID: mediaId },
+                type: 'post',
+                datatype: 'json',
+                contenttype: 'application/json',
+                success: function (data) {
+                    if (data == 'success') {
+                        BindPictureList(type, id, subFeatureid)
+                    }
+                    else {
+                        alert(' Error in Request!!');
+                    }
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+                failure: function (response) {
+                    console.log(response);
+                },
+            });
+        };
+    };
+
+    function DeleteConfirm(action) {
+        //return true;
+        var control = action;
+        if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
+            var a = confirm('Are you sure to delete?');
+            if (a == true) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            var a = alert('You dont have permission to delete');
+            return false;
+        }
+    };
+
+    function EditConfirmMedia(action) {
+
+        var control = action;
+
+        if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
+
+
+            return true;
+
+        }
+        else {
+
+            var a = alert('You dont have permission to assign media');
+
+
+            return false;
+        }
+
+    }
+
+    function EditPictur(ImgeSrc, mediaId) {
+        getDataUri(ImgeSrc, function (dataUri) {
+            $('#image').attr('src', dataUri);
+            $('.cropper-view-box').find('img').attr('src', dataUri);
+            $('.cropper-canvas').find('img').attr('src', dataUri);
+            $('.preview-lg').find('img').attr('src', dataUri);
+            $('.dataId').val(mediaId);
+        });
+
+        $('#avatar-modal').modal('show');
+
+        setTimeout(function () {
+
+            $('script').each(function () {
+
+                if (this.src.split('?') === '/Content/crop-avatar/js/main.js') {
+
+                    $(this).remove();
+                }
+                if (this.src.split('?') === '/Content/crop-avatar/js/cropper.js') {
+
+                    $(this).remove();
+                }
+            });
+            $.getScript('/Content/crop-avatar/js/main.js').done(function () {
+
+
+            });
+            $.getScript('/Content/crop-avatar/js/cropper.js').done(function () {
+
+
+            });
+        }, 100);
+    }
+
+    function getDataUri(url, callback) {
+        var image = new Image();
+
+        image.onload = function () {
+            var canvas = document.createElement('canvas');
+            canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
+            canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
+
+            canvas.getContext('2d').drawImage(this, 0, 0);
+
+            // Get raw image data
+            callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
+
+            // ... or get as Data URI
+            callback(canvas.toDataURL('image/png'));
+        };
+
+        image.src = url;
+    }
+
+    $('#something').change(function () {
+        if (this.checked) {
+            $('#MediaGallery').removeAttr("style");
+            BindMediaList();
+        }
+        else {
+            $('#MediaGallery').hide(true);
+        }
+    });
+
+    function MoveToPicture(type, id, mediaId) {
+        var subFeatureid = '0';
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/MoveToPicture")',
+            data: { type: type, id: id, MediaID: mediaId },
+            type: 'post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                if (data == 'success') {
+                    BindPictureList(type, id, subFeatureid);
+                    BindMediaList();
+
+                }
+                else {
+                    alert(' Error in Request!!');
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            },
+            failure: function (response) {
+                console.log(response);
+            },
+        });
+    };
+
+    function MoveToPic() {
+        var subFeatureid = '0';
+        var value = $('#SubjectID').val();
+        $('#mediaTable input[type=checkbox]').each(function () {
+            if (this.checked) {
+                var mediaId = $(this).val();
+                $.ajax({
+                    url: '@Url.Content("~/Media/Media/MoveToPicture")',
+                    data: { type: 'Subject', id: value, MediaID: mediaId },
+                    type: 'post',
+                    datatype: 'json',
+                    contenttype: 'application/json',
+                    success: function (data) {
+                        if (data == 'success') {
+                        }
+                        else {
+                            alert(' Error in Request!!');
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                    failure: function (response) {
+                        console.log(response);
+                    },
+                });
+            }
+        });
+        BindPictureList('Subject', value, subFeatureid);
+        BindMediaList();
+    }
+
+    function BindMediaList() {
+
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/GetAllMoveToPicture")',
+            data: { 'type': 'Media', 'id': '0', 'subFeatureid': '0' },
+            type: 'Post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                var types = $('#hdType').val();
+                var value = $('#SubjectID').val();
+                var subFeatureid = "0";
+                var temph = "";
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    for (i = 0; i < jsonData.length; i++) {
+                        temph += ' <div class="col-md-2"> ';
+                        temph += '<input id="' + jsonData[i].MediaID + '" value="' + jsonData[i].MediaID + '" type="checkbox">';
+                        temph += '<div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
+                        temph += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                        temph += '<div class="btn-show">';
+                        if ($('#hdType').val() != 'Media') {
+                            temph += '<input type="button" value="MoveTo" id="MoveToPicture" class="btn btn-info add" onclick="MoveToPicture(&#39;' + types + '&#39;,&#39;' + value + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        }
+                        temph += '</div></div></div>';
+                    }
+                }
+                $('#mediaTable').html(temph);
+                $('.pictureTr').hover(function () {
+                    var ImgeSrc = $(this).children('img').attr('src');
+                    var mediaId = $(this).attr('data-id');
+                    $(this).on('click', function () {
+                        $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
+                        $(this).addClass('ShowBorderRed');
+                    });
+                });
+
+            }
+        });
+    }
+
+    $("#permission").click(function () {
+        if (EditConfirm('@ViewBag.Action')) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+
+    // Submit form on tab change Script
+    function formSubmitByTab(valueChanged) {
+        if (valueChanged == true) {
+            var r = confirm("Do you want to save changes?");
+            if (r == true) {
+                $('#submit-data').click();
+            }
+        }
+
+    }// End Submit form on tab change Script
+
+</script>
+
+

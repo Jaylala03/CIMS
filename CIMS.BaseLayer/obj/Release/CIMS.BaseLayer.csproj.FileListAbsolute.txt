@@ -1,0 +1,14 @@
+G:\TFS-CIMS\CIMS\CIMS\CIMS.BaseLayer\bin\Release\CIMS.BaseLayer.dll
+G:\TFS-CIMS\CIMS\CIMS\CIMS.BaseLayer\bin\Release\CIMS.BaseLayer.pdb
+G:\TFS-CIMS\CIMS\CIMS\CIMS.BaseLayer\bin\Release\CIMS.Utility.dll
+G:\TFS-CIMS\CIMS\CIMS\CIMS.BaseLayer\bin\Release\CIMS.Utility.pdb
+G:\TFS-CIMS\CIMS\CIMS\CIMS.BaseLayer\obj\Release\CIMS.BaseLayer.csprojResolveAssemblyReference.cache
+G:\TFS-CIMS\CIMS\CIMS\CIMS.BaseLayer\obj\Release\CIMS.BaseLayer.dll
+G:\TFS-CIMS\CIMS\CIMS\CIMS.BaseLayer\obj\Release\CIMS.BaseLayer.pdb
+C:\TFS\Workspace\CIMS_New\CIMS\CIMS\CIMS.BaseLayer\bin\Release\CIMS.BaseLayer.dll
+C:\TFS\Workspace\CIMS_New\CIMS\CIMS\CIMS.BaseLayer\bin\Release\CIMS.BaseLayer.pdb
+C:\TFS\Workspace\CIMS_New\CIMS\CIMS\CIMS.BaseLayer\bin\Release\CIMS.Utility.dll
+C:\TFS\Workspace\CIMS_New\CIMS\CIMS\CIMS.BaseLayer\bin\Release\CIMS.Utility.pdb
+C:\TFS\Workspace\CIMS_New\CIMS\CIMS\CIMS.BaseLayer\obj\Release\CIMS.BaseLayer.csprojResolveAssemblyReference.cache
+C:\TFS\Workspace\CIMS_New\CIMS\CIMS\CIMS.BaseLayer\obj\Release\CIMS.BaseLayer.dll
+C:\TFS\Workspace\CIMS_New\CIMS\CIMS\CIMS.BaseLayer\obj\Release\CIMS.BaseLayer.pdb

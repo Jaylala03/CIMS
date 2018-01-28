@@ -1,0 +1,206 @@
+﻿@model CIMS.Models.SubjectModel
+@{
+    ViewBag.Title = "AdvancedSearchSubject";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+@*<h2>AdvancedSearchSubject</h2>*@
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Subject</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Advanced Search Subject</li>
+        </ol>
+    </div>
+
+</div>
+
+<div class="row">
+    @using (Html.BeginForm("AdvancedSearchSubject", "Subject", FormMethod.Post, new { area = "Subject" }))
+    {
+        <div class="col-md-6">
+            <div class="white-box clearfix">
+                <div class="row">
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.VIP, new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.VIP, new { @class = "form-control", @onkeypress = "return isNumber(event)" })
+                        </div>
+                    </div>
+
+
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.FirstName, new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.MiddleName, new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.MiddleName, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.LastName, new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.Sex, new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(m => m.Sex, ViewBag.lstGender as List<SelectListItem>, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.Race, new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(m => m.Race, ViewBag.lstRace as List<SelectListItem>, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.Eyes, new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(m => m.Eyes, ViewBag.lstEyes as List<SelectListItem>, new { @class = "form-control" })
+                        </div>
+                    </div>                    
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="white-box clearfix" style="min-height:665px;">
+                <div class="row">
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.Build, new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(m => m.Build, ViewBag.lstBuild as List<SelectListItem>, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.Complexion, new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(m => m.Complexion, ViewBag.lstComplexion as List<SelectListItem>, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.DateOfBirth, new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.DateOfBirth, new { @class = "form-control" })
+                        </div>
+                    </div> 
+                    
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.HairLength, new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(m => m.HairLength, ViewBag.lstHairLength as List<SelectListItem>, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.HairColor, new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(m => m.HairColor, ViewBag.lstHairColor as List<SelectListItem>, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+
+                    <div class="form-group clearfix">
+                        @Html.LabelFor(m => m.FacialHair, new { @class = "control-label col-md-12" })
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(m => m.FacialHair, ViewBag.lstFacial as List<SelectListItem>, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="white-box clearfix">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-success">Search</button>
+                    <button type="reset" class="btn btn-white">Reset</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="white-box clearfix">
+    <div class="table-responsive">
+        <table id="subjectTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Media</th>
+                    <th>Subject</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                </tr>
+            </thead>
+
+
+            <tbody>
+                @if (Model.SubjectList.Count > 0)
+                {
+                    foreach (var items in Model.SubjectList)
+                    {
+                        <tr class="subjectTR" data-id="@items.SubjectID" style="cursor:pointer">
+                            <td style="width: 100px;">
+                                <a href='@Url.Content("~/Subject/Subject/AddSubject?Show=View&Type=Subject&Id=" + items.SubjectID + "")'>
+                                    <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.FilePath) ? items.FilePath : Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                </a>
+                            </td>
+                            <td>@items.VIP</td>
+                            <td>@items.FirstName</td>
+                            <td>@items.LastName</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <div>No Record Found</div>
+                }
+
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#Sex').editableSelect({ effects: 'default' });
+        $('#Race').editableSelect({ effects: 'default' });
+        $('#Eyes').editableSelect({ effects: 'default' });
+        $('#Build').editableSelect({ effects: 'default' });
+        $('#Complexion').editableSelect({ effects: 'default' });
+        $('#HairLength').editableSelect({ effects: 'default' });
+        $('#HairColor').editableSelect({ effects: 'default' });
+        $('#FacialHair').editableSelect({ effects: 'default' });
+        $('#DateOfBirth').datepicker();
+    });
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+</script>
+

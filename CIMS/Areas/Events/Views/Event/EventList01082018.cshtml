@@ -1,0 +1,290 @@
+﻿@model CIMS.Models.EventModel
+@{
+
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+<link href="~/Content/Custom.css" rel="stylesheet" />
+
+<style>
+    .cmdSub {
+        pointer-events: none;
+        opacity: 0.65;
+    }
+</style>
+
+@*<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>*@
+
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Event List</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Event List</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading  custom-head">
+        <h3 class="box-title m-b-0">Event List</h3>
+
+        <div class="panel-options">
+            <div class="right-btn">
+
+                <a href='@Url.Content("~/Events/Event/EventDetail")' class="btn btn-primary add"><i class="fa fa-plus"></i>Add Event</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="ListTable" class="table table-bordered Tableview">
+                <thead>
+                    <tr>
+                        @*<th class="header">
+                            Media
+                        </th>*@
+                        <th class="header headerSortDown">
+                            Event#
+                        </th>
+                        <th class="header">
+                            Event Date
+                        </th>
+                        <th class="header">
+                            Start
+                        </th>
+                        <th class="header">
+                            End
+                        </th>
+                        <th class="header">
+                            Initiated By
+                        </th>
+                        <th class="header">
+                            Nature of Event Code
+                        </th>
+                        <th class="header">
+                            User
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @*@if (Model.ListEventModel.Count > 0)
+                        {
+                            foreach (var items in Model.ListEventModel)
+                            {
+                                <tr class="subTR" data-id="@items.EventID" style="cursor:pointer">
+                                    <td style="width: 100px;">
+                                        <a href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")' title="View Event">
+                                            <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.FilePath) ? items.FilePath: Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                        </a>
+                                    </td>
+                                    <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">
+                                        @items.EventNumber
+                                    </td>
+                                    <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">
+                                        @Convert.ToDateTime(items.EventDate).ToString("MM/dd/yyyy")
+                                    </td>
+                                    <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">@items.EventTime</td>
+                                    <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">@items.EndTime</td>
+                                    <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">@items.FromCode</td>
+                                    <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">@items.NatureCode</td>
+                                    <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">@items.UserID</td>
+                                </tr>
+                            }
+                        }*@
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@*<script src="~/Content/Custom.js">
+    loadScript("~/Content/data-tables/jquery.dataTables.min.js", runDataTables)
+</script>*@
+<script src="~/Content/Custom.js">
+</script>
+<script src="~/Content/data-tables/jquery.dataTables.min.js">
+</script>
+<script>
+
+    $(document).ready(function ()
+    {
+        runDataTables();
+        function runDataTables()
+        {
+            // Prevent alert message from being displayed
+            $.fn.dataTable.ext.errMode = 'none';
+            // Use delegated event handler
+            // to handle Ajax request completion event
+            $(document.body).on('xhr.dt', function (e, settings, json, xhr) {
+                // If there is an Ajax error and status code is 401
+                if (json === null && xhr.status === 401) {
+                    var api = new $.fn.dataTable.Api(settings);
+                    //alert("Your Session time expired. You will be logged out.");
+                    location.href = "/Account/Login"
+
+                } else {
+                    console.log('Could not load list');
+                }
+            });
+            var table = $('#ListTable')
+                .on('error.dt', function (e, settings, techNote, message) {
+                    console.log('An error has been reported by DataTables: ', message);
+                })
+                .DataTable(
+                {
+                    "ajax": {
+                        url: "@Url.Action("JSONEventList", "Event")",
+                        type: 'POST'
+                    },
+                    "proccessing": true,
+                    "serverSide": true,
+                    "orderMulti": false, // for disable multi column order
+                    responsive: true,
+                    scrollX: false,
+                    "pagingType": "full_numbers",
+                    //"stateSave": true,  //restore table state on page reload,
+                    "iDisplayLength": 25,
+                    "aLengthMenu": [[25, 50, 100, 500, 1000, -1], [25, 50, 100, 500, 1000, "All"]],
+                    "deferRender": true,
+                    "autoWidth": false, // this does weird stuff, i dunno we might need it
+                    "searching": false,
+                    language: {
+                        //search: "User:",
+                        //searchPlaceholder: "User"
+                        search: "Search:",
+                        searchPlaceholder: ""
+                    },
+                    "columns": [
+                     {
+                         data: null,
+                         name: "EventNumber",
+                         render: function (data, type, full, meta) {
+                             if (data.EventNumber === undefined) {
+                                 return '';
+                             }
+                             return data.EventNumber;
+                         }
+                     },
+                     {
+                         data: "EventDate",
+                         name: "EventDate",
+                         render: function (data) {
+                            var date = new Date(data);
+                            var month = date.getMonth() + 1;
+                            return (month.length > 1 ? month : "0" + month) + "/" + date.getDate() + "/" + date.getFullYear();
+                        }
+                     },
+                     {
+                         data: null,
+                         name: "EventTime",
+                         render: function (data, type, full, meta) {
+                             if (data.EventTime === undefined) {
+                                 return '';
+                             }
+                             return data.EventTime;
+                         }
+                     },
+                     {
+                         data: null,
+                         name: "EndTime",
+                         render: function (data, type, full, meta) {
+                             if (data.EndTime === undefined) {
+                                 return '';
+                             }
+                             return data.EndTime;
+                         }
+                     },
+                     {
+                         data: null,
+                         name: "FromCode",
+                         render: function (data, type, full, meta) {
+                             if (data.FromCode === undefined) {
+                                 return '';
+                             }
+                             return data.FromCode;
+                         }
+                     },
+                     {
+                         data: null,
+                         name: "NatureCode",
+                         render: function (data, type, full, meta) {
+                             if (data.NatureCode === undefined) {
+                                 return '';
+                             }
+                             return data.NatureCode;
+                         }
+                     }, {
+                         data: null,
+                         name: "UserID",
+                         render: function (data, type, full, meta) {
+                             if (data.UserID === undefined) {
+                                 return '';
+                             }
+                             return data.UserID;
+                         }
+                     }
+                    ]
+                });
+
+            //table.columns(7).every(function () {
+            //    var that = this;
+
+            //    $('input', this.footer()).on('keyup change', function () {
+            //        if (that.search() !== this.value) {
+            //            that
+            //                .search('^' + this.value, true, false)
+            //                .draw();
+            //        }
+            //    });
+            //});
+        }
+        });
+
+    function DeleteEvent(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Events/Event/DeleteEvent")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#ListTable>tbody tr').length == 1) {
+                            $('#ListTable>tbody tr').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Event has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Event has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+
+
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+</script>

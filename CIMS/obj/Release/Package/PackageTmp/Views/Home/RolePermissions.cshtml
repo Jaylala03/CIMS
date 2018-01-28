@@ -1,0 +1,333 @@
+﻿@model CIMS.Models.Roles
+@{
+    ViewBag.Title = "RolePermissions";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+<link href="~/assets/cssmenu/styles.css" rel="stylesheet" />
+<script src="~/assets/cssmenu/script.js"></script>
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Administrator Roles</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Administrator Roles</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="col-md-4">
+            <div class="white-box clearfix">
+                <div class="all-head1">
+                    <div class="large-title left no-padding mtop-5">Administrator Roles List</div>
+
+
+                    <div class="btn-right-align-right clearfix">
+
+
+                        <a href='#myModal' data-toggle="modal" class="btn btn-primary " onclick="bindRole(0,'')"><i class="fa fa-plus"></i> Add Role</a>
+
+                    </div>
+                </div>
+
+
+                @if (Model.RolesList != null && Model.RolesList.Count > 0)
+                {
+
+                    <div class="table-responsive">
+                        <table id="employeeTable" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Role Name</th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.RolesList)
+                                {
+                                    <tr id="@(item.RoleId)tr">
+                                        <td>
+                                            <a href=@Url.Content("~/Home/RolePermissions?id="+item.RoleId)>
+                                                @item.RoleName
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href='#myModal' data-toggle="modal" class="btn small btn-info btn-sm btn-icon" title="Edit Role" onclick="bindRole('@item.RoleId','@item.RoleName')"><i class="fa fa-pencil"></i></a>
+                                            <a class="btn btn-danger small btn-sm delete-sm" href='javascript:;' onclick='DeleteRole(@item.RoleId,this);' title="Delete Role"><i class='fa fa-trash'></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+            </div>
+        </div>
+        <div class="col-md-8">
+            @using (Html.BeginForm("SavepPermission", "Home", null, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+            {
+                <div class="white-box clearfix">
+                    <div class="all-head1">
+                        <div class="large-title left no-padding mtop-5">Manage Permission</div>
+
+
+                        <div class="btn-right-align-right clearfix">
+
+                            <button type="submit" class="btn btn-primary " id="savepermission">Save</button>
+
+                        </div>
+                    </div>
+
+
+                    @Html.HiddenFor(m => m.RoleId)
+                    <div id='cssmenu'>
+                        <ul id="div1" ng-model="div">
+
+
+                            @for (int parent = 0; parent < Model.MenusList.Where(m => m.ParentId == 0).ToList().Count; parent++)
+                            {
+                                <li class='has-sub'>
+
+                                    <a href=" javascript:;">
+                                        <span class="title1">@Model.MenusList[parent].MenuName</span>
+                                    </a>
+
+                                    <ul>
+                                       
+                                        @if (Model.MenusList.Where(m => m.ParentId == Model.MenusList[parent].Id).ToList().Count == 0)
+                                        {
+                                            <li class='has-sub'>
+                                                @Html.HiddenFor(m => m.MenusList[parent].Id)
+                                                @*@Html.CheckBoxFor(m => m.MenusList[parent].Permission)*@
+                                                <input type="checkbox" value="true" name="MenusList[@parent].Permission" @(Model.MenusList[parent].RoleId > 0 ? "checked='checked'" : "") />
+                                                Allow @Model.MenusList[parent].MenuName
+                                               
+                                            </li>
+                                        }
+                                    </ul>
+
+
+
+
+                                </li>
+                            }
+
+                        </ul>
+
+                    </div>
+
+
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("CustomerRoles", "Home", null, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+{
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"><label id="SaveType"></label> <label>Role</label></h4>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            @Html.HiddenFor(m => m.RoleId, new { @Id = "RoleId_Permission" })
+                            @Html.LabelFor(m => m.RoleName)
+                            @Html.TextBoxFor(m => m.RoleName, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.RoleName)
+                        </div>
+                        <div class="form-group">
+                            <div class="pull-right">
+                                <input class="btn btn-primary" type="submit" value="Save" id="saveRole" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    function bindRole(Id, RoleName) {
+        $('#RoleId_Permission').val(Id);
+        $('#RoleName').val(RoleName);
+        if (Id > 0) {
+            $('#SaveType').html('Edit');
+            $('#saveRole').val('Update');
+        }
+        else {
+            $('#SaveType').html('Add New');
+            $('#saveRole').val('Save');
+        }
+    }
+    function DeleteRole(id, caller) {
+        if (confirm('Are you sure to delete?')) {
+            $.ajax({
+                url: '@Url.Content("~/Home/DeleteRole")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#employeeTable>tbody tr').length == 1) {
+                            $('#employeeTable').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Role has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Role has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                    } else if (data == "-10") {
+                        $('#msgDiv').html('Error in deleting role. Role is assigned to a customer.');
+                    }
+                    else {
+                        $('#msgDiv').html('Error in deleting role.');
+                    }
+
+                }
+            });
+        }
+    }
+</script>
+<script type="text/javascript">
+
+    $().ready(function () {
+
+        $('#@(Model.RoleId)tr').addClass('trselc');
+        $('input[type=checkbox]').on('change', function () {
+            if ($(this).is(":checked")) {
+
+                $(this).next().find('input[value=2]').prop('checked', true);
+            }
+            else {
+
+                $(this).next().find('input[type = checkbox]').prop('checked', false);
+            }
+        });
+        $('li.has-sub').each(function () {
+
+            var permissionType = $(this).find('.permissionType').val();
+
+            switch (parseInt(permissionType)) {
+                case 1: $(this).find('input[value = 1]').prop('checked', true);
+                    break;
+                case 2: $(this).find('input[value = 2]').prop('checked', true);
+                    break;
+                case 3:
+                    $(this).find('input[value = 1]').prop('checked', true);
+                    $(this).find('input[value = 2]').prop('checked', true);
+                    break;
+                case 4:
+
+                    $(this).find('input[value = 4]').prop('checked', true);
+                    break;
+                case 5: $(this).find('input[value = 1]').prop('checked', true);
+                    $(this).find('input[value = 4]').prop('checked', true);
+                    break;
+                case 6: $(this).find('input[value = 2]').prop('checked', true);
+                    $(this).find('input[value = 4]').prop('checked', true);
+                    break;
+                case 7:
+                    $(this).find('input[value = 1]').prop('checked', true);
+                    $(this).find('input[value = 2]').prop('checked', true);
+                    $(this).find('input[value = 4]').prop('checked', true);
+                    break;
+                case 8:
+                    $(this).find('input[value = 8]').prop('checked', true);
+                    break;
+                case 9:
+                    $(this).find('input[value = 1]').prop('checked', true);
+                    $(this).find('input[value = 8]').prop('checked', true);
+                    break;
+                case 10:
+                    $(this).find('input[value = 2]').prop('checked', true);
+                    $(this).find('input[value = 8]').prop('checked', true);
+                    break;
+                case 11:
+                    $(this).find('input[value = 1]').prop('checked', true);
+                    $(this).find('input[value = 2]').prop('checked', true);
+                    $(this).find('input[value = 8]').prop('checked', true);
+                    break;
+                case 12:
+                    $(this).find('input[value = 4]').prop('checked', true);
+                    $(this).find('input[value = 8]').prop('checked', true);
+                    break;
+                case 13:
+                    $(this).find('input[value = 1]').prop('checked', true);
+                    $(this).find('input[value = 4]').prop('checked', true);
+                    $(this).find('input[value = 8]').prop('checked', true);
+                    break;
+                case 14:
+                    $(this).find('input[value = 2]').prop('checked', true);
+                    $(this).find('input[value = 4]').prop('checked', true);
+                    $(this).find('input[value = 8]').prop('checked', true);
+                    break;
+                case 15:
+                    $(this).find('input[value = 1]').prop('checked', true);
+                    $(this).find('input[value = 2]').prop('checked', true);
+                    $(this).find('input[value = 4]').prop('checked', true);
+                    $(this).find('input[value = 8]').prop('checked', true);
+                    break;
+
+            }
+        });
+
+        $('#savepermission').click(function () {
+            $('li').each(function () {
+                var permissionType = 0;
+                $(this).find('input[class=full]:checked').each(function () {
+                    permissionType += parseInt($(this).val());
+
+                });
+
+                $(this).find('.permissionType').val(permissionType);
+            });
+        });
+
+        $('input[class=full]').change(function () {
+            if ($(this).parent().find('input[type=checkbox]:checked').length == 0) {
+                $(this).parents('li').find('input[type = checkbox]').eq(0).prop('checked', false);
+            }
+            else {
+                $(this).parents('li').find('input[type = checkbox]').eq(0).prop('checked', true);
+            }
+        });
+    });
+
+</script>
+<style>
+    /*.trselc {
+        border: medium;
+        background-color: #e1e1de;
+        color: black;
+    }*/
+</style>
+
+
+

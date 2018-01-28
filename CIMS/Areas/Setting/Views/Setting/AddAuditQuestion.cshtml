@@ -1,0 +1,235 @@
+﻿@model CIMS.Models.ManageAuditsQuestionsModel
+@{
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+    ViewBag.Title = "Audit Questions";
+}
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Setting</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active"><a href='@Url.Content("~/Setting/Setting/ReportSetting")'>Setting</a></li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+
+<div class="row">
+
+    <div class="col-md-12">
+
+        @*<input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+        <input type="hidden" id="hdType" name="hdType" value='@(Request.QueryString["Type"])' />*@
+
+        <div class="full-width">
+
+            @using (Html.BeginForm("AddAuditQuestion", "Setting", FormMethod.Post, new { area = "Setting" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="large-title no-margin" id="questionTitle">
+                    Add Audit Question For <label>@Html.DisplayFor(m => m.auditsQuestionModel.Audit)</label>
+                </div>
+                @Html.HiddenFor(m => m.auditsQuestionModel.AuditID)
+                @Html.HiddenFor(m => m.auditsQuestionModel.Audit)
+                @Html.HiddenFor(m => m.auditsQuestionModel.QuestionID)
+                <div class="row">
+                    <div class="col-md-3">
+                        @*<div class="white-box clearfix">*@
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.auditsQuestionModel.QuestionType)
+                                @Html.DropDownListFor(m => m.auditsQuestionModel.QuestionType, Model.auditsQuestionModel.QuestionTypeList as List<SelectListItem>, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.auditsQuestionModel.QuestionType, "", new { @class = "text-danger" })
+                            </div>
+                        @*</div>*@
+                    </div>
+                    <div class="col-md-12">
+                        @*<div class="white-box clearfix" >*@
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.auditsQuestionModel.Question)
+                                @Html.TextAreaFor(m => m.auditsQuestionModel.Question, new { @class = "form-control", rows = "4" })
+                                @Html.ValidationMessageFor(m => m.auditsQuestionModel.Question, "", new { @class = "text-danger" })
+                            </div>
+                        @*</div>*@
+                    </div>
+                </div>
+
+                <div class="form-group clearfix">
+                    <div class="white-box clearfix">
+                        <div class="btn-right-align">
+                            <input type="submit" id="btnSubmit" value="Save" class="btn btn-success" />
+                            <input type="button" class="btn btn-blue" id="clearBtn" value="Clear" />
+                        </div>
+                    </div>
+
+                </div>
+
+            }
+
+
+        </div>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="white-box clearfix">
+            <div class="large-title no-padding">
+                Audit Questions List
+            </div>
+
+            @if (Model.auditsQuestionList != null && Model.auditsQuestionList.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table id="questionTable" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Audit</th>
+                                <th>Question Type</th>
+                                <th>Question</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.auditsQuestionList)
+                            {
+                                <tr>
+                                    <td>@item.Audit</td>
+                                    <td>@(item.QuestionType.ToString() == "1" ? "Yes/No" : "Rate On 1-10")</td>
+                                    <td>@item.Question</td>
+                                    <td>
+                                    <a href='javascript:;' data-id="@item.QuestionID" class="btn btn-info small btn-sm btn-icon questionTr">
+                                        <i class='fa fa-pencil'></i>
+                                    </a>
+                                    <a href='javascript:;' class="btn btn-danger small btn-sm delete-sm" onclick='DeleteQuestion(@item.QuestionID,this);'>
+                                        <i class='fa fa-trash'></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div>No Record Found</div>
+            }
+
+        </div>
+    </div>
+
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+
+        $('.questionTr').on('click', function () {
+
+            if (EditConfirm('@ViewBag.Action')) {
+                var Id = $(this).attr('data-id');
+                $.ajax({
+                    url: '@Url.Content("~/Setting/Setting/GetAuditQuestionById")',
+                    data: { Id: Id },
+                    type: 'get',
+                    datatype: 'json',
+                    contenttype: 'application/json',
+                    success: function (data) {
+                        if (data.length > 0) {
+                            var jsondata = JSON.parse(data);
+                            $('#auditsQuestionModel_QuestionType').val(jsondata.QuestionType);
+                            $('#auditsQuestionModel_Question').val(jsondata.Question);
+                            $('#auditsQuestionModel_QuestionID').val(jsondata.QuestionID);
+                            $('#auditsQuestionModel_AuditID').val(jsondata.AuditID);
+                            $('#btnSubmit').val('Update');
+                            $('#questionTitle').text('Update Audit Question For ' + $('#auditsQuestionModel_Audit').val());
+                        }
+
+                    }
+                });
+            }
+        });
+
+        $('#clearBtn').on('click', function () {
+            Reset();
+        });
+        $('#btnSubmit').click(function () {
+            var x;
+            if (parseInt($('#auditsQuestionModel_QuestionID').val()) > 0) {
+                x = EditConfirm('@ViewBag.Action');
+            }
+            else {
+                x = AddConfirm('@ViewBag.Action');
+            }
+            if (x) {
+                return true;
+            }
+            else {
+
+                return false;
+            }
+        });
+
+
+    });// End
+
+    function DeleteQuestion(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action'))
+        {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/DeleteAuditQuestion")',
+                data: JSON.stringify({ 'QuestionId': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#auditsQuestionModel_QuestionType').val('1');
+                        $('#auditsQuestionModel_Question').val('');
+                        $('#auditsQuestionModel_QuestionID').val('');
+                        if ($('#questionTable>tbody tr').length == 1) {
+                            $('#questionTable').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Question Deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Question Deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function Reset() {
+        $('#auditsQuestionModel_QuestionType').val('1');
+        $('#auditsQuestionModel_Question').val('');
+        $('#auditsQuestionModel_QuestionID').val('');
+        $('#btnSubmit').val('Save');
+        $('#questionTitle').text('Add Audit Question For ' + $('#auditsQuestionModel_Audit').val());
+    }
+
+</script>
+

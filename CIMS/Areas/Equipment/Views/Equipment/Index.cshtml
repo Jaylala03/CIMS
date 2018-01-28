@@ -1,0 +1,618 @@
+﻿@model CIMS.Models.EquipmentModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+<style>
+    .cmbSub {
+        pointer-events: none;
+        opacity: 0.40;
+    }
+
+    .form-group-2 {
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="row bg-title" style="margin-bottom: 0;">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Home</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Equipment</li>
+        </ol>
+    </div>
+</div>
+<script src="~/assets/js/Jspdf/FileSaver.js"></script>
+<script src="~/assets/js/Jspdf/jspdf.js"></script>
+<script src="~/assets/js/Jspdf/jspdfplugintable.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="right-tab">
+            <div class="col-md-12">
+                <div class="white-box">
+                    <ul class="nav nav-pills custom-tabs" id="myTab">
+                        <li class="active">
+                            <a href="#Status" data-toggle="tab" id="#Status">
+                                <span>Status</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#OutStanding" data-toggle="tab" id="#OutStanding">
+                                <span>OutStanding / Completed List</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="Status">
+                    <div class="large-title">Details </div>
+                    @using (Html.BeginForm("Index", "Equipment", FormMethod.Post, new { area = "Equipment" }))
+                    {
+                    @Html.HiddenFor(p => p.problemID)
+                    <div class="col-md-6">
+                        <div class="white-box">
+
+                            <div class="form-group clearfix">
+                                <fieldset style="margin-bottom: 42px;">
+                                    <legend>Type</legend>
+                                    <div class="form-group form-group-2 clearfix">
+                                        <div class="col-md-4">
+                                            @Html.Label("Media Device")
+                                        </div>
+                                        <div class="col-md-8">
+                                            @Html.RadioButtonFor(p => p.ProblemType, "Mediya Device", new { @class = "" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group  form-group-2 clearfix">
+                                        <div class="col-md-4">
+                                            @Html.Label("Camera")
+                                        </div>
+                                        <div class="col-md-8">
+                                            @Html.RadioButtonFor(p => p.ProblemType, "Camera", new { @class = "" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group form-group-2 clearfix">
+                                        <div class="col-md-4">
+                                            @Html.Label("Recording Device")
+                                        </div>
+                                        <div class="col-md-8">
+                                            @Html.RadioButtonFor(p => p.ProblemType, "Recording Device", new { @class = "" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group form-group-2 clearfix">
+                                        <div class="col-md-4">
+                                            @Html.Label("Other")
+                                        </div>
+                                        <div class="col-md-8">
+                                            @Html.RadioButtonFor(p => p.ProblemType, "Other", new { @class = "" })
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <div class="form-group" style="margin-bottom:0px;">
+                                    <label class="control-label">Status Date</label>
+                                    @Html.TextBoxFor(m => m.StatusTime, null, new { @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Status</label>
+                                @Html.DropDownListFor(m => m.Problem, ViewBag.ProblemsList as List<SelectListItem>, new { @class = "form-control" })
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="white-box">
+                            <div class="form-group">
+                                <label class="control-label">Name/Number</label>
+                                @Html.TextBoxFor(p => p.EquipNumber, null, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.EquipNumber, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Completed</label>
+                                @Html.CheckBoxFor(p => p.Corrected)
+
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Completed Date</label>
+                                @Html.TextBoxFor(p => p.CompletedTime, null, new { @class = "form-control" })
+                                @*@Html.ValidationMessageFor(m => m.CompletedTime, "", new { @class = "text-danger" })*@
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Replacement</label>
+                                @Html.TextBoxFor(p => p.Replacement, null, new { @class = "form-control" })
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">Action</label>
+                                @Html.DropDownListFor(p => p.Solution, ViewBag.SolutionsList as List<SelectListItem>, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="white-box">
+                            <div class="form-group">
+                                <label class="control-label">Details</label>
+                                @Html.TextAreaFor(p => p.Details, new { @class = "form-control ckeditor" })
+
+                            </div>
+
+                            <button type="submit" class="btn btn-success @(Model.problemID>0?" edit":" add")">Save</button>
+
+                            <a href='@Url.Content("~/Equipment/Equipment/Index")' class="btn btn-default">Reset</a>
+
+
+                        </div>
+                    </div>
+                    }
+                </div>
+                <div class="tab-pane" id="OutStanding">
+                    <div class="large-title">Details </div>
+                    <div class="col-md-12">
+                        <div class="white-box">
+                            <div class="row">
+
+
+                                <div style="border: 1px solid #eee; padding: 16px 0px; margin-bottom: 30px; " class="clearfix">
+                                    <div class="col-md-12">
+                                        <div class="col-md-4">
+                                            <fieldset>
+                                                <legend>Status</legend>
+                                                <div class="form-group clearfix" style="margin-bottom: 10px;">
+                                                    <label class="radio-inline">
+                                                        <input type="radio" type="radio" name="gender" value="male" id="Completed">
+                                                        Completed
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" type="radio" name="gender" value="female" id="OS">
+                                                        Outstanding
+                                                    </label>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="col-md-12">
+                                                <div class="form-inline" style="margin-top:12px;">
+                                                    <div class="form-group">
+                                                        <label class="col-md-4">Start Date:</label>
+                                                        <div class="col-md-8">
+                                                            <input type="text" name="startDate" id="startDate" class="form-control" style="height: 31px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12" style="margin-top:8px;">
+                                                <div class="form-inline">
+                                                    <div class="form-group clearfix">
+                                                        <label class="col-md-4">End Date:</label>
+                                                        <div class="col-md-8">
+                                                            <input type="text" name="endDate" id="endDate" class="form-control" style="height: 31px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group clearfix" style="margin-top: 15px;">
+                                                <input type="button" onclick="loadAddress();" value="Load Data" class="btn btn-primary">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="table-responsive" style="margin-bottom:20px;">
+                                <div id="printDivData">
+                                    <table id="equipmentTable" class="table table-bordered dataTable no-footer printtable" style="border-collapse:collapse;border:0px;">
+
+                                        <thead>
+                                            <tr class="head-bg" style="width:100%;background-color:#f2f2f2;">
+                                                <th class="printtable right-border" style="padding:10px;">
+                                                    Type
+                                                </th>
+                                                <th class="printtable right-border" style="padding:10px;">
+                                                    Date
+                                                </th>
+
+                                                <th class="printtable right-border" style="padding:10px;">
+                                                    Number
+                                                </th>
+                                                <th style="padding:10px;" class="right-border">
+                                                    Status
+                                                </th>
+
+                                                <th class="printtable right-border" style="padding:10px;">
+                                                    Action
+                                                </th>
+
+                                                <th class="printtable right-border" style="padding:10px;">
+                                                    Replacements
+                                                </th>
+                                                <th class="removefromtable right-border" style="padding:10px;">
+                                                    Actions
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.EquipmentList.Count() > 0)
+                                            {
+                                                foreach (var items in Model.EquipmentList)
+                                                {
+
+                                                    <tr class="empTR" data-id="@items.problemID" style="cursor: pointer">
+                                                        <td class="printtable td-border">@items.ProblemType </td>
+                                                        <td class="printtable td-border">@items.StatusTime </td>
+                                                        <td class="printtable td-border">@items.EquipNumber</td>
+                                                        <td class="printtable td-border">@items.Problem </td>
+                                                        <td class="printtable td-border">@items.Solution</td>
+                                                        <td class="printtable td-border">@items.Replacement</td>
+                                                        <td class="removefromtable">
+                                                            <a href='@Url.Content("~/Equipment/Equipment/Index?problemID="+items.problemID+"")' class="btn small btn-info btn-sm btn-icon " title="Edit Employee"><i class="fa fa-pencil"></i></a>
+                                                            <a class="btn btn-danger btn-sm small delete-sm" href='javascript:;' onclick='DeleteEquipment(@items.problemID,this);' title="Delete Employee"><i class='fa fa-trash'></i></a>
+
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <input type="button" onclick="PrintTable();" value="Print" class="btn btn-primary">
+                            <input type="button" onclick="PreviewTable();" value="Preview" class="btn btn-primary">
+                            <input type="button" onclick="SaveASPDFTable();" value="Save as PDF " class="btn btn-primary">
+                            <a href="#myModal1" data-toggle="modal" class="btn btn-success" style="padding: 7px 8px;" id="SendEmail">Send Email</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Send Email</h4>
+            </div>
+
+            <div class="modal-body row">
+                <div class="col-md-12 right-label">
+                    <div class="form-group clearfix">
+                        @Html.Label("To", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="To" id="To" class="form-control">
+                        </div>
+                    </div>
+
+                    @*<div class="form-group clearfix">
+                            @Html.Label("CC", new { @class = "col-md-3" })
+                            <div class="col-md-9">
+                                <input type="text" name="CC" id="CC" class="form-control">
+                            </div>
+                        </div>*@
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Subject", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Subject" id="Subject" class="form-control">
+                        </div>
+                    </div>
+
+                    @*<div class="form-group clearfix">
+                            @Html.Label("Attachment", new { @class = "col-md-3" })
+                            <div class="col-md-5">
+                                <div id="Attachment" class="form-control"></div>
+                            </div>
+                        </div>*@
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Desciption", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Desciption" id="Desciption" class="form-control">
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group col-md-12 text-right">
+
+                        <button type="submit" class="btn btn-success" id="SendEmailData">Send Email</button>
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-12">
+                    <div class="visitor-log">
+
+                        <div class="table-responsive">
+                            <div id="Attachment"></div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+<link href="~/Content/data-tables/dataTables.alphabetSearch.css" rel="stylesheet" />
+<script src="~/Content/data-tables/dataTables.alphabetSearch.min.js"></script>
+<script>
+    $(document).ready(function () {
+        if ('@ViewBag.EditMode' == 'False')
+        {
+            $('#myTab a[href="#OutStanding"]').tab('show');
+            $("#OS").attr('checked', 'checked');
+            loadAddress();
+        }
+
+        var table = $("#equipmentTable").dataTable({
+            dom: 'Alfrtip'
+
+        });
+
+        //dom: 'T<"clear">lfrtip',
+        //tableTools: {
+        //    "aButtons": [
+        //        "copy",
+        //        "csv",
+        //        "xls",
+        //        {
+        //            "sExtends": "pdf",
+        //            "sPdfOrientation": "landscape",
+        //            "sPdfMessage": "Your custom message would go here."
+        //        },
+        //        "copy"
+        //    ]
+        //}
+
+        //table.columns(2).every(function () {
+        //    var that = this;
+        //    $('input', this.footer()).on('keyup change', function () {
+        //        if (that.search() !== this.value) {
+        //            that
+        //                 .search('^' + this.value, true, false)
+        //                .draw();
+        //        }
+        //    });
+        //});
+
+        $(document).on('click', '.empty', function () { $('#subjectTable>tbody tr.alphabet_group').remove(); });
+        $(document).on('click', '.data', function () { $('#subjectTable>tbody tr.alphabet_group').remove(); });
+        $(document).on('click', '.active', function () { $('#subjectTable>tbody tr.alphabet_group').remove(); });
+
+        $('#StatusTime').datepicker({ autoclose: true });
+        $('#CompletedTime').datepicker({ autoclose: true });
+        $('#startDate').datepicker();
+        $('#endDate').datepicker();
+
+        if (parseInt($('#CompletedTime').val()) > 0) {
+
+            $("#Corrected").attr("checked", "checked");
+        }
+        else {
+            $('#CompletedTime').val('');
+            $("#CompletedTime").attr("disabled", "true");
+        }
+
+        $('#Corrected').click(function () {
+
+            if ($(this).is(':checked')) {
+                $("#CompletedTime").removeAttr("disabled");
+            } else {
+                $('#CompletedTime').val('');
+                $("#CompletedTime").attr("disabled", "true");
+            }
+        });
+
+    });
+
+    function DeleteEquipment(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+
+            $.ajax({
+                url: '@Url.Content("~/Equipment/Equipment/DeleteEquipment")',
+                data: JSON.stringify({ 'problemID': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "Success") {
+                        if ($('#equipmentTable>tbody tr').length == 1) {
+                            $('#equipmentTable').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Equipment has been deleted Suceesfully.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Equipment has been deleted Suceesfully.</div>');
+
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                            window.scrollTo(0, 0);
+                        }
+
+                    } else {
+                        alert('error')
+
+                    }
+
+                }
+            });
+        }
+    }
+
+
+
+    function loadAddress() {
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        //var gender = $('#gender').val();
+        var status;
+        var gender = $('input[name=gender]:checked').val();
+        if (gender == "male")
+            status = true;
+        else
+            status = false;
+
+        //alert(startDate + ' ' + endDate + ' ' + status);
+        //alert(JSON.stringify({ 'startDate': startDate, 'endDate': endDate, 'status': status }));
+        $("#equipmentTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Equipment/Equipment/EquipmentProblems_Filter")',
+            data: JSON.stringify({ 'startDate': startDate, 'endDate': endDate, 'status': status }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#equipmentTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function PrintTable() {
+        var NewTabledata1 = $('#printDivData .removefromtable').remove();
+        var newdata = $('#printDivData').html();
+
+
+        var printWindow = window.open('', '', 'width=1000,height=1000,location=no,left=200px');
+        printWindow.document.open();
+        printWindow.document.write('<html><head><title></title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write('<style>.head-bg{background:#f2f2f2;border:1px solid #ccc}.right-border{border-right:1px solid #ccc}.td-border{border:1px solid #ccc}.table {display: table;width: 100%; border: 1px solid black;}.printtable { padding: 15px; text-align: left;}</style>');
+        printWindow.document.write(newdata);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+        printWindow.close();
+
+    }
+    function PreviewTable() {
+        var NewTabledata1 = $('#printDivData .removefromtable').remove();
+        var newdata = $('#printDivData').html();
+
+        var printWindow = window.open('', '', 'width=1000,height=1000,location=no,left=200px');
+        printWindow.document.open();
+        printWindow.document.write('<html><head><title></title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write('<style>.td-border{border:1px solid #ccc}.right-border{border-right:1px solid #ccc}.head-bg{background:#f2f2f2;border:1px solid #ccc}.table {display: table;width: 100%; border: 1px solid black;}.printtable { padding: 15px; text-align: left;}</style>');
+        printWindow.document.write(newdata);
+        printWindow.document.write('</body></html>');
+    }
+    function SaveASPDFTable() {
+        var NewTabledata = $('#equipmentTable .removefromtable').remove();
+        var NewTabledata1 = $('#equipmentTable').html();
+        $('#newtable').html(NewTabledata1);
+        var data = [], fontSize = 10, height = 0, doc;
+        doc = new jsPDF('p', 'pt', 'a4', true);
+        doc.setFont("times", "normal");
+        doc.setFontSize(fontSize);
+
+        data = [];
+        data = doc.tableToJson('newtable');
+        height = doc.drawTable(data, {
+            xstart: 10,
+            ystart: 10,
+            tablestart: 40,
+            marginleft: 10,
+            xOffset: 10,
+            yOffset: 15
+        });
+
+        doc.save("Event.pdf");
+
+    }
+    $('#SendEmail').click(function () {
+        var NewTabledata1 = $('#printDivData .removefromtable').remove();
+        var newdata = $('#printDivData').html();
+        $('#Attachment').html(newdata);
+    });
+
+    $('#SendEmailData').click(function () {
+        if ($("#To").val() == "") {
+            alert("Enter email address.");
+        }
+        else {
+            if (!ValidateEmail($("#To").val())) {
+                alert("Invalid email address.");
+            }
+            else {
+                var NewTabledata1 = $('#printDivData .removefromtable').remove();
+                var newdata = $('#printDivData').html();
+                html2canvas($("#printDivData"), {
+                    onrendered: function (canvas) {
+                        var myImage = canvas.toDataURL("img/png");
+
+                        var Subject = $('#Subject').val();
+                        var Desciption = $('#Desciption').val();
+                        var To = $('#To').val();
+                        var pic = myImage.replace(/^data:image\/png;base64,/, "")
+                        var Attachment = pic;
+                        $.ajax({
+                            url: '@Url.Content("~/Events/Event/SendEmailData")',
+                            data: JSON.stringify({ 'Attachment': Attachment, 'Subject': Subject, 'Desciption': Desciption, 'To': To }),
+                            type: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (data) {
+                                $('.close').click();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+
+    function ValidateEmail(email) {
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        return expr.test(email);
+    };
+
+</script>
+<table id="newtable" style="display: none;"></table>
+
+<div id="newdata"><table></table></div>

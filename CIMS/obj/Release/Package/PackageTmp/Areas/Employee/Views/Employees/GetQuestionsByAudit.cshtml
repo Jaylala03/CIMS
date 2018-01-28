@@ -1,0 +1,53 @@
+﻿@model CIMS.Models.EmployeeIncidentModel
+@{
+    var GroupList = Model.QuestionList.GroupBy(m => m.QuestionGroup).Select(m => m.First()).ToList();
+}
+
+  
+@foreach (var item in GroupList)
+{
+        <tr>
+            <td colspan="4">
+                <input type="hidden" name="hdnCount" value="@Model.QuestionList.Count" />
+                @item.QuestionGroup
+            </td>
+        </tr>
+        for (int i = 0; i < Model.QuestionList.Where(m => m.QuestionGroup == item.QuestionGroup).ToList().Count; i++)
+        {
+            <tr>
+                <td>
+                    @Html.HiddenFor(m => m.QuestionList[i].QuestionID)
+                    @Model.QuestionList[i].Question
+                </td>
+                <td>
+                    @if (Model.QuestionList[i].ScoreType==true)
+                    {
+                    @Html.TextBoxFor(m => m.QuestionList[i].AuditScore, new { @type = "number", @min = 1, @max = 10 })
+                    }
+                    else
+                    {
+
+                    @Html.DropDownListFor(m => m.QuestionList[i].AuditScore, ViewBag.AnswerList as List<SelectListItem>, Model.QuestionList[i].AuditScore, new { @class = "form-control" })
+                    }
+                </td>
+                @*<td></td>*@
+                <td>
+                    @Html.TextAreaFor(m => m.QuestionList[i].AuditComment, new { @class = "Questionckeditor" })
+                </td>
+            </tr>
+        }
+    }
+   
+<script src="~/assets/js/ckeditor/adapters/jquery.js"></script>
+<script src="~/assets/js/ckeditor/ckeditor.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.Questionckeditor').ckeditor();
+      
+    });
+</script>
+<style>
+    .cke_contents {
+    height:70px !important;
+    }
+</style>

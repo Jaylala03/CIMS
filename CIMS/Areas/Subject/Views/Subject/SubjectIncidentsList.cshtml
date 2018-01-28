@@ -1,0 +1,296 @@
+﻿@model CIMS.Models.SubjectIncidentsModel
+@{
+    ViewBag.Title = "SubjectIncidentsList";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+<style>
+    .cmdSub {
+        pointer-events: none;
+        opacity: 0.65;
+    }
+</style>
+
+
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Subject Reports List</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Subject-Incident List</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading  custom-head">
+
+        @if (Model.SubjectID > 0)
+        {
+            <h3 class="box-title m-b-0">@Model.LogoFirstName @Model.LogoMiddleName @Model.LogoLastName - Reports List</h3>
+        }
+        else
+        {
+            <h3 class="box-title m-b-0">Subject Reports List</h3>
+        }
+
+        <div class="panel-options">
+            <div class="right-btn">
+                <a href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "")' class="btn btn-primary add"><i class="fa fa-plus"></i>Add Reports</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="subjectTable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>
+                            Image
+                        </th>
+                        <th>
+                            Nature of incident
+                        </th>
+                        <th>
+                            Report Number
+                        </th>
+                        <th>
+                            Short Description
+                        </th>
+                        <th>
+                            Short description text
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                        <th>
+                            Reports CreatedBy (UserName)
+                        </th>
+                        <th>
+                            Creation Date
+                        </th>
+                        @*<th>Action</th>*@
+
+                    </tr>
+                </thead>
+                @if (Model.SubjectIncidentList.Count() > 0)
+                {
+                    foreach (var items in Model.SubjectIncidentList)
+                    {
+
+                        <tr class="subTR" data-id="@Model.SubjectID" style="cursor:pointer">
+                            @if (items.LinkWithReport == true)
+                            {
+                                if (items.LinkFile == "Employee")
+                                {
+                                    <td style="width: 100px;">
+                                        <a href='@Url.Content("~/Employee/Employees/EmployeeIncident?Show=Link&EmpId=" + items.LinkByEmpID + "&Id=" + items.IncidentID + "")' title="Employee Report">
+                                            <img style="width: 100px;" src="@(Url.Content("~/Content/ReportsLogo/L.PNG"))" />
+                                        </a>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <a href='@Url.Content("~/Subject/Subject/SujectIncident?Show=Link&SubId=" + items.LinkByEmpID + "&Id=" + items.IncidentID + "")' title="View Subject Incident">
+                                            <img style="width: 100px;" src="@(Url.Content("~/Content/ReportsLogo/L.PNG"))" />
+                                        </a>
+                                    </td>
+                                }
+                            }
+                            else
+                            {
+                                <td>
+                                    @if (ViewBag.Action == 4 || ViewBag.Action == 5 || ViewBag.Action == 6 || ViewBag.Action == 7 || ViewBag.Action == 12 || ViewBag.Action == 13 || ViewBag.Action == 14 || ViewBag.Action == 15)
+                                    {
+                                        <a href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")' title="View Subject Incident">
+                                            <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.DefaultImage) ? Url.Content("~/assets/images/"+items.DefaultImage+"") : Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")' title="View Subject Incident">
+                                            <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.DefaultImage) ? Url.Content("~/assets/images/"+items.DefaultImage+"") : Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                        </a>
+                                    }
+                                </td>
+                            }
+                            @if (ViewBag.Action == 4 || ViewBag.Action == 5 || ViewBag.Action == 6 || ViewBag.Action == 7 || ViewBag.Action == 12 || ViewBag.Action == 13 || ViewBag.Action == 14 || ViewBag.Action == 15)
+                            {
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">
+                                    @items.NatureOfEvent
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">
+                                    @items.IncidentNumber
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">@items.ShortDescriptionName</td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">@Html.Raw(@items.Description) </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'"> @items.StatusName </td>
+                                if (items.ReportCreatorUser == Session["UserName"].ToString())
+                                {
+                                    <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'"> @items.ReportCreatorUser </td>
+                                    @*<td>
+
+                                            <a href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")' class="btn btn-info btn-sm small btn-icon" title="Edit Subject Incident"><i class="fa fa-pencil"></i></a>
+                                            <a class="btn btn-danger small btn-sm delete-sm" href='javascript:;' onclick='DeleteSubjectIncident(@items.IncidentID,this);' title="Delete Subject Incident"><i class='fa fa-trash'></i></a>
+                                        </td>*@
+                                }
+                                else
+                                {
+                                    <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">@items.ReportCreatorUser</td>
+                                    @*<td>
+                                            <a href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")' class="btn btn-info btn-sm small btn-icon" id="@(items.IncidentID)Edit" onclick='return ReportPermissionCheck(@Model.SubjectID,@items.IncidentID,1,this);' title="Edit Subject Incident"><i class="fa fa-pencil"></i></a>
+                                            <a class="btn btn-danger small btn-sm delete-sm" href='javascript:;' onclick='ReportPermissionCheck(@Model.SubjectID,@items.IncidentID,2,this);' id="@(items.IncidentID)Delete" title="Delete Subject Incident"><i class='fa fa-trash'></i></a>
+                                        </td>*@
+                                }
+
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">@items.ReportCreateDate</td>
+                            }
+                            else
+                            {
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">
+                                    @items.NatureOfEvent
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">
+                                    @items.IncidentNumber
+                                </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">@items.ShortDescriptionName</td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">@Html.Raw(@items.Description) </td>
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'"> @items.StatusName </td>
+                                if (items.ReportCreatorUser == Session["UserName"].ToString())
+                                {
+                                    <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'"> @items.ReportCreatorUser </td>
+                                    @*<td>
+
+                                            <a href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")' class="btn btn-info btn-sm small btn-icon" title="Edit Subject Incident"><i class="fa fa-pencil"></i></a>
+                                            <a class="btn btn-danger small btn-sm delete-sm" href='javascript:;' onclick='DeleteSubjectIncident(@items.IncidentID,this);' title="Delete Subject Incident"><i class='fa fa-trash'></i></a>
+                                        </td>*@
+                                }
+                                else
+                                {
+                                    <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">@items.ReportCreatorUser</td>
+                                    @*<td>
+                                            <a href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")' class="btn btn-info btn-sm small btn-icon" id="@(items.IncidentID)Edit" onclick='return ReportPermissionCheck(@Model.SubjectID,@items.IncidentID,1,this);' title="Edit Subject Incident"><i class="fa fa-pencil"></i></a>
+                                            <a class="btn btn-danger small btn-sm delete-sm" href='javascript:;' onclick='ReportPermissionCheck(@Model.SubjectID,@items.IncidentID,2,this);' id="@(items.IncidentID)Delete" title="Delete Subject Incident"><i class='fa fa-trash'></i></a>
+                                        </td>*@
+                                }
+
+                                <td onclick="document.location.href='@Url.Content("~/Subject/Subject/SujectIncident?Show=View&SubId=" + Model.SubjectID + "&Id=" + items.IncidentID + "")'">@items.ReportCreateDate</td>
+                            }
+                        </tr>
+                    }
+                }
+
+            </table>
+
+        </div>
+    </div>
+</div>
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+
+@*<link href="~/Content/data-tables/dataTables.alphabetSearch.css" rel="stylesheet" />*@
+@*<script src="~/Content/data-tables/dataTables.alphabetSearch.min.js"></script>*@
+
+<script>
+
+    $(document).ready(function () {
+        $("#subjectTable").dataTable();
+
+
+        //$('.ToggleCls').addClass('cmdSub');
+        //$('.subTR').on('click', function () {
+        //    var employeeID = $(this).attr('data-id');
+        //    //var url = "/Employee/Employees/SearchEmployee/" + employeeID;
+        //    var url = "/CIMS/Employee/Employees/SearchEmployee/" + employeeID;
+        //    $('#combineBtn').attr('href', url);
+        //    $('.ToggleCls').removeClass('cmdSub');
+        //});
+
+    });
+
+    function DeleteSubjectIncident(id, caller) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/DeleteIncidents")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#subjectTable>tbody tr').length == 1) {
+                            $('#subjectTable').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Subject Incident has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Subject Incident has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function ReportPermissionCheck(SubID, RepID, per, caller) {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/ReportPermissionCheck")',
+            data: JSON.stringify({ 'SubID': SubID, 'RepID': RepID, }),
+            type: 'POST',
+            dataType: 'json',
+            async: false,
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    if (per == 1) {
+                        if (jsonData.ReportEdit == true) {
+                            return false;
+                        }
+                        else {
+                            alert('You dont have permission to Edit');
+                            $('#' + RepID + 'Edit').removeAttr("href");
+                        }
+                    }
+                    else if (per == 2) {
+                        if (jsonData.ReportDelete == true) {
+                            DeleteSubjectIncident(RepID, caller);
+                        }
+                        else {
+                            alert('You dont have permission to Delete');
+                            return false;
+                        }
+                    }
+                }
+            },
+            error: function (data) {
+                console.log('error');
+                console.log(data.responseText);
+
+            }
+        });
+    }
+</script>
+

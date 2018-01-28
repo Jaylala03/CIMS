@@ -1,0 +1,902 @@
+﻿@model CIMS.Models.EventPermissionViewModel
+@*@{
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+    ViewBag.Title = "Events";
+}*@
+
+@*<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Events</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Events</li>
+        </ol>
+    </div>
+</div>*@
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+        <input type="hidden" id="hdType" name="hdType" value='@(Request.QueryString["Type"])' />
+        <div class="full-width">
+            <div class="tab-pane" id="Permissions" >
+                <div class="large-title">Event - Access Permission </div>
+                <div class="col-md-12">
+                    <div class="panel-body all-box" style="padding:0px;">
+                        <div class="white-box clearfix">
+                            <div class="table-responsive">
+                                <h3> Event Creator Details </h3>
+                                <table id="tblEventCreatorDetails" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>User Name</th>
+                                            <th>Date Created</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class='has-sub'>
+                                            <td>@Model.EventCreatorFirstName</td>
+                                            <td>@Model.EventCreatorLastName</td>
+                                            <td>@Model.EventCreatorUser</td>
+                                            <td>@Model.EventCreateDate</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="white-box clearfix">
+                            <div class="col-md-12">
+                                <h3>User Base Permission </h3>
+                                <div class="box-bg">
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">
+                                            <h3> Users</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <select name="listUsers" id="listUsers" class="form-control" size="5" style="width: 411px; height: 316px;"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-1 text-center">
+                                        <div class="custom-top-margin">
+                                            <button type="button" class="btn btn-success btnwidh" id="btnadduser" onclick="AddUsersInList(this.id);">></button>
+                                            <br />
+                                            <button type="button" class="btn btn-success btnwidh" id="btnaddalluser" onclick="AddUsersInList(this.id);">>></button>
+                                            <br />
+                                            <button type="button" class="btn btn-danger btnwidh" id="btnremoveuser" onclick="RemoveUsersInList(this.id);"><</button>
+                                            <br />
+                                            <button type="button" class="btn btn-danger btnwidh" id="btnremovealluser" onclick="RemoveUsersInList(this.id);"><<</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">
+                                            <h3> Event Access Users</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <select name="listEventAccessUsers" id="listEventAccessUsers" size="5" class="form-control" style="width: 411px; height: 316px;"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <h3 class="check-space">Permissions</h3>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="1" name="View" class="ByUsers" id="ByUserEventView" />
+                                            <label>View</label>
+                                        </div>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="2" name="Edit" class="ByUsers" id="ByUserEventEdit" />
+                                            <label>Edit</label>
+                                        </div>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="3" name="Delete" class="ByUsers" id="ByUserEventDelete" />
+                                            <label>Delete</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="white-box clearfix">
+                            <div class="col-md-12">
+                                <h3>Role Base Permission </h3>
+                                <div class="box-bg">
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">
+                                            <h3> Roles</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <select name="listRoles" id="listRoles" class="form-control" size="5" style="width: 411px; height: 200px;"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-1 text-center">
+                                        <div class="custom-top-margin">
+                                            <button type="button" class="btn btn-success btnwidh" id="btnaddrole" onclick="AddRoleInList(this.id);"> > </button>
+                                            <br />
+                                            <button type="button" class="btn btn-success btnwidh" id="btnaddallrole" onclick="AddRoleInList(this.id);"> >> </button>
+                                            <br />
+                                            <button type="button" class="btn btn-danger btnwidh" id="btnremoverole" onclick="RemoveRoleInList(this.id);"> < </button>
+                                            <br />
+                                            <button type="button" class="btn btn-danger btnwidh" id="btnremoveallrole" onclick="RemoveRoleInList(this.id);"> << </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">
+                                            <h3> Event Access Roles</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <select name="listEventAccessRoles" id="listEventAccessRoles" size="5" class="form-control" style="width: 411px; height: 200px;"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <h3 class="check-space"> Permissions</h3>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="4" name="View" class="ByRoles" id="ByRoleEventView" />
+                                            <label>View</label>
+                                        </div>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="5" name="Edit" class="ByRoles" id="ByRoleEventEdit" />
+                                            <label>Edit</label>
+                                        </div>
+                                        <div class="checkbox-inline">
+                                            <input type="checkbox" value="6" name="Delete" class="ByRoles" id="ByRoleEventDelete" />
+                                            <label>Delete</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    // Event Access By User
+    /* -------- UsersList ---------- */
+    function UsersList() {
+        var EventID = '@Model.EventID';
+        $("#listUsers").html("");
+        $.ajax({
+            url: '@Url.Content("~/Events/Event/UsersListEventAccess")',
+            data: JSON.stringify({ 'EventID': EventID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listUsers').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- EventAccess Users List ---------- */
+    function EventAccessUsers() {
+        var EventID = '@Model.EventID';
+        $("#listEventAccessUsers").html("");
+        $.ajax({
+            url: '@Url.Content("~/Events/Event/EventAccessUsers_Bind")',
+            data: JSON.stringify({ 'EventID': EventID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listEventAccessUsers').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- Add Users in List ---------- */
+    function AddUsersInList(btnid)
+    {
+        var EventID = '@Model.EventID';
+        //var UserId = $("#listUsers").val();
+        var values = [];
+        var datacolumn = '';
+        if (btnid == 'btnadduser') {
+            values.push($("#listUsers").val());
+        }
+        else {
+            $("#listUsers > option").each(function () {
+                values.push(this.value);
+            });
+        }
+        //alert(values.join(','));
+        datacolumn = values.join(',');
+        if (datacolumn == '') {
+            alert("Please select a user");
+            return false;
+        }
+        else {
+            $.ajax({
+                url: '@Url.Content("~/Events/Event/AddUsersEventAccess")',
+                data: JSON.stringify({ 'UserID': datacolumn, 'EventID': EventID}),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Users has been added Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        UsersList(); // Users List
+                        EventAccessUsers(); // EventAccess Users List
+                    }
+                    else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                    }
+                }
+            });
+        }
+    }
+
+    /* -------- Remove Users in List ---------- */
+    function RemoveUsersInList(btnid) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            var values = [];
+            var datacolumn = '';
+            if (btnid == 'btnremoveuser') {
+                values.push($("#listEventAccessUsers").val());
+            }
+            else {
+                $("#listEventAccessUsers > option").each(function () {
+                    values.push(this.value);
+                });
+            }
+            //alert(values.join(','));
+            datacolumn = values.join(',');
+            if (datacolumn == '') {
+                alert("Please select a Event Access user");
+                return false;
+            }
+            else {
+                $.ajax({
+                    url: '@Url.Content("~/Events/Event/RemoveUsersEventAccess")',
+                    data: JSON.stringify({ 'ID': datacolumn }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data == "success") {
+                            $('#msgDiv').html('<div class="alert alert-success">User has been removed Suceesfully.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                            UsersList(); // Users List
+                            EventAccessUsers(); // EventAccess Users List
+                        }
+                        else {
+                            $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                        }
+                    }
+                });
+            }
+        }
+    }
+    /* -------- SavePermission By User ---------- */
+    $('#ByUserEventView').click(function ()
+    {
+        if ($(this).is(':checked')) {
+            var id = $("#listEventAccessUsers").val();
+            var RepId = '@Model.EventID';
+            var type = 'View';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            debugger
+            if (id == '' || id == null) {
+                alert("Please select a Event Access User.");
+                return false;
+            } else {
+                SavePermission(id, RepId, type, permission);
+            }
+        }
+        else {
+            if ($('#ByUserEventEdit').is(':checked')) {
+                alert("First to Remove Edit Permission");
+                return false;
+            }
+            if ($('#ByUserEventDelete').is(':checked')) {
+                alert("First to Remove Delete Permission");
+                return false;
+            }
+            if (!$(this).is(':checked')) {
+                var id = $("#listEventAccessUsers").val();
+                var RepId = '@Model.EventID';
+                var type = 'View';
+                var permission = 'false';
+                if ($(this).is(':checked')) {
+                    permission = 'true';
+                }
+                else {
+                    permission = 'false';
+                }
+                if (id == '' || id == null) {
+                    alert("Please select a Event Access User.");
+                    return false;
+                } else {
+                    SavePermission(id, RepId, type, permission);
+                }
+            }
+        }
+    });
+    $('#ByUserEventEdit').click(function () {
+        if (!$('#ByUserEventView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listEventAccessUsers").val();
+            var RepId = '@Model.EventID';
+            var type = 'Edit';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Event Access User.");
+                return false;
+            } else {
+                SavePermission(id, RepId, type, permission);
+            }
+        }
+    });
+
+    $('#ByUserEventDelete').click(function () {
+        if (!$('#ByUserEventView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listEventAccessUsers").val();
+            var RepId = '@Model.EventID';
+            var type = 'Delete';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Event Access User.");
+                return false;
+            } else {
+                SavePermission(id, RepId, type, permission);
+            }
+        }
+    });
+    function SavePermission(id, RepId, type, permission) {
+        $.ajax({
+            url: '@Url.Content("~/Events/Event/EventAccessPermission")',
+            data: JSON.stringify({ 'ID': id, 'EventID': RepId, 'Type': type, 'Permission': permission }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Event Access Permission Successfully Saved.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+                EventAccessPermission(id);
+            }
+        });
+    }
+    function checkuserViewRights()
+    {
+        debugger
+        $.ajax({
+            url: '@Url.Content("~/Events/Event/EventAccessPermission_ByUser")',
+            data: JSON.stringify({ 'UserID': $("#listEventAccessUsers").val(), 'EventID': '@Model.EventID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var EventPermission = data.split(',');
+
+                    if (EventPermission[0] == "True") {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+
+                }
+                else {
+                    return true;
+                }
+            }
+        });
+    }
+    function checkuserEditRights()
+    {
+        debugger
+        $.ajax({
+            url: '@Url.Content("~/Events/Event/EventAccessPermission_ByUser")',
+            data: JSON.stringify({ 'UserID': $("#listEventAccessUsers").val(), 'EventID': '@Model.EventID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var EventPermission = data.split(',');
+
+                    if (EventPermission[1] == "True") {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+
+                }
+                else {
+                    return true;
+                }
+            }
+        });
+    }
+    /* -------- Event Access Permission By User ---------- */
+    function EventAccessPermission(id) {
+        $.ajax({
+            url: '@Url.Content("~/Events/Event/EventAccessPermission_ByUser")',
+            data: JSON.stringify({ 'ID': id, 'EventID': '@Model.EventID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var EventPermission = data.split(',');
+                    if (EventPermission[0] == "True") {
+                        $('#ByUserEventView').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserEventView').prop('checked', false);
+                    }
+                    if (EventPermission[1] == "True") {
+                        $('#ByUserEventEdit').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserEventEdit').prop('checked', false);
+                    }
+                    if (EventPermission[2] == "True") {
+                        $('#ByUserEventDelete').prop('checked', true);
+                    }
+                    else {
+                        $('#ByUserEventDelete').prop('checked', false);
+                    }
+                }
+                else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+            }
+        });
+    }
+    //End Event Access Users End
+
+    // Event Access By Role
+    /* -------- Roles List ---------- */
+    function RolesList() {
+        var EventID = '@Model.EventID';
+        $("#listRoles").html("");
+        $.ajax({
+            url: '@Url.Content("~/Events/Event/UsersEventAccessRole")',
+            data: JSON.stringify({ 'EventID': EventID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listRoles').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- EventAccess Role List ---------- */
+    function EventAccessRoles() {
+        var EventID = '@Model.EventID';
+        $("#listEventAccessRoles").html("");
+        $.ajax({
+            url: '@Url.Content("~/Events/Event/EventAccessRoles_Bind")',
+            data: JSON.stringify({ 'EventID': EventID }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    $('#listEventAccessRoles').append(data);
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    /* -------- Add Role in List ---------- */
+    function AddRoleInList(btnid) {
+        var EventID = '@Model.EventID';
+        var EventID = '@Model.EventID';
+        //var RoleId = $("#listRoles").val();
+        var values = [];
+        var datacolumn = '';
+        if (btnid == 'btnaddrole') {
+            values.push($("#listRoles").val());
+        }
+        else {
+            $("#listRoles > option").each(function () {
+                values.push(this.value);
+            });
+        }
+        datacolumn = values.join(',');
+        if (datacolumn == '') {
+            alert("Please select a Role");
+            return false;
+        }
+        else {
+            $.ajax({
+                url: '@Url.Content("~/Events/Event/AddRolesEventAccess")',
+                data: JSON.stringify({ 'RoleID': datacolumn, 'EventID': EventID}),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Role has been added Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        RolesList(); // Roles List
+                        EventAccessRoles(); // EventAccess Roles List
+                    }
+                    else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                    }
+                }
+            });
+        }
+    }
+
+    /* -------- Remove Role in List ---------- */
+    function RemoveRoleInList(btnid) {
+        //var ID = $("#listEventAccessRoles").val();
+        //if (ID == "" || ID == null) {
+        //    alert("Please select a Event Access Role");
+        //    return false;
+        //}
+        //else
+        //{
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            var values = [];
+            var datacolumn = '';
+            if (btnid == 'btnremoverole') {
+                values.push($("#listEventAccessRoles").val());
+            }
+            else {
+                $("#listEventAccessRoles > option").each(function () {
+                    values.push(this.value);
+                });
+            }
+            datacolumn = values.join(',');
+            if (datacolumn == '') {
+                alert("Please select a Event Access Role");
+                return false;
+            }
+            else {
+                $.ajax(
+                    {
+                        url: '@Url.Content("~/Events/Event/RemoveRolesEventAccess")',
+                        data: JSON.stringify({ 'ID': datacolumn }),
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function (data) {
+                            if (data == "success") {
+                                $('#msgDiv').html('<div class="alert alert-success">Role has been remove Suceesfully.</div>');
+                                setTimeout(function () {
+                                    $('#msgDiv').fadeOut();
+                                }, 5000);
+                                RolesList(); // Roles List
+                                EventAccessRoles(); // EventAccess Roles List
+                            }
+                            else {
+                                $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                                setTimeout(function () {
+                                    $('#msgDiv').fadeOut();
+                                }, 5000);
+                            }
+                        }
+                    });
+            }
+        }
+        //}
+    }
+    /* -------- SavePermission By Role ---------- */
+    $('#ByRoleEventView').click(function () {
+        if ($(this).is(':checked')) {
+            var id = $("#listEventAccessRoles").val();
+            var RepId = '@Model.EventID';
+            var type = 'View';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Event Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, RepId, type, permission);
+            }
+        } else {
+            if ($('#ByRoleEventEdit').is(':checked')) {
+                alert("First to Remove Edit Permission");
+                return false;
+            }
+            if ($('#ByRoleEventDelete').is(':checked')) {
+                alert("First to Remove Delete Permission");
+                return false;
+            }
+            if (!$(this).is(':checked')) {
+                var id = $("#listEventAccessRoles").val();
+                var RepId = '@Model.EventID';
+                var type = 'View';
+                var permission = 'false';
+                if (id == '' || id == null) {
+                    alert("Please select a Event Access Role.");
+                    return false;
+                } else {
+                    SavePermissionByRole(id, RepId, type, permission);
+                }
+            }
+        }
+    });
+    $('#ByRoleEventEdit').click(function () {
+        if (!$('#ByRoleEventView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listEventAccessRoles").val();
+            var RepId = '@Model.EventID';
+            var type = 'Edit';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Event Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, RepId, type, permission);
+            }
+        }
+    });
+
+    $('#ByRoleEventDelete').click(function () {
+        if (!$('#ByRoleEventView').is(':checked')) {
+            alert("First to Save View Permission");
+            return false;
+        }
+        else {
+            var id = $("#listEventAccessRoles").val();
+            var RepId = '@Model.EventID';
+            var type = 'Delete';
+            var permission = 'false';
+            if ($(this).is(':checked')) {
+                permission = 'true';
+            }
+            else {
+                permission = 'false';
+            }
+            if (id == '' || id == null) {
+                alert("Please select a Event Access Role.");
+                return false;
+            } else {
+                SavePermissionByRole(id, RepId, type, permission);
+            }
+        }
+    });
+    function SavePermissionByRole(id, RepId, type, permission) {
+        $.ajax({
+            url: '@Url.Content("~/Events/Event/EventAccessPermissionByRole")',
+            data: JSON.stringify({ 'ID': id, 'EventID': RepId, 'Type': type, 'Permission': permission }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Event Access Permission Successfully Saved.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+                EventAccessPermission(id);
+            }
+        });
+    }
+    /* -------- Event Access Permission By Role ---------- */
+    function EventAccessPermissionByRole(id) {
+        $.ajax({
+            url: '@Url.Content("~/Events/Event/EventAccessPermission_ByRole")',
+            data: JSON.stringify({ 'ID': id, 'EventID': '@Model.EventID' }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var EventPermission = data.split(',');
+                    if (EventPermission[0] == "True") {
+                        $('#ByRoleEventView').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleEventView').prop('checked', false);
+                    }
+                    if (EventPermission[1] == "True") {
+                        $('#ByRoleEventEdit').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleEventEdit').prop('checked', false);
+                    }
+                    if (EventPermission[2] == "True") {
+                        $('#ByRoleEventDelete').prop('checked', true);
+                    }
+                    else {
+                        $('#ByRoleEventDelete').prop('checked', false);
+                    }
+                }
+                else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Error in request.</div>');
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                }
+            }
+        });
+    }
+    //End Event Access Role End
+
+
+</script>
+<script>
+
+    $(document).ready(function () {
+
+        if ($('#hdShow').val() == 'View') {
+            $(".form-control").attr("disabled", "disabled");
+            $(".btn").hide(true);
+            $(document).find('.enablebtn>a').removeAttr("style");
+        }
+        else {
+            $(".form-control").attr("disabled", false);
+            $(document).find('#permission').hide(true);
+        }
+
+        UsersList(); // Users List
+        EventAccessUsers(); // EventAccess Users List
+        RolesList(); // Roles List
+        EventAccessRoles(); // EventAccess Roles List
+    });
+
+    function DeleteEvent(id) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Events/Event/DeleteEvent")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Event has been deleted Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                        location.replace('@Url.Content("~/Events/Event/Index")');
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    $("#permission").click(function () {
+        if (EditConfirm('@ViewBag.Action')) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+
+    // Submit form on tab change Script
+    function formSubmitByTab(valueChanged) {
+        if (valueChanged == true) {
+            var r = confirm("Do you want to save changes?");
+            if (r == true) {
+                $('#btnSubmit').click();
+            }
+        }
+
+    }
+    // End Submit form on tab change Script
+</script>
+
+<style>
+    .btnwidh {
+        width: 44px;
+    }
+</style>

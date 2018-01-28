@@ -1,0 +1,472 @@
+﻿@model CIMS.Models.LCTIdentificationModel
+@{
+    ViewBag.Title = "SubjectLCTTotals";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+<style>
+    .paddng {
+        padding: 20px 15px;
+        padding-bottom: 5px;
+    }
+
+    .sub-lct {
+        padding: 0px 0px;
+        float: left;
+        display: inline-block;
+    }
+
+    .get-lct-btn {
+        margin-bottom: 0px;
+        text-align: right;
+        float: right;
+        display: inline-block;
+    }
+
+    .table-scroll {
+        max-height: 258px;
+        overflow-y: auto;
+    }
+</style>
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Subject</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Subject</li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    @if (Model.SubjectID > 0)
+    {
+        <div class="col-md-12 enablebtn btn-enable-main">
+            <h3 class="box-title inline-head">@Model.LogoFirstName @Model.LogoMiddleName @Model.LogoLastName</h3>
+
+            <a href='@Url.Content("~/Subject/Subject/SubjectLCTTotals?Type=Subject&Id=" + Model.SubjectID + "")' id="permission" class="btn btn-info edit" title="Edit Subject">
+                <i class="fa fa-pencil"></i> Edit
+            </a>
+            <a class="btn btn-danger" href='javascript:;' onclick='DeleteSubject(@Model.SubjectID, this);' title="Delete Subject">
+                <i class='fa fa-trash'></i> Delete
+            </a>
+            <a class="btn btn-primary" href='@Url.Content("~/Subject/Subject/SubjectIncidentsList?SubId=" + Model.SubjectID + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))">
+                View Reports
+            </a>
+            <a class="btn btn-info" href='@Url.Content("~/Subject/Subject/SearchSubject/" + Model.SubjectID + "")'>
+                <i class="fa fa-plus"></i>
+                Combine Subject
+            </a>
+        </div>
+    }
+    <div class="col-md-12">
+        <div class="white-box clearfix">
+            <ul class="nav nav-pills custom-tabs">
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li>
+                    <a href='@Url.Content("~/Subject/Subject/AddSubject?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                        <span>Subject</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Addresses", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li class="">
+                    <a href='@Url.Content("~/Subject/Subject/SubjectAddress?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                        <span>Addresses</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Aliases", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li class="">
+                    <a href='@Url.Content("~/Subject/Subject/SubjectAlias?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+
+                        <span>Aliases</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Features", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li class="">
+                    <a href='@Url.Content("~/Subject/Subject/SubjectFeatures?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                        <span>Features</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Identification", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li class="">
+                    <a href='@Url.Content("~/Subject/Subject/SubjectIdentification?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                        <span>Identification</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject LCT Totals", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li class="active">
+                    <a href="javascript:;">
+                        <span>LCT Totals</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Watch List", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li class="">
+                    <a href='@Url.Content("~/Subject/Subject/SubjectWatchList?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                        <span>Watch List</span>
+                    </a>
+                </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Linked", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                <li class="">
+                    <a href='@Url.Content("~/Subject/Subject/SubjectLinked?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+Model.SubjectID+"")'>
+                        <span>Linked</span>
+                    </a>
+                </li>
+                }
+            </ul>
+        </div>
+        <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+        <input type="hidden" id="hdSubjectID" value='@Model.SubjectID' />
+
+        <div id="featureTitle" class="large-title no-margin">Subject LCT Totals</div>
+
+        <div class="white-box clearfix">
+            <div class="panel panel-default">
+                <div class="panel-body" style="padding:0px 0px;">
+                    <div class="col-md-12">
+                        <fieldset>
+                            <legend>Date Range </legend>
+                            <div class="col-md-6">
+                                <div class="row">
+
+
+                                    <div class="form-group clearfix" style="margin-top: 18px;">
+                                        <label class="col-md-12"></label>
+                                        <div class="col-md-12">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="Radio1" value="Today" id="rbToday" />
+                                                Today
+                                            </label>
+
+                                            <label class="radio-inline">
+                                                <input type="radio" name="Radio1" value="YeartoDate" id="rbYeartoDate" />
+                                                Year to date
+                                            </label>
+
+                                            <label class="radio-inline">
+                                                <input type="radio" name="Radio1" value="All" checked="checked" class="active" id="rbAll" />
+                                                All
+                                            </label>
+
+                                            <label class="radio-inline">
+                                                <input type="radio" name="Radio1" value="DateRange" id="rbDateRange" />
+                                                Date Range
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group clearfix  has-feedback">
+                                            <label>Start Date</label>
+                                            <input type="text" id="startDate" name="startDate" class="form-control" />
+                                            <span class="fa fa-calendar form-control-feedback"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group clearfix  has-feedback">
+                                            <label>End Date</label>
+                                            <input type="text" id="endDate" name="endDate" class="form-control" />
+                                            <span class="fa fa-calendar form-control-feedback"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </fieldset>
+
+                    </div>
+                    <div class="col-md-12 clearfix" style="margin-top:20px;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span class="large-title no-margin sub-lct">Subject LCT Totals List</span>
+                                <span class="form-group btn-right-align clearfix get-lct-btn">
+                                    <input type="submit" value="Get LCT Totals" class="btn btn-success " id="GetLCTTotals" onclick="GetLCTTotals()" />
+                                </span>
+                            </div>
+                        </div>
+                        <div class="panel-body" style="padding: 25px 0px;">
+                            <div class="table-responsive table-scroll">
+                                <table id="LCTTotalsTable" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Incident number</th>
+                                            <th>Incident date</th>
+                                            <th>Amount</th>
+                                            <th>Transaction Type</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="white-box clearfix">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+
+                <div class="col-md-12">
+
+                    <div class="col-md-6">
+                        <fieldset>
+                            <legend>Buy INS</legend>
+                            <div class="form-group clearfix">
+                                <label>Cash  </label>
+                                <input type="text" class="form-control" id="BuyInCash" readonly />
+                            </div>
+
+                            <div class="form-group clearfix">
+                                <label>Marker  </label>
+                                <input type="text" class="form-control" id="BuyInMarker" readonly />
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <div class="col-md-6">
+                        <fieldset>
+                            <legend>Cash Outs</legend>
+                            <div class="form-group clearfix">
+                                <label>Cash  </label>
+                                <input type="text" class="form-control" id="CashOutCash" readonly />
+                            </div>
+                            <div class="form-group clearfix">
+                                <label>Marker Buy-Back</label>
+                                <input type="text" class="form-control" id="CashOutMarker" readonly />
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <div class="col-md-12 clearfix" style="margin-top:30px;">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group clearfix">
+                                <label class="control-label control-label col-md-4">Cash Call: </label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="CashCall" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group clearfix">
+                                <label class="control-label control-label col-md-4">Cash Outs-Buy Ins:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="CashOutBuy" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+
+                            <div class="form-group clearfix">
+                                <label class="control-label control-label col-md-4">Foreign Exchange:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" id="ForeignExchange" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+        $(document).ready(function () {
+            $('#startDate').datepicker();
+            $('#endDate').datepicker();
+            $('#startDate').attr("disabled", "disabled");
+            $('#endDate').attr("disabled", "disabled");
+        });
+
+        $('input:radio').click(function () {
+            $('input:radio:checked').addClass('active');
+            $('input:radio:not(:checked)').removeClass('active');
+
+        });
+
+        $('#rbToday').click(function () {
+            $('#startDate').val('');
+            $('#endDate').val('');
+            $('#startDate').attr("disabled", "disabled");
+            $('#endDate').attr("disabled", "disabled");
+        });
+        $('#rbYeartoDate').click(function () {
+            $('#startDate').val('');
+            $('#endDate').val('');
+            $('#startDate').attr("disabled", "disabled");
+            $('#endDate').attr("disabled", "disabled");
+        });
+        $('#rbAll').click(function () {
+            $('#startDate').val('');
+            $('#endDate').val('');
+            $('#startDate').attr("disabled", "disabled");
+            $('#endDate').attr("disabled", "disabled");
+        });
+        $('#rbDateRange').click(function () {
+            $('#startDate').val('');
+            $('#endDate').val('');
+            $('#startDate').attr("disabled", false);
+            $('#endDate').attr("disabled", false);
+        });
+
+
+        function GetLCTTotals() {
+            var type = $('input[type=radio][name=Radio1].active').val();
+            var value = '';
+            if (type == 'All') {
+                value = $('#hdSubjectID').val();
+                var startDate = '';
+                var endDate = '';
+            }
+            if (type == 'Today') {
+                value = $('#hdSubjectID').val();
+
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth() + 1; //January is 0!
+
+                var yyyy = today.getFullYear();
+                if (dd < 10) {
+                    dd = '0' + dd
+                }
+                if (mm < 10) {
+                    mm = '0' + mm
+                }
+                var today = mm + '/' + dd + '/' + yyyy;
+                var startDate = today;
+                var endDate = today;
+            }
+            if (type == 'YeartoDate') {
+                value = $('#hdSubjectID').val();
+
+                var currentTime = new Date();
+
+                // returns the year (four digits)
+                var year = currentTime.getFullYear();
+
+                var startDate = 01 + '/' + 01 + '/' + year;
+
+                var today = new Date();
+                var dd = today.getDate();
+                var mm = today.getMonth() + 1; //January is 0!
+
+                var yyyy = today.getFullYear();
+                if (dd < 10) {
+                    dd = '0' + dd
+                }
+                if (mm < 10) {
+                    mm = '0' + mm
+                }
+                var today = mm + '/' + dd + '/' + yyyy;
+                var endDate = today;
+            }
+            if (type == 'DateRange') {
+                value = $('#hdSubjectID').val();
+                if ($('#startDate').val() != '') {
+                    var startDate = $('#startDate').val();
+                }
+                else {
+                    alert("Start Date Required.");
+                    return false;
+                }
+                if ($('#endDate').val() != '') {
+                    var endDate = $('#endDate').val();
+                }
+                else {
+                    alert("End Date Required.");
+                    return false;
+                }
+
+            }
+            $("#LCTTotalsTable").find("tr:not(:first)").remove();
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/IncidentList_print")',
+                data: JSON.stringify({ 'value': value, 'startDate': startDate, 'endDate': endDate }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    $('#LCTTotalsTable>tbody').append(data[0].JsonString);
+                    $('#BuyInCash').val(data[0].BuyInCash);
+                    $('#BuyInMarker').val(data[0].BuyInMarker);
+                    $('#CashOutCash').val(data[0].CashOutCash);
+                    $('#CashOutMarker').val(data[0].CashOutMarker);
+                    $('#CashCall').val(data[0].CashCall);
+                    $('#ForeignExchange').val(data[0].ForeignExchange);
+                    var value = (data[0].CashOutCash + data[0].CashOutMarker) - (data[0].BuyInCash + data[0].BuyInMarker);
+                    if (value < 0) {
+                        value = -value;
+                    }
+                    $('#CashOutBuy').val(value);
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+
+        function DeleteSubject(id, caller) {
+            if (DeleteConfirm('@ViewBag.Action')) {
+                $.ajax({
+                    url: '@Url.Content("~/Subject/Subject/DeleteSubject")',
+                    data: JSON.stringify({ 'Id': id }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data == "success") {
+                            $('#msgDiv').html('<div class="alert alert-success">Subject has been deleted Suceesfully.</div>');
+                            setTimeout(function () {
+                                $('#msgDiv').fadeOut();
+                            }, 5000);
+                            window.scrollTo(0, 0);
+                            location.replace('@Url.Content("~/Subject/Subject/Index")');
+                        } else {
+
+                        }
+
+                    }
+                });
+            }
+        }
+    </script>

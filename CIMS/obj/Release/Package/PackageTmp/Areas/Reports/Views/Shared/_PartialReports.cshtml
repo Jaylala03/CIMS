@@ -1,0 +1,590 @@
+﻿@model CIMS.Models.ReportsModel
+<div class="col-md-12">
+    <div class="white-box">
+        <div class="col-md-12">
+            <fieldset>
+                <legend>Banned End Date Between</legend>
+                <div class="form-group">
+                    <label class="control-label">Start Date </label>
+                    <input type="text" id="startDate" name="startDate" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">End Date </label>
+                    <input type="text" id="endDate" name="endDate" class="form-control" />
+                </div>
+            </fieldset>
+        </div>
+        <div class="col-md-12">
+            <fieldset>
+                <legend>Type of Ban</legend>
+
+                <input type="hidden" value="@Model.BanTypeList" name="Count" id="BannedList" />
+
+                @for (int i = 0; i < Model.BanTypeList.ToList().Count; i++)
+                {
+                    if (Model.BanTypeList != null && Model.BanTypeList.Count > 0)
+                    {
+
+
+                        if (Model.BanTypeList.Where(m => m.Text == Model.BanTypeList[i].Text).FirstOrDefault() != null)
+                        {
+                            <input type="checkbox" id="BanTypeList_(@i)__TypeOfBan" name="BanTypeList[@i].TypeOfBan" value="@Model.BanTypeList[i].Text" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="BanTypeList_(@i)__TypeOfBan" name="BanTypeList[@i].TypeOfBan" value="@Model.BanTypeList[i].Text" />
+
+                        }
+
+                    }
+                    else
+                    {
+                        <input type="checkbox" id="BanTypeList_(@i)__TypeOfBan" name="BanTypeList[@i].TypeOfBan" value="@Model.BanTypeList[i].Text" />
+
+                    }
+
+
+                    <input type="hidden" id="BanTypeList_(@i)__Text" name="BanTypeList[@i].__Text" value="@Model.BanTypeList[i].Text" />
+                    @Model.BanTypeList[i].Text <br />
+
+                }
+
+            </fieldset>
+        </div>
+        <br />
+        <div class="col-md-12">
+            <div class="form-group">
+                <button type="button" class="btn btn-success" id="PrintBannedPicSubmit">Print</button>
+                <button type="button" class="btn btn-success" id="PreviewBannedPicSubmit">Preview</button>
+                <a href="#myModalSendEmail" data-toggle="modal" class="btn btn-success" style="padding: 7px 8px;" id="SendEmailBannedPic">Send Email</a>
+                <button type="button" class="btn btn-success" id="PdfBannedPicSubmit">Save As Pdf</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Send Email Model-->
+<div class="modal fade" id="myModalSendEmail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Send Email</h4>
+            </div>
+
+            <div class="modal-body row">
+                <div class="col-md-12 right-label">
+                    <div class="form-group clearfix">
+                        @Html.Label("To", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="To" id="ToBan" class="form-control">
+                            <label id="EmailTo" style="color:red;"></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Subject", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Subject" id="SubjectBan" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Desciption", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Desciption" id="DesciptionBan" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12 text-right">
+                        <button type="submit" class="btn btn-success" id="SendEmailBanPicData">Send Email</button>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="BannedPicture-log">
+
+                        <div class="table-responsive">
+                            <div id="AttachmentBannedPic"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+<!-- /.Send Email Model-->
+
+
+<div id="PrintBannedPicdiv" style="text-align: center; border: 1px solid #ccc;display:none;">
+</div>
+
+<script>
+    $(document).ready(function () {
+    });
+
+    $('input:checkbox').change(function () {
+        if ($(this).is(':checked'))
+            $(this).addClass('selectedBan');
+        else
+            $(this).removeClass('selectedBan');
+
+    });
+
+    //print--
+    $('#PrintBannedPicSubmit').click(function () {
+        var values = [];
+        $('.selectedBan').each(function () {
+            values.push($(this).val());
+        });
+
+        var datacolumn = values.join(',');
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        alert(startDate, endDate, datacolumn);
+        $.ajax({
+            url: '@Url.Content("~/Reports/Reports/BannedPictures_print")',
+            data: JSON.stringify({ 'startDate': startDate, 'endDate': endDate, 'datacolumn': datacolumn }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var Column = datacolumn.split(',');
+
+                var sOut = '<table id="dynamicTable" style="border-collapse:collapse"><thead><tr class="head-bg">';
+
+                sOut += '</tr><thead><tbody>';
+
+                for (var i = 0; i < data.length; i += 1) {
+                    alert(data.length);/////////////////////
+
+                    console.log(data[i]);
+
+                    alert(data[i]["FirstName"]);////////////
+                    sOut += '<tr><td class="td-border" height="150" width="200">' + data[i]["Picture"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Name:' + data[i]["FirstName"] + ' ' + data[i]["LastName"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Race:' + data[i]["Race"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Sex:' + String(data[i]["Sex"]) + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Status:' + data[i]["Status"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Type of Ban:' + data[i]["BanName"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">Start Date:' + data[i]["StartDate"] + '</td></tr>';
+                    sOut += '<tr><td class="td-border">End Date:' + data[i]["EndDate"] + '</td></tr>';
+                }
+                sOut += '<tbody></table>';
+                $('#PrintBannedPicdiv').html(sOut);
+                var divContents = $('#PrintBannedPicdiv').html();
+                var printWindow = window.open('', '_blank', 'width=350,height=150,location=no,left=200px');
+                printWindow.document.open();
+                printWindow.document.write('<html><head><title></title>');
+                printWindow.document.write('</head><body >');
+                printWindow.document.write('<style>.head-bg{background:#f2f2f2}.td-border{outline:1px solid #ccc;padding:5px}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+                printWindow.document.write(divContents);
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.print();
+
+
+                printWindow.close();
+
+
+
+
+            }
+        });
+
+    });
+
+    //Preview
+    $('#PreviewBannedPicSubmit').click(function () {
+        var values = [];
+        $('.selectedBan').each(function () {
+            values.push($(this).val());
+        });
+
+        var datacolumn = values.join(',');
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        alert(startDate, endDate, datacolumn);
+        $.ajax({
+            url: '@Url.Content("~/Reports/Reports/BannedPictures_print")',
+            data: JSON.stringify({ 'startDate': startDate, 'endDate': endDate, 'datacolumn': datacolumn }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var Column = datacolumn.split(',');
+
+                var sOut = '<table id="dynamicTable" style="border-collapse:collapse"><thead><tr class="head-bg">';
+
+                //sOut += '<th class="BannedPictures td-border">Banned Pictures</th><th class="EventNumber td-border">EventNumber</th><th class="AttachedEvent td-border">AttachedEvent</th><th class="EventTime td-border">EventTime</th><th class="EndTime td-border">EndTime</th><th class="FromCode td-border">FromCode</th><th class="NatureDesc td-border">NatureDesc</th><th class="DutyDesc td-border">DutyDesc</th><th class="Camera td-border">Camera</th><th class="KeyEvent td-border">KeyEvent</th><th class="UserID td-border">UserID</th><th class="Location">Location</th><th class="Site td-border">Site</th>';
+
+                sOut += '</tr><thead><tbody>';
+
+                for (var i = 0; i < data.length; i += 1) {
+
+                    console.log(data[i]);
+                    sOut += '<tr><td class="BannedPictures td-border" colspan="2">' + data[i]["Picture"] + '</td></tr>';
+                    sOut += '<tr><td class="Name td-border">Name:' + data[i]["FirstName"] + ' ' + data[i]["LastName"] + '</td></tr>';
+                    sOut += '<tr><td class="Race td-border">Race:' + data[i]["Race"] + '</td></tr>';
+                    sOut += '<tr><td class="Sex td-border">Sex:' + data[i]["Sex"] + '</td></tr>';
+                    sOut += '<tr><td class="Status td-border">Status:' + data[i]["Status"] + '</td></tr>';
+                    sOut += '<tr><td class="TypeOfBan td-border">Type of Ban:' + data[i]["Race"] + '</td></tr>';
+                    sOut += '<tr><td class="StartDate td-border">Start Date:' + data[i]["StartDate"].ToString() + '</td></tr>';
+                    sOut += '<tr><td class="EndDate td-border">End Date:' + data[i]["EndDate"].ToString() + '</td></tr>';
+                }
+                sOut += '<tbody></table>';
+
+                $('#PrintBannedPicdiv').html(sOut);
+
+                var data = $('#PrintBannedPicdiv .BannedPictures').html();
+                if (datacolumn.indexOf(data) > -1) {
+                    $('#PrintBannedPicdiv .BannedPictures').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .BannedPictures').hide();
+                }
+                var data1 = $('#PrintBannedPicdiv .Name').html();
+                if (datacolumn.indexOf(data1) > -1) {
+                    $('#PrintBannedPicdiv .Name').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .Name').hide();
+                }
+                var data2 = $('#PrintBannedPicdiv .Race').html();
+                if (datacolumn.indexOf(data2) > -1) {
+                    $('#PrintBannedPicdiv .Race').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .Race').hide();
+                }
+                var data3 = $('#PrintBannedPicdiv .Sex').html();
+                if (datacolumn.indexOf(data3) > -1) {
+                    $('#PrintBannedPicdiv .Sex').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .Sex').hide();
+                }
+                var data4 = $('#PrintBannedPicdiv .Status').html();
+                if (datacolumn.indexOf(data4) > -1) {
+                    $('#PrintBannedPicdiv .Status').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .Status').hide();
+                }
+                var data5 = $('#PrintBannedPicdiv .TypeOfBan').html();
+                if (datacolumn.indexOf(data5) > -1) {
+                    $('#PrintBannedPicdiv .TypeOfBan').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .TypeOfBan').hide();
+                }
+                var data6 = $('#PrintBannedPicdiv .StartDate').html();
+                if (datacolumn.indexOf(data6) > -1) {
+                    $('#PrintBannedPicdiv .StartDate').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .StartDate').hide();
+                }
+                var data7 = $('#PrintBannedPicdiv .EndDate').html();
+                if (datacolumn.indexOf(data7) > -1) {
+                    $('#PrintBannedPicdiv .EndDate').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .EndDate').hide();
+                }
+                var divContents = $('#PrintBannedPicdiv').html();
+
+                var printWindow = window.open('', '_blank', 'width=350,height=150,location=no,left=200px');
+                printWindow.document.open();
+                printWindow.document.write('<html><head><title></title>');
+                printWindow.document.write('</head><body >');
+                printWindow.document.write('<style>.head-bg{background:#f2f2f2}.td-border{outline:1px solid #ccc;padding:5px}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+                printWindow.document.write(divContents);
+                printWindow.document.write('</body></html>');
+
+            }
+        });
+
+    });
+
+
+    // Email
+    $('#SendEmailBannedPic').click(function () {
+        var values = [];
+        $('.selectedBan').each(function () {
+            values.push($(this).val());
+        });
+
+        var datacolumn = values.join(',');
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        alert(startDate, endDate, datacolumn);
+        $.ajax({
+            url: '@Url.Content("~/Reports/Reports/BannedPictures_print")',
+            data: JSON.stringify({ 'startDate': startDate, 'endDate': endDate, 'datacolumn': datacolumn }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var Column = datacolumn.split(',');
+
+                var sOut = '<table id="dynamicTable" style="border-collapse:collapse"><thead><tr class="head-bg">';
+
+                //sOut += '<th class="BannedPictures td-border">Banned Pictures</th><th class="EventNumber td-border">EventNumber</th><th class="AttachedEvent td-border">AttachedEvent</th><th class="EventTime td-border">EventTime</th><th class="EndTime td-border">EndTime</th><th class="FromCode td-border">FromCode</th><th class="NatureDesc td-border">NatureDesc</th><th class="DutyDesc td-border">DutyDesc</th><th class="Camera td-border">Camera</th><th class="KeyEvent td-border">KeyEvent</th><th class="UserID td-border">UserID</th><th class="Location">Location</th><th class="Site td-border">Site</th>';
+
+                sOut += '</tr><thead><tbody>';
+
+                for (var i = 0; i < data.length; i += 1) {
+
+                    console.log(data[i]);
+                    sOut += '<tr><td class="BannedPictures td-border" colspan="2">' + data[i]["Picture"] + '</td></tr>';
+                    sOut += '<tr><td class="Name td-border">Name:' + data[i]["FirstName"] + ' ' + data[i]["LastName"] + '</td></tr>';
+                    sOut += '<tr><td class="Race td-border">Race:' + data[i]["Race"] + '</td></tr>';
+                    sOut += '<tr><td class="Sex td-border">Sex:' + data[i]["Sex"] + '</td></tr>';
+                    sOut += '<tr><td class="Status td-border">Status:' + data[i]["Status"] + '</td></tr>';
+                    sOut += '<tr><td class="TypeOfBan td-border">Type of Ban:' + data[i]["Race"] + '</td></tr>';
+                    sOut += '<tr><td class="StartDate td-border">Start Date:' + data[i]["StartDate"] + '</td></tr>';
+                    sOut += '<tr><td class="EndDate td-border">End Date:' + data[i]["EndDate"] + '</td></tr>';
+                }
+                sOut += '<tbody></table>';
+
+                $('#PrintBannedPicdiv').html(sOut);
+
+                var data = $('#PrintBannedPicdiv .BannedPictures').html();
+                if (datacolumn.indexOf(data) > -1) {
+                    $('#PrintBannedPicdiv .BannedPictures').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .BannedPictures').hide();
+                }
+                var data1 = $('#PrintBannedPicdiv .Name').html();
+                if (datacolumn.indexOf(data1) > -1) {
+                    $('#PrintBannedPicdiv .Name').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .Name').hide();
+                }
+                var data2 = $('#PrintBannedPicdiv .Race').html();
+                if (datacolumn.indexOf(data2) > -1) {
+                    $('#PrintBannedPicdiv .Race').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .Race').hide();
+                }
+                var data3 = $('#PrintBannedPicdiv .Sex').html();
+                if (datacolumn.indexOf(data3) > -1) {
+                    $('#PrintBannedPicdiv .Sex').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .Sex').hide();
+                }
+                var data4 = $('#PrintBannedPicdiv .Status').html();
+                if (datacolumn.indexOf(data4) > -1) {
+                    $('#PrintBannedPicdiv .Status').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .Status').hide();
+                }
+                var data5 = $('#PrintBannedPicdiv .TypeOfBan').html();
+                if (datacolumn.indexOf(data5) > -1) {
+                    $('#PrintBannedPicdiv .TypeOfBan').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .TypeOfBan').hide();
+                }
+                var data6 = $('#PrintBannedPicdiv .StartDate').html();
+                if (datacolumn.indexOf(data6) > -1) {
+                    $('#PrintBannedPicdiv .StartDate').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .StartDate').hide();
+                }
+                var data7 = $('#PrintBannedPicdiv .EndDate').html();
+                if (datacolumn.indexOf(data7) > -1) {
+                    $('#PrintBannedPicdiv .EndDate').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .EndDate').hide();
+                }
+
+                var divContents = $('#PrintBannedPicdiv').html();
+                $('#AttachmentBannedPic').html(divContents);
+
+            }
+        });
+    });
+
+    $('#SendEmailBanPicData').click(function () {
+        if ($("#ToBan").val() == "") {
+            alert("Enter email address.");
+        }
+        else {
+            if (!ValidateEmail($("#ToBan").val())) {
+                alert("Invalid email address.");
+            }
+            else {
+                html2canvas($("#AttachmentBannedPic"), {
+                    onrendered: function (canvas) {
+                        var myImageBan = canvas.toDataURL("img/png");
+
+                        var SubjectBan = $('#SubjectBan').val();
+                        var DesciptionBan = $('#DesciptionBan').val();
+                        var ToBan = $('#ToBan').val();
+                        var picBan = myImageBan.replace(/^data:image\/png;base64,/, "")
+                        var AttachmentBanBan = picBan;
+                        $.ajax({
+                            url: '@Url.Content("~/Events/Event/SendEmailData")',
+                            data: JSON.stringify({ 'Attachment': AttachmentBan, 'Subject': SubjectBan, 'Desciption': DesciptionBan, 'To': ToBan }),
+                            type: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (data) {
+                                $('.close').click();
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+
+    function ValidateEmail(email) {
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        return expr.test(email);
+    };
+
+    // PDF
+    $('#PdfBannedPicSubmit').click(function () {
+        var values = [];
+        $('.selectedBan').each(function () {
+            values.push($(this).val());
+        });
+
+        var datacolumn = values.join(',');
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        alert(startDate, endDate, datacolumn);
+        $.ajax({
+            url: '@Url.Content("~/Reports/Reports/BannedPictures_print")',
+            data: JSON.stringify({ 'startDate': startDate, 'endDate': endDate, 'datacolumn': datacolumn }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                var Column = datacolumn.split(',');
+
+                var sOut = '<table id="dynamicTable" style="border-collapse:collapse"><thead><tr class="head-bg">';
+
+                //sOut += '<th class="BannedPictures td-border">Banned Pictures</th><th class="EventNumber td-border">EventNumber</th><th class="AttachedEvent td-border">AttachedEvent</th><th class="EventTime td-border">EventTime</th><th class="EndTime td-border">EndTime</th><th class="FromCode td-border">FromCode</th><th class="NatureDesc td-border">NatureDesc</th><th class="DutyDesc td-border">DutyDesc</th><th class="Camera td-border">Camera</th><th class="KeyEvent td-border">KeyEvent</th><th class="UserID td-border">UserID</th><th class="Location">Location</th><th class="Site td-border">Site</th>';
+
+                sOut += '</tr><thead><tbody>';
+
+                for (var i = 0; i < data.length; i += 1) {
+
+                    console.log(data[i]);
+                    sOut += '<tr><td class="BannedPictures td-border" colspan="2">' + data[i]["Picture"] + '</td></tr>';
+                    sOut += '<tr><td class="Name td-border">Name:' + data[i]["FirstName"] + ' ' + data[i]["LastName"] + '</td></tr>';
+                    sOut += '<tr><td class="Race td-border">Race:' + data[i]["Race"] + '</td></tr>';
+                    sOut += '<tr><td class="Sex td-border">Sex:' + data[i]["Sex"] + '</td></tr>';
+                    sOut += '<tr><td class="Status td-border">Status:' + data[i]["Status"] + '</td></tr>';
+                    sOut += '<tr><td class="TypeOfBan td-border">Type of Ban:' + data[i]["Race"] + '</td></tr>';
+                    sOut += '<tr><td class="StartDate td-border">Start Date:' + data[i]["StartDate"] + '</td></tr>';
+                    sOut += '<tr><td class="EndDate td-border">End Date:' + data[i]["EndDate"] + '</td></tr>';
+                }
+                sOut += '<tbody></table>';
+
+                $('#PrintBannedPicdiv').html(sOut);
+
+                var data = $('#PrintBannedPicdiv .BannedPictures').html();
+                if (datacolumn.indexOf(data) > -1) {
+                    $('#PrintBannedPicdiv .BannedPictures').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .BannedPictures').hide();
+                }
+                var data1 = $('#PrintBannedPicdiv .Name').html();
+                if (datacolumn.indexOf(data1) > -1) {
+                    $('#PrintBannedPicdiv .Name').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .Name').hide();
+                }
+                var data2 = $('#PrintBannedPicdiv .Race').html();
+                if (datacolumn.indexOf(data2) > -1) {
+                    $('#PrintBannedPicdiv .Race').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .Race').hide();
+                }
+                var data3 = $('#PrintBannedPicdiv .Sex').html();
+                if (datacolumn.indexOf(data3) > -1) {
+                    $('#PrintBannedPicdiv .Sex').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .Sex').hide();
+                }
+                var data4 = $('#PrintBannedPicdiv .Status').html();
+                if (datacolumn.indexOf(data4) > -1) {
+                    $('#PrintBannedPicdiv .Status').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .Status').hide();
+                }
+                var data5 = $('#PrintBannedPicdiv .TypeOfBan').html();
+                if (datacolumn.indexOf(data5) > -1) {
+                    $('#PrintBannedPicdiv .TypeOfBan').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .TypeOfBan').hide();
+                }
+                var data6 = $('#PrintBannedPicdiv .StartDate').html();
+                if (datacolumn.indexOf(data6) > -1) {
+                    $('#PrintBannedPicdiv .StartDate').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .StartDate').hide();
+                }
+                var data7 = $('#PrintBannedPicdiv .EndDate').html();
+                if (datacolumn.indexOf(data7) > -1) {
+                    $('#PrintBannedPicdiv .EndDate').show();
+                }
+                else {
+                    $('#PrintBannedPicdiv .EndDate').hide();
+                }
+
+                var htmldata = $('#Printdiv').html();
+
+                $('#dynamicTable').html(htmldata);
+
+                var data = [], fontSize = 12, height = 0, doc;
+                doc = new jsPDF('p', 'pt', 'a4', true);
+                doc.setFont("times", "normal");
+                doc.setFontSize(fontSize);
+
+                data = [];
+                data = doc.tableToJson('dynamicTable');
+                height = doc.drawTable(data, {
+                    xstart: 10,
+                    ystart: 10,
+                    tablestart: 40,
+                    marginleft: 10,
+                    xOffset: 10,
+                    yOffset: 15
+                });
+                doc.save("BannedPictures.pdf");
+
+            }
+        });
+    });
+
+</script>
+
+

@@ -1,0 +1,334 @@
+/**
+ *
+ * Apply your custom CSS here
+ *
+*/
+
+@media only screen and (max-width:992px) {
+
+    .btn-space {
+        margin-top: 10px;
+    }
+
+    .radio-center {
+        margin-left: 0px !important;
+    }
+
+        .radio-center input[type=radio] {
+            display: block;
+        }
+}
+
+
+
+
+
+
+.center-block {
+    margin: 0px auto;
+    float: none;
+}
+
+
+.login-section {
+}
+
+    .login-section hr {
+        margin: 10px 0px;
+    }
+
+    .login-section .panel {
+        position: relative;
+        background: #ffffff;
+        padding: 34px 39px 23px;
+        margin-bottom: 0px;
+    }
+
+.remember {
+    margin-bottom: 8px;
+}
+
+.login-page {
+    background: #2c2e2f;
+    color: #fff;
+    padding-top: 100px;
+}
+
+.custom-login.login-page.login-light {
+    /*background: url(../../assets/images/login-bg.jpg);*/
+    background-size: cover;
+}
+
+
+/*.custom-login.login-page.login-light {
+    background: url(../../../CIMS/asset/plugins/images/login-register.jpg);
+    background-size: cover;
+}*/
+
+
+/*.login-register {
+    background: url(asset/../../plugins/images/login-register.jpg) no-repeat center center / cover !important;
+    height: 100%;
+    position: fixed;
+}*/
+
+
+
+
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: RGBA(0, 0, 0, 0.29);
+}
+
+.left-side {
+    border: 1px solid #fff;
+    padding: 20px;
+    background: #FFF;
+}
+
+footer.main-footer {
+    clear: both;
+}
+
+.emp-photo {
+    float: left;
+    width: 119px;
+    background: rgb(233, 233, 233) none repeat scroll 0% 0%;
+    height: 119px;
+    margin-right: 8px;
+}
+
+.all-btn {
+    float: right;
+    width: 71px;
+}
+
+    .all-btn .btn {
+        width: 100%;
+        margin-left: 0px;
+    }
+
+.new-btn .btn {
+}
+
+.right-tab .nav.nav-tabs + .tab-content {
+    background: #FFF;
+    padding: 0 10px;
+    margin-bottom: 30px;
+}
+
+.right-tab .panel {
+    padding: 20px 5px;
+}
+
+.nav.nav-tabs > li > a {
+    padding-left: 14px;
+    padding-right: 15px;
+    font-weight: 600;
+}
+
+.custom-column {
+    padding-right: 0px;
+}
+
+.sidebar-menu .logo-env {
+    padding: 21px 45px;
+    border-bottom: 1px solid #313437;
+    background: transparent;
+    border-right: 1px solid #f6f4f4;
+}
+
+
+.login-logo {
+    text-align: left;
+    margin-bottom: 29px;
+}
+
+
+.login-section .panel-heading {
+    clear: both;
+    margin: 0px 15px !important;
+}
+
+
+.table > thead > tr > td::after, .table > thead > tr > th::after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 1px;
+    height: 1px;
+    background-color: transparent;
+}
+
+.panel-options a {
+    color: #FFF !important;
+    line-height: 23px !important;
+}
+
+.panel-heading .panel-title {
+    margin-top: 11px;
+}
+
+.panel .panel-heading {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    background: none;
+    font-size: 17px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f5f5f5;
+}
+
+.login-section .panel-heading .panel-title {
+    margin-top: 0;
+}
+
+.btn-right-align {
+    text-align: right;
+}
+
+
+.radio-center {
+    margin-left: 20px;
+}
+
+.bspace {
+    margin-bottom: 29px;
+}
+
+
+
+.form-control-feedback {
+    position: absolute;
+    top: 23px;
+    right: 0;
+    z-index: 2;
+    display: block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+}
+
+.custom-form-title {
+    border-bottom: 2px solid #f5f5f5;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.btn-sm {
+    padding: 3px 7px;
+}
+
+
+.no-margin-bottom {
+    margin-bottom: 0px !important;
+}
+
+.no-padding-bottom {
+    padding-bottom: 0px !important;
+}
+
+.subjectTr {
+   
+}
+
+.delete-sm {
+padding: 2px 7px !important;
+}
+
+
+
+label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+   
+    font-size: 15px;
+    color: #5d5b5b;
+}
+
+
+.custom-check-space {
+    float: left;
+margin-right: 16px !important;
+}
+
+.form-padd {
+margin: 15px 0px;
+}
+
+
+.scroll-custom {
+    overflow-y:scroll;
+}
+
+.innner-head {
+    font-size: 17px;
+    border-bottom: 2px solid #f3f3f3;
+    padding-bottom: 6px;
+    margin: 41px 0px 20px;
+    color: #333131;
+}
+
+.table-list {
+    max-height:400px;
+    overflow:auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*Responsive design media query*/
+
+@media only screen and (max-width:768px) {
+
+    .nav.nav-tabs.nav-tabs-justified > li {
+        display: inline;
+    }
+}
+
+
+@media only screen and (max-width:360px) {
+
+    .panel .panel-heading > .panel-title {
+        float: left;
+        font-size: 19px;
+        width: 100%;
+    }
+
+    .panel .panel-heading > .panel-options {
+        float: left;
+        font-size: 13px;
+        margin-top: 10px;
+    }
+}
+
+@media only screen and (min-width:769px) and (max-width:945px) {
+
+    .nav.nav-tabs.nav-tabs-justified > li {
+        display: inline;
+    }
+
+}

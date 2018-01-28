@@ -1,0 +1,608 @@
+﻿@{
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Subject</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Subject</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<div class="row">
+    @if (ViewBag.SubjectId > 0)
+    {
+        <div class="col-md-12 enablebtn btn-enable-main">
+            <h3 class="box-title inline-head">@ViewBag.LogoFirstName @ViewBag.LogoMiddleName @ViewBag.LogoLastName</h3>
+
+            <a href='@Url.Content("~/Subject/Subject/SubjectWatchList?Type=Subject&Id=" + ViewBag.SubjectId + "")' id="permission" class="btn btn-info edit" title="Edit Subject">
+                <i class="fa fa-pencil"></i> Edit
+            </a>
+            <a class="btn btn-danger btndelete disableClick" href='javascript:;' onclick='DeleteSubject(@ViewBag.SubjectId, this);' title="Delete Subject">
+                <i class='fa fa-trash'></i> Delete
+            </a>
+            <a class="btn btn-primary btnaddrep" href='@Url.Content("~/Subject/Subject/SujectIncident?SubId=" + ViewBag.SubjectId + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))">
+                <i class="fa fa-plus"></i>Add Reports
+            </a>
+            <a class="btn btn-primary btnviewrep" href='@Url.Content("~/Subject/Subject/SubjectIncidentsList?SubId=" + ViewBag.SubjectId + "")' onclick="return checkReportPermission(this)" data-permission="@((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Incident Details", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))">
+                <i class="fa fa-eye"></i>   View Reports
+            </a>
+            <a class="btn btn-info" href='@Url.Content("~/Subject/Subject/SearchSubject/" + ViewBag.SubjectID + "")'>
+                <i class="fa fa-plus"></i>
+                Combine Subject
+            </a>
+        </div>
+    }
+    <div class="col-md-12">
+
+        <div class="white-box clearfix">
+            <ul class="nav nav-pills custom-tabs">
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li>
+                        <a href='@Url.Content("~/Subject/Subject/AddSubject?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+ViewBag.SubjectId+"")'>
+                            <span>Subject</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li>
+                        <a href='@Url.Content("~/Subject/Subject/SubjectAddress?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+ViewBag.SubjectId+"")'>
+
+                            <span>Addresses</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectAlias?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+ViewBag.SubjectId+"")'>
+                            <span>Aliases</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectFeatures?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+ViewBag.SubjectId+"")'>
+                            <span>Features</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectIdentification?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id=" + ViewBag.SubjectId + "")'>
+                            <span>Identification</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject LCT Totals", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a style="display:none;" href='@Url.Content("~/Subject/Subject/SubjectLCTTotals?" + (Request.QueryString["Show"] == "View" ? "Show=View&" : "") + "Type=Subject&Id=" + ViewBag.SubjectId + "")'>
+                            <span>LCT Totals</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="active">
+                        <a href="javascript:;">
+                            <span>Watch List</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectLinked?"+(Request.QueryString["Show"]=="View"?"Show=View&":"")+"Type=Subject&Id="+ViewBag.SubjectId+"")'>
+                            <span>Linked</span>
+                        </a>
+                    </li>
+                }
+                @if ((Session["Admin"] == null ?
+                                (CIMS.Models.CheckPermissions.permissionMenu("Subject Permission", Convert.ToInt32(Session["UserId"])) && Convert.ToInt32(ViewBag.SubjectId) > 0 && (Convert.ToInt32(ViewBag.CreatedBy) == Convert.ToInt32(Session["UserID"])))
+                                : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                {
+                    <li class="">
+                        <a href='@Url.Content("~/Subject/Subject/SubjectPermission?" + (Request.QueryString["Show"] == "View" ? "Show=View&" : "") + "Type=Subject&Id=" + ViewBag.SubjectId + "")'>
+                            <span>Permission</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <input type="hidden" id="hdShow" name="hdShow" value='@(Request.QueryString["Show"])' />
+
+        <div class="large-title no-margin">Watch List</div>
+
+        <div class="panel panel-default">
+
+            <div class="panel-body">
+
+                <div class="col-md-8">
+                    <div class="row">
+                        @using (Html.BeginForm("SubjectWatchList", "Subject", FormMethod.Post, new { area = "Subject", id = "SubjectWatchList" }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden" id="hdnSubject" name="hdnSubject" value="@ViewBag.SubjectId" />
+                            <input type="hidden" id="hdnXml" name="hdnXml" />
+                            <div class="col-md-10">
+                                <div id="SubjectWatchTable" class="form-group clearfix">
+                                    @*<div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" />
+                                                New Watch
+                                            </label>
+                                        </div>
+
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" />
+                                                New Watch
+                                            </label>
+                                        </div>
+                                    *@
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <input type="button" id="btnSubjectWatchSubmit" value="save" class="btn btn-success" />
+                            </div>
+
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <button class="btn btn-info" data-toggle="modal" data-target="#myModal"><i class="fa fa-pencil"></i> Edit Watch Lists</button>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Watch List</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="list-modal">
+                    <div id="WatchTable" class="table-responsive">
+                    </div>
+
+
+                    <div class="list-add">
+                        <div class="form-group clearfix">
+                            <label>Watch List name </label>
+                            <input type="text" id="watchNametxt" class="form-control" style="display:none;" />
+                            <select id="op1" class="form-control dropdown"></select>
+                            <input type="hidden" id="hdnWatchId" />
+                        </div>
+                        <div class="form-group clearfix">
+                            <input type="submit" id="btnWatchSubmit" value="Add" class="btn btn-success" />
+                            <input type="button" class="btn btn-blue" id="clearBtn" value="Clear" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<script>
+    $(document).ready(function ()
+    {
+
+        var SubjectId = $('#hdnSubject').val();
+        BindWatchList(SubjectId);
+
+        $('#btnWatchSubmit').on('click', function () {
+            var x;
+            if (parseInt($('#hdnWatchId').val()) > 0) {
+                x = EditConfirm('@ViewBag.Action');
+            }
+            else {
+
+                var permission = '@Session["RoleName"]';
+
+
+
+                if (permission == 'Admin') {
+                    x = AddConfirm('@ViewBag.Action');
+                }
+                else {
+                    alert("You don't have permission to Add Watch.");
+                    return false;
+                }
+
+
+            }
+            if (x) {
+                SaveWatchName();
+            }
+        });
+
+        $('#btnSubjectWatchSubmit').on('click', function () {
+            if (EditConfirm('@ViewBag.Action')) {
+                SaveSubjectWatch();
+            }
+        });
+
+        $('#clearBtn').on('click', function () {
+            Reset();
+        });
+
+        if ($('#hdShow').val() == 'View') {
+            $(".form-control").attr("disabled", "disabled");
+            $(".btn").hide(true);
+            $(document).find('.enablebtn>a').removeAttr("style");
+        }
+        else {
+            //$(".btn").removeAttr("style");
+            $(".form-control").attr("disabled", false);
+            //$(".btn").attr("disabled", false);
+            $(document).find('#permission').hide(true);
+        }
+
+        // Page Change
+        var somethingChanged = false;
+        var button = $('#btnSubjectWatchSubmit');
+        var orig = [];
+
+        $.fn.getType = function () {
+            return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
+        }
+
+        $("#SubjectWatchList :input").each(function () {
+            var type = $(this).getType();
+            var tmp = {
+                'type': type,
+                'value': $(this).val()
+            };
+            if (type == 'radio') {
+                tmp.checked = $(this).is(':checked');
+            }
+            orig[$(this).attr('id')] = tmp;
+        });
+
+        $('#SubjectWatchList').bind('change keyup', function () {
+            var disable = true;
+            somethingChanged = false;
+            $("#SubjectWatchList :input").each(function () {
+                var type = $(this).getType();
+                var id = $(this).attr('id');
+
+                if (type == 'text' || type == 'select') {
+                    disable = (orig[id].value == $(this).val());
+                } else if (type == 'checkbox') {
+                    disable = (orig[id].checked == $(this).is(':checked'));
+                }
+
+                if (!disable) {
+                    return false; // break out of loop
+
+                }
+            });
+            somethingChanged = true;
+            button.prop('disabled', disable);
+        }); // End Page Change
+
+        // save change script
+        $('#myTab > li > a ').click(function (e) {
+            if ($('#hdShow').val() != 'View') {
+                if (somethingChanged == true) {
+                    formSubmitByTab(somethingChanged);
+                    somethingChanged = false;
+                    return false;
+                }
+            }
+        });
+        // end save change script
+        if ('@ViewBag.EditPermission' == 'False') {
+            $(".form-control").attr("disabled", "disabled");
+            //$(".btn").hide(true);
+            $(".btn").attr("disabled", "disabled");
+            $(".flubtn").attr("disabled", "disabled");
+            $(document).find("input[type=checkbox]").attr("disabled", "disabled");
+            $(document).find("input[type=radio]").attr("disabled", "disabled");
+        }
+        $(".btnaddrep").removeAttr("disabled");
+        $(".btnviewrep").removeAttr("disabled");
+
+        if ('@ViewBag.DeletePermission' == 'True') {
+            $(".btndelete").removeClass("disableClick");
+        }
+    }); // End
+
+    function BindWatchList(SubjectId) {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/GetWatchList")',
+            data: {},
+            type: 'get',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                var jsonData = JSON.parse(data);
+                if (jsonData.length > 0) {
+                    var temphtml = "<table class='table table-bordered' ><thead><tr><th>Watch Name</th><th>&nbsp;</th></tr></thead><tbody>";
+                    for (i = 0; i < jsonData.length; i++) {
+                        temphtml += '<tr>';
+                        temphtml += '<td>' + jsonData[i].WatchName + '</td>';
+                        temphtml += '<td><a href="javascript:;" onclick="return EditWatch(' + jsonData[i].WatchID + ')" class="btn btn-info btn-sm btn-icon subjectTr"><i class="fa fa-pencil"></i></a>&nbsp;<a class="btn btn-danger btn-sm delete-sm" href="javascript:;" onclick="DeleteWatch(' + jsonData[i].WatchID + ',this);"><i class="fa fa-trash"></i></a></td>';
+                        temphtml += '</tr>';
+                    }
+                    temphtml += "</tbody></table>";
+
+                    var subHtml = "<table class='table table-bordered' ><tbody>";
+                    for (i = 0; i < jsonData.length; i++) {
+                        subHtml += '<tr>';
+                        subHtml += '<td><input type="checkbox" data-id="0" class="watchcheckbox" id="chk_' + jsonData[i].WatchID + '"  /></td></td>';
+                        subHtml += '<td>' + jsonData[i].WatchName + '</td>';
+                        subHtml += '</tr>';
+                    }
+                    subHtml += "</tbody></table>";
+                }
+                $('#WatchTable').html(temphtml);
+                $('#SubjectWatchTable').html(subHtml);
+                if ($('#hdShow').val() == 'View') {
+                    $(document).find('#SubjectWatchTable input[type=checkbox]').attr("disabled", "disabled");
+                }
+                BindSubjectWatchList(SubjectId);
+            }
+        });
+    }
+
+    function SaveWatchName() {
+        var Watchname = $("#op1 option:selected").text();
+        var Watchid = $('#hdnWatchId').val();
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/SaveWatchName")',
+            data: { 'WatchName': Watchname, 'WatchID': Watchid },
+            type: 'post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    if (data > 0) {
+                        BindWatchList();
+                        $('#btnWatchSubmit').val('Add');
+                        $('#watchNametxt').val('');
+                        $('#hdnWatchId').val(0);
+                    }
+                }
+            }
+        });
+        watch();
+    }
+
+    function EditWatch(WatchId) {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/GetWatchNameByWatchId")',
+            data: { WatchID: WatchId },
+            type: 'get',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    //$('#op1 option[text=' + jsonData.WatchName + ']').attr('selected', 'selected');
+                   // $('#op1').val(jsonData.WatchName);
+                    $('#op1 option').each(function () {
+                        if ($(this).text().toLowerCase() == jsonData.WatchName.toLowerCase()) {
+                            this.selected = true;
+                            return;
+                        }
+                    });
+                    $('#hdnWatchId').val(jsonData.WatchID);
+                    $('#btnWatchSubmit').val('Update');
+                }
+            }
+        });
+    }
+
+    function BindSubjectWatchList(SubjectId) {
+        $.ajax({
+            url: '@Url.Content("~/Subject/Subject/GetWatchListBySubjectId")',
+            data: { SubjectId: SubjectId },
+            type: 'get',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    for (i = 0; i < jsonData.length; i++) {
+                        $("#chk_" + jsonData[i].WatchName + "").attr('checked', true);
+                        // $("#chk_" + jsonData[i].RoleId + "").parent('span').addClass('checked');
+                        $("#chk_" + jsonData[i].WatchName + "").attr('data-id', jsonData[i].ID);
+                    }
+                }
+            }
+        });
+    }
+
+
+    function SaveSubjectWatch() {
+        var xml = '';
+        xml += "<root>";
+        $(".watchcheckbox:checked").each(function () {
+            var selectedId = $(this).attr('data-id');
+            var selectedWatchId = $(this).attr('id').split('chk_')[1];
+            xml += "<watchInfo>";
+            xml += "<Id>" + selectedId + "</Id>";
+            xml += "<watchId>" + selectedWatchId + "</watchId>";
+            xml += "</watchInfo>";
+        });
+        xml += "</root>";
+        $("#hdnXml").val(xml);
+        //alert($("#hdnXml").val());
+        $('form').submit();
+
+    }
+
+    function DeleteWatch(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/DeleteWatch")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#WatchTable>tbody tr').length == 1) {
+                            $('#WatchTable').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Watch Name has been deleted Suceesfully.</div>');
+                            $('#watchNametxt').val('');
+                            window.scrollTo(0, 0);
+                        } else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Watch Name has been deleted Deleted Suceesfully.</div>');
+                            $('#watchNametxt').val('');
+                            window.scrollTo(0, 0);
+                        }
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function DeleteSubject(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Subject/Subject/DeleteSubject")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Subject has been deleted Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                        location.replace('@Url.Content("~/Subject/Subject/Index")');
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+
+    function Reset() {
+        $('#watchNametxt').val('');
+        $('#hdnWatchId').val('');
+        $('#btnWatchSubmit').val('Create');
+    }
+
+    $("#permission").click(function () {
+        if (EditConfirm('@ViewBag.Action')) {
+            return true;
+        }
+        else {
+
+            return false;
+        }
+    });
+
+    // Submit form on tab change Script
+    function formSubmitByTab(valueChanged) {
+        if (valueChanged == true) {
+            var r = confirm("Do you want to save changes?");
+            if (r == true) {
+                $('#btnSubjectWatchSubmit').click();
+            }
+        }
+
+    }// End Submit form on tab change Script
+
+    $(document).ready(function () {
+        watch(); // Bind Watch
+
+        function watch() {
+            var op1 = $('#op1'); // cache it
+            op1.append("<option value='0'>Unknown</option>");
+
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/Masterwatch_selectall")',
+                data: JSON.stringify({}),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+
+                    //var optionhtml1 = '<option value="' + 0 + '">' + "--Select State--" + '</option>';
+                    //$(".ddlProjectvalue").append(optionhtml1);
+
+                    op1.empty(); // remove any existing options
+
+                   var data1 =  data.split(',');
+
+                   for (i = 1; i < data1.length; i++) {
+
+                       var data2 = data1[i].split(':');
+
+                       op1.append("<option value=" + data2[0] + ">" + data2[1] + "</option>");
+                    };
+
+                },
+                error: function () {
+
+                    console.log('error');
+                }
+            });
+        }
+
+    });
+</script>

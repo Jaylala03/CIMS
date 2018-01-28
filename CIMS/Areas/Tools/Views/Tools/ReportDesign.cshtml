@@ -1,0 +1,1100 @@
+﻿@model CIMS.Models.ToolsModel
+@{
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+<style>
+    .left-div {
+        background: #fff;
+        padding: 10px;
+        height: 100%;
+        border: 1px solid #DADADA;
+        margin: 10px 0px;
+        min-height: 600px;
+    }
+
+    #container table tr th {
+        background: #fff;
+        padding: 2px 10px;
+    }
+
+    .div2 {
+        background: #fff;
+        padding: 10px;
+        border: 1px solid #DADADA;
+        height: 140px;
+        margin-top: 10px;
+        width: 100%;
+        display: block;
+        overflow-y: scroll;
+    }
+
+    .nav-tabs {
+        border-bottom: 0px;
+    }
+
+    #container {
+        background: #ababab;
+        min-height: 520px;
+        padding: 2px;
+    }
+
+    .btncls {
+        border-bottom: 2px solid #6f9dd9;
+        border-top: 0px;
+        font-weight: normal;
+        font-size: 13px;
+        background: #aecaee; /* For browsers that do not support gradients */
+        background: -webkit-linear-gradient(#e3efff, #aecaee); /* For Safari 5.1 to 6.0 */
+        background: -o-linear-gradient(#e3efff, #aecaee); /* For Opera 11.1 to 12.0 */
+        background: -moz-linear-gradient(#e3efff, #aecaee); /* For Firefox 3.6 to 15 */
+        background: linear-gradient(#e3efff, #aecaee); /* Standard syntax */
+        color: #15428b;
+        border-radius: 4px;
+        padding: 4px 20px;
+    }
+
+    .mybtn {
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-right: 7px;
+    }
+
+    .menu-tab {
+        margin-bottom: 20px;
+    }
+
+    .btncls i {
+        font-size: 20px;
+        color: rgb(108, 148, 200);
+    }
+
+    .tab-content {
+        margin-top: 18px;
+    }
+
+
+
+    .resizable {
+        resize: both; /* Options: horizontal, vertical, both */
+        overflow: auto; /* fix for Safari */
+    }
+
+    .RowHeader {
+    }
+</style>
+<script src="/assets/js/jstree.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Report Desginer</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Report Desginer</li>
+        </ol>
+    </div>
+</div>
+<div class="menu-tab">
+    <button type="button" class="btncls btn" id="GroupResult">
+        <i class="fa fa-random" aria-hidden="true"></i>
+        Group results
+    </button>
+    <button type="button" class="btncls btn" id="ExecuteQuery">
+        <i class="fa fa-file-o" aria-hidden="true"></i>
+        View query results
+    </button>
+    <button type="button" class="btncls btn" id="ClearSQL">
+        <i class="fa fa-times" aria-hidden="true" style="color:red"></i>
+        Clear SQL
+    </button>
+
+    <a href="#myModal" data-toggle="modal" class="btncls btn" style="padding: 7px 8px;"><i class="fa fa-floppy-o" aria-hidden="true"></i>  Save </a>
+
+    <label class="btncls btn mybtn">
+        Reports
+        @Html.DropDownListFor(m => m.ReportName, new SelectList(Model.ReportNameList, "ReportID", "ReportName", 0), "Select", new { @class = "form-control reportdropdown" })
+
+    </label>
+    @*<button type="button" class="btncls btn">
+            <i class="fa fa-sign-out" aria-hidden="true"></i>
+            Exit designer
+        </button>*@
+
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#home" aria-controls="home" role="tab" data-toggle="tab" style="border-right:2px solid #ccc;">
+                    <i class="fa fa-database" aria-hidden="true"></i>
+                    Data
+                </a>
+            </li>
+            <li role="presentation">
+                <a href="#profile" aria-controls="profile" role="tab" data-toggle="tab" style="border-right:2px solid #ccc;">
+                    <i class="fa fa-deaf" aria-hidden="true"></i>
+                    Layout
+                </a>
+            </li>
+            <li role="presentation" id="PreviewClick">
+                <a href="#messages" aria-controls="messages" role="tab" data-toggle="tab" style="border-right:2px solid #ccc;">
+                    <i class="fa fa-low-vision" aria-hidden="true"></i>
+                    Preview
+                </a>
+            </li>
+
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade in active" id="home">
+                <div class="row">
+                    <div id="wholehtml">
+                        <div class="col-md-3">
+
+
+                            <label class="control-label col-md-12">Group </label>
+                            <input type="hidden" id="datacontainerHtml" name="datacontainerHtml" />
+                            <div class="col-md-12">
+                                @Html.DropDownListFor(m => m.GroupName, new SelectList(Model.toolsList, "GroupName", "GroupName"), new { @class = "form-control", onchange = "BindTable();" })
+
+                            </div>
+                            <div class="col-md-12">
+                                <div class="left-div" id="datacontainer"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-9">
+                            <div id="container">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="full-table-height">
+                                            <table class="table table-bordered" id="DataTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>column</th>
+                                                        <th>Alias</th>
+                                                        <th>Table</th>
+                                                        <th>Output</th>
+                                                        <th id="GroupByColumn">GroupBy</th>
+                                                        <th>Sort</th>
+                                                        <th>Filter</th>
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="div2" id="SqlQuery">
+
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="profile">
+                <div id="wholeLayout">
+                    <div class="col-md-3">
+                        <div class="col-md-12">
+                            <div class="left-div " id="Layoutcontainer">
+                                <ul>
+                                    <li>
+                                        Container
+                                        <ul>
+                                            <li class="drag"> <span class="list-text"><i class="fa fa-stop" aria-hidden="true"></i></span>Fixed Section</li>
+                                            <li onclick="ExpandTreeSql(this);"> <span class="list-text"><i class="fa fa-table" aria-hidden="true"></i></span>Table<ul><li class="AppendTreeData"></li></ul></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <ul>
+                                    <li>
+                                        Static Object
+                                        <ul>
+                                            <li class="dragText"><span class="list-text">A</span> Text Label</li>
+                                            <li class="dragLine"><span class="list-text">\</span>Line</li>
+                                            <li class="dragBox"><span class="list-text"><i class="fa fa-square-o" aria-hidden="true"></i></span>Box</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" id="GetPrivewData">
+
+                        <div class="col-md-12">
+                            <div class="left-div drop" id="" contenteditable="true"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+
+                        <div class="col-md-12">
+                            <div class="left-div" id=""></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="messages">
+                <div class="bg-dark">
+                    <div class="col-md-12">
+                        <div class="print-btn">
+                            <button type="button" class="btn btn-primary" id="PrintButton"> <i class="fa fa-print" aria-hidden="true"></i> Print   </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 tab-div-center">
+                        <div class="white-box white-height" id="PrintPreviewData">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="settings">...</div>
+        </div>
+    </div>
+</div>
+<div class="modal fade color-modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel" style="color:#000;">Report Name and Role</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group bottom1">
+                        <label class="col-sm-4 control-label">Report Name</label>
+                        <div class="col-sm-8">
+                            <input type="hidden" id="ReportID" name="ReportID">
+                            <input type="text" class="form-control" id="ReportNameData">
+                        </div>
+                    </div>
+                    <div class="form-group bottom2">
+                        <label for="inputPassword3" class="col-sm-4 control-label">Role</label>
+                        <div class="col-sm-8">
+                            @Html.DropDownListFor(m => m.RoleName, new SelectList(Model.RoleNameList, "RoleName", "RoleName"), new { @class = "form-control" })
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="SaveReport">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="hdTableName" value="" />
+
+
+
+
+<script type="text/javascript">
+    $(function () {
+        $('body').on('mousedown', '.moveable', function () {
+            $(this).addClass('draggable').parents().on('mousemove', function (e) {
+                $('.draggable').offset({
+                    top: e.pageY - $('.draggable').outerHeight() / 2,
+                    left: e.pageX - $('.draggable').outerWidth() / 2
+                }).on('mouseup', function () {
+                    $(this).removeClass('draggable');
+                });
+            });
+
+        }).on('mouseup', function () {
+            $('.draggable').removeClass('draggable');
+        });
+    });
+    $(document).ready(function () {
+        $('#GroupByColumn').hide();
+        $(".reportdropdown").val('0');
+
+        $('#Layoutcontainer').jstree({
+            core: {
+                check_callback: true,
+
+            },
+
+            'plugins': ['dnd']
+        }).on("copy_node.jstree", function () {
+
+        }).on("move_node.jstree", function () {
+
+        });
+
+        $('.drag')
+            .on('mousedown', function (e) {
+                return $.vakata.dnd.start(e, {
+                    'jstree': true,
+                    'obj': $(this),
+                    'nodes': [{
+                        id: true,
+                        text: $(this).text()
+                    }]
+
+                }, '<div id="jstree-dnd" class="jstree-default"><i class="jstree-icon jstree-er"></i>' + $(this).text() + '</div>');
+
+            });
+
+    });
+    $(document)
+          .on('dnd_move.vakata', function (e, data) {
+              console.log(data);
+              var t = $(data.event.target);
+              if (!t.closest('.jstree').length) {
+                  if (t.closest('.drop').length) {
+                      data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
+
+                  } else {
+                      data.helper.find('.jstree-icon').removeClass('jstree-ok').addClass('jstree-er');
+                  }
+              }
+          })
+          .on('dnd_stop.vakata', function (e, data) {
+              var t = $(data.event.target);
+
+              if (!t.closest('.jstree').length) {
+                  if (t.closest('.drop').length) {
+                      var obj = data.element;
+                      var parentobj = $(obj).parent();
+
+                      var checkClass = parentobj.hasClass("drag");
+                      var checkClassText = parentobj.hasClass("dragText");
+
+                      var checkClassLine = parentobj.hasClass("dragLine");
+                      var checkClassdragBox = parentobj.hasClass("dragBox");
+
+                      if (checkClass == true) {
+                          $('.drop').append('<div class="FixedSection"  style="height:100px;width:500px;border:1px dashed;" readonly></div>');
+                      }
+                      else if (checkClassText == true) {
+                          $('.FixedSection').append('<div  id="LabelText" class="resizable moveable" style="height:25px;width:70px;border:1px dashed;" readonly></div>');
+                      }
+                      else if (checkClassLine == true) {
+                          $('.FixedSection').append('<hr style="width:150px;background-color: black;"/>');
+                      }
+                      else if (checkClassdragBox == true) {
+                          $('.FixedSection').append('<div class="resizable moveable" style="height:50px;width:60px;border:1px dashed;" readonly></div>');
+                      }
+
+                  }
+              }
+          });
+    $('.reportdropdown').change(function () {
+
+        var ReportID = $(this).val();
+        var selectedtext = $("#ReportName :selected").text();
+        $('#ReportNameData').val(selectedtext);
+
+        $('#ReportID').val(ReportID);
+
+
+        $.ajax({
+            url: '@Url.Content("~/Tools/Tools/bindReportData")',
+            data: JSON.stringify({ 'ReportID': ReportID }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+          
+                $('#wholehtml').html(data[0].ReportLayout);
+                $('#wholeLayout').html('');
+                $('#wholeLayout').html(data[0].WholeLayout);
+              
+                var groupnameval = $('#datacontainerHtml').val();
+                BindTable(groupnameval);
+            }
+        });
+    });
+    $('#SaveReport').click(function () {
+
+        var ReportID = $('#ReportID').val();
+        var GroupName = $('#GroupName').val();
+        $('#datacontainerHtml').val(GroupName);
+
+        var ReportName = $('#ReportNameData').val();
+        var Role = $('#RoleName').text();
+        var ReportLayout = $('#wholehtml').html();
+        var WholeLayout = $('#wholeLayout').html();
+        var ExecuteSql = $('#SqlQuery').html();
+        $.ajax({
+            url: '@Url.Content("~/Tools/Tools/SaveReport")',
+            data: JSON.stringify({ 'ReportID': ReportID, 'ReportName': ReportName, 'Role': Role, 'ReportLayout': ReportLayout, 'ExecuteSql': ExecuteSql, 'WholeLayout': WholeLayout }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#ReportNameData').val(ReportName);
+                $('.close').click();
+                window.location.reload();
+            }
+        });
+
+    });
+    function LayoutClick() {
+
+
+        ExpandTreeSql();
+    }
+    function ExpandTreeSql(obj) {
+        var treeId = $(obj).attr('id');
+
+
+
+        var length = $('#' + treeId + ' ul li').length;
+
+        var ReportID = $('#ReportID').val();
+        if (length == 0) {
+            $.ajax({
+                url: '@Url.Content("~/Tools/Tools/BindReportSql")',
+                data: JSON.stringify({ 'ReportID': ReportID }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+
+                    if (data[0].QuerySQL != null) {
+                        var subStr = data[0].QuerySQL.match("Select(.*)From");
+
+                        var data = subStr[1];
+                        var column = data.split(",");
+                        var Newhtml = $('.AppendTreeData').html();
+                        Newhtml = Newhtml.replace('<i class="jstree-icon jstree-themeicon"></i>', ' ');
+
+                        $('.AppendTreeData').html(Newhtml);
+                        for (i = 0; i <= column.length; i++) {
+
+                            if (column[i] != 'undefined' && column[i] != '' && column[i] != " " && column[i] != 'Undefined' && column[i] != String.empty) {
+
+                                if (i == 0) {
+                                    $('#Layoutcontainer .AppendTreeData').removeAttr('id');
+                                    $('#Layoutcontainer .AppendTreeData').html("<i class='jstree-icon jstree-ocl'></i><a class='jstree-anchor' href='#'>" + column[i] + "</a>");
+
+                                }
+                                else {
+                                    $('#Layoutcontainer .AppendTreeData').after("<li  class='jstree-node jstree-leaf jstree-last'><i class='jstree-icon jstree-ocl'></i><a class='jstree-anchor' href='#'>" + column[i] + "</a></li>");
+                                }
+                            }
+                        }
+
+
+                    }
+                }
+            });
+        }
+    }
+
+    function checkboxClick(event, x, TableName) {
+        var ischecked = $(event).is(':checked');
+        if (ischecked) {
+            var Sqlhtml = $('#SqlQuery').html();
+            var ordervalue = "";
+            var groupvalue = "";
+            var TreeTableName = TableName;
+
+            if (Sqlhtml.indexOf(TreeTableName) > -1) {
+
+                var oldhtml = $('#SqlQuery').html();
+
+                var result = oldhtml.search("ORDER BY");
+
+                if (result > -1) {
+                    var subStrOrder = oldhtml.match("ORDER BY(.*)");
+                    ordervalue = " ORDER BY " + subStrOrder[1];
+                }
+                var result2 = oldhtml.search("Group By");
+
+                if (result2 > -1) {
+                    var subStrOrder = oldhtml.match("Group By(.*)ORDER BY");
+                    if (subStrOrder != null) {
+                        groupvalue = " Group By " + subStrOrder[1];
+                    }
+                    else {
+                        var subStrOrders = oldhtml.match("Group By(.*)");
+                        groupvalue = " Group By " + subStrOrders[1];
+                    }
+                }
+
+                var subStr = oldhtml.match("Select(.*)From");
+
+                $('#SqlQuery').html(' ');
+
+                $('#SqlQuery').append("Select " + subStr[1] + "," + x + " From " + TreeTableName + groupvalue + ordervalue + "");
+            }
+            var oldhtml = $('#SqlQuery').html();
+
+            var subStr = oldhtml.match("Select(.*)From");
+
+            if ((subStr[1].indexOf('*')) == 2 || (subStr[1].indexOf('*')) > 2) {
+
+                console.log(subStr[1].indexOf('*'));
+                if ((subStr[1].indexOf('*')) > 2) {
+                    var newvalue1 = "* ,";
+                }
+                else {
+                    var newvalue1 = "* ,";
+                }
+                oldhtml = oldhtml.replace(newvalue1, ' ');
+                $('#SqlQuery').html(' ');
+                $('#SqlQuery').html(oldhtml);
+
+            }
+        }
+        else {
+            var oldhtml = $('#SqlQuery').html();
+
+            var subStr = oldhtml.match("Select(.*)From");
+            if (subStr[1].indexOf(x) > -1) {
+                if (subStr[1].indexOf(x) == 1) {
+                    oldhtml = oldhtml.replace(x, ' ');
+                }
+                else {
+                    var newvalue = x + " ,";
+                    var result = "";
+                    result = oldhtml.search(newvalue);
+                    if (result > -1) {
+                        oldhtml = oldhtml.replace(newvalue, ' ');
+                    }
+                    else {
+                        var newvalue1 = "," + x;
+                        result = oldhtml.search(newvalue1);
+                        if (result > -1) {
+                            oldhtml = oldhtml.replace(newvalue1, ' ');
+                        }
+                        else {
+                            var newvalue2 = ", " + x;
+                            result = oldhtml.search(newvalue2);
+                            if (result > -1) {
+                                oldhtml = oldhtml.replace(newvalue2, ' ');
+                            }
+                            else {
+                                oldhtml = oldhtml.replace(x, ' ');
+                            }
+                        }
+                    }
+                }
+                $('#SqlQuery').html(oldhtml);
+            }
+            var oldhtml = $('#SqlQuery').html();
+            var result = oldhtml.match(/Select+\s+From/gi);
+
+            if (result) {
+                oldhtml = oldhtml.replace(/Select+\s+From/gi, 'Select * From ');
+
+                $('#SqlQuery').html(oldhtml);
+            }
+
+            var result = oldhtml.search("Group By");
+            if (result > -1) {
+
+                var subStrOrder = oldhtml.match("Group By(.*)");
+                if (subStrOrder[1].indexOf(x) > -1) {
+                    var newvalue = x + " ,";
+                    var result = "";
+                    result = oldhtml.search(newvalue);
+                    if (result > -1) {
+                        oldhtml = oldhtml.replace(newvalue, ' ');
+                    }
+                    else {
+                        var newvalue1 = "," + x;
+                        result = oldhtml.search(newvalue1);
+                        if (result > -1) {
+                            oldhtml = oldhtml.replace(newvalue1, ' ');
+                        }
+                        else {
+                            var newvalue2 = ", " + x;
+                            result = oldhtml.search(newvalue2);
+                            if (result > -1) {
+                                oldhtml = oldhtml.replace(newvalue2, ' ');
+                            }
+                            else {
+                                oldhtml = oldhtml.replace(x, ' ');
+                            }
+                        }
+                    }
+                    $('#SqlQuery').html(oldhtml);
+                }
+
+                var oldhtml = $('#SqlQuery').html();
+                var subStrOrder = oldhtml.match("Group By(.*)");
+                if (!subStrOrder[1].trim()) {
+                    $('#SqlQuery').html(' ');
+
+                    oldhtml = oldhtml.replace('Group By', ' ');
+                    $('#SqlQuery').html(oldhtml);
+                }
+
+            }
+
+        }
+    }
+
+    function checkGroupBy(value, x, TableName) {
+        if (value != "GroupBy") {
+            var oldhtml = $('#SqlQuery').html();
+            var subStr = oldhtml.match("Select(.*)From");
+
+            if (subStr[1].indexOf(x) > -1) {
+
+                var newvalue = value + "(" + x.trim() + ")";
+
+                oldhtml = oldhtml.replace(x, newvalue);
+
+                var subStr = oldhtml.match("Select(.*)From");
+                $('#SqlQuery').html(' ');
+
+                $('#SqlQuery').append("Select " + subStr[1] + " From " + TableName + "");
+
+            }
+        }
+        else {
+            $('#SqlQuery').append("Select " + subStr[1] + " From " + TableName + "");
+        }
+    }
+
+    function checkSort(value, x, TableName) {
+
+        var oldhtml = $('#SqlQuery').html();
+        var subStr = oldhtml.match("Select(.*)From");
+        if (subStr[1].indexOf(x) > -1) {
+
+            var subStr = oldhtml.match("Select(.*)From");
+            $('#SqlQuery').html(' ');
+
+            var result = oldhtml.search("ORDER BY");
+            if (result > -1) {
+
+                var subStrOrder = oldhtml.match("ORDER BY(.*)");
+                if (subStrOrder[1].indexOf(x) > -1) {
+                    var newvalue = x + " ASC";
+                    var newvalue3 = x + " DESC";
+                    var newvalue2 = x + " " + value;
+                    var result2 = oldhtml.search(newvalue);
+
+                    if (result2 > -1) {
+                        if (value == "NoSort") {
+                            var result1 = oldhtml.search(newvalue + ',');
+                            if (result1 > -1) {
+                                oldhtml = oldhtml.replace(newvalue + ',', '');
+                            }
+                            else {
+                                var result2 = oldhtml.search(',' + newvalue)
+                                if (result2 > -1) {
+                                    oldhtml = oldhtml.replace(',' + newvalue, '');
+                                }
+                                else if (oldhtml.search(newvalue)) {
+                                    oldhtml = oldhtml.replace(newvalue, ' ');
+                                }
+                            }
+                            $('#SqlQuery').html(oldhtml);
+                        }
+                        else {
+                            oldhtml = oldhtml.replace(newvalue, newvalue2);
+                            $('#SqlQuery').html(oldhtml);
+                        }
+                    }
+                    else {
+                        if (value == "NoSort") {
+                            var result1 = oldhtml.search(newvalue3 + ',');
+                            if (result1 > -1) {
+                                oldhtml = oldhtml.replace(newvalue3 + ',', '');
+                            }
+                            else {
+                                var result2 = oldhtml.search(',' + newvalue3)
+                                if (result2 > -1) {
+                                    oldhtml = oldhtml.replace(',' + newvalue3, '');
+                                }
+                                else if (oldhtml.search(newvalue3)) {
+                                    oldhtml = oldhtml.replace(newvalue3, ' ');
+                                }
+                            }
+                            $('#SqlQuery').html(oldhtml);
+                        }
+                        else {
+                            if (oldhtml.search(newvalue3)) {
+                                oldhtml = oldhtml.replace(newvalue3, newvalue2);
+                                $('#SqlQuery').html(oldhtml);
+                            }
+                        }
+                    }
+                }
+                else {
+                    $('#SqlQuery').append("Select " + subStr[1] + " From " + TableName + " ORDER BY " + subStrOrder[1] + "," + x + " " + value + "");
+                }
+            }
+            else {
+                $('#SqlQuery').append("Select " + subStr[1] + " From " + TableName + " ORDER BY " + x + " " + value + "");
+            }
+        }
+
+        var oldhtml = $('#SqlQuery').html();
+        var subStrOrder = oldhtml.match("ORDER BY(.*)");
+        if (!subStrOrder[1].trim()) {
+            $('#SqlQuery').html(' ');
+
+            oldhtml = oldhtml.replace('ORDER BY', ' ');
+            $('#SqlQuery').html(oldhtml);
+        }
+    }
+
+
+    function BindTable(x) {
+
+        if (x != null) {
+            var GroupName = x;
+            $('#GroupName').val(x);
+        }
+        else {
+            var GroupName = $('#GroupName').val();
+        }
+        $('#datacontainer').jstree('destroy');
+        $.ajax({
+            url: '@Url.Content("~/Tools/Tools/LoadDataTablesTree")',
+            data: JSON.stringify({ 'GroupName': GroupName }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+                $('#datacontainer ul').remove();
+                $.each(data.LoadDataTablesTreeList, function (key, value) {
+
+                    $('#datacontainer').append("<ul><li onclick='NewFunction(this);'>" + value.TableName + "<ul><li class='AppendNode' onclick='AppendColumnTable(this,&#39;" + value.TableName + "&#39;);'></li></ul></li></ul>");
+
+                });
+
+                $('#datacontainer').jstree({});
+
+
+            }
+        });
+    }
+
+    function NewFunction(obj) {
+
+        var treeId = $(obj).attr('id');
+
+        $('#datacontainer a').removeClass('jstree-clicked');
+        $('#datacontainer').jstree("select_node", "#" + treeId, true);
+        var length = $('#' + treeId + ' ul li').length;
+
+        var TableName = $(obj).find('a').text();
+
+        if (length == 0) {
+            $.ajax({
+                url: '@Url.Content("~/Tools/Tools/LoadTableColumnsTreeNode")',
+                data: JSON.stringify({ 'TableName': TableName }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+
+                    var Newhtml = $('.AppendNode').html();
+                    Newhtml = Newhtml.replace('<i class="jstree-icon jstree-themeicon"></i>', ' ');
+
+                    $('.AppendNode').html(Newhtml);
+
+                    $.each(data.LoadTableColumnsTreeNodeList, function (key, value) {
+
+                        if (key == 0) {
+                            $('#' + treeId + ' .AppendNode').append(value.column_name);
+                        }
+                        else {
+                            $('#' + treeId + ' .AppendNode').after("<li class='jstree-node jstree-leaf jstree-last' onclick='AppendColumnTable(this,&#39;" + TableName + "&#39;);'><i class='jstree-icon jstree-ocl'></i>" + value.column_name + "</li>");
+                        }
+
+                    });
+
+
+
+                }
+            });
+        }
+    }
+
+    $('#GroupResult').click(function () {
+
+        var TreeTableName = $('#hdTableName').val();
+        var ordervalue = "";
+
+        var getdisplay = $('#GroupByColumn').css('display');
+
+        var oldhtml = $('#SqlQuery').html();
+        var subStr = oldhtml.match("Select(.*)From");
+
+        var result = oldhtml.search("ORDER BY");
+
+        if (result > -1) {
+            var subStrOrder = oldhtml.match("ORDER BY(.*)");
+            ordervalue = " ORDER BY " + subStrOrder[1];
+        }
+
+        if (getdisplay == 'table-cell') {
+            $('.tbodyGroup').hide();
+            $('#GroupByColumn').hide();
+
+
+            $('#SqlQuery').html(' ');
+
+            $('#SqlQuery').append("Select " + subStr[1] + " From " + TreeTableName + ordervalue + "");
+
+        }
+        else {
+            $('.tbodyGroup').show();
+            $('#GroupByColumn').show();
+
+            $('#SqlQuery').html(' ');
+
+            $('#SqlQuery').append("Select " + subStr[1] + " From " + TreeTableName + " Group By " + subStr[1] + ordervalue + "");
+
+            var subStr = oldhtml.match("Select(.*)From");
+
+            if ((subStr[1].indexOf('*')) > -1) {
+                $('#SqlQuery').html(' ');
+                $('#SqlQuery').append("Select " + subStr[1] + " From " + TreeTableName + ordervalue + "");
+            }
+
+        }
+    });
+
+    function AppendColumnTable(obj, x) {
+
+        $("#hdTableName").val(x);
+        var ordervalue = "";
+        var newvalue = $(obj).text();
+
+        var selectedColumn = newvalue;
+        var selectedTableName = $('#GroupName').val();
+        var TableNodeId = $('#datacontainer li').attr('id');
+
+        var TreeTableName = x;
+
+        var GrpByColumn = "";
+
+        $('#DataTable>tbody').append('<tr style="color:white;background-color:#6f9dd9;"><td>' + selectedColumn + '</td><td></td><td>' + TreeTableName + '</td><td><input type="Checkbox" class="' + selectedColumn.trim() + '" checked="checked" onclick="checkboxClick(this,&#39;' + selectedColumn + '&#39;,&#39;' + TreeTableName + '&#39;);" /></td><td class="tbodyGroup"> <select style="color:black;" id="GroupBy" onmousedown="this.value="";" onchange="checkGroupBy(this.value,&#39;' + selectedColumn + '&#39;,&#39;' + TreeTableName + '&#39;);"><option value="GroupBy">GroupBy</option><option value="Sum">Sum</option><option value="Avg">Avg</option><option value="Min">Min</option><option value="Max">Max</option><option value="Count">Count</option><option value="SumDistinct">SumDistinct</option><option value="AvgDistinct">AvgDistinct</option><option value="MinDistinct">MinDistinct</option><option value="MaxDistinct">MaxDistinct</option><option value="CountDistinct">CountDistinct</option></select></td><td><select style="color:black" onmousedown="this.value="";" onchange="checkSort(this.value,&#39;' + selectedColumn + '&#39;,&#39;' + TreeTableName + '&#39;);"><option value="NoSort">No Sort</option ><option value="ASC">Ascending</option><option value="DESC">Descending</option></select></td><td><input type="button" Value="Filter" style="height:25px;width:70px;"></td></tr>');
+        var getdisplay = $('#GroupByColumn').css('display');
+
+        if (getdisplay == 'none') {
+            $('#GroupByColumn').hide();
+            $('.tbodyGroup').hide();
+        }
+        else {
+            $('#GroupByColumn').show();
+            $('.tbodyGroup').show();
+        }
+
+
+        var Sqlhtml = $('#SqlQuery').html();
+
+        if (Sqlhtml.indexOf(TreeTableName) > -1) {
+            var oldhtml = $('#SqlQuery').html();
+            var subStr = oldhtml.match("Select(.*)From");
+            $('#SqlQuery').html(' ');
+
+            var result = oldhtml.search("ORDER BY");
+
+            if (result > -1) {
+                var subStrOrder = oldhtml.match("ORDER BY(.*)");
+                ordervalue = " ORDER BY " + subStrOrder[1];
+            }
+
+            if (getdisplay == 'none') {
+
+                $('#SqlQuery').append("Select " + subStr[1] + "," + selectedColumn + " From " + TreeTableName + ordervalue + "");
+
+                var oldhtml = $('#SqlQuery').html();
+
+                var subStr = oldhtml.match("Select(.*)From");
+                if ((subStr[1].indexOf('*')) == 2) {
+                    var newvalue1 = "* ,";
+                    oldhtml = oldhtml.replace(newvalue1, ' ');
+
+                    $('#SqlQuery').html(' ');
+                    $('#SqlQuery').html(oldhtml);
+                }
+            }
+            else {
+                $('#SqlQuery').append("Select " + subStr[1] + "," + selectedColumn + " From " + TreeTableName + " Group By " + subStr[1] + "," + selectedColumn + ordervalue + "");
+
+                var oldhtml = $('#SqlQuery').html();
+                var subStr = oldhtml.match("Select(.*)From");
+                if ((subStr[1].indexOf('*')) == 2) {
+                    var newvalue1 = "* ,";
+                    oldhtml = oldhtml.replace(newvalue1, ' ');
+
+                    $('#SqlQuery').html(' ');
+                    $('#SqlQuery').html(oldhtml);
+                }
+
+                var oldhtml = $('#SqlQuery').html();
+
+                var subStrGroup = oldhtml.match("Group By(.*)");
+                if ((subStrGroup[1].indexOf('*')) == 2) {
+                    var newvalue0 = "* ,";
+                    oldhtml = oldhtml.replace(newvalue0, ' ');
+
+                    $('#SqlQuery').html(' ');
+                    $('#SqlQuery').html(oldhtml);
+                }
+            }
+        }
+        else if (selectedColumn == null) {
+            $('#SqlQuery').html(' ');
+            $('#SqlQuery').append("Select * From " + TreeTableName + ordervalue + "");
+
+        }
+        else {
+            $('#SqlQuery').html(' ');
+            if (getdisplay == 'none') {
+                $('#SqlQuery').append("Select " + selectedColumn + " From " + TreeTableName + ordervalue + "");
+
+            }
+            else {
+                $('#SqlQuery').append("Select " + selectedColumn + " From " + TreeTableName + " Group By " + selectedColumn + ordervalue + "");
+            }
+        }
+    }
+
+
+    $('#ClearSQL').click(function () { $('#SqlQuery').html(' '); $('#DataTable>tbody').html(' '); });
+    $('#ExecuteQuery').click(function () {
+        var FinalSql = $('#SqlQuery').html();
+
+        $.ajax({
+            url: '@Url.Content("~/Tools/Tools/ExexcuteSql")',
+            data: JSON.stringify({ 'FinalSql': FinalSql }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+
+
+                $('#newdata').html(data[0].ExecuteSql);
+
+                var newdata = $('#newdata').html();
+
+                var printWindow = window.open('', '', 'width=1000,height=1000,location=no,left=200px');
+                printWindow.document.open();
+                printWindow.document.write('<html><head><title></title>');
+                printWindow.document.write('</head><body >');
+                printWindow.document.write('<style>.td-border{border:1px solid #ccc}.right-border{border-right:1px solid #ccc}.head-bg{background:#f2f2f2;border:1px solid #ccc}.table {display: table;width: 100%; border: 1px solid black;}.printtable { padding: 15px; text-align: left;}</style>');
+                printWindow.document.write(newdata);
+                printWindow.document.write('</body></html>');
+
+            }
+        });
+    });
+
+
+    $('#PreviewClick').click(function () {
+        var values = [];
+        $('#GetPrivewData').find('.FixedSection a').each(function () {
+
+            values.push($(this).html());
+        });
+        var datacolumn = values.join(',');
+        var GetPrivewData = $('#GetPrivewData').html();
+        GetPrivewData = GetPrivewData.replace('border:1px dashed;', ' ');
+        GetPrivewData = GetPrivewData.replace('border: 1px dashed;', ' ');
+        GetPrivewData = GetPrivewData.replace('border:1px dashed;', ' ');
+        GetPrivewData = GetPrivewData.replace('resizable moveable', ' ');
+        $('#PrintPreviewData').html(GetPrivewData);
+        //var FinalSql = $('#SqlQuery').html();
+
+
+        var values2 = [];
+        $('#GetPrivewData').find('.jstree-anchor').each(function () {
+            values2.push($(this).html());
+        });
+        var datacolumn2 = values2.join(',');
+
+        var oldhtml = $('#SqlQuery').html();
+        var subStr = oldhtml.match("Select(.*)From");
+        console.log(subStr[1]);
+        oldhtml = oldhtml.replace(subStr[1], ' ' + datacolumn2 + ' ');
+        console.log(oldhtml);
+        var FinalSql = oldhtml;
+
+        $.ajax({
+            url: '@Url.Content("~/Tools/Tools/ExexcuteSql")',
+            data: JSON.stringify({ 'FinalSql': FinalSql }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                var newhtmldata = data[0].ExecuteSql;
+                $('#PrintPreviewData').html(data[0].ExecuteSql);
+                // $('#PrintPreviewData').html(GetPrivewData + data[0].ExecuteSql);
+                //var values2 = [];
+                //$('#GetPrivewData').find('.jstree-anchor').each(function () {
+                //    values2.push($(this).html());
+                //});
+                //var datacolumn2 = values2.join(',');
+                //var arrGetPrivewData = datacolumn2.split(',');
+
+                //var values1 = [];
+                //$('#PrintPreviewData').html(newhtmldata);
+
+                //$('#PrintPreviewData').find('#AltListBorder>tbody tr#' + 1 + ' th').each(function () {
+                //    values1.push($(this).html());
+                //});
+
+                //var datacolumn = values1.join(',');
+
+                //for (i = 0; i < arrGetPrivewData.length; i++) {
+
+                //    $('#PrintPreviewData').find('#AltListBorder>tbody tr#' + 1 + ' th').each(function () {
+                //        var PrintPreview = values1.push($(this).html());
+                //        for (j = 0; j < arrGetPrivewData.length; j++) {
+                //            if (PrintPreview == arrGetPrivewData[j]) {
+
+                //                $('#AltListBorder td:nth-child(' + arrGetPrivewData[j] + ')').show();
+                //            }
+                //            else {
+                //                $('#AltListBorder td:nth-child(' + arrGetPrivewData[j] + ')').hide();
+                //            }
+                //        }
+
+                //    });
+                //}
+                //console.log($('#AltListBorder').html());
+                //$('#PrintPreviewData').html();
+                //console.log(data[0].ExecuteSql);
+            }
+        });
+    });
+
+    $('#PrintButton').click(function () {
+        var divContents = $('#PrintPreviewData').html();
+        var printWindow = window.open('', '_blank', 'width=350,height=150,location=no,left=200px');
+        printWindow.document.open();
+        printWindow.document.write('<html><head><title></title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write('<style>.head-bg{background:#f2f2f2}.td-border{outline:1px solid #ccc;padding:5px}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+        printWindow.document.write(divContents);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+
+
+        printWindow.close();
+    });
+
+</script>
+
+<div id="newdata" style="display:none;"></div>
+<table id="new" style="display:none;"></table>

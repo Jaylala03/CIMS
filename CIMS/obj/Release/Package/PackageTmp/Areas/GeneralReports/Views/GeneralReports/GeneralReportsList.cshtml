@@ -1,0 +1,131 @@
+﻿@model CIMS.Models.GeneralReportsModel
+@{
+    ViewBag.Title = "GeneralReportsList";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+<link href="~/Content/Custom.css" rel="stylesheet" />
+
+<style>
+    .alphabet {
+        display: none !important;
+    }
+</style>
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">General Reports List</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">General Reports List</li>
+        </ol>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading  custom-head">
+        <h3 class="box-title m-b-0">Subject Reports List</h3>
+
+        <div class="panel-options">
+            <div class="right-btn">
+
+                <a href='@Url.Content("~/GeneralReports/GeneralReports/Index")' class="btn btn-primary add"><i class="fa fa-plus"></i> Add General Reports</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="generalReportsTable" class="table table-bordered Tableview">
+                <thead>
+                    <tr>
+                        <th class="header">
+                            Media
+                        </th>
+                        <th class="header headerSortDown">
+                            Report Number
+                        </th>
+                        <th class="header">
+                            Short Description
+                        </th>
+                        <th class="header">
+                            Status
+                        </th>
+                        <th class="header">
+                            Reports CreatedBy (UserName)
+                        </th>
+                        @*<th>Action</th>*@
+
+                    </tr>
+                </thead>
+                @if (Model.ListGeneralReports.Count() > 0)
+                {
+                    foreach (var items in Model.ListGeneralReports)
+                    {
+
+                        <tr class="subTR" data-id="@items.ReportID" style="cursor:pointer">
+                            <td>
+                                <a href='@Url.Content("~/GeneralReports/GeneralReports/Index?Show=View&Id=" + items.ReportID + "")' title="View General Report">
+                                    @*Ankur New 1*@
+                                    <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.DefaultImage) ? Url.Content("~/assets/images/"+items.DefaultImage+"") : Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                </a>
+                            </td>
+                            <td onclick="document.location.href='@Url.Content("~/GeneralReports/GeneralReports/Index?Show=View&Id=" + items.ReportID + "")'">@items.ReportNumber</td>
+                            <td onclick="document.location.href='@Url.Content("~/GeneralReports/GeneralReports/Index?Show=View&Id=" + items.ReportID + "")'">@items.ShortDescriptorName</td>
+                            <td onclick="document.location.href='@Url.Content("~/GeneralReports/GeneralReports/Index?Show=View&Id=" + items.ReportID + "")'">@items.StatusName</td>
+                            @if (items.UserName == Session["UserName"].ToString())
+                            {
+                                <td onclick="document.location.href='@Url.Content("~/GeneralReports/GeneralReports/Index?Show=View&Id=" + items.ReportID + "")'">Me</td>
+                                @*<td>
+
+                                    <a href='@Url.Content("~/GeneralReports/GeneralReports/Index?Id=" + items.ReportID + "")' class="btn btn-info btn-sm small btn-icon edit" title="Edit General Report"><i class="fa fa-pencil"></i></a>
+                                    <a class="btn btn-danger small btn-sm delete-sm" href='javascript:;' onclick='DeleteGeneralReport(@items.ReportID,this);' title="Delete General Report"><i class='fa fa-trash'></i></a>
+                                </td>*@
+                            }
+                            else
+                            {
+                                <td onclick="document.location.href='@Url.Content("~/GeneralReports/GeneralReports/Index?Show=View&Id=" + items.ReportID + "")'">@items.UserName</td>
+                                @*<td>
+                                    <a href='@Url.Content("~/GeneralReports/GeneralReports/Index?Id=" + items.ReportID + "")' class="btn btn-info btn-sm small btn-icon" id="@(items.ReportID)Edit" onclick='return ReportPermissionCheck(@items.ReportID,1,this);' title="Edit General Report"><i class="fa fa-pencil"></i></a>
+                                    <a class="btn btn-danger small btn-sm delete-sm" href='javascript:;' onclick='ReportPermissionCheck(@items.ReportID,2,this);' id="@(items.ReportID)Delete" title="Delete General Report"><i class='fa fa-trash'></i></a>
+                                </td>*@
+                            }
+                        </tr>
+                    }
+                }
+
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+<link href="~/Content/data-tables/dataTables.alphabetSearch.css" rel="stylesheet" />
+<script src="~/Content/data-tables/dataTables.alphabetSearch.min.js"></script>
+<script src="~/Content/Custom.js"></script>
+<script type="text/javascript">
+        $(document).ready(function () {
+            var table = $('#generalReportsTable').DataTable({
+
+                dom: 'Alfrtip',
+                alphabetSearch: {
+                    column: 3
+                },
+            });
+            $(document).on('click', '.empty', function () { $('#generalReportsTable>tbody tr.alphabet_group').remove(); });
+            $(document).on('click', '.data', function () { $('#generalReportsTable>tbody tr.alphabet_group').remove(); });
+            $(document).on('click', '.active', function () { $('#generalReportsTable>tbody tr.alphabet_group').remove(); });
+
+            $(document).on('keyup', '#generalReportsTable_filter input[type=search]', function () {
+                $(document).find('.alphabet-clear').click();
+            });
+        });
+</script>
+<style>
+    .alphabet_group {
+        display: none;
+    }
+</style>
+

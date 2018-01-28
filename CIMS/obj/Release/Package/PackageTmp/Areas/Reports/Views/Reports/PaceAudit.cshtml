@@ -1,0 +1,471 @@
+﻿@model CIMS.Models.PaceAuditModel
+@{
+    ViewBag.Title = "PaceAudit";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+<script src="~/assets/js/Jspdf/FileSaver.js"></script>
+<script src="~/assets/js/Jspdf/jspdf.js"></script>
+<script src="~/assets/js/Jspdf/jspdfplugintable.js"></script>
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Pace Audits</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Reports</a></li>
+            <li class="active">Pace Audits</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+<div class="row">
+    <div class="col-md-12">
+
+
+
+
+
+        <div class="col-md-12">
+            
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="white-box">
+                            <div class="form-group clearfix">
+                                <label class="control-label col-md-4">Game</label>
+                                  <div class="col-md-8"> 
+                                @Html.DropDownListFor(model => model.Game, ViewBag.GameList as List<SelectListItem>, new { @class = "form-control" })
+                                 </div>     
+                            </div>
+
+                            <div class="form-group clearfix">
+                                <label class="control-label col-md-4">Hands Per Hour</label>
+                                  <div class="col-md-8">
+                                @Html.DropDownListFor(model => model.HandsPerHour, ViewBag.handsperHourList as List<SelectListItem>, new { @class = "form-control" })
+                                    </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="white-box">
+                            <div class="form-group clearfix">
+                                <label class="control-label col-md-4">Start Date</label>
+                                 <div class="col-md-8">
+                                @Html.TextBoxFor(m => m.StartDate, null, new { @class = "form-control" })
+                            </div>
+                             </div>
+
+                            <div class="form-group clearfix">
+                                <label class="control-label col-md-4">End Date</label>
+                                <div class="col-md-8">
+                                @Html.TextBoxFor(m => m.EndDate, null, new { @class = "form-control" })
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+
+
+                </div>
+
+
+
+
+
+
+
+
+           
+        </div>
+
+
+
+
+        <div class="col-md-12">
+            <div class="white-box clearfix">
+                <div class="col-md-6">
+                    <div class="form-group clearfix no-margin-bottom">
+                        <div class="col-md-4">
+                            @Html.Label("First Name")
+                        </div>
+                        <div class="col-md-8">
+                            @*@Html.RadioButtonFor(p => p.FirstName, "a", new { @group = "a" })*@
+                            <input type="radio" name="Radio1" value="FirstName">
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <div class="col-md-4">
+                            @Html.Label("Last Name")
+                        </div>
+                        <div class="col-md-8">
+                            @*@Html.RadioButtonFor(p => p.LastName, "a", new { @group = "a" })*@
+                            <input type="radio" name="Radio1" value="LastName">
+                        </div>
+                    </div>
+                        
+                    <button type="submit" class="btn btn-success" id="print">Print</button>
+                    <button type="submit" class="btn btn-primary" id="preview">Preview</button>
+                    <a href="#myModalSendEmail" data-toggle="modal" class="btn btn-info" style="padding: 7px 8px;" id="SendEmailPaceAudit">Send Email</a>
+                    <button type="button" class="btn btn-warning" id="PdfPaceAuditSubmit">Save As Pdf</button>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="PrintPaceAuditdiv" style="text-align: center; border: 1px solid #ccc;display:none;">
+</div>
+<!-- Send Email Model-->
+<div class="modal fade" id="myModalSendEmail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Send Email</h4>
+            </div>
+
+            <div class="modal-body row">
+                <div class="col-md-12 right-label">
+                    <div class="form-group clearfix">
+                        @Html.Label("To", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="To" id="topace" class="form-control">
+                            <label id="EmailTo" style="color:red;"></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Subject", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Subject" id="SubjectPaceAudit" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group clearfix">
+                        @Html.Label("Desciption", new { @class = "col-md-3" })
+                        <div class="col-md-9">
+                            <input type="text" name="Desciption" id="DesciptionPace" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-12 text-right">
+                        <button type="submit" class="btn btn-success" id="SendPaceEmailData">Send Email</button>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="PaceAuditPicture-log">
+
+                        <div class="table-responsive">
+                            <div id="AttachmentPaceAuditPic"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+<!-- /.Send Email Model-->
+
+
+<script>
+    $(document).ready(function () {
+        $('#StartDate').datepicker();
+        $('#EndDate').datepicker();
+
+
+
+        $('input:checkbox').change(function () {
+            if ($(this).is(':checked'))
+                $(this).addClass('selectedPaceAudit');
+            else
+                $(this).removeClass('selectedPAceAudit');
+
+        });
+        //print--
+        $('#print').click(function () {
+
+
+            var game = $('#Game').val();
+            var startDate = $('#StartDate').val();
+            var endDate = $('#EndDate').val();
+            var sortBy = $('input[name=Radio1]:checked').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Reports/Reports/PaceAudit_print")',
+                data: JSON.stringify({ 'Game': game, 'startDate': startDate, 'endDate': endDate, 'SortOrder': sortBy }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    var sOut = '<table cellpadding="6" border="1" id="dynamicTable" style="border-collapse:collapse"><tr>';
+                    sOut += '<th>LastName</th>';
+                    sOut += '<th>First Name</th>';
+                    sOut += '<th>Incidents</th>';
+                    sOut += '<th>Observations</th>';
+                    sOut += '<th>Hands Per hour</th>';
+                    sOut += '<th>Shuffle Time</th>';
+                    sOut += '<th>Shoe Time</th>';
+                    sOut += '</tr><tbody>';
+                    for (var i = 0; i < data.length; i += 1) {
+                        sOut += '<tr><td>' + data[i]["LastName"] + '</td>';
+                        sOut += '<td>' + data[i]["FirstName"] + '</td>';
+                        sOut += '<td>' + String(data[i]["IncidentCount"]) + '</td>';
+                        sOut += '<td>' + data[i]["ObservationCount"] + '</td>';
+                        sOut += '<td>' + String(data[i]["PaceAuditsHandsPerHour"]) + '</td>';
+                        sOut += '<td>' + String(data[i]["ShuffleTime"]) + '</td>';
+                        sOut += '<td>' + data[i]["ShoeTime"] + '</td></tr>';
+
+                    }
+                    sOut += '<tbody></table>';
+                    $('#PrintPaceAuditdiv').html(sOut);
+                    var divContents = $('#PrintPaceAuditdiv').html();
+
+                    var printWindow = window.open('', '_blank', 'width=350,height=150,location=no,left=200px');
+                    printWindow.document.open();
+                    printWindow.document.write('<html><head><title></title>');
+                    printWindow.document.write('</head><body >');
+                    printWindow.document.write('<style>.head-bg{background:#f2f2f2}.td-border{outline:1px solid #ccc;padding:5px}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+                    printWindow.document.write(divContents);
+                    printWindow.document.write('</body></html>');
+                    printWindow.document.close();
+                    printWindow.print();
+
+
+                    printWindow.close();
+
+
+
+
+                }
+            });
+
+        });
+
+        //Preview
+        $("#preview").click(function () {
+
+            var game = $('#Game').val();
+            var startDate = $('#StartDate').val();
+            var endDate = $('#EndDate').val(); topace
+            var sortBy = $('input[name=Radio1]:checked').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Reports/Reports/PaceAudit_print")',
+                data: JSON.stringify({ 'Game': game, 'startDate': startDate, 'endDate': endDate, 'SortOrder': sortBy }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    var sOut = '<table cellpadding="6" border="1" id="dynamicTable" style="border-collapse:collapse"><tr>';
+                    sOut += '<th>LastName</th>';
+                    sOut += '<th>First Name</th>';
+                    sOut += '<th>Incidents</th>';
+                    sOut += '<th>Observations</th>';
+                    sOut += '<th>Hands Per hour</th>';
+                    sOut += '<th>Shuffle Time</th>';
+                    sOut += '<th>Shoe Time</th>';
+                    sOut += '</tr><tbody>';
+                    for (var i = 0; i < data.length; i += 1) {
+                        sOut += '<tr><td>' + data[i]["LastName"] + '</td>';
+                        sOut += '<td>' + data[i]["FirstName"] + '</td>';
+                        sOut += '<td>' + String(data[i]["IncidentCount"]) + '</td>';
+                        sOut += '<td>' + data[i]["ObservationCount"] + '</td>';
+                        sOut += '<td>' + String(data[i]["PaceAuditsHandsPerHour"]) + '</td>';
+                        sOut += '<td>' + String(data[i]["ShuffleTime"]) + '</td>';
+                        sOut += '<td>' + data[i]["ShoeTime"] + '</td></tr>';
+
+                    }
+                    sOut += '<tbody></table>';
+                    $('#PrintPaceAuditdiv').html(sOut);
+                    var divContents = $('#PrintPaceAuditdiv').html();
+                    var printWindow = window.open('', '_blank', 'width=350,height=150,location=no,left=200px');
+                    printWindow.document.open();
+                    printWindow.document.write('<html><head><title></title>');
+                    printWindow.document.write('</head><body >');
+                    printWindow.document.write('<style>th{background:#ccc;}.head-bg{background:#f2f2f2}.td-border{outline:1px solid #ccc;padding:5px}.table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+                    printWindow.document.write(divContents);
+                    printWindow.document.write('</body></html>');
+
+                }
+            });
+
+        });
+
+
+        $("#SendEmailPaceAudit").click(function () {
+
+            var game = $('#Game').val();
+            var startDate = $('#StartDate').val();
+            var endDate = $('#EndDate').val();
+            var sortBy = $('input[name=Radio1]:checked').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Reports/Reports/PaceAudit_print")',
+                data: JSON.stringify({ 'Game': game, 'startDate': startDate, 'endDate': endDate, 'SortOrder': sortBy }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    var sOut = '<table cellpadding="6" border="1" id="dynamicTable" style="border-collapse:collapse"><tr>';
+                    sOut += '<th>LastName</th>';
+                    sOut += '<th>First Name</th>';
+                    sOut += '<th>Incidents</th>';
+                    sOut += '<th>Observations</th>';
+                    sOut += '<th>Hands Per hour</th>';
+                    sOut += '<th>Shuffle Time</th>';
+                    sOut += '<th>Shoe Time</th>';
+                    sOut += '</tr><tbody>';
+                    for (var i = 0; i < data.length; i += 1) {
+                        sOut += '<tr><td>' + data[i]["LastName"] + '</td>';
+                        sOut += '<td>' + data[i]["FirstName"] + '</td>';
+                        sOut += '<td>' + String(data[i]["IncidentCount"]) + '</td>';
+                        sOut += '<td>' + data[i]["ObservationCount"] + '</td>';
+                        sOut += '<td>' + String(data[i]["PaceAuditsHandsPerHour"]) + '</td>';
+                        sOut += '<td>' + String(data[i]["ShuffleTime"]) + '</td>';
+                        sOut += '<td>' + data[i]["ShoeTime"] + '</td></tr>';
+
+                    }
+                    sOut += '<tbody></table>';
+                    $('#PrintPaceAuditdiv').html(sOut);
+                    var divContents = $('#PrintPaceAuditdiv').html();
+
+                    $('#AttachmentPaceAuditPic').html(divContents);
+
+
+                }
+            });
+
+        });
+
+
+
+        $('#SendPaceEmailData').click(function () {
+
+            if ($("#topace").val() == "") {
+                alert("Enter email address.");
+            }
+            else {
+                if (!ValidateEmail($("#topace").val())) {
+                    alert("Invalid email address.");
+                }
+                else {
+                    html2canvas($("#AttachmentPaceAuditPic"), {
+                        onrendered: function (canvas) {
+                            var myImageBan = canvas.toDataURL("img/png");
+
+                            var SubjectPaceAudit = $('#SubjectPaceAudit').val();
+                            var DesciptionPace = $('#DesciptionPace').val();
+                            var ToPace = $('#topace').val();
+                            var picBan = myImageBan.replace(/^data:image\/png;base64,/, "")
+                            var AttachmentBan = picBan;
+                            $.ajax({
+                                url: '@Url.Content("~/Reports/Reports/SendEmailData")',
+                                data: JSON.stringify({ 'Attachment': AttachmentBan, 'Subject': SubjectPaceAudit, 'Desciption': DesciptionPace, 'To': ToPace }),
+                                type: 'POST',
+                                dataType: 'json',
+                                contentType: 'application/json',
+                                success: function (data) {
+                                    $('.close').click();
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        });
+
+        function ValidateEmail(email) {
+            var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+            return expr.test(email);
+        };
+
+
+        $('#PdfPaceAuditSubmit').click(function () {
+            var game = $('#Game').val();
+            var startDate = $('#StartDate').val();
+            var endDate = $('#EndDate').val(); topace
+            var sortBy = $('input[name=Radio1]:checked').val();
+
+            $.ajax({
+                url: '@Url.Content("~/Reports/Reports/PaceAudit_print")',
+                data: JSON.stringify({ 'Game': game, 'startDate': startDate, 'endDate': endDate, 'SortOrder': sortBy }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    var sOut = '<table cellpadding="6" border="1" id="dynamicTable" style="border-collapse:collapse"><tr>';
+                    sOut += '<th>LastName</th>';
+                    sOut += '<th>First Name</th>';
+                    sOut += '<th>Incidents</th>';
+                    sOut += '<th>Observations</th>';
+                    sOut += '<th>Hands Per hour</th>';
+                    sOut += '<th>Shuffle Time</th>';
+                    sOut += '<th>Shoe Time</th>';
+                    sOut += '</tr><tbody>';
+                    for (var i = 0; i < data.length; i += 1) {
+                        sOut += '<tr><td>' + data[i]["LastName"] + '</td>';
+                        sOut += '<td>' + data[i]["FirstName"] + '</td>';
+                        sOut += '<td>' + String(data[i]["IncidentCount"]) + '</td>';
+                        sOut += '<td>' + data[i]["ObservationCount"] + '</td>';
+                        sOut += '<td>' + String(data[i]["PaceAuditsHandsPerHour"]) + '</td>';
+                        sOut += '<td>' + String(data[i]["ShuffleTime"]) + '</td>';
+                        sOut += '<td>' + data[i]["ShoeTime"] + '</td></tr>';
+
+                    }
+                    sOut += '<tbody></table>';
+                    $('#PrintPaceAuditdiv').html(sOut);
+
+                    var htmldata = $('#PrintPaceAuditdiv').html();
+
+                    $('#dynamicTable').html(htmldata);
+
+                    var data = [], fontSize = 12, height = 0, doc;
+                    doc = new jsPDF('p', 'pt', 'a4', true);
+                    doc.setFont("times", "normal");
+                    doc.setFontSize(fontSize);
+
+                    data = [];
+                    data = doc.tableToJson('dynamicTable');
+                    height = doc.drawTable(data, {
+                        xstart: 10,
+                        ystart: 10,
+                        tablestart: 40,
+                        marginleft: 10,
+                        xOffset: 10,
+                        yOffset: 15
+                    });
+                    doc.save("PaceAudit.pdf");
+
+                }
+            });
+
+
+        });
+    });
+</script>

@@ -1,0 +1,222 @@
+﻿@model CIMS.Models.EventModel
+@{
+
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+<link href="~/Content/Custom.css" rel="stylesheet" />
+
+<style>
+    .cmdSub {
+        pointer-events: none;
+        opacity: 0.65;
+    }
+</style>
+
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Event List</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Event List</li>
+        </ol>
+    </div>
+
+</div>
+
+
+
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading  custom-head">
+        <h3 class="box-title m-b-0">Event List</h3>
+
+        <div class="panel-options">
+            <div class="right-btn">
+
+                <a href='@Url.Content("~/Events/Event/EventDetail")' class="btn btn-primary add"><i class="fa fa-plus"></i>Add Event</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-body">
+        <div class="table-responsive">
+           
+
+                
+                   
+                        <table id="ListTable" class="table table-bordered Tableview">
+                            <thead>
+                                <tr>
+                                    <th class="header">
+                                        Media
+                                    </th>
+                                    <th class="header headerSortDown">
+                                        Evt#
+                                    </th>
+                                    <th class="header">
+                                        Att#
+                                    </th>
+                                    <th class="header">
+                                        Start
+                                    </th>
+                                    <th class="header">
+
+                                        End
+                                    </th>
+                                    <th class="header">
+                                        Initiated By
+                                    </th>
+                                    <th class="header">
+                                        Nature of Event Code
+                                    </th>
+                                    @*<th>
+                                            Action Taken
+                                        </th>*@
+                                    @*<th>
+
+                                            Camera
+                                        </th>*@
+                                    @*<th>
+                                            Location
+                                        </th>*@
+                                    @*<th>
+                                            Key
+                                        </th>*@
+                                    <th class="header">
+
+                                        User
+                                    </th>
+                                    @*<th style="width:100px;">
+                                        Action
+                                    </th>
+                                    <th>
+                                        Media
+                                    </th>*@
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.ListEventModel.Count > 0)
+                                {
+
+                                    foreach (var items in Model.ListEventModel)
+                                    {
+
+                                        <tr>
+                                            <td style="width: 100px;">
+                                                <a href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")' title="View Event">
+                                                    <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.FilePath) ? items.FilePath: Url.Content("~/asset/plugins/images/no-image.jpg"))" />
+                                                </a>
+                                            </td>
+                                            <td>@items.EventNumber</td>
+                                            <td>@items.AttachedEvent</td>
+                                            <td>@items.EventTime</td>
+                                            <td>@items.EndTime</td>
+                                            <td>@items.FromCode</td>
+                                            <td>@items.NatureCode</td>
+                                            @*<td>@items.DutyDesc</td>*@
+                                            @*<td>@items.Camera</td>*@
+                                            @*<td>@items.Location</td>*@
+                                            @*<td>@items.KeyEvent</td>*@
+                                            <td>@items.UserID</td>
+                                            @*<td>
+                                                <a href='@Url.Content("~/Events/Event/EventDetail?EventID=" + @items.EventID + "")' class="btn btn-info btn-sm btn-icon small" title="Edit Subject Incident"><i class="fa fa-pencil"></i></a>
+                                                <a class="btn btn-danger small btn-sm delete-sm" href='javascript:;' onclick='DeleteEvent(@items.EventID,this);'><i class='fa fa-trash'></i></a>
+                                            </td>
+                                            <td>
+                                                <a href='@Url.Content("~/Media/Media/Index?Type=Event&typeid=" + items.EventID + "")' class="btn btn-info small btn-sm btn-icon" title="Media"><i class="fa fa-camera"></i></a>
+
+                                            </td>*@
+                                        </tr>
+
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+        
+<script src="~/Content/Custom.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        var table = $('#ListTable').DataTable({
+            language: {
+                search: "User:",
+                searchPlaceholder: "User"
+            }
+        });
+
+        table.columns(7).every(function () {
+            var that = this;
+
+            $('input', this.footer()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search('^' + this.value, true, false)
+                        .draw();
+                }
+            });
+        });
+    });
+
+    function DeleteEvent(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Events/Event/DeleteEvent")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#ListTable>tbody tr').length == 1) {
+                            $('#ListTable>tbody tr').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Event has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">Event has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+
+
+                    } else {
+
+                    }
+
+                }
+            });
+        }
+    }
+</script>
+

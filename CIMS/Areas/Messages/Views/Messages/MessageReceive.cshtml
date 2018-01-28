@@ -1,0 +1,520 @@
+﻿@model CIMS.Models.MessagesModel
+@{
+    ViewBag.Title = "MessageReceive";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+<style>
+    .cmbSub {
+        pointer-events: none;
+        opacity: 0.40;
+    }
+</style>
+
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Messages</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Messages</li>
+        </ol>
+    </div>
+
+</div>
+
+@*<div class="page-title">
+
+        <div class="title-env">
+            <h1 class="title">Messages</h1>
+
+        </div>
+
+        <div class="breadcrumb-env">
+
+            <ol class="breadcrumb bc-1">
+                <li>
+                <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+                <li><a href='@Url.Content("~/Messages/Messages/MessageReceive")'>Message Receive</a></li>
+                <li class="active">Messages</li>
+            </ol>
+
+        </div>
+
+    </div>*@
+<div class="row">
+    <div class="col-md-12">
+
+        <div class="pull-right" style="margin-bottom:15px;">
+            <a href='@Url.Content("~/Messages/Messages/Index")' class="btn btn-info"><i class="fa fa-plus"></i> New</a>
+        </div>
+    </div>
+</div>
+        <div id="msgDiv">
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="right-tab">
+                 
+                        <div class="white-box">
+                            <ul class="nav nav-pills custom-tabs" id="myTab">
+                                <li class="active">
+                                    <a href="#ReceivedMessage" data-toggle="tab">
+                                        <span>Received</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#SentMessage" data-toggle="tab">
+                                        <span>Sent</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#DraftMessage" data-toggle="tab">
+                                        <span>Draft</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="ReceivedMessage">
+                            <div class="large-title">Received </div>
+                            <div class="col-md-12">
+                                <div class="white-box">
+
+                                    <div class="table-responsive">
+                                        <table id="receivedTable" class="table table-striped dataTable no-footer">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        Date
+                                                    </th>
+                                                    <th>
+                                                        From
+                                                    </th>
+
+                                                    <th>
+                                                        Description
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.MessagesList.Count() > 0)
+                                                {
+                                                    foreach (var items in Model.MessagesList)
+                                                    {
+                                                        if (Convert.ToBoolean(items.SentToSelf) == true)
+                                                        {
+                                                            <tr class="empTR" data-id="@items.MessageID" style="cursor: pointer">
+                                                                <td>@items.DateSent </td>
+                                                                <td>@items.FirstName @items.LastName</td>
+                                                                <td>@items.Description </td>
+                                                                <td>
+                                                                    <a href='@Url.Content("~/Messages/Messages/Index")' class="btn btn-primary btn-sm" title="Reply"><i class="fa fa-reply"></i></a>
+                                                                    <a class="btn btn-default btn-sm btn-icon" href='javascript:;' onclick='ViewReceivedMessage(@items.MessageID,this);' title="View Message"><i class='fa fa-eye'></i></a>
+                                                                    <a class="btn btn-danger btn-sm delete-sm" href='javascript:;' onclick='DeleteReceivedMessage(@items.MessageID,this);' title="Delete Message"><i class='fa fa-trash'></i></a>
+                                                                    <a class="btn btn-info btn-sm btn-icon" onclick='ShowRecipients(@items.MessageID,this);' title="Show Recipients"><i class='fa fa-file-text'></i> ShowRecipients</a>
+                                                                    <a class="btn btn-success btn-sm" href='javascript:;' onclick='PrintTable("@items.DateSent,@items.FirstName,@items.LastName,@items.Description,@items.MessageText",this);'><i class="fa fa-print"></i> Print</a>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Message:</label>
+                                        <div>
+                                            <textarea name="receivedText" id="receivedText" class="form-control ckeditor"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="SentMessage">
+                            <div class="large-title">Sent </div>
+                            <div class="col-md-12">
+                                <div class="white-box">
+                                    <div class="table-responsive">
+                                        <table id="SentTable" class="table table-striped dataTable no-footer">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        Date
+                                                    </th>
+                                                    <th>
+                                                        Description
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.MessagesList.Count() > 0)
+                                                {
+                                                    foreach (var items in Model.MessagesList)
+                                                    {
+                                                        if ((Convert.ToBoolean(items.Draft) == false) && (Convert.ToBoolean(items.SentToSelf) == false))
+                                                        {
+                                                            <tr class="empTR" data-id="@items.MessageID" style="cursor: pointer">
+                                                                <td>@items.DateSent </td>
+                                                                <td>@items.Description</td>
+                                                                <td>
+                                                                    <a class="btn btn-default btn-sm btn-icon" href='javascript:;' onclick='ViewSentMessage(@items.MessageID,this);' title="View Message"><i class='fa fa-eye'></i></a>
+                                                                    <a class="btn btn-danger btn-sm delete-sm" href='javascript:;' onclick='DeleteSentMessage(@items.MessageID,this);' title="Delete Message"><i class='fa fa-trash'></i></a>
+                                                                    <a class="btn btn-info btn-sm btn-icon" href='javascript:;' onclick='ShowRecipients(@items.MessageID,this);' title="Show Recipients"><i class='fa fa fa-file-text'></i> ShowRecipients</a>
+                                                                    <a class="btn btn-success btn-sm" href='javascript:;' onclick='PrintTable("@items.DateSent,@items.FirstName,@items.LastName,@items.Description,@items.MessageText",this);'><i class="fa fa-print"></i> Print</a>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Message:</label>
+                                        <div>
+                                            <textarea name="SentText" id="SentText" class="form-control ckeditor"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="DraftMessage">
+                            <div class="large-title">Draft</div>
+                            <div class="col-md-12">
+                                <div class="white-box">
+                                    <div class="table-responsive">
+                                        <table id="DraftTable" class="table table-striped dataTable no-footer">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        Date
+                                                    </th>
+                                                    <th>
+                                                        Description
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.MessagesList.Count() > 0)
+                                                {
+                                                    foreach (var items in Model.MessagesList)
+                                                    {
+                                                        if (Convert.ToBoolean(items.Draft) == true)
+                                                        {
+                                                            <tr class="empTR" data-id="@items.MessageID" style="cursor: pointer">
+                                                                <td>@items.DateSent </td>
+                                                                <td>@items.Description</td>
+                                                                <td>
+                                                                    <a class="btn btn-primary btn-sm btn-icon" href='@Url.Content("~/Messages/Messages/Index?messageID="+items.MessageID+"")' title="Edit Message"><i class='fa fa-pencil'></i></a>
+                                                                    <a class="btn btn-default btn-sm btn-icon" href='javascript:;' onclick='ViewDraftMessage(@items.MessageID,this);' title="View Message"><i class='fa fa-eye'></i></a>
+                                                                    <a class="btn btn-danger btn-sm delete-sm" href='javascript:;' onclick='DeleteDraftMessage(@items.MessageID,this);' title="Delete Message"><i class='fa fa-trash'></i></a>
+                                                                    <a class="btn btn-info btn-sm btn-icon" href='javascript:;' onclick='ShowRecipients(@items.MessageID,this);' title="Show Recipients"><i class='fa fa fa-file-text'></i> ShowRecipients</a>
+                                                                    <a class="btn btn-success btn-sm" href='javascript:;' onclick='PrintTable("@items.DateSent,@items.FirstName,@items.LastName,@items.Description,@items.MessageText",this);'><i class="fa fa-print"></i> Print</a>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Message:</label>
+                                        <div>
+                                            <textarea name="DraftText" id="DraftText" class="form-control ckeditor"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        <!-- Modal -->
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Show Recipients</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table id="ShowRecipients" class="table table-bordered dataTable no-footer">
+                            <tbody>
+                                <tr></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+            });
+        </script>
+        <style>
+            .alphabet_group {
+                display: none;
+            }
+        </style>
+        <script>
+            $(document).ready(function () {
+                //$("#DraftTable").dataTable(
+                //   {
+
+                //   });
+                //$('#SentMessage').DataTable({
+
+                //});
+                //$('#ReceivedMessage').DataTable({
+
+                //});
+                //$(document).on('click', '.empty', function () { $('#employeeTable>tbody tr.alphabet_group').remove(); });
+                //$(document).on('click', '.data', function () { $('#employeeTable>tbody tr.alphabet_group').remove(); });
+                //$(document).on('click', '.active', function () { $('#employeeTable>tbody tr.alphabet_group').remove(); });
+                CKEDITOR.config.removePlugins = 'toolbar';
+
+                $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                    localStorage.setItem('activeTab', $(e.target).attr('href'));
+                });
+                var activeTab = localStorage.getItem('activeTab');
+                if (activeTab) {
+                    $('#myTab a[href="' + activeTab + '"]').tab('show');
+                }
+            });
+
+            function ViewReceivedMessage(id, caller) {
+                $.ajax({
+                    url: '@Url.Content("~/Messages/Messages/ViewMessage")',
+                    data: JSON.stringify({ 'messageID': id }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data.length > 0) {
+                            CKEDITOR.instances['receivedText'].setData(data);
+                        }
+                    },
+                    error: function () {
+                        console.log('error');
+                    }
+                });
+            }
+            function ViewSentMessage(id, caller) {
+                $.ajax({
+                    url: '@Url.Content("~/Messages/Messages/ViewMessage")',
+                    data: JSON.stringify({ 'messageID': id }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data.length > 0) {
+                            CKEDITOR.instances['SentText'].setData(data);
+                        }
+                    },
+                    error: function () {
+                        console.log('error');
+                    }
+                });
+            }
+            function ViewDraftMessage(id, caller) {
+                $.ajax({
+                    url: '@Url.Content("~/Messages/Messages/ViewMessage")',
+                    data: JSON.stringify({ 'messageID': id }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data.length > 0) {
+                            CKEDITOR.instances['DraftText'].setData(data);
+                        }
+                    },
+                    error: function () {
+                        console.log('error');
+                    }
+                });
+            }
+
+            function ShowRecipients(id, caller) {
+                $.ajax({
+                    url: '@Url.Content("~/Messages/Messages/ShowRecipients")',
+                    data: JSON.stringify({ 'messageID': id }),
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if (data.length > 0) {
+
+                            $('#myModal').modal('show');
+                            $('#ShowRecipients').html('');
+                            $('#ShowRecipients').append(data);
+                        }
+                    },
+                    error: function () {
+                        console.log('error');
+                    }
+                });
+            }
+
+            function PrintTable(info, caller) {
+                var values = info.split(',');
+                var DateSent = values[0];
+                var FirstName = values[1];
+                var LastName = values[2];
+                var Description = values[3];
+                var MessageText = values[4];
+
+                var printWindow = window.open('', '', 'width=1000,height=1000,location=no,left=200px');
+                printWindow.document.open();
+                printWindow.document.write('<html><head><title></title>');
+                printWindow.document.write('</head><body >');
+                printWindow.document.write('<style>.table-border{border:1px solid #ccc;padding:10px} .table {display: table;width: 100%;}.tableRow { display: table-row;}.tableHead { display: table-row; font-weight: bold;} .tableCell { display: table-cell; padding: 3px 10px;border: 1px solid #999999;width:auto; } .sigTableCell {display: table-cell; padding: 25px 10px;border: 1px solid #999999;background-color:#DBE5F1;width:auto;height:70px; } #OrganisationDetail_IndustrySectorList {height:70px; #startdate { border:none;}</style>');
+                printWindow.document.write('<table><tr><th class="table-border">Sent Date: </th><td>' + DateSent + '</td></tr><tr><th class="table-border">From: </th><td>' + FirstName + ' ' + LastName + '</td></tr><tr><th class="table-border">Description: </th><td>' + Description + '</td></tr><tr><th class="table-border">Message:</th></tr><tr><td colspan="2">' + MessageText + '</td></tr></table>');
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.print();
+                printWindow.close();
+            }
+
+            function DeleteReceivedMessage(id, caller) {
+                var x = DeleteConfirm('@ViewBag.Action');
+                if (x) {
+                    var result = confirm("Want to delete?");
+                    if (result) {
+
+                        $.ajax({
+                            url: '@Url.Content("~/Messages/Messages/DeleteMessage")',
+                            data: JSON.stringify({ 'messageID': id }),
+                            type: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (data) {
+                                if (data == "Success") {
+                                    if ($('#receivedTable>tbody tr').length == 1) {
+                                        $('#receivedTable').remove();
+                                        $('#msgDiv').html('<div class="alert alert-success">Messages has been deleted Successfully.</div>');
+                                        setTimeout(function () {
+                                            $('#msgDiv').fadeOut();
+                                        }, 5000);
+                                        window.scrollTo(0, 0);
+                                    }
+                                    else {
+                                        $(caller).parents('tr:first').remove();
+                                        $('#msgDiv').html('<div class="alert alert-success">Messages has been deleted Successfully.</div>');
+
+                                        setTimeout(function () {
+                                            $('#msgDiv').fadeOut();
+                                        }, 5000);
+                                        window.scrollTo(0, 0);
+                                    }
+
+                                } else {
+                                    alert('error')
+
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+
+            function DeleteSentMessage(id, caller) {
+                var x = DeleteConfirm('@ViewBag.Action');
+                if (x) {
+                    var result = confirm("Want to delete?");
+                    if (result) {
+
+                        $.ajax({
+                            url: '@Url.Content("~/Messages/Messages/DeleteMessage")',
+                            data: JSON.stringify({ 'messageID': id }),
+                            type: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (data) {
+                                if (data == "Success") {
+                                    if ($('#SentTable>tbody tr').length == 1) {
+                                        $('#SentTable').remove();
+                                        $('#msgDiv').html('<div class="alert alert-success">Messages has been deleted Successfully.</div>');
+                                        setTimeout(function () {
+                                            $('#msgDiv').fadeOut();
+                                        }, 5000);
+                                        window.scrollTo(0, 0);
+                                    }
+                                    else {
+                                        $(caller).parents('tr:first').remove();
+                                        $('#msgDiv').html('<div class="alert alert-success">Messages has been deleted Successfully.</div>');
+
+                                        setTimeout(function () {
+                                            $('#msgDiv').fadeOut();
+                                        }, 5000);
+                                        window.scrollTo(0, 0);
+                                    }
+
+                                } else {
+                                    alert('error')
+
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+
+            function DeleteDraftMessage(id, caller) {
+                var x = DeleteConfirm('@ViewBag.Action');
+                if (x) {
+                    var result = confirm("Want to delete?");
+                    if (result) {
+
+                        $.ajax({
+                            url: '@Url.Content("~/Messages/Messages/DeleteMessage")',
+                            data: JSON.stringify({ 'messageID': id }),
+                            type: 'POST',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (data) {
+                                if (data == "Success") {
+                                    if ($('#DraftTable>tbody tr').length == 1) {
+                                        $('#DraftTable').remove();
+                                        $('#msgDiv').html('<div class="alert alert-success">Messages has been deleted Successfully.</div>');
+                                        setTimeout(function () {
+                                            $('#msgDiv').fadeOut();
+                                        }, 5000);
+                                        window.scrollTo(0, 0);
+                                    }
+                                    else {
+                                        $(caller).parents('tr:first').remove();
+                                        $('#msgDiv').html('<div class="alert alert-success">Messages has been deleted Successfully.</div>');
+
+                                        setTimeout(function () {
+                                            $('#msgDiv').fadeOut();
+                                        }, 5000);
+                                        window.scrollTo(0, 0);
+                                    }
+
+                                } else {
+                                    alert('error')
+
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        </script>

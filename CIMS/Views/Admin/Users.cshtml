@@ -1,0 +1,177 @@
+﻿@model CIMS.Models.ManageUserModel
+@{
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+
+<link href="~/Content/Custom.css" rel="stylesheet" />
+
+<style>
+    .alphabet {
+        display: none !important;
+    }
+</style>
+
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Users</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Users</li>
+        </ol>
+    </div>
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix custom-head">
+                <h3 class="box-title m-b-0">Users List</h3>
+
+
+                <div class="panel-options">
+                    <div class="right-btn">
+
+                        <a href='@Url.Content("~/Admin/ManageUsers")' class="btn btn-primary add"><i class="fa fa-plus"></i> Add User</a>
+                    </div>
+                </div>
+            </div>
+            @if (Model.UserList != null && Model.UserList.Count > 0)
+            {
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table id="employeeTable" class="table table-bordered Tableview">
+                            <thead>
+                                <tr>
+                                    <th class="header">First Name</th>
+                                    <th class="header headerSortDown">Last Name</th>
+                                    <th class="header">Initials</th>
+                                    <th class="header">Gaming ID</th>
+                                    <th class="header">User Name</th>
+                                    <th class="header">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var itm in Model.UserList)
+                                {
+                                    <tr>
+                                        <td>@itm.FirstName</td>
+                                        <td>@itm.LastName</td>
+                                        <td>@itm.Initials</td>
+                                        <td>@itm.UnitID</td>
+                                        <td>@itm.UserName</td>
+                                        <td>
+                                            <a href='/Admin/ManageUsers?Id=@itm.ID' class="btn btn-info small btn-sm btn-icon edit" title="Edit User"><i class="fa fa-pencil"></i></a>
+                                            <a class="btn btn-danger btn-sm delete-sm  small" href='javascript:;' onclick='DeleteUser(@itm.ID,this);' title="Delete User"><i class='fa fa-trash'></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div>No Record Found</div>
+            }
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var table = $('#employeeTable').DataTable({
+
+            dom: 'Alfrtip',
+            alphabetSearch: {
+                column: 1
+            },
+            language: {
+                search: "User Name:",
+                searchPlaceholder: "User Name"
+            }
+        });
+
+        table.columns(4).every(function () {
+            var that = this;
+
+            $('input', this.footer()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search('^' + this.value, true, false)
+                        .draw();
+                }
+            });
+        });
+        $(document).on('click', '.empty', function () { $('#employeeTable>tbody tr.alphabet_group').remove(); });
+        $(document).on('click', '.data', function () { $('#employeeTable>tbody tr.alphabet_group').remove(); });
+        $(document).on('click', '.active', function () { $('#employeeTable>tbody tr.alphabet_group').remove(); });
+
+        $(document).on('keyup', '#employeeTable_filter input[type=search]', function () {
+            $(document).find('.alphabet-clear').click();
+        });
+    });
+
+    function DeleteUser(id, caller)
+    {
+        
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Admin/DeleteUser")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        if ($('#employeeTable>tbody tr').length == 1) {
+                            $('#employeeTable').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">User has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                        else {
+                            $(caller).parents('tr:first').remove();
+                            $('#msgDiv').html('<div class="alert alert-success">User has been deleted Suceesfully.</div>');
+                            window.scrollTo(0, 0);
+                        }
+                    } else if (data == "-10") {
+                        $('#msgDiv').html('Error in deleting user.');
+                    }
+                    else {
+                        $('#msgDiv').html('Error in deleting user.');
+                    }
+
+                }
+            });
+        }
+    }
+
+</script>
+
+<style>
+    .alphabet_group {
+        display: none;
+    }
+</style>
+<script src="~/Content/Custom.js"></script>
+
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+<link href="~/Content/data-tables/dataTables.alphabetSearch.css" rel="stylesheet" />
+<script src="~/Content/data-tables/dataTables.alphabetSearch.min.js"></script>
+

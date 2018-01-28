@@ -1,0 +1,37 @@
+
+ ----------------------------------------------------------------------------- 
+ An error ocurred at 2/8/2017 1:26:20 AM
+  Error Message: A connection was successfully established with the server, but then an error occurred during the pre-login handshake. (provider: SSL Provider, error: 0 - The wait operation timed out.)
+  Stack Trace:    at System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, DbConnectionPool pool, String accessToken, Boolean applyTransientFaultHandling)
+   at System.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at System.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   at System.Data.SqlClient.SqlConnection.Open()
+   at Common.Execute_Procedures_LoadData() in G:\CIMS\CIMS\CIMS.DbServices\Common.cs:line 372
+   at CIMS.DataLayer.Admin.AdminDL.Corporate_update(CorporateBase corporateBase) in G:\CIMS\CIMS\CIMS.DataLayer\Admin\AdminDL.cs:line 592
+ ----------------------------------------------------------------------------- 
+ An error ocurred at 2/8/2017 1:26:20 AM
+  Error Message: A connection was successfully established with the server, but then an error occurred during the pre-login handshake. (provider: SSL Provider, error: 0 - The wait operation timed out.)
+  Stack Trace:    at CIMS.Utility.ErrorReporting.DataLayerError(Exception dlException) in G:\CIMS\CIMS\CIMS.Utility\ErrorReporting.cs:line 165
+   at CIMS.DataLayer.Admin.AdminDL.Corporate_update(CorporateBase corporateBase) in G:\CIMS\CIMS\CIMS.DataLayer\Admin\AdminDL.cs:line 596
+   at CIMS.ActionLayer.Admin.AdminAction.Corporate_update(CorporateBase corporateBase) in G:\CIMS\CIMS\CIMS.ActionLayer\Admin\AdminAction.cs:line 445
+ ----------------------------------------------------------------------------- 
+ An error ocurred at 2/8/2017 1:26:20 AM
+  Error Message: A connection was successfully established with the server, but then an error occurred during the pre-login handshake. (provider: SSL Provider, error: 0 - The wait operation timed out.)
+  Stack Trace:    at CIMS.Utility.ErrorReporting.DataLayerError(Exception dlException) in G:\CIMS\CIMS\CIMS.Utility\ErrorReporting.cs:line 165
+   at CIMS.DataLayer.Account.AccountDL.Login_Load(UserBase userBase) in G:\CIMS\CIMS\CIMS.DataLayer\Account\AccountDL.cs:line 39
+   at CIMS.ActionLayer.Account.AccountAction.Login_Load(UserBase userBase) in G:\CIMS\CIMS\CIMS.ActionLayer\Account\AccountAction.cs:line 26
+ ----------------------------------------------------------------------------- 
+ An error ocurred at 2/8/2017 1:26:35 AM
+  Error Message: A connection was successfully established with the server, but then an error occurred during the pre-login handshake. (provider: SSL Provider, error: 0 - The wait operation timed out.)
+  Stack Trace:    at CIMS.Utility.ErrorReporting.ActionLayerError(Exception actionException) in G:\CIMS\CIMS\CIMS.Utility\ErrorReporting.cs:line 153
+   at CIMS.ActionLayer.Account.AccountAction.Login_Load(UserBase userBase) in G:\CIMS\CIMS\CIMS.ActionLayer\Account\AccountAction.cs:line 34
+   at CIMS.Controllers.AccountController.Login(LoginModel model, String returnUrl) in G:\CIMS\CIMS\CIMS\Controllers\AccountController.cs:line 109

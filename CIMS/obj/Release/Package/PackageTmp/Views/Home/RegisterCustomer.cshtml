@@ -1,0 +1,257 @@
+﻿@model CIMS.Models.LicensedCustomers
+@{
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+<link href="~/assets/cssmenu/styles.css" rel="stylesheet" />
+<script src="~/assets/cssmenu/script.js"></script>
+
+<div class="row bg-title">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <h4 class="page-title">Manage Application Administrator</h4>
+    </div>
+    
+
+</div>
+
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix custom-head">
+
+                @using (Html.BeginForm("RegisterCustomer", "Home", FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
+                {
+
+                    <div class="col-md-6">
+
+                        <div class="form-group">
+                            <label class="control-label">Upload Logo</label>
+                            <br />
+                            <img id="previewLogo" height="100" width="100" src="@(Model.CustomerLogo != null ? Model.CustomerLogo : "/assets/images/user-1.png")" />
+                            <input type="file" id="uploadFile" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">First Name</label>
+                            @Html.HiddenFor(m => m.Id)
+                            @Html.HiddenFor(m => m.CustomerLogo)
+                            @Html.HiddenFor(m => m.Roles)
+                            @Html.TextBoxFor(m => m.FirstName, null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Last Name</label>
+
+                            @Html.TextBoxFor(m => m.LastName, null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Email</label>
+
+                            @Html.TextBoxFor(m => m.EMail, null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.EMail, "", new { @class = "text-danger" })
+                        </div>
+
+                      
+                        <div class="form-group">
+                            <label class="control-label">Password</label>
+
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Confirm Password</label>
+
+                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+                        </div>
+
+                      
+
+
+                    </div>
+
+                    <div class="col-md-6">
+                      
+                            <div class="form-group">
+                                <label class="control-label">User Name</label>
+
+                                @Html.TextBoxFor(m => m.UserName, null, new { @class = "form-control"})
+                                @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                            </div>
+                        
+                    <div class="form-group">
+
+                        <div class="form-group">
+                            <label class="control-label">License Expiry Date</label>
+
+                            @Html.TextBoxFor(m => m.LicenseExpiryDate, null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.LicenseExpiryDate, "", new { @class = "text-danger" })
+                        </div>
+
+                        <label class="control-label">Country</label>
+                        @Html.DropDownListFor(m => m.Country, new SelectList(Model.CountryList, "ID", "CountryName"), "Select", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Country, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">State</label>
+
+                        @Html.DropDownListFor(m => m.State, new SelectList(Model.StateList, "ID", "StateName"), "Select", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.State, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">City</label>
+
+                        @Html.TextBoxFor(m => m.City, null, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.City, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Zip</label>
+
+                        @Html.TextBoxFor(m => m.Zip, null, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Zip, "", new { @class = "text-danger" })
+                    </div>
+
+
+
+
+
+
+
+                </div>
+
+                    <div class="col-md-12">
+
+
+
+                        <div class="form-group">
+                            @if (Model.MenusList != null && Model.MenusList.Count > 0)
+                            {
+
+                                <div class="table-responsive">
+                                    <table id="employeeTable" class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Module Name</th>
+                                                <th>
+                                                    <input type="checkbox" class="checkAll" />
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.MenusList.Where(m => m.ParentId == 0).ToList())
+                                            {
+                                                <tr id="@(item.Id)tr">
+                                                    <td>
+                                                        @item.MenuName
+                                                    </td>
+                                                    <td>
+                                                        <input type="checkbox" class="check" data-id="@(item.Id)" />
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                    <div class="btn-right-align-right clearfix">
+
+                        <button type="submit" class="btn btn-success" id="saveUser">Save</button>
+                        <button type="reset" class="btn btn-white">Reset</button>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#LicenseExpiryDate').datepicker({ autoclose: true });
+        if (parseInt($('#ID').val()) > 0) {
+            $('#UserName').attr('readonly', 'readonly');
+        }
+
+        $('.checkAll').change(function () {
+            if ($(this).is(':checked')) {
+                $('.check').prop('checked', true);
+            }
+            else
+                $('.check').prop('checked', false);
+        });
+
+        $('#saveUser').click(function () {
+            var roles = [];
+            $('.check:checked').each(function () {
+                roles.push($(this).attr('data-id'));
+            });
+
+            $('#Roles').val(roles.join(','));
+        });
+        if ($('#Roles').val().length > 0) {
+            var roles = $('#Roles').val().split(',');
+            $(roles).each(function (i, item) {
+                $('input[data-id=' + item + ']').prop('checked', true);
+            });
+        }
+        $('#uploadFile').change(function () {
+            var file = document.querySelector('#uploadFile').files[0];
+
+            var reader = new FileReader();
+
+            reader.onloadend = function () {
+                //  preview.src = reader.result;
+                //alert($('#ProfileImage').val(reader.result));
+                $('#previewLogo').attr('src', reader.result);
+                $('#CustomerLogo').val(reader.result);
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        });
+
+        $('#Country').change(function () {
+            var CountryId = $(this).val();
+
+            $.ajax({
+                url: '@Url.Content("~/Home/GetStateListByCountryId")',
+                data: JSON.stringify({ 'CountryId': CountryId }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    var option = "<option>Select</option>";
+                    if (data) {
+
+                        $(data.StateList).each(function (i, item) {
+                            option += "<option value='" + item.ID + "'>" + item.StateName + "</option>";
+                        });
+
+                    }
+                    $('#State').html(option);
+
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+
