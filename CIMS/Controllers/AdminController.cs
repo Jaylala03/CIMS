@@ -173,7 +173,7 @@ namespace CIMS.Controllers
         public ActionResult Users(UserModel model)
         {
             //check for duplicate username
-            actionResult = adminAction.CheckDuplicateUser(model.UserName, null);
+            actionResult = adminAction.CheckDuplicateUser(model.UserName, model.ID);
             if (actionResult.IsSuccess)
             {
                 TempData["ErrorMessage"] = "User name is duplicate.";

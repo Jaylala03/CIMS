@@ -2150,6 +2150,7 @@
     <Content Include="JavaScriptSpellCheck\translations\uk.js" />
     <Content Include="JavaScriptSpellCheck\translations\vi.js" />
     <Content Include="JavaScriptSpellCheck\translations\yi.js" />
+    <Content Include="SQLScriptChanges\02112018\CheckDuplicateUser.sql" />
     <Content Include="Views\Admin\Roles.cshtml" />
     <Content Include="Areas\Admin\Views\web.config" />
     <Content Include="Views\Admin\Users.cshtml" />

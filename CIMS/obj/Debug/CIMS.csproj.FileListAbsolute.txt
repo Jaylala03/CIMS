@@ -128,3 +128,4 @@ D:\CIMS\CIMS\bin\CIMS.DbServices.pdb
 D:\CIMS\CIMS\obj\Debug\CIMS.csprojResolveAssemblyReference.cache
 D:\CIMS\CIMS\obj\Debug\CIMS.dll
 D:\CIMS\CIMS\obj\Debug\CIMS.pdb
+D:\CIMS\CIMS\bin\ASPNetSpell.dll
