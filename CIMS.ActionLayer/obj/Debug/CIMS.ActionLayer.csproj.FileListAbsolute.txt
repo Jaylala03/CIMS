@@ -37,3 +37,16 @@ D:\CIMS_New\CIMS\CIMS\CIMS.ActionLayer\bin\Debug\CIMS.Utility.pdb
 D:\CIMS_New\CIMS\CIMS\CIMS.ActionLayer\obj\Debug\CIMS.ActionLayer.csprojResolveAssemblyReference.cache
 D:\CIMS_New\CIMS\CIMS\CIMS.ActionLayer\obj\Debug\CIMS.ActionLayer.dll
 D:\CIMS_New\CIMS\CIMS\CIMS.ActionLayer\obj\Debug\CIMS.ActionLayer.pdb
+D:\CIMS\CIMS.ActionLayer\bin\Debug\CIMS.ActionLayer.dll
+D:\CIMS\CIMS.ActionLayer\bin\Debug\CIMS.ActionLayer.pdb
+D:\CIMS\CIMS.ActionLayer\bin\Debug\CIMS.BaseLayer.dll
+D:\CIMS\CIMS.ActionLayer\bin\Debug\CIMS.DataLayer.dll
+D:\CIMS\CIMS.ActionLayer\bin\Debug\CIMS.DbServices.dll
+D:\CIMS\CIMS.ActionLayer\bin\Debug\CIMS.Utility.dll
+D:\CIMS\CIMS.ActionLayer\bin\Debug\CIMS.BaseLayer.pdb
+D:\CIMS\CIMS.ActionLayer\bin\Debug\CIMS.DataLayer.pdb
+D:\CIMS\CIMS.ActionLayer\bin\Debug\CIMS.DbServices.pdb
+D:\CIMS\CIMS.ActionLayer\bin\Debug\CIMS.Utility.pdb
+D:\CIMS\CIMS.ActionLayer\obj\Debug\CIMS.ActionLayer.csprojResolveAssemblyReference.cache
+D:\CIMS\CIMS.ActionLayer\obj\Debug\CIMS.ActionLayer.dll
+D:\CIMS\CIMS.ActionLayer\obj\Debug\CIMS.ActionLayer.pdb

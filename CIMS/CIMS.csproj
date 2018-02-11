@@ -266,6 +266,7 @@
     <Compile Include="Models\RoleModel.cs" />
     <Compile Include="Models\SettingModel.cs" />
     <Compile Include="Models\SubjectModel.cs" />
+    <Compile Include="Models\GetWeekSalesData.cs" />
     <Compile Include="Models\ToolsModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Models\VisitorModel.cs" />

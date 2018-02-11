@@ -140,7 +140,7 @@ namespace CIMS.DataLayer.Employee
             {
                 MyParameter[] myParams ={
 
-                                           new MyParameter("@UserID", employee.EmpID),
+                                           new MyParameter("@UserID", employee.UserID),
                                            new MyParameter("@empID", employee.EmpID),
                                            new MyParameter("@EmpNumber", employee.EmpNumber ),
                                            new MyParameter("@Age", employee.Age),

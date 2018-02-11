@@ -19,3 +19,10 @@ D:\CIMS_New\CIMS\CIMS\CIMS.BaseLayer\bin\Debug\CIMS.Utility.pdb
 D:\CIMS_New\CIMS\CIMS\CIMS.BaseLayer\obj\Debug\CIMS.BaseLayer.csprojResolveAssemblyReference.cache
 D:\CIMS_New\CIMS\CIMS\CIMS.BaseLayer\obj\Debug\CIMS.BaseLayer.dll
 D:\CIMS_New\CIMS\CIMS\CIMS.BaseLayer\obj\Debug\CIMS.BaseLayer.pdb
+D:\CIMS\CIMS.BaseLayer\bin\Debug\CIMS.BaseLayer.dll
+D:\CIMS\CIMS.BaseLayer\bin\Debug\CIMS.BaseLayer.pdb
+D:\CIMS\CIMS.BaseLayer\bin\Debug\CIMS.Utility.dll
+D:\CIMS\CIMS.BaseLayer\bin\Debug\CIMS.Utility.pdb
+D:\CIMS\CIMS.BaseLayer\obj\Debug\CIMS.BaseLayer.csprojResolveAssemblyReference.cache
+D:\CIMS\CIMS.BaseLayer\obj\Debug\CIMS.BaseLayer.dll
+D:\CIMS\CIMS.BaseLayer\obj\Debug\CIMS.BaseLayer.pdb

@@ -12,3 +12,8 @@ D:\CIMS_New\CIMS\CIMS\CIMS.Utility\bin\Debug\CIMS.Utility.pdb
 D:\CIMS_New\CIMS\CIMS\CIMS.Utility\obj\Debug\CIMS.Utility.csprojResolveAssemblyReference.cache
 D:\CIMS_New\CIMS\CIMS\CIMS.Utility\obj\Debug\CIMS.Utility.dll
 D:\CIMS_New\CIMS\CIMS\CIMS.Utility\obj\Debug\CIMS.Utility.pdb
+D:\CIMS\CIMS.Utility\bin\Debug\CIMS.Utility.dll
+D:\CIMS\CIMS.Utility\bin\Debug\CIMS.Utility.pdb
+D:\CIMS\CIMS.Utility\obj\Debug\CIMS.Utility.csprojResolveAssemblyReference.cache
+D:\CIMS\CIMS.Utility\obj\Debug\CIMS.Utility.dll
+D:\CIMS\CIMS.Utility\obj\Debug\CIMS.Utility.pdb
