@@ -26,6 +26,16 @@ namespace CIMS.Models
        [DataType(DataType.Password)]
        [Required]
         public string Password { get; set; }
+
+        [DataType(DataType.Password)]
+        [Required]
+        public string NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Required]
+        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+        public string ConfirmNewPassword { get; set; }
+
         [DataType(DataType.Password)]
         [Required]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]

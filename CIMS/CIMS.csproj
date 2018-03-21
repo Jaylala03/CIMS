@@ -2449,6 +2449,8 @@
     <Content Include="Views\Home\LicensedCustomers.cshtml" />
     <Content Include="Views\Home\RolePermissions.cshtml" />
     <Content Include="Views\Account\AdminLogin.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\Admin\ChangePassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

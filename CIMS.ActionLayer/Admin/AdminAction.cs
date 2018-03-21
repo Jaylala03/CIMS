@@ -133,6 +133,23 @@ namespace CIMS.ActionLayer.Admin
         }
         #endregion
 
+        public ActionResult Users_Password_Update(UserBase userBase)
+        {
+            try
+            {
+                actionResult.dtResult = admintDL.Users_Password_Update(userBase);
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorReporting.ActionLayerError(ex);
+            }
+            return actionResult;
+        }
+
         #region Users_LoadAll
         public ActionResult Users_LoadAll()
         {

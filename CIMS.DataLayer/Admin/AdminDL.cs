@@ -234,6 +234,29 @@ namespace CIMS.DataLayer.Admin
             return dtContainer;
         }
         #endregion
+
+        public DataTable Users_Password_Update(UserBase userBase)
+        {
+            dtContainer = new DataTable();
+            try
+            {
+                MyParameter[] myParams = {
+                                            new MyParameter("@UserName", userBase.UserName),                                            
+                                            new MyParameter("@Password", userBase.Password)
+                                         };
+                Common.Set_Procedures("User_Password_update");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                ErrorReporting.DataLayerError(ex);
+            }
+            return dtContainer;
+        }
+
+
         #region method VerifyEmailAccount
         public DataTable VerifyEmailAccount(UserBase userBase)
         {

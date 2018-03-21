@@ -62,7 +62,7 @@
             <table id="ListTable" class="table table-bordered Tableview">
                 <thead>
                     <tr>
-                        <th class="header">
+                        <th class="header" style="display:none;">
                             Media
                         </th>
                         <th class="header headerSortDown">
@@ -96,9 +96,9 @@
                         @*<th>
                                 Location
                             </th>*@
-                        @*<th>
-                                Key
-                            </th>*@
+                        <th>
+                                Key Event
+                            </th>
                         <th class="header">
 
                             User
@@ -118,7 +118,7 @@
                         foreach (var items in Model.ListEventModel)
                         {
                             <tr class="subTR" data-id="@items.EventID" style="cursor:pointer">
-                                <td style="width: 100px;">
+                                <td style="width: 100px; display:none;">
                                     <a href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")' title="View Event">
                                         <img style="width: 100px;" src="@(!String.IsNullOrEmpty(items.FilePath) ? items.FilePath: Url.Content("~/asset/plugins/images/no-image.jpg"))" />
                                     </a>
@@ -137,7 +137,18 @@
                                 @*<td>@items.DutyDesc</td>*@
                                 @*<td>@items.Camera</td>*@
                                 @*<td>@items.Location</td>*@
-                                @*<td>@items.KeyEvent</td>*@
+                                
+                                    @*@items.KeyEvent*@
+                                    @if (items.KeyEvent == true)
+                                    {
+                                      <td>Yes</td>  
+                                    }
+                                    else
+                                    {
+                                       <td>No</td> 
+                                    }                                   
+
+                                
                                 <td onclick="document.location.href='@Url.Content("~/Events/Event/EventDetail?Show=View&Type=Event&EventID=" + items.EventID + "")'">@items.UserID</td>
                                 @*<td>
                                         <a href='@Url.Content("~/Events/Event/EventDetail?EventID=" + @items.EventID + "")' class="btn btn-info btn-sm btn-icon small" title="Edit Subject Incident"><i class="fa fa-pencil"></i></a>

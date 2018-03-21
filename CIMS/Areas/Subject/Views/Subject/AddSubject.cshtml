@@ -329,13 +329,18 @@
                                 @Html.TextBoxFor(m => m.DateOfBirth, new { @class = "form-control" })
                             </div>
                         </div>
-                        <div class="form-group clearfix">
+                        <div class="form-group clearfix" style="display:none;">
                             @Html.LabelFor(m => m.Age, new { @class = "control-label col-md-12" })
                             <div class="col-md-12">
                                 @Html.TextBoxFor(m => m.Age, new { @class = "form-control age" })
                             </div>
                         </div>
-
+                        <div class="form-group clearfix">
+                            @Html.Label("Select Age", new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownList("AgeRange", ViewBag.lstAgeRange as List<SelectListItem>, "", new { @class = "form-control" })
+                            </div>
+                        </div>
                         <div class="form-group clearfix">
                             @Html.LabelFor(m => m.Height, new { @class = "control-label col-md-12" })
                             <div class="col-md-12">

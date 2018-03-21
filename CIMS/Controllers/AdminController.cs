@@ -187,8 +187,11 @@ namespace CIMS.Controllers
             userBase.Initials = model.Initials;
             userBase.EMail = model.EMail;
             userBase.IsDispatchable = model.IsDispatchable;
-            userBase.Password = model.Password;
-            userBase.PasswordDate = DateTime.UtcNow;
+            if (model.ID == 0)
+            {
+                userBase.Password = model.Password;
+                userBase.PasswordDate = DateTime.UtcNow;
+            }
             userBase.RegNumber = model.RegNumber;
             userBase.Skills = model.Skills;
             userBase.UnitID = model.UnitID;
@@ -854,5 +857,31 @@ namespace CIMS.Controllers
             return (actionResult.dtResult);
         }
 
-    }
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ChangePassword(UserModel model)
+        {
+            UserBase userBase = new UserBase();
+            userBase.ID = model.ID;
+
+            userBase.UserName = Session["UserName"].ToString();
+
+            userBase.Password = model.NewPassword;
+
+            actionResult = adminAction.Users_Password_Update(userBase);
+            if (actionResult.IsSuccess)
+            {
+                TempData["SuccessMessage"] = "Password changed successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Old password is wrong.";
+            }
+            return RedirectToAction("ChangePassword");
+        }
+    }    
 }

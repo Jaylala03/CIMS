@@ -21,6 +21,8 @@ namespace CIMS.Models
         public string EventTime { get; set; }
         public string FromCode { get; set; }
         public string NatureCode { get; set; }
+
+        public string NatureCodeName { get; set; }
         public string NatureDesc { get; set; }
         public string Comments { get; set; }
         public string DutyDesc { get; set; }

@@ -29,6 +29,7 @@ namespace CIMS.DataLayer.Subject
                                             new MyParameter("@SubjectID", subjectBase.SubjectID),
                                             new MyParameter("@VIP", subjectBase.VIP),
                                             new MyParameter("@Age", subjectBase.Age),
+                                            new MyParameter("@AgeRange", subjectBase.AgeRange ),
                                             new MyParameter("@Sex", subjectBase.Sex),
                                             new MyParameter("@Race", subjectBase.Race),
                                             new MyParameter("@LastName" , subjectBase.LastName),
@@ -1627,7 +1628,7 @@ namespace CIMS.DataLayer.Subject
                                            new MyParameter("@VehicleModel", subject.VehicleModel),
                                             new MyParameter("@VehicleMake ", subject.VehicleMake),
                                            new MyParameter("@IssuedIn", subject.VehicleYear),
-                                           new MyParameter("@LicensePlate", subject.VehicleModel)
+                                           new MyParameter("@LicensePlate", subject.LicensePlate)
 
 
                                         };
@@ -2507,14 +2508,14 @@ namespace CIMS.DataLayer.Subject
             dtContainer = new DataTable();
             try
             {
-                int? FromAge = null;
-                int? ToAge = null;
-                if (!string.IsNullOrEmpty(subject.AgeRange.Trim()))
-                {
-                    int[] agerange = subject.AgeRange.Trim().Split('-').Select<string, int>(int.Parse).ToArray();
-                    FromAge = agerange[0];
-                    ToAge = agerange[1];
-                }
+                //int? FromAge = null;
+                //int? ToAge = null;
+                //if (!string.IsNullOrEmpty(subject.AgeRange.Trim()))
+                //{
+                //    int[] agerange = subject.AgeRange.Trim().Split('-').Select<string, int>(int.Parse).ToArray();
+                //    FromAge = agerange[0];
+                //    ToAge = agerange[1];
+                //}
 
                 MyParameter[] myParams ={
                                             new MyParameter("@VIP", subject.VIP),
@@ -2530,8 +2531,9 @@ namespace CIMS.DataLayer.Subject
                                             new MyParameter("@HairLength", subject.HairLength),
                                             new MyParameter("@HairColor", subject.HairColor),
                                             new MyParameter("@FacialHair", subject.FacialHair)
-                                            , new MyParameter("@FromAge", FromAge)
-                                            , new MyParameter("@ToAge", ToAge)
+                                            ,new MyParameter("@AgeRange", subject.AgeRange)
+                                            //, new MyParameter("@FromAge", FromAge)
+                                            //, new MyParameter("@ToAge", ToAge)
                                         };
                 Common.Set_Procedures("Subjects_AdvancedSearch");
                 Common.Set_ParameterLength(myParams.Length);

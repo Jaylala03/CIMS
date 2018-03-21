@@ -379,6 +379,14 @@ namespace CIMS.Areas.Events.Controllers
             EventModel.EventCopyModel = EventCopyModel;
             EventModel.LocationList = LocationList;
             EventModel.EventCodeList = EventCodeList;
+            if (EventModel.NatureCode != null)
+            {
+                var codename = EventCodeList.Where(i => i.Value == EventModel.NatureCode.ToString()).FirstOrDefault();
+                if (codename != null)
+                    EventModel.NatureCodeName = codename.Text;
+                else
+                    EventModel.NatureCodeName = "";
+            }
             EventModel.InitiatedByList = InitiatedByList;
             return View(EventModel);
         }
@@ -1475,5 +1483,24 @@ namespace CIMS.Areas.Events.Controllers
         }
         #endregion
 
+        [HttpPost]
+        public JsonResult EventCode()
+        {
+            CIMS.ActionLayer.Setting.SettingAction settingAction = new CIMS.ActionLayer.Setting.SettingAction();
+            
+            actionResult = EventAction.NatureCodes_LoadAll();
+            if (actionResult.IsSuccess)
+            {
+                EventCodeList = (from DataRow row in actionResult.dtResult.Rows
+                                 select new SelectListItem
+                                 {
+                                     //Text = row["Code"] != DBNull.Value ? row["Code"].ToString() + "|" + row["Description"].ToString() : "",
+                                     Text = row["Code"] != DBNull.Value ? row["Code"].ToString() : "",
+                                     Value = row["Id"] != DBNull.Value ? row["Id"].ToString() : ""
+                                 }).ToList();
+            }
+
+            return Json(EventCodeList, JsonRequestBehavior.AllowGet);
+        }
     }
 }

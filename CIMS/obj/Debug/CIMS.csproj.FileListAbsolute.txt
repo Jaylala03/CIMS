@@ -113,6 +113,7 @@ D:\CIMS\CIMS\bin\roslyn\VBCSCompiler.exe.config
 D:\CIMS\CIMS\bin\CIMS.dll.config
 D:\CIMS\CIMS\bin\CIMS.dll
 D:\CIMS\CIMS\bin\CIMS.pdb
+D:\CIMS\CIMS\bin\ASPNetSpell.dll
 D:\CIMS\CIMS\bin\CIMS.ActionLayer.dll
 D:\CIMS\CIMS\bin\CIMS.BaseLayer.dll
 D:\CIMS\CIMS\bin\CIMS.Utility.dll
@@ -128,4 +129,3 @@ D:\CIMS\CIMS\bin\CIMS.DbServices.pdb
 D:\CIMS\CIMS\obj\Debug\CIMS.csprojResolveAssemblyReference.cache
 D:\CIMS\CIMS\obj\Debug\CIMS.dll
 D:\CIMS\CIMS\obj\Debug\CIMS.pdb
-D:\CIMS\CIMS\bin\ASPNetSpell.dll

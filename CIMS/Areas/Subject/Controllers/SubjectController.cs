@@ -439,33 +439,7 @@ namespace CIMS.Areas.Subject.Controllers
                                           }).ToList();
                 }
                 ViewBag.lstIdentification1 = lstIdentification1;
-
-                //List<SelectListItem> lstIdentification2 = new List<SelectListItem>();
-                //actionResult = settingAction.MasterTypeID2_Load();
-                //if (actionResult.IsSuccess)
-                //{
-                //    lstIdentification2 = (from DataRow row in actionResult.dtResult.Rows
-                //                          select new SelectListItem
-                //                          {
-                //                              Text = row["Value"] != DBNull.Value ? row["Value"].ToString() : "",
-                //                              Value = row["Id"] != DBNull.Value ? row["Id"].ToString() : ""
-                //                          }).ToList();
-                //}
-                //ViewBag.lstIdentification2 = lstIdentification2;
-
-                //List<SelectListItem> lstIdentification3 = new List<SelectListItem>();
-                //actionResult = settingAction.MasterTypeID3_Load();
-                //if (actionResult.IsSuccess)
-                //{
-                //    lstIdentification3 = (from DataRow row in actionResult.dtResult.Rows
-                //                          select new SelectListItem
-                //                          {
-                //                              Text = row["Value"] != DBNull.Value ? row["Value"].ToString() : "",
-                //                              Value = row["Id"] != DBNull.Value ? row["Id"].ToString() : ""
-                //                          }).ToList();
-                //}
-                //ViewBag.lstIdentification3 = lstIdentification3;
-
+                
                 setMetricsBase.Type = "Weight";
                 actionResult = settingAction.setmetrics_LoadBy(setMetricsBase);
                 if (actionResult.IsSuccess)
@@ -589,6 +563,18 @@ namespace CIMS.Areas.Subject.Controllers
                 }
                 ViewBag.lstFacial = lstFacial;
 
+                List<SelectListItem> lstAgeRange = new List<SelectListItem>();
+                actionResult = settingAction.LU_AgeSearch_Load();
+                if (actionResult.IsSuccess)
+                {
+                    lstAgeRange = (from DataRow row in actionResult.dtResult.Rows
+                                   select new SelectListItem
+                                   {
+                                       Text = row["AgeRange"] != DBNull.Value ? row["AgeRange"].ToString() : "",
+                                       Value = row["AgeRange"] != DBNull.Value ? row["AgeRange"].ToString() : ""
+                                   }).ToList();
+                }
+                ViewBag.lstAgeRange = lstAgeRange;
 
 
                 if (id > 0)
@@ -608,7 +594,7 @@ namespace CIMS.Areas.Subject.Controllers
                         DataRow dr = actionResult.dtResult.Rows[0];
                         model.EditPermission = dr["editpermission"] != DBNull.Value ? Convert.ToBoolean(dr["editpermission"]) : false;
                         model.DeletePermission = dr["deletepermission"] != DBNull.Value ? Convert.ToBoolean(dr["deletepermission"]) : false;
-
+                        
                         ViewBag.SelectedHairLength = Convert.ToString(model.HairLength);
                     }
                 }
@@ -832,6 +818,19 @@ namespace CIMS.Areas.Subject.Controllers
                 ViewBag.lstHairLength = lstHairLength;
                 ViewBag.SelectedHairLength = Convert.ToString(model.HairLength);
 
+                List<SelectListItem> lstAgeRange = new List<SelectListItem>();
+                actionResult = settingAction.LU_AgeSearch_Load();
+                if (actionResult.IsSuccess)
+                {
+                    lstAgeRange = (from DataRow row in actionResult.dtResult.Rows
+                                   select new SelectListItem
+                                   {
+                                       Text = row["AgeRange"] != DBNull.Value ? row["AgeRange"].ToString() : "",
+                                       Value = row["AgeRange"] != DBNull.Value ? row["AgeRange"].ToString() : ""
+                                   }).ToList();
+                }
+                ViewBag.lstAgeRange = lstAgeRange;
+
                 List<SelectListItem> lstHairColor = new List<SelectListItem>();
                 actionResult = settingAction.HairColor_Load();
                 if (actionResult.IsSuccess)
@@ -923,6 +922,7 @@ namespace CIMS.Areas.Subject.Controllers
                 subjectBase.MiddleName = model.MiddleName;
                 subjectBase.VIP = model.VIP;
                 subjectBase.Age = model.Age;
+                subjectBase.AgeRange = model.AgeRange;
                 subjectBase.Sex = model.Sex;
                 subjectBase.Race = model.Race;
                 subjectBase.Height = model.Height;

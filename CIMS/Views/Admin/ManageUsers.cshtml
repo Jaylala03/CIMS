@@ -71,8 +71,8 @@
                         @Html.TextBoxFor(m => m.UserName, null, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
                     </div>
-                    @*@if (Model.ID == 0)
-                        {*@
+                    @if (Model.ID == 0)
+                        {
                     <div class="form-group">
                         <label class="control-label">Password</label>
 
@@ -85,7 +85,7 @@
                         @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
                     </div>
-                    @*}*@
+                    }
 
 
                 </div>

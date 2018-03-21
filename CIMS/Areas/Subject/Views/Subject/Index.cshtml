@@ -393,47 +393,14 @@
                 noResults: "",
                 results: function (resultsCount) { }
             },
-            select: function (event, ui) {
-                //event.preventDefault();
-                ////alert(ui.item.value);
-                //var str = ui.item.value.match(/[^ ]+/g);
-                //$('#FirstName').val(str[0]);
-                //firstname = str[0];
-                //if (str.length > 1)
-                //{
-                //    $('#LastName').val(str[1]);
-                //}
-                //return
+            select: function (event, ui) {                
 
                 var actionurl = '@Url.Action("AddSubject", "Subject")';
-                //e.preventDefault();
+                
                 window.location = actionurl + '?Type=Subject' +
                     '&Id=' + subjectID;
 
-                //$.ajax({
-                //    url: "/Subject/Subject/SelectionList",
-                //    type: "POST",
-                //    dataType: "json",
-                //    data: { Prefix: ui.item.value },
-                //    success: function (data) {
-                //        var partdata = data.split("/");
-
-                //        $('#VIP').val(partdata[3]);
-                //        $('#FirstName').val(partdata[0]);
-                //        $('#LastName').val(partdata[1]);
-                //        $('#MiddleName').val(partdata[2]);
-
-                //        var sex1 = partdata[4];
-
-                //        $('#Sex option').each(function () {
-                //            debugger;
-                //            if ($(this).text().toLowerCase() == sex1.toLowerCase()) {
-                //                this.selected = true;
-                //                return;
-                //            }
-                //        });
-                //    }
-                //});
+                
             }
         });
         //$("FirstName").val(firstname);
