@@ -64,6 +64,22 @@ namespace CIMS.Areas.Messages.Controllers
                     model.MessageText = row["MessageText"] != DBNull.Value ? row["MessageText"].ToString() : "";
                 }
             }
+
+            //MessageGroupsModel msgGroupModel = new MessageGroupsModel();
+            List<UserModel> userList = new List<UserModel>();
+            UserModel userModel = new UserModel();
+            actionResult = adminAction.Users_LoadAll();
+            userList = (from DataRow row in actionResult.dtResult.Rows
+                        select new UserModel
+                        {
+                            UserID = row["ID"] != DBNull.Value ? row["ID"].ToString() : "",
+                            UserName = row["UserName"] != DBNull.Value ? row["UserName"].ToString() : "",
+                            FirstName = row["FirstName"] != DBNull.Value ? row["FirstName"].ToString() : "",
+                            FullName = row["FullName"] != DBNull.Value ? row["FullName"].ToString() : "",
+                        }).ToList();
+            model.userList = userList;
+           
+
             return View(model);
         }
         #endregion
@@ -204,10 +220,9 @@ namespace CIMS.Areas.Messages.Controllers
             messages.MessageText = model.MessageText.Trim();
             messages.Description = model.Description.Trim();
             messages.DateSent = DateTime.Now.ToString();
-
-            messages.UserID = fc["hdnMembers"].ToString().Trim();
             messages.SenderID = Session["UserId"].ToString().Trim();
             messages.Draft = fc["hdfDraftValue"].ToString().Trim();
+            
             if (fc["hdfDraftValue"].ToString() != "1")
             {
                 if (fc["hdnMembers"].ToString() == Session["UserId"].ToString())
@@ -223,7 +238,24 @@ namespace CIMS.Areas.Messages.Controllers
             {
                 messages.SentToSelf = "0";
             }
-            actionResult = messagesAction.Messages_Sent(messages);
+
+            if (fc["hdnMembers"].ToString().Contains(","))
+            {
+                string[] sUserID = fc["hdnMembers"].ToString().Split(',');
+
+                for (int i = 0; i < sUserID.Length; i++)
+                {
+                    messages.UserID = sUserID[i];
+                    actionResult = messagesAction.Messages_Sent(messages);
+                }
+            }
+            else
+            {
+                messages.UserID = fc["hdnMembers"].ToString().Trim();
+                actionResult = messagesAction.Messages_Sent(messages);
+            }
+            
+            
             if (actionResult.IsSuccess)
             {
                 TempData["SuccessMessage"] = "Successfully Saved !!";

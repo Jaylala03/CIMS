@@ -28,6 +28,8 @@ namespace CIMS.Models
 
         public List<MessageGroupsModel> msgGroupList = new List<MessageGroupsModel>();
 
+        public List<UserModel> userList = new List<UserModel>();
+
     }
 
     public class MessageGroupsModel
