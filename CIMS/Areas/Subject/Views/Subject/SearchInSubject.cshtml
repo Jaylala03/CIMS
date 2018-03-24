@@ -152,6 +152,14 @@
                             </div>
                         </div>
 
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.SubjectNumber, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(m => m.SubjectNumber, new { @class = "form-control", @maxlength = "6" })                                
+                            </div>
+                        </div>
+
+
 
                         <div class="form-group clearfix">
                             @Html.LabelFor(m => m.FirstName, new { @class = "control-label col-md-12" })

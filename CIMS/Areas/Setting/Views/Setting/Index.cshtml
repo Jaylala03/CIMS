@@ -40,6 +40,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="#EmployeeDepartment" data-toggle="tab">
+                        <span>Employee Department</span>
+                    </a>
+                </li>
+                <li>
                     <a href="#LicenseType" data-toggle="tab">
                         <span>License Type</span>
                     </a>
@@ -291,6 +296,38 @@
                     </div>
                 </div>*@
 
+                <div class="tab-pane" id="EmployeeDepartment">
+                    <div class="large-title" style="padding:10px 0px;">Employee Department</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdEmployeeDepartmentID" name="hdEmployeeDepartmentID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Department Name</label>
+                            <input type="text" class="form-control" id="EmployeeDepartmentName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="btnAddEmployeeDepartment" onclick="submitEmployeeDepartment();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetEmployeeDepartment();">Reset</button>
+                        </div>
+
+                    </div>
+                    <div class="col-md-12">
+                        <table id="EmployeeDepartmentTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+                </div>
 
                 <div class="tab-pane" id="LicenseType">
                     <div class="large-title" style="padding:10px 0px;">License Type</div>
@@ -1212,6 +1249,9 @@
 
     $(document).ready(function () {
         DepartmentType(); // Bind Department Type
+
+        EmployeeDepartment(); // Bind Employee Department
+
         LicenseType(); // Bind License Type
         LicenseStatus(); // Bind  License Status
         FeatureType(); // Bind Feature Type
@@ -1543,6 +1583,99 @@
         }
     }
     // End Department
+
+
+    //2018-03-21 Chirag Employee Department 
+    function EmployeeDepartment() {
+        $("#EmployeeDepartmentTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/EmployeeDepartment_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#EmployeeDepartmentTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditEmployeeDepartment(id, name) {
+        $('#hdEmployeeDepartmentID').val(id);
+        $('#EmployeeDepartmentName').val(name);
+    }
+
+    function resetEmployeeDepartment() {
+        $('#EmployeehdDepartmentID').val(0);
+        $('#EmployeeDepartmentName').val('');
+    }
+
+    function submitEmployeeDepartment() {
+        var id = $('#hdEmployeeDepartmentID').val();
+        var name = $('#EmployeeDepartmentName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/EmployeeDepartment_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Employee Department save Successfully.</div>');
+
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetEmployeeDepartment(); // reset Department value
+                EmployeeDepartment(); // Bind Department Type
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteEmployeeDepartment(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/EmployeeDepartment_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Employee Department Type has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetEmployeeDepartment(); // reset Department value
+                    EmployeeDepartment(); // Bind Department Type
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Employee Department
+
+
 
     // License Type
     function LicenseType() {

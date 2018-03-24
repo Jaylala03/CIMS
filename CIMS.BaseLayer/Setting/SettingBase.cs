@@ -22,6 +22,12 @@ namespace CIMS.BaseLayer.Setting
         public string DepartmentName { get; set; }
     }
 
+    public class EmployeeDepartmentBase
+    {
+        public int EmployeeDepartmentID { get; set; }
+        public string EmployeeDepartmentName { get; set; }
+    }
+
     public class LicenseTypeBase
     {
         public int LicenseID { get; set; }

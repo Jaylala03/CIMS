@@ -77,6 +77,13 @@
                             </div>
                         </div>
 
+                        <div class="form-group clearfix">                            
+                            @Html.Label("Subject number", new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">                                
+                                @Html.TextBox("SubjectNumber", null, new { @class = "form-control", @maxlength = "6" })
+                            </div>
+                        </div>
+
                         <div class="form-group clearfix">
                             @Html.Label("FirstName", new { @class = "control-label col-md-12" })
                             <div class="col-md-12">

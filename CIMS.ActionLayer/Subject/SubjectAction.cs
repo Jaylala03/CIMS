@@ -76,6 +76,7 @@ namespace CIMS.ActionLayer.Subject
             return actionResult;
         }
         #endregion
+
         #region SubjectIDMax_Load
         public ActionResult SubjectIDMax_Load()
         {

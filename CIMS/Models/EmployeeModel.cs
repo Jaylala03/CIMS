@@ -12,6 +12,7 @@ namespace CIMS.Models
         //[Required]
         [Display(Name = "Number")]
         public string EmpNumber { get; set; }
+        public string EmployeeNumber { get; set; }
         public int UserID { get; set; }
         public decimal Age { get; set; }
         public string Sex { get; set; }
@@ -73,11 +74,14 @@ namespace CIMS.Models
         public List<SelectListItem> LicenseStatusList = new List<SelectListItem>();
         public List<SelectListItem> AddressTypeList = new List<SelectListItem>();
 
+        public List<SelectListItem> EmployeeDepartmentList = new List<SelectListItem>();
+
         // license
         public string DateOfHire { get; set; }
         public string TerminationDate { get; set; }
         public string LicenseExpirationDate { get; set; }
         public string Department { get; set; }
+        public string EmployeeDepartment { get; set; }
         public string LicenseType { get; set; }
         public string LicenseStatus { get; set; }
         public string ReasonForLeaving { get; set; }

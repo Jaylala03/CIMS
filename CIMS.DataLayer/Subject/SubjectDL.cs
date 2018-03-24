@@ -50,7 +50,9 @@ namespace CIMS.DataLayer.Subject
                                             new MyParameter("@RoleName", subjectBase.RoleName),
                                             new MyParameter("@CIDSubject", subjectBase.CIDSubject),
                                             new MyParameter("@CIDPersonID", subjectBase.CIDPersonID),
-                                            new MyParameter("@CreatedBy", subjectBase.CreatedBy)
+                                            new MyParameter("@CreatedBy", subjectBase.CreatedBy),
+                                            new MyParameter("@SubjectNumber", subjectBase.SubjectNumber)
+
                                          };
                 Common.Set_Procedures("Subject_IU");
                 Common.Set_ParameterLength(myParams.Length);
@@ -109,9 +111,7 @@ namespace CIMS.DataLayer.Subject
             }
             return dtContainer;
         }
-        #endregion
-
-
+        #endregion     
 
         #region Subjects_LoadAll
         public DataTable Subjects_LoadAll(SubjectBase model)
@@ -2530,8 +2530,9 @@ namespace CIMS.DataLayer.Subject
                                             new MyParameter("@DateOfBirth", subject.DateOfBirth),
                                             new MyParameter("@HairLength", subject.HairLength),
                                             new MyParameter("@HairColor", subject.HairColor),
-                                            new MyParameter("@FacialHair", subject.FacialHair)
-                                            ,new MyParameter("@AgeRange", subject.AgeRange)
+                                            new MyParameter("@FacialHair", subject.FacialHair),
+                                            new MyParameter("@AgeRange", subject.AgeRange),
+                                            new MyParameter("@SubjectNumber", subject.SubjectNumber)
                                             //, new MyParameter("@FromAge", FromAge)
                                             //, new MyParameter("@ToAge", ToAge)
                                         };

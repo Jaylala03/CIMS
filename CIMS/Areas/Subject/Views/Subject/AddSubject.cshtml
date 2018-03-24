@@ -135,16 +135,16 @@
                             </li>
                         }
                         @if ((Session["Admin"] == null ?
-                                        (CIMS.Models.CheckPermissions.permissionMenu("Subject Permission", Convert.ToInt32(Session["UserId"])) && Model.SubjectID > 0 && (Model.CreatedBy == Convert.ToInt32(Session["UserID"])))
-                                        : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
-                                    {
+                                (CIMS.Models.CheckPermissions.permissionMenu("Subject Permission", Convert.ToInt32(Session["UserId"])) && Model.SubjectID > 0 && (Model.CreatedBy == Convert.ToInt32(Session["UserID"])))
+                                : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        {
                             <li class="">
                                 <a href='@Url.Content("~/Subject/Subject/SubjectPermission?" + (Request.QueryString["Show"] == "View" ? "Show=View&" : "") + "Type=Subject&id=" + Model.SubjectID + "")'>
                                     <span>Permission</span>
                                 </a>
                             </li>
                         }
-                       
+
                     </ul>
                 </div>
             </div>
@@ -156,66 +156,66 @@
                     <ul class="nav nav-pills custom-tabs">
                         @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
                         {
-                        <li class="active">
-                            <a href="javascript:;" id="tabSubject">
-                                <span>Subject</span>
-                            </a>
-                        </li>
+                            <li class="active">
+                                <a href="javascript:;" id="tabSubject">
+                                    <span>Subject</span>
+                                </a>
+                            </li>
                         }
                         @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Addresses", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
                         {
-                        <li class="">
-                            <a href="javascript:;" class="checkAlert" id="tabAddresses">
-                                <span>Addresses</span>
-                            </a>
-                        </li>
+                            <li class="">
+                                <a href="javascript:;" class="checkAlert" id="tabAddresses">
+                                    <span>Addresses</span>
+                                </a>
+                            </li>
                         }
                         @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Aliases", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
                         {
-                        <li class="">
-                            <a href="javascript:;" class="checkAlert" id="tabAliases">
-                                <span>Aliases</span>
-                            </a>
-                        </li>
+                            <li class="">
+                                <a href="javascript:;" class="checkAlert" id="tabAliases">
+                                    <span>Aliases</span>
+                                </a>
+                            </li>
                         }
                         @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Features", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
                         {
-                        <li class="">
-                            <a href="javascript:;" class="checkAlert" id="tabFeatures">
-                                <span>Features</span>
-                            </a>
-                        </li>
+                            <li class="">
+                                <a href="javascript:;" class="checkAlert" id="tabFeatures">
+                                    <span>Features</span>
+                                </a>
+                            </li>
                         }
                         @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Identification", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
                         {
-                        <li class="">
-                            <a href="javascript:;" class="checkAlert" id="tabIdentification">
-                                <span>Identification</span>
-                            </a>
-                        </li>
+                            <li class="">
+                                <a href="javascript:;" class="checkAlert" id="tabIdentification">
+                                    <span>Identification</span>
+                                </a>
+                            </li>
                         }
                         @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Watch List", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
                         {
 
-                        @*<li class="">
-                                <a href="javascript:;" class="checkAlert">
-                                    <span>LCT Totals</span>
+                            @*<li class="">
+                                    <a href="javascript:;" class="checkAlert">
+                                        <span>LCT Totals</span>
+                                    </a>
+                                </li>*@
+                            <li class="">
+                                <a href="javascript:;" class="checkAlert" id="tabWatchList">
+                                    <span>Watch List</span>
                                 </a>
-                            </li>*@
-                        <li class="">
-                            <a href="javascript:;" class="checkAlert" id="tabWatchList">
-                                <span>Watch List</span>
-                            </a>
-                        </li>
+                            </li>
                         }
                         @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Subject Linked", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
                         {
 
-                        <li class="">
-                            <a href="javascript:;" class="checkAlert" id="tabLinked">
-                                <span>Linked</span>
-                            </a>
-                        </li>
+                            <li class="">
+                                <a href="javascript:;" class="checkAlert" id="tabLinked">
+                                    <span>Linked</span>
+                                </a>
+                            </li>
                         }
                         <li class="">
                             <a href="javascript:;" class="checkAlert" id="tabPermission">
@@ -242,18 +242,27 @@
             <div class="col-md-6">
                 <div class="white-box clearfix">
                     <div class="row">
-                        <div class="form-group clearfix">
-                            @Html.LabelFor(m => m.VIP, new { @class = "control-label col-md-12" })
-                            <div class="col-md-12">
-                                @*<input type="text" value="@ViewBag.SujectID" class="form-control" readonly>*@
-                                @Html.TextBoxFor(m => m.VIP, new { @class = "form-control", @readonly = "readonly" })
-                                @Html.HiddenFor(m => m.SubjectID)
+                        <div class="row">
+                            <div class="col-sm-8">
+                                @Html.LabelFor(m => m.VIP, new { @class = "control-label col-md-12" })
+                                <div class="col-md-7">
+                                    @*<input type="text" value="@ViewBag.SujectID" class="form-control" readonly>*@
+                                    @Html.TextBoxFor(m => m.VIP, new { @class = "form-control", @readonly = "readonly" })
+                                    @Html.HiddenFor(m => m.SubjectID)
+                                </div>
+                            
+                                @Html.LabelFor(m => m.SubjectNumber, new { @class = "control-label col-md-12" })
+                                <div class="col-md-7">
+                                    @Html.TextBoxFor(m => m.SubjectNumber, new { @class = "form-control", @maxlength = "6" })
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <img src="@(!String.IsNullOrEmpty(ViewBag.FilePath) ? ViewBag.FilePath : Url.Content("~/asset/plugins/images/no-image.jpg"))" alt="Subject" style="height:100%;width:100%;" />
                             </div>
                         </div>
 
-
                         <div class="form-group clearfix">
-                            @Html.LabelFor(m => m.FirstName, new { @class = "control-label col-md-12" })
+                            @Html.LabelFor(m => m.FirstName, new { @class = "control-label col-md-12" })    
                             <div class="col-md-12">
                                 @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
 
@@ -279,7 +288,7 @@
                         <div class="form-group clearfix">
                             @Html.LabelFor(m => m.Sex, new { @class = "control-label col-md-12" })
                             <div class="col-md-12">
-                                @Html.DropDownListFor(m => m.Sex, ViewBag.lstGender as List<SelectListItem>,"Unknown", new { @class = "form-control" })
+                                @Html.DropDownListFor(m => m.Sex, ViewBag.lstGender as List<SelectListItem>, "Unknown", new { @class = "form-control" })
 
                             </div>
                         </div>
@@ -311,7 +320,7 @@
                         <div class="form-group clearfix">
                             @Html.LabelFor(m => m.Complexion, new { @class = "control-label col-md-12" })
                             <div class="col-md-12">
-                                @Html.DropDownListFor(m => m.Complexion, ViewBag.lstComplexion as List<SelectListItem>,"Unknown", new { @class = "form-control" })
+                                @Html.DropDownListFor(m => m.Complexion, ViewBag.lstComplexion as List<SelectListItem>, "Unknown", new { @class = "form-control" })
 
                             </div>
                         </div>
@@ -379,7 +388,7 @@
                                     <option selected="selected">Unknown</option>
                                     @foreach (var item in (List<CIMS.Models.SelectedListItemModel>)ViewBag.lstHairLength)
                                     {
-                                    <option style="background-image:url(@item.cssstyle)" value="@item.Value" @(item.Value == ViewBag.SelectedHairLength ? "selected" : "")>@item.Text</option>
+                                        <option style="background-image:url(@item.cssstyle)" value="@item.Value" @(item.Value == ViewBag.SelectedHairLength ? "selected" : "")>@item.Text</option>
                                     }
                                 </select>
                             </div>
@@ -388,7 +397,7 @@
                         <div class="form-group clearfix">
                             @Html.LabelFor(m => m.HairColor, new { @class = "control-label col-md-12" })
                             <div class="col-md-12">
-                                @Html.DropDownListFor(m => m.HairColor, ViewBag.lstHairColor as List<SelectListItem>,"Unknown", new { @class = "form-control" })
+                                @Html.DropDownListFor(m => m.HairColor, ViewBag.lstHairColor as List<SelectListItem>, "Unknown", new { @class = "form-control" })
                             </div>
                         </div>
 
@@ -396,7 +405,7 @@
                         <div class="form-group clearfix">
                             @Html.LabelFor(m => m.FacialHair, new { @class = "control-label col-md-12" })
                             <div class="col-md-12">
-                                @Html.DropDownListFor(m => m.FacialHair, ViewBag.lstFacial as List<SelectListItem>, "Unknown",new { @class = "form-control" })
+                                @Html.DropDownListFor(m => m.FacialHair, ViewBag.lstFacial as List<SelectListItem>, "Unknown", new { @class = "form-control" })
                             </div>
                         </div>
 
@@ -718,35 +727,35 @@
 
         //AB 26/2
 
-            if ('@TempData["SaveSuccess"]' == 'Success' && parseInt(@Model.SubjectID) > 0) {
-                //if (confirm("Do you want to give permission for this report?"))
-                if (confirm("This Subject is accessible to everyone. Would you like to restrict acess to this report ?"))
-                {
-                    var actionurl = '@Url.Action("SubjectPermission", "Subject")';
-                    window.location = actionurl + '?Type=Subject' +
-                        '&id=' + @Model.SubjectID;
-                }
-                else
-                {
-                    var actionurl = '@Url.Action("SubjectAddress", "Subject")';
-                    window.location = actionurl + '?Type=Subject' +
-                       '&id=' + @Model.SubjectID;
-                }
+        if ('@TempData["SaveSuccess"]' == 'Success' && parseInt(@Model.SubjectID) > 0) {
+            //if (confirm("Do you want to give permission for this report?"))
+            if (confirm("This Subject is accessible to everyone. Would you like to restrict acess to this report ?"))
+            {
+                var actionurl = '@Url.Action("SubjectPermission", "Subject")';
+                window.location = actionurl + '?Type=Subject' +
+                    '&id=' + @Model.SubjectID;
             }
+            else
+            {
+                var actionurl = '@Url.Action("SubjectAddress", "Subject")';
+                window.location = actionurl + '?Type=Subject' +
+                   '&id=' + @Model.SubjectID;
+            }
+        }
 
-            $('.checkAlert').on('click', function () {
-                var firstname = "";
-                firstname = $("input#FirstName").val();
-                if (firstname == "") {
-                    firstname = "Unknown";
-                }
-                var r = confirm("Are you sure to create " + firstname + " Subject ?");
-                if (r == true)
-                {
-                    $('#submit-data').click();
-                    //alert(@Model.SubjectID);
-                    //alert($(this).attr("id"));
-                    @*var active = $(this).attr("id");
+        $('.checkAlert').on('click', function () {
+            var firstname = "";
+            firstname = $("input#FirstName").val();
+            if (firstname == "") {
+                firstname = "Unknown";
+            }
+            var r = confirm("Are you sure to create " + firstname + " Subject ?");
+            if (r == true)
+            {
+                $('#submit-data').click();
+                //alert(@Model.SubjectID);
+                //alert($(this).attr("id"));
+                @*var active = $(this).attr("id");
                 if (active == "tabAddresses") {
                     location.replace('@Url.Content("~/Subject/Subject/SubjectAddress?Type=Subject&Id="+Model.SubjectID+"")');
                 }
@@ -766,333 +775,200 @@
                     location.replace('@Url.Content("~/Subject/Subject/SubjectLinked?Type=Subject&Id=" + Model.SubjectID+"")');
                 }*@
 
-                }
-                else {
-                    $('#msgDiv').html("<div class='alert alert-danger'>Please Add Subject Details First</div>");
-                }
-            });
-
-            // Page Change
-            var somethingChanged = false;
-            var button = $('#submit-data');
-            var orig = [];
-
-            $.fn.getType = function () {
-                return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
             }
-
-            $("#AddSubjectForm :input").each(function () {
-                var type = $(this).getType();
-                var tmp = {
-                    'type': type,
-                    'value': $(this).val()
-                };
-                if (type == 'radio') {
-                    tmp.checked = $(this).is(':checked');
-                }
-                orig[$(this).attr('id')] = tmp;
-            });
-
-            $('#AddSubjectForm').bind('change keyup', function () {
-                var disable = true;
-                somethingChanged = false;
-                $("#AddSubjectForm :input").each(function () {
-                    var type = $(this).getType();
-                    var id = $(this).attr('id');
-
-                    if (type == 'text' || type == 'select') {
-                        disable = (orig[id].value == $(this).val());
-                    } else if (type == 'radio') {
-                        disable = (orig[id].checked == $(this).is(':checked'));
-                    }
-
-                    if (!disable) {
-                        return false; // break out of loop
-
-                    }
-                });
-                somethingChanged = true;
-                button.prop('disabled', disable);
-            }); // End Page Change
-
-            // Save changes
-            $('#myTab > li > a ').click(function (e) {
-                if ($('#hdShow').val() != 'View') {
-                    if (somethingChanged == true) {
-                        formSubmitByTab(somethingChanged);
-                        somethingChanged = false;
-                        return false;
-                    }
-                }
-            });
-            // end save change script
-
-            if ('@Model.EditPermission' == 'False')
-            {
-                $(".form-control").attr("disabled", "disabled");
-                //$(".btn").hide(true);
-                $(".btn").attr("disabled", "disabled");
-                $(".flubtn").attr("disabled", "disabled");
-                $(document).find("input[type=checkbox]").attr("disabled", "disabled");
-                $(document).find("input[type=radio]").attr("disabled", "disabled");
-            }
-            $(".btnaddrep").removeAttr("disabled");
-            $(".btnviewrep").removeAttr("disabled");
-
-            if ('@Model.DeletePermission' == 'True') {
-                $(".btndelete").removeClass("disableClick");
+            else {
+                $('#msgDiv').html("<div class='alert alert-danger'>Please Add Subject Details First</div>");
             }
         });
-        // End-------------------------------
 
-        function Reset() {
-            $('#Sex').val('');
-            $('#Race').val('');
-            $('#Eyes').val('');
-            $('#Build').val('');
-            $('#Complexion').val('');
-            $('#HairLength').val('');
-            $('#HairColor').val('');
-            $('#FacialHair').val('');
-            $('#VIP').val('');
-            $('#FirstName').val('');
-            $('#MiddleName').val('');
-            $('#LastName').val('');
-            $('#DateOfBirth').val('');
-            $('#Age').val('');
-            $('#Height').val('');
-            $('#Weight').val('');
-            //$('#Glasses').val(false);
+        // Page Change
+        var somethingChanged = false;
+        var button = $('#submit-data');
+        var orig = [];
+
+        $.fn.getType = function () {
+            return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
         }
 
-        //function showAlert() {
-        //}
-
-        function DeleteSubject(id, caller) {
-            if (DeleteConfirm('@ViewBag.Action')) {
-                $.ajax({
-                    url: '@Url.Content("~/Subject/Subject/DeleteSubject")',
-                    data: JSON.stringify({ 'Id': id }),
-                    type: 'POST',
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    success: function (data) {
-                        if (data == "success") {
-                            $('#msgDiv').html('<div class="alert alert-success">Subject has been deleted Suceesfully.</div>');
-                            setTimeout(function () {
-                                $('#msgDiv').fadeOut();
-                            }, 5000);
-                            window.scrollTo(0, 0);
-                            location.replace('@Url.Content("~/Subject/Subject/Index")');
-                        } else {
-
-                        }
-                    }
-                });
+        $("#AddSubjectForm :input").each(function () {
+            var type = $(this).getType();
+            var tmp = {
+                'type': type,
+                'value': $(this).val()
+            };
+            if (type == 'radio') {
+                tmp.checked = $(this).is(':checked');
             }
-        }
+            orig[$(this).attr('id')] = tmp;
+        });
 
-        function BindPictureList(type, id, subFeatureid) {
+        $('#AddSubjectForm').bind('change keyup', function () {
+            var disable = true;
+            somethingChanged = false;
+            $("#AddSubjectForm :input").each(function () {
+                var type = $(this).getType();
+                var id = $(this).attr('id');
 
-            $.ajax({
-                url: '@Url.Content("~/Media/Media/GetAllPictures")',
-                data: { 'type': type, 'id': id, 'subFeatureid': subFeatureid },
-                type: 'Post',
-                datatype: 'json',
-                contenttype: 'application/json',
-                success: function (data) {
-                    var temphtml = "";
-                    if (data.length > 0) {
-                        var jsonData = JSON.parse(data);
-                        for (i = 0; i < jsonData.length; i++) {
-                            temphtml += ' <div class="col-md-2"> <div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
-                            temphtml += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
-                            temphtml += '<div class="btn-show">';
-                            temphtml += '<input type="button" value="Assign Picture" id="AssignPicture" class="btn btn-success add" onclick="AssignPictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
-                            temphtml += '<input type="button" value="Edit" id="EditPicture" class="btn btn-primary add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="EditPictur(&#39;' + jsonData[i].FilePath + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
-                            temphtml += '<input type="button" value="Delete" id="DeletePicture" class="btn btn-danger add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="DeletePictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;,&#39;' + subFeatureid + '&#39;);">';
-                            temphtml += '</div></div></div>';
-                        }
-                    }
-                    $('#pictureTable').html(temphtml);
-                    $('.pictureTr').hover(function () {
-                        var ImgeSrc = $(this).children('img').attr('src');
-                        var mediaId = $(this).attr('data-id');
-                        $(this).on('click', function () {
-                            $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
-                            $(this).addClass('ShowBorderRed');
-                        });
-                    });
+                if (type == 'text' || type == 'select') {
+                    disable = (orig[id].value == $(this).val());
+                } else if (type == 'radio') {
+                    disable = (orig[id].checked == $(this).is(':checked'));
+                }
+
+                if (!disable) {
+                    return false; // break out of loop
 
                 }
             });
-        }
+            somethingChanged = true;
+            button.prop('disabled', disable);
+        }); // End Page Change
 
-        function AssignPictures(type, id, mediaId) {
-
-            if (EditConfirmMedia('@ViewBag.Action')) {
-                $.ajax({
-                    url: '@Url.Content("~/Media/Media/AssignPictures")',
-                    data: { MediaType: type, Type: type, ID: id, IncidentID: 0, MediaID: mediaId, QuestionID: 0, Observation: 0 },
-                    type: 'post',
-                    datatype: 'json',
-
-                    contenttype: 'application/json',
-                    success: function (data) {
-                        if (data == "success") {
-                            alert('Image Assign successfuly!!');
-                        }
-                        else {
-                            alert(' Error in Request!!');
-                        }
-                    }
-                });
-            }
-        }
-        function DeletePictures(type, id, mediaId, subFeatureid) {
-            if (DeleteConfirm('@ViewBag.Action')) {
-                $.ajax({
-                    url: '@Url.Content("~/Media/Media/DeletePicture")',
-                    data: { MediaID: mediaId },
-                    type: 'post',
-                    datatype: 'json',
-                    contenttype: 'application/json',
-                    success: function (data) {
-                        if (data == 'success') {
-                            BindPictureList(type, id, subFeatureid)
-                        }
-                        else {
-                            alert(' Error in Request!!');
-                        }
-                    },
-                    error: function (error) {
-                        console.log(error);
-                    },
-                    failure: function (response) {
-                        console.log(response);
-                    },
-                });
-            };
-        };
-
-        function DeleteConfirm(action) {
-            //return true;
-            var control = action;
-            if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
-                var a = confirm('Are you sure to delete?');
-                if (a == true) {
-                    return true;
-                }
-                else {
+        // Save changes
+        $('#myTab > li > a ').click(function (e) {
+            if ($('#hdShow').val() != 'View') {
+                if (somethingChanged == true) {
+                    formSubmitByTab(somethingChanged);
+                    somethingChanged = false;
                     return false;
                 }
             }
-            else {
-                var a = alert('You dont have permission to delete');
-                return false;
-            }
-        };
+        });
+        // end save change script
 
-        function EditConfirmMedia(action) {
-
-            var control = action;
-
-            if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
-
-
-                return true;
-
-            }
-            else {
-
-                var a = alert('You dont have permission to assign media');
-
-
-                return false;
-            }
-
+        if ('@Model.EditPermission' == 'False')
+        {
+            $(".form-control").attr("disabled", "disabled");
+            //$(".btn").hide(true);
+            $(".btn").attr("disabled", "disabled");
+            $(".flubtn").attr("disabled", "disabled");
+            $(document).find("input[type=checkbox]").attr("disabled", "disabled");
+            $(document).find("input[type=radio]").attr("disabled", "disabled");
         }
+        $(".btnaddrep").removeAttr("disabled");
+        $(".btnviewrep").removeAttr("disabled");
 
-        function EditPictur(ImgeSrc, mediaId) {
-            getDataUri(ImgeSrc, function (dataUri) {
-                $('#image').attr('src', dataUri);
-                $('.cropper-view-box').find('img').attr('src', dataUri);
-                $('.cropper-canvas').find('img').attr('src', dataUri);
-                $('.preview-lg').find('img').attr('src', dataUri);
-                $('.dataId').val(mediaId);
-            });
-
-            $('#avatar-modal').modal('show');
-
-            setTimeout(function () {
-
-                $('script').each(function () {
-
-                    if (this.src.split('?') === '/Content/crop-avatar/js/main.js') {
-
-                        $(this).remove();
-                    }
-                    if (this.src.split('?') === '/Content/crop-avatar/js/cropper.js') {
-
-                        $(this).remove();
-                    }
-                });
-                $.getScript('/Content/crop-avatar/js/main.js').done(function () {
-
-
-                });
-                $.getScript('/Content/crop-avatar/js/cropper.js').done(function () {
-
-
-                });
-            }, 100);
+        if ('@Model.DeletePermission' == 'True') {
+            $(".btndelete").removeClass("disableClick");
         }
+    });
+    // End-------------------------------
 
-        function getDataUri(url, callback) {
-            var image = new Image();
+    function Reset() {
+        $('#Sex').val('');
+        $('#Race').val('');
+        $('#Eyes').val('');
+        $('#Build').val('');
+        $('#Complexion').val('');
+        $('#HairLength').val('');
+        $('#HairColor').val('');
+        $('#FacialHair').val('');
+        $('#VIP').val('');
+        $('#FirstName').val('');
+        $('#MiddleName').val('');
+        $('#LastName').val('');
+        $('#DateOfBirth').val('');
+        $('#Age').val('');
+        $('#Height').val('');
+        $('#Weight').val('');
+        //$('#Glasses').val(false);
+    }
 
-            image.onload = function () {
-                var canvas = document.createElement('canvas');
-                canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
-                canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
+    //function showAlert() {
+    //}
 
-                canvas.getContext('2d').drawImage(this, 0, 0);
-
-                // Get raw image data
-                callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
-
-                // ... or get as Data URI
-                callback(canvas.toDataURL('image/png'));
-            };
-
-            image.src = url;
-        }
-
-        //$('#something').change(function () {
-        //    if (this.checked) {
-        //        $('#MediaGallery').removeAttr("style");
-        //        BindMediaList();
-        //    }
-        //    else {
-        //        $('#MediaGallery').hide(true);
-        //    }
-        //});
-
-        $('#MediaGallery').removeAttr("style");
-        BindMediaList();
-
-        function MoveToPicture(type, id, mediaId) {
-            var subFeatureid = '0';
+    function DeleteSubject(id, caller) {
+        if (DeleteConfirm('@ViewBag.Action')) {
             $.ajax({
-                url: '@Url.Content("~/Media/Media/MoveToPicture")',
-                data: { type: type, id: id, MediaID: mediaId },
+                url: '@Url.Content("~/Subject/Subject/DeleteSubject")',
+                data: JSON.stringify({ 'Id': id }),
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Subject has been deleted Suceesfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                        location.replace('@Url.Content("~/Subject/Subject/Index")');
+                    } else {
+
+                    }
+                }
+            });
+        }
+    }
+
+    function BindPictureList(type, id, subFeatureid) {
+
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/GetAllPictures")',
+            data: { 'type': type, 'id': id, 'subFeatureid': subFeatureid },
+            type: 'Post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                var temphtml = "";
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    for (i = 0; i < jsonData.length; i++) {
+                        temphtml += ' <div class="col-md-2"> <div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
+                        temphtml += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                        temphtml += '<div class="btn-show">';
+                        temphtml += '<input type="button" value="Assign Picture" id="AssignPicture" class="btn btn-success add" onclick="AssignPictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        temphtml += '<input type="button" value="Edit" id="EditPicture" class="btn btn-primary add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="EditPictur(&#39;' + jsonData[i].FilePath + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        temphtml += '<input type="button" value="Delete" id="DeletePicture" class="btn btn-danger add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="DeletePictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;,&#39;' + subFeatureid + '&#39;);">';
+                        temphtml += '</div></div></div>';
+                    }
+                }
+                $('#pictureTable').html(temphtml);
+                $('.pictureTr').hover(function () {
+                    var ImgeSrc = $(this).children('img').attr('src');
+                    var mediaId = $(this).attr('data-id');
+                    $(this).on('click', function () {
+                        $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
+                        $(this).addClass('ShowBorderRed');
+                    });
+                });
+
+            }
+        });
+    }
+
+    function AssignPictures(type, id, mediaId) {
+
+        if (EditConfirmMedia('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/AssignPictures")',
+                data: { MediaType: type, Type: type, ID: id, IncidentID: 0, MediaID: mediaId, QuestionID: 0, Observation: 0 },
+                type: 'post',
+                datatype: 'json',
+
+                contenttype: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        alert('Image Assign successfuly!!');
+                    }
+                    else {
+                        alert(' Error in Request!!');
+                    }
+                }
+            });
+        }
+    }
+    function DeletePictures(type, id, mediaId, subFeatureid) {
+        if (DeleteConfirm('@ViewBag.Action')) {
+            $.ajax({
+                url: '@Url.Content("~/Media/Media/DeletePicture")',
+                data: { MediaID: mediaId },
                 type: 'post',
                 datatype: 'json',
                 contenttype: 'application/json',
                 success: function (data) {
                     if (data == 'success') {
-                        BindPictureList(type, id, subFeatureid);
-                        BindMediaList();
+                        BindPictureList(type, id, subFeatureid)
                     }
                     else {
                         alert(' Error in Request!!');
@@ -1106,106 +982,239 @@
                 },
             });
         };
+    };
 
-        function MoveToPic() {
-            var subFeatureid = '0';
-            var value = $('#SubjectID').val();
-            $('#mediaTable input[type=checkbox]').each(function () {
-
-                if (this.checked) {
-                    var mediaId = $(this).val();
-                    $.ajax({
-                        url: '@Url.Content("~/Media/Media/MoveToPicture")',
-                        data: { type: 'Subject', id: value, MediaID: mediaId },
-                        type: 'post',
-                        datatype: 'json',
-                        contenttype: 'application/json',
-                        success: function (data) {
-                            if (data == 'success') {
-                            }
-                            else {
-                                alert(' Error in Request!!');
-                            }
-                        },
-                        error: function (error) {
-                            console.log(error);
-                        },
-                        failure: function (response) {
-                            console.log(response);
-                        },
-                    });
-                }
-            });
-            BindPictureList('Subject', value, subFeatureid);
-            BindMediaList();
-        }
-
-        function BindMediaList() {
-
-            $.ajax({
-                url: '@Url.Content("~/Media/Media/GetAllMoveToPicture")',
-                data: { 'type': 'Media', 'id': '0', 'subFeatureid': '0' },
-                type: 'Post',
-                datatype: 'json',
-                contenttype: 'application/json',
-                success: function (data) {
-                    var types = $('#hdType').val();
-                    var value = $('#SubjectID').val();
-                    var subFeatureid = "0";
-                    var temph = "";
-                    if (data.length > 0) {
-                        var jsonData = JSON.parse(data);
-                        for (i = 0; i < jsonData.length; i++) {
-                            temph += ' <div class="col-md-2"> ';
-                            temph += '<input id="' + jsonData[i].MediaID + '" value="' + jsonData[i].MediaID + '" type="checkbox">';
-                            temph += '<div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
-                            temph += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
-                            temph += '<div class="btn-show">';
-                            if ($('#hdType').val() != 'Media') {
-                                temph += '<input type="button" value="MoveTo" id="MoveToPicture" class="btn btn-info add" onclick="MoveToPicture(&#39;' + types + '&#39;,&#39;' + value + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
-                            }
-                            temph += '</div></div></div>';
-                        }
-                    }
-                    $('#mediaTable').html(temph);
-                    $('.pictureTr').hover(function () {
-                        var ImgeSrc = $(this).children('img').attr('src');
-                        var mediaId = $(this).attr('data-id');
-                        $(this).on('click', function () {
-                            $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
-                            $(this).addClass('ShowBorderRed');
-                        });
-                    });
-
-                }
-            });
-        }
-
-        $("#permission").click(function () {
-            if (EditConfirm('@ViewBag.Action')) {
+    function DeleteConfirm(action) {
+        //return true;
+        var control = action;
+        if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
+            var a = confirm('Are you sure to delete?');
+            if (a == true) {
                 return true;
             }
             else {
                 return false;
             }
+        }
+        else {
+            var a = alert('You dont have permission to delete');
+            return false;
+        }
+    };
+
+    function EditConfirmMedia(action) {
+
+        var control = action;
+
+        if (control == '4' || control == '5' || control == '6' || control == '7' || control == '12' || control == '13' || control == '14' || control == '15') {
+
+
+            return true;
+
+        }
+        else {
+
+            var a = alert('You dont have permission to assign media');
+
+
+            return false;
+        }
+
+    }
+
+    function EditPictur(ImgeSrc, mediaId) {
+        getDataUri(ImgeSrc, function (dataUri) {
+            $('#image').attr('src', dataUri);
+            $('.cropper-view-box').find('img').attr('src', dataUri);
+            $('.cropper-canvas').find('img').attr('src', dataUri);
+            $('.preview-lg').find('img').attr('src', dataUri);
+            $('.dataId').val(mediaId);
         });
 
-        // Submit form on tab change Script
-        function formSubmitByTab(valueChanged) {
-            if (valueChanged == true) {
-                var r = confirm("Do you want to save changes?");
-                if (r == true) {
-                    $('#submit-data').click();
-                }
-            }
+        $('#avatar-modal').modal('show');
 
-        }// End Submit form on tab change Script
-        $(document).ready(function () {
-            $("#HairLength").ImageDropdown({
-                selectedIndexChanged: function (newVal) {
-                    //alert("value changed: " + newVal);
+        setTimeout(function () {
+
+            $('script').each(function () {
+
+                if (this.src.split('?') === '/Content/crop-avatar/js/main.js') {
+
+                    $(this).remove();
+                }
+                if (this.src.split('?') === '/Content/crop-avatar/js/cropper.js') {
+
+                    $(this).remove();
                 }
             });
-            //$("#HairLength").val(-1);
+            $.getScript('/Content/crop-avatar/js/main.js').done(function () {
+
+
+            });
+            $.getScript('/Content/crop-avatar/js/cropper.js').done(function () {
+
+
+            });
+        }, 100);
+    }
+
+    function getDataUri(url, callback) {
+        var image = new Image();
+
+        image.onload = function () {
+            var canvas = document.createElement('canvas');
+            canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
+            canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
+
+            canvas.getContext('2d').drawImage(this, 0, 0);
+
+            // Get raw image data
+            callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
+
+            // ... or get as Data URI
+            callback(canvas.toDataURL('image/png'));
+        };
+
+        image.src = url;
+    }
+
+    //$('#something').change(function () {
+    //    if (this.checked) {
+    //        $('#MediaGallery').removeAttr("style");
+    //        BindMediaList();
+    //    }
+    //    else {
+    //        $('#MediaGallery').hide(true);
+    //    }
+    //});
+
+    $('#MediaGallery').removeAttr("style");
+    BindMediaList();
+
+    function MoveToPicture(type, id, mediaId) {
+        var subFeatureid = '0';
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/MoveToPicture")',
+            data: { type: type, id: id, MediaID: mediaId },
+            type: 'post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                if (data == 'success') {
+                    BindPictureList(type, id, subFeatureid);
+                    BindMediaList();
+                }
+                else {
+                    alert(' Error in Request!!');
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            },
+            failure: function (response) {
+                console.log(response);
+            },
         });
+    };
+
+    function MoveToPic() {
+        var subFeatureid = '0';
+        var value = $('#SubjectID').val();
+        $('#mediaTable input[type=checkbox]').each(function () {
+
+            if (this.checked) {
+                var mediaId = $(this).val();
+                $.ajax({
+                    url: '@Url.Content("~/Media/Media/MoveToPicture")',
+                    data: { type: 'Subject', id: value, MediaID: mediaId },
+                    type: 'post',
+                    datatype: 'json',
+                    contenttype: 'application/json',
+                    success: function (data) {
+                        if (data == 'success') {
+                        }
+                        else {
+                            alert(' Error in Request!!');
+                        }
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                    failure: function (response) {
+                        console.log(response);
+                    },
+                });
+            }
+        });
+        BindPictureList('Subject', value, subFeatureid);
+        BindMediaList();
+    }
+
+    function BindMediaList() {
+
+        $.ajax({
+            url: '@Url.Content("~/Media/Media/GetAllMoveToPicture")',
+            data: { 'type': 'Media', 'id': '0', 'subFeatureid': '0' },
+            type: 'Post',
+            datatype: 'json',
+            contenttype: 'application/json',
+            success: function (data) {
+                var types = $('#hdType').val();
+                var value = $('#SubjectID').val();
+                var subFeatureid = "0";
+                var temph = "";
+                if (data.length > 0) {
+                    var jsonData = JSON.parse(data);
+                    for (i = 0; i < jsonData.length; i++) {
+                        temph += ' <div class="col-md-2"> ';
+                        temph += '<input id="' + jsonData[i].MediaID + '" value="' + jsonData[i].MediaID + '" type="checkbox">';
+                        temph += '<div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
+                        temph += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                        temph += '<div class="btn-show">';
+                        if ($('#hdType').val() != 'Media') {
+                            temph += '<input type="button" value="MoveTo" id="MoveToPicture" class="btn btn-info add" onclick="MoveToPicture(&#39;' + types + '&#39;,&#39;' + value + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
+                        }
+                        temph += '</div></div></div>';
+                    }
+                }
+                $('#mediaTable').html(temph);
+                $('.pictureTr').hover(function () {
+                    var ImgeSrc = $(this).children('img').attr('src');
+                    var mediaId = $(this).attr('data-id');
+                    $(this).on('click', function () {
+                        $('.pictureTr').removeClass('ShowBorderRed'); // Remove class from all other images
+                        $(this).addClass('ShowBorderRed');
+                    });
+                });
+
+            }
+        });
+    }
+
+    $("#permission").click(function () {
+        if (EditConfirm('@ViewBag.Action')) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+
+    // Submit form on tab change Script
+    function formSubmitByTab(valueChanged) {
+        if (valueChanged == true) {
+            var r = confirm("Do you want to save changes?");
+            if (r == true) {
+                $('#submit-data').click();
+            }
+        }
+
+    }// End Submit form on tab change Script
+    $(document).ready(function () {
+        $("#HairLength").ImageDropdown({
+            selectedIndexChanged: function (newVal) {
+                //alert("value changed: " + newVal);
+            }
+        });
+        //$("#HairLength").val(-1);
+    });
 </script>

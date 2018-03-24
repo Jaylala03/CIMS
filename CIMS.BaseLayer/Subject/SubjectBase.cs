@@ -40,7 +40,7 @@ namespace CIMS.BaseLayer.Subject
         private string _shortDescription = string.Empty;
         private string _overallStatus = string.Empty;
         public string _ageRange = string.Empty;
-
+        private string _subjectNumber = string.Empty;
         #endregion
 
         #region Properties
@@ -78,6 +78,8 @@ namespace CIMS.BaseLayer.Subject
         
         public string CreatedByUser { get; set; }
         public string AgeRange { get { return _ageRange; } set { _ageRange = value; } }
+
+        public string SubjectNumber { get { return _subjectNumber; } set { _subjectNumber = value; } }
         #endregion
     }
 

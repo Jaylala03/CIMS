@@ -119,6 +119,94 @@ namespace CIMS.Areas.Setting.Controllers
         }
         #endregion
 
+        //Chirag Employee Department
+        #region Bind Employee Department
+        public JsonResult EmployeeDepartment_Load()
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                CIMS.ActionLayer.Employee.EmployeeAction employeeAction = new CIMS.ActionLayer.Employee.EmployeeAction();
+                actionResult = employeeAction.MasterEmployeeDepartment_Load();
+                if (actionResult.IsSuccess && actionResult.dtResult.Rows.Count > 0)
+                {
+                    for (int i = 0; i < actionResult.dtResult.Rows.Count; i++)
+                    {
+                        jsonString += "<tr class='tableRow' data-id=" + actionResult.dtResult.Rows[i]["id"].ToString() + " style='cursor: pointer'>";
+                        jsonString += "<td class='tableCell'>" + actionResult.dtResult.Rows[i]["DepartmentType"].ToString() + " </td>";
+                        jsonString += "<td class='removefromtable'>";
+                        jsonString += "<a href='javascript:;' onclick='EditEmployeeDepartment(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",&#39;" + actionResult.dtResult.Rows[i]["DepartmentType"].ToString() + "&#39;);' class='btn small btn-info btn-sm btn-icon edit' title='Edit'><i class='fa fa-pencil'></i></a>";
+                        jsonString += "<a class='btn btn-danger small btn-sm delete-sm' href='javascript:;' onclick='DeleteEmployeeDepartment(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",this);' title='Delete'><i class='fa fa-trash'></i></a>";
+                        jsonString += "</td></tr>";
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region Employee Department IU
+        public JsonResult EmployeeDepartment_IU(int ID, string Name)
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                EmployeeDepartmentBase employeeDepartmentBase = new EmployeeDepartmentBase();
+                employeeDepartmentBase.EmployeeDepartmentID = ID;
+                employeeDepartmentBase.EmployeeDepartmentName = Name;
+                actionResult = settingAction.EmployeeDepartment_IU(employeeDepartmentBase);
+                if (actionResult.IsSuccess)
+                {
+                    jsonString = "success";
+                }
+                else
+                {
+                    jsonString = "error";
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region Employee Department Delete
+        public JsonResult EmployeeDepartment_Delete(int ID)
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                EmployeeDepartmentBase employeeDepartmentBase = new EmployeeDepartmentBase();
+                employeeDepartmentBase.EmployeeDepartmentID = ID;
+                actionResult = settingAction.EmployeeDepartment_Delete(employeeDepartmentBase);
+                if (actionResult.IsSuccess)
+                {
+                    jsonString = "success";
+                }
+                else
+                {
+                    jsonString = "error";
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+        //
+
+
         // License Type
         #region Bind License Type
         public JsonResult LicenseType_Load()

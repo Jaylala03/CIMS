@@ -37,6 +37,30 @@ namespace CIMS.DataLayer
         }
         #endregion
 
+        #region Method EmployeeDepartment_IU
+        public DataTable EmployeeDepartment_IU(EmployeeDepartmentBase employeeDepartmentBase)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", employeeDepartmentBase.EmployeeDepartmentID),
+                                           new MyParameter("@DepartmentType", employeeDepartmentBase.EmployeeDepartmentName )
+                                        };
+                Common.Set_Procedures("EmployeeDepartment_IU");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+
         #region Method DepartmentType_Delete
         public DataTable DepartmentType_Delete(DepartmentTypeBase departmentBase)
         {
@@ -59,7 +83,30 @@ namespace CIMS.DataLayer
             return dtContainer;
         }
         #endregion
-        
+
+        #region Method EmployeeDepartment_Delete
+        public DataTable EmployeeDepartment_Delete(EmployeeDepartmentBase employeeDepartmentBase)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", employeeDepartmentBase.EmployeeDepartmentID)
+                                        };
+                Common.Set_Procedures("EmployeeDepartment_Delete");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+
 
         #region Method LicenseType_IU
         public DataTable LicenseType_IU(LicenseTypeBase licenseBase)
