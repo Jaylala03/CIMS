@@ -582,7 +582,7 @@ namespace CIMS.Areas.Subject.Controllers
                     subjectBase.SubjectID = Convert.ToInt32(id);
                     subjectBase.CreatedBy = Convert.ToInt32(Session["UserID"]);
                     subjectBase.RoleID = Convert.ToInt32(Session["RoleId"]);
-
+                    
                     actionResult = subjectAction.Subject_LoadById(subjectBase);
                     if (actionResult.IsSuccess)
                     {
@@ -590,6 +590,7 @@ namespace CIMS.Areas.Subject.Controllers
                         if (subjectList.Count > 0)
                             model = subjectList.FirstOrDefault();
                         model.DateOfBirth = !String.IsNullOrEmpty(model.DateOfBirth) ? Convert.ToDateTime(model.DateOfBirth).ToShortDateString() : "";
+                        model.FilePath = !String.IsNullOrEmpty(model.FilePath) ? model.FilePath.ToString() : "";
 
                         DataRow dr = actionResult.dtResult.Rows[0];
                         model.EditPermission = dr["editpermission"] != DBNull.Value ? Convert.ToBoolean(dr["editpermission"]) : false;
@@ -923,6 +924,7 @@ namespace CIMS.Areas.Subject.Controllers
                 subjectBase.VIP = model.VIP;
                 subjectBase.Age = model.Age;
                 subjectBase.AgeRange = model.AgeRange;
+                subjectBase.SubjectNumber = model.SubjectNumber;
                 subjectBase.Sex = model.Sex;
                 subjectBase.Race = model.Race;
                 subjectBase.Height = model.Height;
@@ -5500,6 +5502,7 @@ namespace CIMS.Areas.Subject.Controllers
                 subjectBase.HairLength = Request.Params["HairLength"];//model.HairLength;
                 subjectBase.Complexion = Request.Params["Complexion"];//model.Complexion;
                 subjectBase.AgeRange = Request.Params["AgeRange"];//model.AgeRange;
+                subjectBase.SubjectNumber = Request.Params["SubjectNumber"];//model.SubjectNumber;
                 actionResult = subjectAction.Subjects_AdvancedSearch(subjectBase);
                 if (actionResult.IsSuccess == true)
                 {
@@ -5541,6 +5544,8 @@ namespace CIMS.Areas.Subject.Controllers
                 subjectBase.HairColor = model.HairColor;
                 subjectBase.HairLength = model.HairLength;
                 subjectBase.Complexion = model.Complexion;
+                subjectBase.SubjectNumber = model.SubjectNumber;
+
                 actionResult = subjectAction.Subjects_AdvancedSearch(subjectBase);
                 if (actionResult.IsSuccess)
                 {

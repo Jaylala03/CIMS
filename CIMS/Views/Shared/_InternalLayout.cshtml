@@ -197,9 +197,9 @@
                 </ul>-->
 
                 <ul class="nav navbar-top-links navbar-right pull-right">
-
-
-
+                    <div class="dropdown-toggle profile-pic"  style="float:right;margin:7px 0px 0px 0px;">
+                        <a href='@Url.Content("~/Account/LogOff")'> <i class="fa fa-power-off"></i></a>
+                    </div>
                     <!-- /.dropdown -->
                     <li class="dropdown">                       
                         <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#">
@@ -218,12 +218,13 @@
                                 {
                                     <span>Hi, User</span>
                                 }
-                                <i class="fa fa-sign-out" aria-hidden="true"></i> @Session["UserName"]
+                                <i class="fa fa-sign-out" aria-hidden="true"></i> @Session["UserName"]                                
                             </b>
-                        </a>
+                        </a>                       
+                        
                         <ul class="dropdown-menu dropdown-user animated flipInY">
 
-                            <li><a href='@Url.Content("~/Account/LogOff")'> <i class="fa fa-power-off"></i> Logout</a></li>
+                            @*<li><a href='@Url.Content("~/Account/LogOff")'> <i class="fa fa-power-off"></i> Logout</a></li>*@
 
                             <li><a href='@Url.Action("ChangePassword", "Admin")'> <i class="fa fa-user"></i> Change Password</a></li>
                         </ul>

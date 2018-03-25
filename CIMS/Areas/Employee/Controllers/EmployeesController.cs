@@ -34,7 +34,7 @@ namespace CIMS.Areas.Employee.Controllers
 
         // GET: Employee/Employees
         public ActionResult Employees(int? Id = 0)
-        {
+         {
             EmployeeModel model = new EmployeeModel();
             List<SelectListItem> genderList = new List<SelectListItem>();
             model.EmployeeLinkedList = new List<EmployeeLinkedList>();
@@ -197,6 +197,19 @@ namespace CIMS.Areas.Employee.Controllers
             }
             ViewBag.EmployeePosition = empPositionList;
 
+            List<SelectListItem> EmployeeDepartmentList = new List<SelectListItem>();
+            actionResult = employeeAction.MasterEmployeeDepartment_Load();
+            if (actionResult.IsSuccess)
+            {
+                EmployeeDepartmentList = (from DataRow row in actionResult.dtResult.Rows
+                                          select new SelectListItem
+                                          {
+                                              Text = row["DepartmentType"] != DBNull.Value ? row["DepartmentType"].ToString() : "",
+                                              Value = row["id"] != DBNull.Value ? row["id"].ToString() : ""
+                                          }).ToList();
+            }
+            ViewBag.EmployeeDepartmentList = EmployeeDepartmentList;
+
             ViewBag.BuildList = buildList;
             ViewBag.GenderList = genderList;
             ViewBag.RaceList = raceList;
@@ -217,6 +230,7 @@ namespace CIMS.Areas.Employee.Controllers
                     DataRow dr = actionResult.dtResult.Rows[0];
                     model.EmployeeID = dr["EmployeeID"] != DBNull.Value ? Convert.ToInt32(dr["EmployeeID"]) : 0;
                     model.EmpNumber = dr["EmpNumber"] != DBNull.Value ? dr["EmpNumber"].ToString() : "";
+                    model.EmployeeNumber = dr["EmployeeNumber"] != DBNull.Value ? dr["EmployeeNumber"].ToString() : "";
                     model.Age = dr["Age"] != DBNull.Value ? Convert.ToDecimal(dr["Age"]) : 0;
                     model.FirstName = dr["FirstName"] != DBNull.Value ? dr["FirstName"].ToString() : "";
                     model.LastName = dr["LastName"] != DBNull.Value ? dr["LastName"].ToString() : "";
@@ -230,6 +244,7 @@ namespace CIMS.Areas.Employee.Controllers
                     model.Weight = dr["Weight"] != DBNull.Value ? dr["Weight"].ToString() : "";
                     model.StaffPosition = dr["StaffPosition"] != DBNull.Value ? dr["StaffPosition"].ToString() : "";
                     model.Glasses = dr["Glasses"] != DBNull.Value ? dr["Glasses"].ToString() : "";
+                    model.EmployeeDepartment = dr["Department"] != DBNull.Value ? dr["Department"].ToString() : "";
                     model.ConvertSubject = dr["ConvertSubject"] != DBNull.Value ? Convert.ToBoolean(dr["ConvertSubject"]) : false;
                     if (dr["DateOfBirth"] != DBNull.Value)
                     {
@@ -242,6 +257,7 @@ namespace CIMS.Areas.Employee.Controllers
                     model.UserID = dr["UserID"] != DBNull.Value ? Convert.ToInt32(dr["UserID"]) : 0;
                     model.CreatorFirstName = dr["CreatorFirstName"] != DBNull.Value ? dr["CreatorFirstName"].ToString() : "";
                     model.CreatorLastName = dr["CreatorLastName"] != DBNull.Value ? dr["CreatorLastName"].ToString() : "";
+                    model.FilePath = dr["FilePath"] != DBNull.Value ? dr["FilePath"].ToString() : "";
                 }
                 employee.EmployeeID = model.EmployeeID;
                 actionResult = employeeAction.EmployeePersonal_LoadByEmployeeID(employee);
@@ -314,6 +330,19 @@ namespace CIMS.Areas.Employee.Controllers
                                       }).ToList();
             }
             model.DepartmentTypeList = DepartmentTypeList;
+
+            //List<SelectListItem> EmployeeDepartmentList = new List<SelectListItem>();
+            //actionResult = employeeAction.MasterEmployeeDepartment_Load();
+            //if (actionResult.IsSuccess)
+            //{
+            //    EmployeeDepartmentList = (from DataRow row in actionResult.dtResult.Rows
+            //                          select new SelectListItem
+            //                          {
+            //                              Text = row["DepartmentType"] != DBNull.Value ? row["DepartmentType"].ToString() : "",
+            //                              Value = row["id"] != DBNull.Value ? row["id"].ToString() : ""
+            //                          }).ToList();
+            //}
+            //model.EmployeeDepartmentList = EmployeeDepartmentList;
 
             List<SelectListItem> LicenseTypeList = new List<SelectListItem>();
             actionResult = employeeAction.MasterLicenseType_Load();
@@ -523,6 +552,19 @@ namespace CIMS.Areas.Employee.Controllers
             }
             ViewBag.EmployeePosition = empPositionList;
 
+            List<SelectListItem> EmployeeDepartmentList = new List<SelectListItem>();
+            actionResult = employeeAction.MasterEmployeeDepartment_Load();
+            if (actionResult.IsSuccess)
+            {
+                EmployeeDepartmentList = (from DataRow row in actionResult.dtResult.Rows
+                                          select new SelectListItem
+                                          {
+                                              Text = row["DepartmentType"] != DBNull.Value ? row["DepartmentType"].ToString() : "",
+                                              Value = row["id"] != DBNull.Value ? row["id"].ToString() : ""
+                                          }).ToList();
+            }
+            ViewBag.EmployeeDepartmentList = EmployeeDepartmentList;
+
             ViewBag.BuildList = buildList;
             ViewBag.GenderList = genderList;
             ViewBag.RaceList = raceList;
@@ -546,6 +588,8 @@ namespace CIMS.Areas.Employee.Controllers
                                       }).ToList();
             }
             model.DepartmentTypeList = DepartmentTypeList;
+
+            
 
             List<SelectListItem> LicenseTypeList = new List<SelectListItem>();
             actionResult = employeeAction.MasterLicenseType_Load();
@@ -604,12 +648,14 @@ namespace CIMS.Areas.Employee.Controllers
             EmployeeBase employee = new EmployeeBase();
             employee.UserID = Convert.ToInt32(Session["UserId"]);
             employee.EmpNumber = model.EmpNumber;
+            employee.EmployeeNumber = model.EmployeeNumber;
             employee.EmpID = model.EmployeeID;
             employee.Age = Convert.ToDecimal(model.Age);
             employee.DateOfBirth = model.DateOfBirth;
             employee.Eyes = model.Eyes;
             employee.Sex = model.Sex;
             employee.Race = model.Race;
+            employee.EmployeeDepartment = model.EmployeeDepartment;
 
             if (model.FirstName != null)
             {
@@ -1801,6 +1847,19 @@ namespace CIMS.Areas.Employee.Controllers
                                 }).ToList();
             }
             parammodel.LocationList = LocationList;
+
+            List<SelectListItem> TemplateCategoryList = new List<SelectListItem>();            
+            actionResult = employeeAction.MasterTemplateCategory_Load();
+            if (actionResult.IsSuccess)
+            {
+                TemplateCategoryList = (from DataRow row in actionResult.dtResult.Rows
+                                select new SelectListItem
+                                {
+                                    Text = row["CategoryName"] != DBNull.Value ? row["CategoryName"].ToString() : "",
+                                    Value = row["Id"] != DBNull.Value ? row["Id"].ToString() : ""
+                                }).ToList();
+            }
+            parammodel.TemplateCategoryList = TemplateCategoryList;
 
             List<SelectListItem> lstRole = new List<SelectListItem>();
             actionResult = settingAction.MasterRole_Load();
@@ -3910,6 +3969,7 @@ namespace CIMS.Areas.Employee.Controllers
                 employee.StaffPosition = model.StaffPosition;
                 employee.Height = model.Height;
                 employee.Weight = model.Weight;
+                employee.EmployeeNumber = model.EmployeeNumber;
 
                 actionResult = employeeAction.AdvancedSearchEmployees(employee);
 
@@ -3933,6 +3993,7 @@ namespace CIMS.Areas.Employee.Controllers
                 employee.StaffPosition = model.StaffPosition;
                 employee.Height = model.Height;
                 employee.Weight = model.Weight;
+                employee.EmployeeNumber = model.EmployeeNumber;
 
                 actionResult = employeeAction.AdvancedSearchEmployees(employee);
                 TempData["EmployeeList"] = actionResult;
@@ -5560,6 +5621,53 @@ namespace CIMS.Areas.Employee.Controllers
             }
             EventModel.ListEventModel = lstEventModel;
             return PartialView(EventModel);
+        }
+
+        public JsonResult TemplateCategoryTypeByID_Load(int CategoryID)
+        {
+            string jsonString = string.Empty;            
+            List<SelectListItem> TemplateCategoryTypeList = new List<SelectListItem>();
+            try
+            {   
+                actionResult = employeeAction.TemplateCategoryTypeByID_Load(CategoryID);
+                if (actionResult.IsSuccess && actionResult.dtResult.Rows.Count > 0)
+                {
+                    TemplateCategoryTypeList = (from DataRow row in actionResult.dtResult.Rows
+                                                select new SelectListItem
+                                                {
+                                                    Text = row["TemplateName"] != DBNull.Value ? row["TemplateName"].ToString() : "",
+                                                    Value = row["Id"] != DBNull.Value ? row["Id"].ToString() : ""
+                                                }).ToList();
+                }             
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(TemplateCategoryTypeList, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult TemplateCategoryTypeByID_ContentLoad(int CategoryTypeID)
+        {
+            string jsonString = string.Empty;            
+            try
+            {
+                actionResult = employeeAction.TemplateCategoryTypeByID_ContentLoad(CategoryTypeID);
+                if (actionResult.IsSuccess && actionResult.dtResult.Rows.Count > 0)
+                {
+                    for (int i = 0; i < actionResult.dtResult.Rows.Count; i++)
+                    {
+                        jsonString = actionResult.dtResult.Rows[i]["Content"].ToString();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
         }
 
     }

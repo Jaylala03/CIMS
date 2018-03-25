@@ -12,6 +12,8 @@ namespace CIMS.Models
         //  [Required]
         [Display(Name = "Subject identification number ")]
         public string VIP { get; set; }
+        [Display(Name = "Subject number ")]
+        public string SubjectNumber { get; set; }
         public decimal Age { get; set; }
         public string Sex { get; set; }
         public string Race { get; set; }

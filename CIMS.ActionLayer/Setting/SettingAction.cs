@@ -38,6 +38,26 @@ namespace CIMS.ActionLayer.Setting
 
         #endregion
 
+        #region Method EmployeeDepartment_IU
+        public ActionResult EmployeeDepartment_IU(EmployeeDepartmentBase employeeDepartmentBase)
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = settingDL.EmployeeDepartment_IU(employeeDepartmentBase);
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+        #endregion
+
         #region Method DepartmentType_Delete
         public ActionResult DepartmentType_Delete(DepartmentTypeBase departmentBase)
         {
@@ -57,6 +77,88 @@ namespace CIMS.ActionLayer.Setting
             return actionResult;
         }
 
+        #endregion
+
+        #region Method EmployeeDepartment_Delete
+        public ActionResult EmployeeDepartment_Delete(EmployeeDepartmentBase employeeDepartmentBase)
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = settingDL.EmployeeDepartment_Delete(employeeDepartmentBase);
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+
+        #endregion
+
+        #region Method TemplateCategory_IU
+        public ActionResult TemplateCategory_IU(TemplateCategoryBase templateCategoryBase)
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = settingDL.TemplateCategory_IU(templateCategoryBase);
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+        #endregion
+
+        #region Method TemplateCategory_Delete
+        public ActionResult TemplateCategory_Delete(TemplateCategoryBase templateCategoryBase)
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = settingDL.TemplateCategory_Delete(templateCategoryBase);
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+
+        #endregion
+
+        #region Method TemplateCategoryType_IU
+        public ActionResult TemplateCategoryType_IU(TemplateCategoryTypeBase templateCategoryTypeBase)
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = settingDL.TemplateCategoryType_IU(templateCategoryTypeBase);
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
         #endregion
 
         #region Method LicenseType_IU

@@ -42,3 +42,14 @@ D:\CIMS\CIMS.DataLayer\bin\Debug\CIMS.Utility.pdb
 D:\CIMS\CIMS.DataLayer\obj\Debug\CIMS.DataLayer.csprojResolveAssemblyReference.cache
 D:\CIMS\CIMS.DataLayer\obj\Debug\CIMS.DataLayer.dll
 D:\CIMS\CIMS.DataLayer\obj\Debug\CIMS.DataLayer.pdb
+G:\Jay Bhai\CIMSWorking\CIMS.DataLayer\bin\Debug\CIMS.DataLayer.dll
+G:\Jay Bhai\CIMSWorking\CIMS.DataLayer\bin\Debug\CIMS.DataLayer.pdb
+G:\Jay Bhai\CIMSWorking\CIMS.DataLayer\bin\Debug\CIMS.BaseLayer.dll
+G:\Jay Bhai\CIMSWorking\CIMS.DataLayer\bin\Debug\CIMS.DbServices.dll
+G:\Jay Bhai\CIMSWorking\CIMS.DataLayer\bin\Debug\CIMS.Utility.dll
+G:\Jay Bhai\CIMSWorking\CIMS.DataLayer\bin\Debug\CIMS.BaseLayer.pdb
+G:\Jay Bhai\CIMSWorking\CIMS.DataLayer\bin\Debug\CIMS.DbServices.pdb
+G:\Jay Bhai\CIMSWorking\CIMS.DataLayer\bin\Debug\CIMS.Utility.pdb
+G:\Jay Bhai\CIMSWorking\CIMS.DataLayer\obj\Debug\CIMS.DataLayer.csprojResolveAssemblyReference.cache
+G:\Jay Bhai\CIMSWorking\CIMS.DataLayer\obj\Debug\CIMS.DataLayer.dll
+G:\Jay Bhai\CIMSWorking\CIMS.DataLayer\obj\Debug\CIMS.DataLayer.pdb
