@@ -1,4 +1,5 @@
-﻿using CIMS.ActionLayer.Events;
+﻿using CIMS.ActionLayer.Employee;
+using CIMS.ActionLayer.Events;
 using CIMS.ActionLayer.Subject;
 using CIMS.Areas.Events.Controllers;
 using CIMS.BaseLayer.Events;
@@ -36,6 +37,7 @@ namespace CIMS.Areas.Subject.Controllers
         EventAction EventAction = new EventAction();
         SubjectIdentificationBase subjectIdentificationBase = new SubjectIdentificationBase();
         SubjectAction subjectAction = new SubjectAction();
+        EmployeeAction employeeAction = new EmployeeAction();
         CIMS.BaseLayer.ActionResult actionResult = new CIMS.BaseLayer.ActionResult();
         List<SelectListItem> AuthorNameList = new List<SelectListItem>();
         List<SelectListItem> DisputTypeList = new List<SelectListItem>();
@@ -322,6 +324,19 @@ namespace CIMS.Areas.Subject.Controllers
                 }
                 ViewBag.lstFacial = lstFacial;
 
+                List<SelectListItem> lstSubjectStatus = new List<SelectListItem>();
+                actionResult = employeeAction.SubjectStatus_Load();
+                if (actionResult.IsSuccess)
+                {
+                    lstSubjectStatus = (from DataRow row in actionResult.dtResult.Rows
+                                 select new SelectListItem
+                                 {
+                                     Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
+                                     Value = row["Id"] != DBNull.Value ? row["Id"].ToString() : ""
+                                 }).ToList();
+                }
+                ViewBag.lstSubjectStatus = lstSubjectStatus;
+
                 List<SelectListItem> lstAliasNameType = new List<SelectListItem>();
                 actionResult = settingAction.AliasNameType_Load();
                 if (actionResult.IsSuccess)
@@ -563,6 +578,19 @@ namespace CIMS.Areas.Subject.Controllers
                 }
                 ViewBag.lstFacial = lstFacial;
 
+                List<SelectListItem> lstSubjectStatus = new List<SelectListItem>();
+                actionResult = employeeAction.SubjectStatus_Load();
+                if (actionResult.IsSuccess)
+                {
+                    lstSubjectStatus = (from DataRow row in actionResult.dtResult.Rows
+                                     select new SelectListItem
+                                     {
+                                         Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
+                                         Value = row["Id"] != DBNull.Value ? row["Id"].ToString() : ""
+                                     }).ToList();
+                }
+                ViewBag.lstSubjectStatus = lstSubjectStatus;
+
                 List<SelectListItem> lstAgeRange = new List<SelectListItem>();
                 actionResult = settingAction.LU_AgeSearch_Load();
                 if (actionResult.IsSuccess)
@@ -590,7 +618,7 @@ namespace CIMS.Areas.Subject.Controllers
                         if (subjectList.Count > 0)
                             model = subjectList.FirstOrDefault();
                         model.DateOfBirth = !String.IsNullOrEmpty(model.DateOfBirth) ? Convert.ToDateTime(model.DateOfBirth).ToShortDateString() : "";
-                        model.FilePath = !String.IsNullOrEmpty(model.FilePath) ? model.FilePath.ToString() : "";
+                        model.FilePath = !String.IsNullOrEmpty(model.FilePath) ? model.FilePath.ToString() : "";                       
 
                         DataRow dr = actionResult.dtResult.Rows[0];
                         model.EditPermission = dr["editpermission"] != DBNull.Value ? Convert.ToBoolean(dr["editpermission"]) : false;
@@ -857,6 +885,20 @@ namespace CIMS.Areas.Subject.Controllers
                                  }).ToList();
                 }
                 ViewBag.lstFacial = lstFacial;
+
+                List<SelectListItem> lstSubjectStatus = new List<SelectListItem>();
+                actionResult = employeeAction.SubjectStatus_Load();
+                if (actionResult.IsSuccess)
+                {
+                    lstSubjectStatus = (from DataRow row in actionResult.dtResult.Rows
+                                     select new SelectListItem
+                                     {
+                                         Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
+                                         Value = row["Id"] != DBNull.Value ? row["Id"].ToString() : ""
+                                     }).ToList();
+                }
+                ViewBag.lstSubjectStatus = lstSubjectStatus;
+
                 //if (id > 0)
                 //{
                 //    subjectBase.SubjectID = Convert.ToInt32(id);
@@ -942,6 +984,7 @@ namespace CIMS.Areas.Subject.Controllers
                 subjectBase.RoleName = model.RoleName;
                 subjectBase.CIDSubject = model.CIDSubject;
                 subjectBase.CIDPersonID = model.CIDPersonID;
+                subjectBase.SubjectStatus = model.SubjectStatus;
                 subjectBase.CreatedBy = Convert.ToInt32(Session["UserId"]);
                 actionResult = subjectAction.Subject_IU(subjectBase);
                 if (actionResult.IsSuccess)
@@ -5335,6 +5378,19 @@ namespace CIMS.Areas.Subject.Controllers
                                  }).ToList();
                 }
                 ViewBag.lstFacial = lstFacial;
+
+                List<SelectListItem> lstSubjectStatus = new List<SelectListItem>();
+                actionResult = employeeAction.SubjectStatus_Load();
+                if (actionResult.IsSuccess)
+                {
+                    lstSubjectStatus = (from DataRow row in actionResult.dtResult.Rows
+                                        select new SelectListItem
+                                        {
+                                            Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
+                                            Value = row["Id"] != DBNull.Value ? row["Id"].ToString() : ""
+                                        }).ToList();
+                }
+                ViewBag.lstSubjectStatus = lstSubjectStatus;
             }
             catch (Exception ex)
             {
@@ -5458,6 +5514,19 @@ namespace CIMS.Areas.Subject.Controllers
                 }
                 ViewBag.lstFacial = lstFacial;
 
+                List<SelectListItem> lstSubjectStatus = new List<SelectListItem>();
+                actionResult = employeeAction.SubjectStatus_Load();
+                if (actionResult.IsSuccess)
+                {
+                    lstSubjectStatus = (from DataRow row in actionResult.dtResult.Rows
+                                     select new SelectListItem
+                                     {
+                                         Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
+                                         Value = row["Id"] != DBNull.Value ? row["Id"].ToString() : ""
+                                     }).ToList();
+                }
+                ViewBag.lstSubjectStatus = lstSubjectStatus;
+
                 List<SelectListItem> lstAliasNameType = new List<SelectListItem>();
                 actionResult = settingAction.AliasNameType_Load();
                 if (actionResult.IsSuccess)
@@ -5503,6 +5572,7 @@ namespace CIMS.Areas.Subject.Controllers
                 subjectBase.Complexion = Request.Params["Complexion"];//model.Complexion;
                 subjectBase.AgeRange = Request.Params["AgeRange"];//model.AgeRange;
                 subjectBase.SubjectNumber = Request.Params["SubjectNumber"];//model.SubjectNumber;
+                subjectBase.SubjectStatus = Request.Params["SubjectStatus"];//model.SubjectStatus;
                 actionResult = subjectAction.Subjects_AdvancedSearch(subjectBase);
                 if (actionResult.IsSuccess == true)
                 {
@@ -5545,6 +5615,7 @@ namespace CIMS.Areas.Subject.Controllers
                 subjectBase.HairLength = model.HairLength;
                 subjectBase.Complexion = model.Complexion;
                 subjectBase.SubjectNumber = model.SubjectNumber;
+                subjectBase.SubjectStatus = model.SubjectStatus;
 
                 actionResult = subjectAction.Subjects_AdvancedSearch(subjectBase);
                 if (actionResult.IsSuccess)
@@ -5679,6 +5750,19 @@ namespace CIMS.Areas.Subject.Controllers
                                  }).ToList();
                 }
                 ViewBag.lstFacial = lstFacial;
+
+                List<SelectListItem> lstSubjectStatus = new List<SelectListItem>();
+                actionResult = employeeAction.SubjectStatus_Load();
+                if (actionResult.IsSuccess)
+                {
+                    lstSubjectStatus = (from DataRow row in actionResult.dtResult.Rows
+                                     select new SelectListItem
+                                     {
+                                         Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
+                                         Value = row["Id"] != DBNull.Value ? row["Id"].ToString() : ""
+                                     }).ToList();
+                }
+                ViewBag.lstSubjectStatus = lstSubjectStatus;
 
                 List<SelectListItem> lstAliasNameType = new List<SelectListItem>();
                 actionResult = settingAction.AliasNameType_Load();
@@ -5855,6 +5939,18 @@ namespace CIMS.Areas.Subject.Controllers
                 }
                 ViewBag.lstFacial = lstFacial;
 
+                List<SelectListItem> lstSubjectStatus = new List<SelectListItem>();
+                actionResult = employeeAction.SubjectStatus_Load();
+                if (actionResult.IsSuccess)
+                {
+                    lstSubjectStatus = (from DataRow row in actionResult.dtResult.Rows
+                                        select new SelectListItem
+                                        {
+                                            Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
+                                            Value = row["Id"] != DBNull.Value ? row["Id"].ToString() : ""
+                                        }).ToList();
+                }
+                ViewBag.lstSubjectStatus = lstSubjectStatus;
             }
             catch (Exception ex)
             {

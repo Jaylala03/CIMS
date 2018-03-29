@@ -92,6 +92,8 @@ namespace CIMS.BaseLayer.Employee
         public int RoleID { get; set; }
 
         public string EmployeeDepartment { get; set; }
+
+        public string SubjectStatus { get; set; }
     }
 
 

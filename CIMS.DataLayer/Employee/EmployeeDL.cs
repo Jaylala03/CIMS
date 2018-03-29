@@ -42,7 +42,8 @@ namespace CIMS.DataLayer.Employee
                                            new MyParameter("@RoleName", employee.RoleName),
                                             new MyParameter("@UD9", employee.UD9),
                                             new MyParameter("@Department", employee.EmployeeDepartment),
-                                            new MyParameter("@EmployeeNumber", employee.EmployeeNumber)
+                                            new MyParameter("@EmployeeNumber", employee.EmployeeNumber),
+                                            new MyParameter("@SubjectStatus", employee.SubjectStatus)
 
                                         };
                 Common.Set_Procedures("Employees_Insert");
@@ -161,7 +162,8 @@ namespace CIMS.DataLayer.Employee
                                             new MyParameter("@Glasses", employee.Glasses),
                                             new MyParameter("@UD9", employee.UD9),
                                             new MyParameter("@Department", employee.EmployeeDepartment),
-                                            new MyParameter("@EmployeeNumber", employee.EmployeeNumber)
+                                            new MyParameter("@EmployeeNumber", employee.EmployeeNumber),
+                                            new MyParameter("@SubjectStatus", employee.SubjectStatus)
 
                                         };
                 Common.Set_Procedures("Employees_Update");
@@ -1418,6 +1420,27 @@ namespace CIMS.DataLayer.Employee
         }
         #endregion
 
+        #region Method SubjectStatus_Load
+        public DataTable SubjectStatus_Load()
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams = { };
+                Common.Set_Procedures("MasterSubjectStatus_Load");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+
         #region Method TemplateCategoryTypeByID_ContentLoad
         public DataTable TemplateCategoryTypeByID_ContentLoad(int CategoryTypeID)
         {
@@ -1704,7 +1727,8 @@ namespace CIMS.DataLayer.Employee
                                             new MyParameter("@Height", empBase.Height),
                                             new MyParameter("@StaffPosition", empBase.StaffPosition),
                                             new MyParameter("@Weight", empBase.Weight),
-                                            new MyParameter("@EmployeeNumber", empBase.EmployeeNumber)
+                                            new MyParameter("@EmployeeNumber", empBase.EmployeeNumber),
+                                            new MyParameter("@SubjectStatus", empBase.SubjectStatus)
                                          };
                 Common.Set_Procedures("AdvancedSearchEmployees");
                 Common.Set_ParameterLength(myParams.Length);

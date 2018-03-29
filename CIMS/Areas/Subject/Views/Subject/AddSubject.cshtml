@@ -409,6 +409,12 @@
                             </div>
                         </div>
 
+                        <div class="form-group clearfix">
+                            @Html.LabelFor(m => m.SubjectStatus, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">                                
+                                @Html.DropDownListFor(m => m.SubjectStatus, ViewBag.lstSubjectStatus as List<SelectListItem>, "Select Status", new { @class = "form-control" })
+                            </div>
+                        </div>
 
 
                         @*<div class="form-group clearfix">
@@ -718,6 +724,7 @@
             $('#HairLength').val('@Model.HairLength');
             $('#HairColor').val('@Model.HairColor');
             $('#FacialHair').val('@Model.FacialHair');
+            $('#SubjectStatus').val('@Model.SubjectStatus');
         }
 
         $('#clearBtn').on('click', function () {
@@ -871,6 +878,7 @@
         $('#Age').val('');
         $('#Height').val('');
         $('#Weight').val('');
+        $('#SubjectStatus').val('');
         //$('#Glasses').val(false);
     }
 

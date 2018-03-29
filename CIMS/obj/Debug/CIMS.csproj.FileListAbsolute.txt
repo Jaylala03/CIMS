@@ -129,6 +129,7 @@ D:\CIMS\CIMS\bin\CIMS.DbServices.pdb
 D:\CIMS\CIMS\obj\Debug\CIMS.csprojResolveAssemblyReference.cache
 D:\CIMS\CIMS\obj\Debug\CIMS.dll
 D:\CIMS\CIMS\obj\Debug\CIMS.pdb
+G:\Jay Bhai\CIMSWorking\CIMS\obj\Debug\CIMS.csprojResolveAssemblyReference.cache
 G:\Jay Bhai\CIMSWorking\CIMS\bin\ApplicationInsights.config
 G:\Jay Bhai\CIMSWorking\CIMS\bin\roslyn\csc.exe
 G:\Jay Bhai\CIMSWorking\CIMS\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
@@ -158,6 +159,5 @@ G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.Utility.pdb
 G:\Jay Bhai\CIMSWorking\CIMS\bin\EntityFramework.SqlServer.xml
 G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.DataLayer.pdb
 G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.DbServices.pdb
-G:\Jay Bhai\CIMSWorking\CIMS\obj\Debug\CIMS.csprojResolveAssemblyReference.cache
 G:\Jay Bhai\CIMSWorking\CIMS\obj\Debug\CIMS.dll
 G:\Jay Bhai\CIMSWorking\CIMS\obj\Debug\CIMS.pdb

@@ -43,6 +43,12 @@ namespace CIMS.BaseLayer.Setting
         public int CreatedBy { get; set; }
     }
 
+    public class SubjectStatusBase
+    {
+        public int SubjectStatusID { get; set; }
+        public string SubjectStatusName { get; set; }
+    }
+
     public class LicenseTypeBase
     {
         public int LicenseID { get; set; }

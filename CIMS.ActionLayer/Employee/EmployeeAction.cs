@@ -1129,6 +1129,26 @@ namespace CIMS.ActionLayer.Employee
         }
         #endregion
 
+        #region Method SubjectStatus_Load
+        public ActionResult SubjectStatus_Load()
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = employeeDL.SubjectStatus_Load();
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+        #endregion
+
         #region Method MasterLicenseType_Load
         public ActionResult MasterLicenseType_Load()
         {

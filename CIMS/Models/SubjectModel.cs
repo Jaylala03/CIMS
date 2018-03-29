@@ -43,6 +43,8 @@ namespace CIMS.Models
         [Display(Name = "Facial Hair")]
         public string FacialHair { get; set; }
 
+        public string SubjectStatus { get; set; }
+
         [Display(Name = "Hair Length")]
         public string HairLength { get; set; }
         public bool Glasses { get; set; }
@@ -222,6 +224,8 @@ namespace CIMS.Models
         public string LastName { get; set; }
         public bool EditPermission { get; set; }
         public bool DeletePermission { get; set; }
+
+        public string SubjectStatus { get; set; }
     }
 
     public class ManageSubjectMarkModel

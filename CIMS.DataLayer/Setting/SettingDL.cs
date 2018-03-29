@@ -181,6 +181,53 @@ namespace CIMS.DataLayer
         }
         #endregion
 
+        #region Method SubjectStatus_IU
+        public DataTable SubjectStatus_IU(SubjectStatusBase subjectStatusBase)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", subjectStatusBase.SubjectStatusID),
+                                           new MyParameter("@Status", subjectStatusBase.SubjectStatusName)
+                                        };
+                Common.Set_Procedures("MasterSubjectStatus_IU");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+
+        #region Method SubjectStatus_Delete
+        public DataTable SubjectStatus_Delete(SubjectStatusBase subjectStatusBase)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", subjectStatusBase.SubjectStatusID)
+                                        };
+                Common.Set_Procedures("MasterSubjectStatus_Delete");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+
         #region Method LicenseType_IU
         public DataTable LicenseType_IU(LicenseTypeBase licenseBase)
         {

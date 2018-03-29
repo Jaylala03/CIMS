@@ -348,7 +348,6 @@ namespace CIMS.Areas.Setting.Controllers
         }
         #endregion
 
-
         #region Template Category Type IU
         public JsonResult TemplateCategoryType_IU(int ID, int CategoryID, string Name, string Content)
         {
@@ -363,6 +362,93 @@ namespace CIMS.Areas.Setting.Controllers
                 templateCategoryTypeBase.CreatedBy = 0;
 
                 actionResult = settingAction.TemplateCategoryType_IU(templateCategoryTypeBase);
+                if (actionResult.IsSuccess)
+                {
+                    jsonString = "success";
+                }
+                else
+                {
+                    jsonString = "error";
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+        //End
+
+        //Chirag Subject Status Start
+        #region Bind Subject Status
+        public JsonResult SubjectStatus_Load()
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                CIMS.ActionLayer.Employee.EmployeeAction employeeAction = new CIMS.ActionLayer.Employee.EmployeeAction();
+                actionResult = employeeAction.SubjectStatus_Load();
+                if (actionResult.IsSuccess && actionResult.dtResult.Rows.Count > 0)
+                {
+                    for (int i = 0; i < actionResult.dtResult.Rows.Count; i++)
+                    {
+                        jsonString += "<tr class='tableRow' data-id=" + actionResult.dtResult.Rows[i]["id"].ToString() + " style='cursor: pointer'>";
+                        jsonString += "<td class='tableCell'>" + actionResult.dtResult.Rows[i]["Status"].ToString() + " </td>";
+                        jsonString += "<td class='removefromtable'>";
+                        jsonString += "<a href='javascript:;' onclick='EditSubjectStatus(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",&#39;" + actionResult.dtResult.Rows[i]["Status"].ToString() + "&#39;);' class='btn small btn-info btn-sm btn-icon edit' title='Edit'><i class='fa fa-pencil'></i></a>";
+                        jsonString += "<a class='btn btn-danger small btn-sm delete-sm' href='javascript:;' onclick='DeleteSubjectStatus(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",this);' title='Delete'><i class='fa fa-trash'></i></a>";
+                        jsonString += "</td></tr>";
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region Subject Status IU
+        public JsonResult SubjectStatus_IU(int ID, string Name)
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                SubjectStatusBase subjectStatusBase = new SubjectStatusBase();
+                subjectStatusBase.SubjectStatusID = ID;
+                subjectStatusBase.SubjectStatusName = Name;
+                actionResult = settingAction.SubjectStatus_IU(subjectStatusBase);
+                if (actionResult.IsSuccess)
+                {
+                    jsonString = "success";
+                }
+                else
+                {
+                    jsonString = "error";
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region Subject Status Delete
+        public JsonResult SubjectStatus_Delete(int ID)
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                SubjectStatusBase subjectStatusBase = new SubjectStatusBase();
+                subjectStatusBase.SubjectStatusID = ID;
+                actionResult = settingAction.SubjectStatus_Delete(subjectStatusBase);
                 if (actionResult.IsSuccess)
                 {
                     jsonString = "success";
