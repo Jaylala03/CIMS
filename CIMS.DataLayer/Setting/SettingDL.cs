@@ -37,6 +37,30 @@ namespace CIMS.DataLayer
         }
         #endregion
 
+        #region Method EmployeeDepartment_IU
+        public DataTable EmployeeDepartment_IU(EmployeeDepartmentBase employeeDepartmentBase)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", employeeDepartmentBase.EmployeeDepartmentID),
+                                           new MyParameter("@DepartmentType", employeeDepartmentBase.EmployeeDepartmentName )
+                                        };
+                Common.Set_Procedures("EmployeeDepartment_IU");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+
         #region Method DepartmentType_Delete
         public DataTable DepartmentType_Delete(DepartmentTypeBase departmentBase)
         {
@@ -59,7 +83,150 @@ namespace CIMS.DataLayer
             return dtContainer;
         }
         #endregion
-        
+
+        #region Method EmployeeDepartment_Delete
+        public DataTable EmployeeDepartment_Delete(EmployeeDepartmentBase employeeDepartmentBase)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", employeeDepartmentBase.EmployeeDepartmentID)
+                                        };
+                Common.Set_Procedures("EmployeeDepartment_Delete");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+
+        #region Method TemplateCategory_IU
+        public DataTable TemplateCategory_IU(TemplateCategoryBase templateCategoryBase)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", templateCategoryBase.TemplateCategoryID),
+                                           new MyParameter("@CategoryName", templateCategoryBase.TemplateCategoryName)
+                                        };
+                Common.Set_Procedures("TemplateCategory_IU");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+
+        #region Method TemplateCategory_Delete
+        public DataTable TemplateCategory_Delete(TemplateCategoryBase templateCategoryBase)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", templateCategoryBase.TemplateCategoryID)
+                                        };
+                Common.Set_Procedures("TemplateCategory_Delete");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+
+        #region Method TemplateCategoryType_IU
+        public DataTable TemplateCategoryType_IU(TemplateCategoryTypeBase templateCategoryTypeBase)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", templateCategoryTypeBase.TemplateCategoryTypeID),
+                                           new MyParameter("@CategoryID", templateCategoryTypeBase.TemplateCategoryID),
+                                           new MyParameter("@TemplateName", templateCategoryTypeBase.TemplateCategoryTypeName),
+                                           new MyParameter("@Content", templateCategoryTypeBase.TemplateCategoryTypeContent),
+                                           new MyParameter("@CreatedBy", templateCategoryTypeBase.CreatedBy)
+                                        };
+                Common.Set_Procedures("TemplateCategoryType_IU");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+
+        #region Method SubjectStatus_IU
+        public DataTable SubjectStatus_IU(SubjectStatusBase subjectStatusBase)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", subjectStatusBase.SubjectStatusID),
+                                           new MyParameter("@Status", subjectStatusBase.SubjectStatusName)
+                                        };
+                Common.Set_Procedures("MasterSubjectStatus_IU");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+
+        #region Method SubjectStatus_Delete
+        public DataTable SubjectStatus_Delete(SubjectStatusBase subjectStatusBase)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", subjectStatusBase.SubjectStatusID)
+                                        };
+                Common.Set_Procedures("MasterSubjectStatus_Delete");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
 
         #region Method LicenseType_IU
         public DataTable LicenseType_IU(LicenseTypeBase licenseBase)

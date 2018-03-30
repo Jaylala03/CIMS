@@ -158,15 +158,15 @@
                             </li>
                         }
                         @if ((Session["Admin"] == null ?
-                            (CIMS.Models.CheckPermissions.permissionMenu("Employee Permission", Convert.ToInt32(Session["UserId"])) && Model.EmployeeID > 0 && (Model.UserID == Convert.ToInt32(Session["UserID"]))) 
-                            : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+(CIMS.Models.CheckPermissions.permissionMenu("Employee Permission", Convert.ToInt32(Session["UserId"])) && Model.EmployeeID > 0 && (Model.UserID == Convert.ToInt32(Session["UserID"])))
+: CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
                         {
-                        <li>
-                            <a href="@(Model.EmployeeID > 0 && (Model.UserID == Convert.ToInt32(Session["UserID"])) ? "#Permissions" : "javascript:;")" id="#Permissions" data-toggle="tab" class="@(Model.EmployeeID > 0 ? "" : "checkAlert")">
+                            <li>
+                                <a href="@(Model.EmployeeID > 0 && (Model.UserID == Convert.ToInt32(Session["UserID"])) ? "#Permissions" : "javascript:;")" id="#Permissions" data-toggle="tab" class="@(Model.EmployeeID > 0 ? "" : "checkAlert")">
 
-                                <span>Permissions</span>
-                            </a>
-                        </li>
+                                    <span>Permissions</span>
+                                </a>
+                            </li>
                         }
 
                     </ul>
@@ -183,12 +183,24 @@
                     {
                         <div class="col-md-6">
                             <div class="white-box">
-                                <div class="form-group">
-                                    <label class="control-label">Employee Number</label>
-                                    @Html.HiddenFor(m => m.EmployeeID)
-                                    @Html.TextBoxFor(m => m.EmpNumber, null, new { @class = "form-control", @readonly = "readonly" })
-                                    @*@Html.ValidationMessageFor(m => m.EmpNumber, "", new { @class = "text-danger" })*@
+                                <div class="row">
+                                    <div class="col-sm-7">
+                                        <label class="control-label">System Generated Employee Number</label>
+                                        @Html.HiddenFor(m => m.EmployeeID)
+                                        @Html.TextBoxFor(m => m.EmpNumber, null, new { @class = "form-control", @readonly = "readonly" })
+                                        @*@Html.ValidationMessageFor(m => m.EmpNumber, "", new { @class = "text-danger" })*@
+
+                                        <label class="control-label">Employee Number</label>
+                                        @Html.TextBoxFor(m => m.EmployeeNumber, null, new { @class = "form-control", @maxlength = "6" })
+                                        @Html.ValidationMessageFor(m => m.EmployeeNumber, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-sm-5">
+                                        @*<img src="/Content/Media/d87e3EmployeeMedia1.png" class="ImgClass" style="height:100%;width:100%;">*@
+                                        <img src="@(!String.IsNullOrEmpty(Model.FilePath) ? Model.FilePath : Url.Content("~/asset/plugins/images/no-image.jpg"))" alt="Employee" style="height:100%;width:100%;" />
+                                    </div>
                                 </div>
+
+
 
                                 <div class="form-group">
                                     <label class="control-label">First Name </label>
@@ -280,6 +292,15 @@
                                 <div class="form-group">
                                     <label class="control-label">Position</label>
                                     @Html.DropDownListFor(model => model.StaffPosition, ViewBag.EmployeePosition as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Employee Department</label>
+                                    @Html.DropDownListFor(m => m.EmployeeDepartment, ViewBag.EmployeeDepartmentList as List<SelectListItem>, "Select Employee Department", new { @class = "form-control" })
+                                    <span id="departmentSpan" class="text-danger" style="display: none;">Department Type is required.</span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Status</label>
+                                    @Html.DropDownListFor(m => m.SubjectStatus, ViewBag.SubjectStatusList as List<SelectListItem>, "Select Status", new { @class = "form-control" })
                                 </div>
                             </div>
                         </div>
@@ -559,145 +580,145 @@
                 <div class="tab-pane" id="Employees">
                     @using (Html.BeginForm("EmployeesPersonal", "Employees", FormMethod.Post, new { @id = "EmployeesPersonal" }))
                     {
-                    <div class="row">
-                        <div class="col-md-12">
-                            @Html.HiddenFor(m => m.EmployeeID)
-                            @*<div class="col-md-6">
-
-                                    <div class="form-group">
-
-                                        <label>User-Defined 10</label>
-                                        @Html.TextBoxFor(m => m.UD10, new { @class = "form-control" })
-                                        @Html.ValidationMessageFor(m => m.UD10)
-
-                                    </div>
-                                    <div class="form-group">
-                                        <label>User-Defined 11</label>
-                                        @Html.TextBoxFor(m => m.UD11, new { @class = "form-control" })
-                                        @Html.ValidationMessageFor(m => m.UD11)
-                                    </div>
-                                    <div class="form-group">
-                                        <label>User-Defined 12</label>
-                                        @Html.TextBoxFor(m => m.UD12, new { @class = "form-control" })
-                                        @Html.ValidationMessageFor(m => m.UD12)
-                                    </div>
-
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>User-Defined 13</label>
-                                        @Html.TextBoxFor(m => m.UD13, new { @class = "form-control" })
-                                        @Html.ValidationMessageFor(m => m.UD13)
-                                    </div>
-                                    <div class="form-group">
-                                        <label>User-Defined 14</label>
-                                        @Html.TextBoxFor(m => m.UD14, new { @class = "form-control" })
-                                        @Html.ValidationMessageFor(m => m.UD14)
-                                    </div>
-                                    <div class="form-group">
-                                        <label>User-Defined 15</label>
-                                        @Html.TextBoxFor(m => m.UD15, new { @class = "form-control" })
-                                        @Html.ValidationMessageFor(m => m.UD15)
-                                    </div>
-                                </div>*@
-
-
-
+                        <div class="row">
                             <div class="col-md-12">
-                                <div class="large-title no-margin">Employee-Personal </div>
-                                <div class="white-box clearfix">
-                                    <div class="col-md-12">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label>Date of Birth</label>
-                                                <div class="col-md-12">
-                                                    <div class="form-group col-md-4">
-                                                        <label>Year</label>
-                                                        <select id="years" class="form-control"></select>
+                                @Html.HiddenFor(m => m.EmployeeID)
+                                @*<div class="col-md-6">
+
+                                        <div class="form-group">
+
+                                            <label>User-Defined 10</label>
+                                            @Html.TextBoxFor(m => m.UD10, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.UD10)
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label>User-Defined 11</label>
+                                            @Html.TextBoxFor(m => m.UD11, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.UD11)
+                                        </div>
+                                        <div class="form-group">
+                                            <label>User-Defined 12</label>
+                                            @Html.TextBoxFor(m => m.UD12, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.UD12)
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>User-Defined 13</label>
+                                            @Html.TextBoxFor(m => m.UD13, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.UD13)
+                                        </div>
+                                        <div class="form-group">
+                                            <label>User-Defined 14</label>
+                                            @Html.TextBoxFor(m => m.UD14, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.UD14)
+                                        </div>
+                                        <div class="form-group">
+                                            <label>User-Defined 15</label>
+                                            @Html.TextBoxFor(m => m.UD15, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(m => m.UD15)
+                                        </div>
+                                    </div>*@
+
+
+
+                                <div class="col-md-12">
+                                    <div class="large-title no-margin">Employee-Personal </div>
+                                    <div class="white-box clearfix">
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label>Date of Birth</label>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group col-md-4">
+                                                            <label>Year</label>
+                                                            <select id="years" class="form-control"></select>
+                                                        </div>
+                                                        <div class="form-group col-md-4">
+                                                            <label>Month</label>
+                                                            <select id="months" class="form-control"></select>
+                                                        </div>
+                                                        <div class="form-group col-md-4">
+                                                            <label>Day</label>
+                                                            <select id="days" class="form-control"></select>
+                                                        </div>
+                                                        @Html.HiddenFor(m => m.Day)
+                                                        @Html.HiddenFor(m => m.Month)
+                                                        @Html.HiddenFor(m => m.Year)
+                                                        @*@Html.TextBoxFor(m => m.DateOfBirth, new { @class = "form-control" })*@
+                                                        @*@Html.ValidationMessageFor(m => m.DateOfBirth)*@
                                                     </div>
-                                                    <div class="form-group col-md-4">
-                                                        <label>Month</label>
-                                                        <select id="months" class="form-control"></select>
-                                                    </div>
-                                                    <div class="form-group col-md-4">
-                                                        <label>Day</label>
-                                                        <select id="days" class="form-control"></select>
-                                                    </div>
-                                                    @Html.HiddenFor(m => m.Day)
-                                                    @Html.HiddenFor(m => m.Month)
-                                                    @Html.HiddenFor(m => m.Year)
-                                                    @*@Html.TextBoxFor(m => m.DateOfBirth, new { @class = "form-control" })*@
-                                                    @*@Html.ValidationMessageFor(m => m.DateOfBirth)*@
                                                 </div>
                                             </div>
                                         </div>
+
+
+                                        <div class="col-md-4">
+
+                                            <div class="form-group">
+                                                <label>Type of ID:</label>
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.IDType1, new { @class = "form-control" })
+
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.IDType2, new { @class = "form-control" })
+
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.IDType3, new { @class = "form-control" })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>ID Number:</label>
+                                            </div>
+
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.IDNumber1, new { @class = "form-control" })
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.IDNumber2, new { @class = "form-control" })
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.IDNumber3, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Default ID</label>
+                                            </div>
+
+                                            <div class="form-group">
+                                                @Html.RadioButtonFor(m => m.IDDefault1, 1)
+                                            </div>
+
+                                            <div class="form-group">
+                                                @Html.RadioButtonFor(m => m.IDDefault1, 2)
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.RadioButtonFor(m => m.IDDefault1, 3)
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-12 clearfix no-margin-bottom">
+                                            <input type="submit" value="@(Model.EmployeeID > 0 ? "Update" :"Create")" class="btn btn-success@(Model.EmployeeID>0?" edit":" add")" id="formEmployeesPersonal" />
+                                        </div>
+
                                     </div>
-
-
-                                    <div class="col-md-4">
-
-                                        <div class="form-group">
-                                            <label>Type of ID:</label>
-                                        </div>
-                                        <div class="form-group">
-                                            @Html.TextBoxFor(m => m.IDType1, new { @class = "form-control" })
-
-                                        </div>
-                                        <div class="form-group">
-                                            @Html.TextBoxFor(m => m.IDType2, new { @class = "form-control" })
-
-                                        </div>
-                                        <div class="form-group">
-                                            @Html.TextBoxFor(m => m.IDType3, new { @class = "form-control" })
-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>ID Number:</label>
-                                        </div>
-
-                                        <div class="form-group">
-                                            @Html.TextBoxFor(m => m.IDNumber1, new { @class = "form-control" })
-                                        </div>
-                                        <div class="form-group">
-                                            @Html.TextBoxFor(m => m.IDNumber2, new { @class = "form-control" })
-                                        </div>
-                                        <div class="form-group">
-                                            @Html.TextBoxFor(m => m.IDNumber3, new { @class = "form-control" })
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Default ID</label>
-                                        </div>
-
-                                        <div class="form-group">
-                                            @Html.RadioButtonFor(m => m.IDDefault1, 1)
-                                        </div>
-
-                                        <div class="form-group">
-                                            @Html.RadioButtonFor(m => m.IDDefault1, 2)
-                                        </div>
-                                        <div class="form-group">
-                                            @Html.RadioButtonFor(m => m.IDDefault1, 3)
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-md-12 clearfix no-margin-bottom">
-                                        <input type="submit" value="@(Model.EmployeeID > 0 ? "Update" :"Create")" class="btn btn-success@(Model.EmployeeID>0?" edit":" add")" id="formEmployeesPersonal" />
-                                    </div>
-
                                 </div>
+
+
+
                             </div>
 
-
-
                         </div>
-
-                    </div>
                     }
 
                 </div>
@@ -707,31 +728,31 @@
                         <div class="large-title">Employee- Linked Files</div>
                         @using (Html.BeginForm("EmployeesLInkedFiles", "Employees", FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off", @id = "EmployeesLInkedFiles" }))
                         {
-                        @Html.HiddenFor(m => m.EmployeeID)
-                        <input type="hidden" id="LinkedId" name="LinkedId" value="0" />
-                        <div class="col-md-6">
-                            <div class="white-box clearfix">
-                                <div class="form-group clearfix">
-                                    <label>Description</label>
-                                    <input type="text" class="form-control" id="Description" name="Description" />
-                                    <span style="color: red" id="spanDesc"></span>
+                            @Html.HiddenFor(m => m.EmployeeID)
+                            <input type="hidden" id="LinkedId" name="LinkedId" value="0" />
+                            <div class="col-md-6">
+                                <div class="white-box clearfix">
+                                    <div class="form-group clearfix">
+                                        <label>Description</label>
+                                        <input type="text" class="form-control" id="Description" name="Description" />
+                                        <span style="color: red" id="spanDesc"></span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="white-box clearfix" style="min-height:138px;">
-                                <div class="form-group clearfix">
-                                    <input type="file" id="fileUpload" name="fileUpload" class="flubtn" />
-                                    <span style="color: red" id="spanUpload"></span>
+                            <div class="col-md-6">
+                                <div class="white-box clearfix" style="min-height:138px;">
+                                    <div class="form-group clearfix">
+                                        <input type="file" id="fileUpload" name="fileUpload" class="flubtn" />
+                                        <span style="color: red" id="spanUpload"></span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group clearfix">
-                                <input type="submit" value="Save" id="LinkedButton" class="btn btn-success" />
-                                <input type="button" value="Cancel" id="ResetButton" class="btn btn-white" />
+                            <div class="col-md-12">
+                                <div class="form-group clearfix">
+                                    <input type="submit" value="Save" id="LinkedButton" class="btn btn-success" />
+                                    <input type="button" value="Cancel" id="ResetButton" class="btn btn-white" />
+                                </div>
                             </div>
-                        </div>
                         }
 
                     </div>
@@ -756,14 +777,14 @@
                                     {
                                         foreach (var items in Model.EmployeeLinkedList)
                                         {
-                                    <tr id="Linked@(items.Id)">
-                                        <td>@items.Description</td>
-                                        <td><a href="@items.FilePath" download="@items.FilePath.Split('/').Last()" class="product-item">@items.FilePath.Split('/').Last()</a></td>
-                                        <td>
-                                            <a href="javascript:;" class="btn small btn-info btn-sm btn-icon newbtncls" onclick="bindLinkedData('@items.Id','@HttpUtility.JavaScriptStringEncode(items.Description)','@HttpUtility.JavaScriptStringEncode(items.FilePath)')"><i class="fa fa-pencil"></i></a>
-                                            <a href="javascript:;" class="btn small btn-danger btn-sm delete-sm newbtncls" onclick="DeleteLinkedItem(@items.Id)"><i class="fa fa-trash"></i></a>
-                                        </td>
-                                    </tr>
+                                            <tr id="Linked@(items.Id)">
+                                                <td>@items.Description</td>
+                                                <td><a href="@items.FilePath" download="@items.FilePath.Split('/').Last()" class="product-item">@items.FilePath.Split('/').Last()</a></td>
+                                                <td>
+                                                    <a href="javascript:;" class="btn small btn-info btn-sm btn-icon newbtncls" onclick="bindLinkedData('@items.Id','@HttpUtility.JavaScriptStringEncode(items.Description)','@HttpUtility.JavaScriptStringEncode(items.FilePath)')"><i class="fa fa-pencil"></i></a>
+                                                    <a href="javascript:;" class="btn small btn-danger btn-sm delete-sm newbtncls" onclick="DeleteLinkedItem(@items.Id)"><i class="fa fa-trash"></i></a>
+                                                </td>
+                                            </tr>
                                         }
                                     }
 
@@ -776,147 +797,147 @@
 
                 </div>
 
-               @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Permission", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
-               {
+                @if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Employee Permission", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Employees")))
+                {
 
-                <div class="tab-pane" id="Permissions">
-                    <div class="large-title">Employee Access Permission </div>
-                    <div class="col-md-12">
-                        <div class="panel-body all-box" style="padding:0px;">
-                            <div class="white-box clearfix">
-                                <div class="table-responsive">
-                                    <h3> Employee Creator Details </h3>
-                                    <table id="tblReportCreatorDetails" class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>First Name</th>
-                                                <th>Last Name</th>
-                                                <th>User Name</th>
-                                                <th>Date Created</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr class='has-sub'>
-                                                <td>@Model.CreatorFirstName</td>
-                                                <td>@Model.CreatorLastName</td>
-                                                <td>@Model.CreatedByUser</td>
-                                                <td>@Model.CreatedDate</td>
+                    <div class="tab-pane" id="Permissions">
+                        <div class="large-title">Employee Access Permission </div>
+                        <div class="col-md-12">
+                            <div class="panel-body all-box" style="padding:0px;">
+                                <div class="white-box clearfix">
+                                    <div class="table-responsive">
+                                        <h3> Employee Creator Details </h3>
+                                        <table id="tblReportCreatorDetails" class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>User Name</th>
+                                                    <th>Date Created</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class='has-sub'>
+                                                    <td>@Model.CreatorFirstName</td>
+                                                    <td>@Model.CreatorLastName</td>
+                                                    <td>@Model.CreatedByUser</td>
+                                                    <td>@Model.CreatedDate</td>
 
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="white-box clearfix">
-                                <div class="col-md-12">
-                                    <h3>User Base Permission </h3>
-                                    <div class="box-bg">
-                                        <div class="col-md-3">
-                                            <div class="col-md-12">
-                                                <h3> Users</h3>
+                                <div class="white-box clearfix">
+                                    <div class="col-md-12">
+                                        <h3>User Base Permission </h3>
+                                        <div class="box-bg">
+                                            <div class="col-md-3">
+                                                <div class="col-md-12">
+                                                    <h3> Users</h3>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <select name="listUsers" id="listUsers" class="form-control" size="5" style="width: 411px; height: 316px;"></select>
+                                                </div>
                                             </div>
-                                            <div class="panel-body">
-                                                <select name="listUsers" id="listUsers" class="form-control" size="5" style="width: 411px; height: 316px;"></select>
-                                            </div>
-                                        </div>
 
-                                        <div class="col-md-1 text-center">
-                                            <div class="custom-top-margin">
-                                                <button type="button" class="btn btn-success btnwidh" id="btnadduser" onclick="AddUsersInList(this.id);">></button>
-                                                <br />
-                                                <button type="button" class="btn btn-success btnwidh" id="btnaddalluser" onclick="AddUsersInList(this.id);">>></button>
-                                                <br />
-                                                <button type="button" class="btn btn-danger btnwidh" id="btnremoveuser" onclick="RemoveUsersInList(this.id);"><</button>
-                                                <br />
-                                                <button type="button" class="btn btn-danger btnwidh" id="btnremovealluser" onclick="RemoveUsersInList(this.id);"><<</button>
+                                            <div class="col-md-1 text-center">
+                                                <div class="custom-top-margin">
+                                                    <button type="button" class="btn btn-success btnwidh" id="btnadduser" onclick="AddUsersInList(this.id);">></button>
+                                                    <br />
+                                                    <button type="button" class="btn btn-success btnwidh" id="btnaddalluser" onclick="AddUsersInList(this.id);">>></button>
+                                                    <br />
+                                                    <button type="button" class="btn btn-danger btnwidh" id="btnremoveuser" onclick="RemoveUsersInList(this.id);"><</button>
+                                                    <br />
+                                                    <button type="button" class="btn btn-danger btnwidh" id="btnremovealluser" onclick="RemoveUsersInList(this.id);"><<</button>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="col-md-3">
-                                            <div class="col-md-12">
-                                                <h3> Access Users</h3>
+                                            <div class="col-md-3">
+                                                <div class="col-md-12">
+                                                    <h3> Access Users</h3>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <select name="listReportAccessUsers" id="listReportAccessUsers" size="5" class="form-control" style="width: 411px; height: 316px;"></select>
+                                                </div>
                                             </div>
-                                            <div class="panel-body">
-                                                <select name="listReportAccessUsers" id="listReportAccessUsers" size="5" class="form-control" style="width: 411px; height: 316px;"></select>
-                                            </div>
-                                        </div>
 
-                                        <div class="col-md-5">
-                                            <h3 class="check-space">Permissions</h3>
-                                            <div class="checkbox-inline">
-                                                <input type="checkbox" value="1" name="View" class="ByUsers" id="ByUserReportView" />
-                                                <label>View</label>
-                                            </div>
-                                            <div class="checkbox-inline">
-                                                <input type="checkbox" value="2" name="Edit" class="ByUsers" id="ByUserReportEdit" />
-                                                <label>Edit</label>
-                                            </div>
-                                            <div class="checkbox-inline">
-                                                <input type="checkbox" value="3" name="Delete" class="ByUsers" id="ByUserReportDelete" />
-                                                <label>Delete</label>
+                                            <div class="col-md-5">
+                                                <h3 class="check-space">Permissions</h3>
+                                                <div class="checkbox-inline">
+                                                    <input type="checkbox" value="1" name="View" class="ByUsers" id="ByUserReportView" />
+                                                    <label>View</label>
+                                                </div>
+                                                <div class="checkbox-inline">
+                                                    <input type="checkbox" value="2" name="Edit" class="ByUsers" id="ByUserReportEdit" />
+                                                    <label>Edit</label>
+                                                </div>
+                                                <div class="checkbox-inline">
+                                                    <input type="checkbox" value="3" name="Delete" class="ByUsers" id="ByUserReportDelete" />
+                                                    <label>Delete</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="white-box clearfix">
-                                <div class="col-md-12">
-                                    <h3>Role Base Permission </h3>
-                                    <div class="box-bg">
-                                        <div class="col-md-3">
-                                            <div class="col-md-12">
-                                                <h3> Roles</h3>
+                                <div class="white-box clearfix">
+                                    <div class="col-md-12">
+                                        <h3>Role Base Permission </h3>
+                                        <div class="box-bg">
+                                            <div class="col-md-3">
+                                                <div class="col-md-12">
+                                                    <h3> Roles</h3>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <select name="listRoles" id="listRoles" class="form-control" size="5" style="width: 411px; height: 200px;"></select>
+                                                </div>
                                             </div>
-                                            <div class="panel-body">
-                                                <select name="listRoles" id="listRoles" class="form-control" size="5" style="width: 411px; height: 200px;"></select>
-                                            </div>
-                                        </div>
 
-                                        <div class="col-md-1 text-center">
-                                            <div class="custom-top-margin">
-                                                <button type="button" class="btn btn-success btnwidh" id="btnaddrole" onclick="AddRoleInList(this.id);"> > </button>
-                                                <br />
-                                                <button type="button" class="btn btn-success btnwidh" id="btnaddallrole" onclick="AddRoleInList(this.id);"> >> </button>
-                                                <br />
-                                                <button type="button" class="btn btn-danger btnwidh" id="btnremoverole" onclick="RemoveRoleInList(this.id);"> < </button>
-                                                <br />
-                                                <button type="button" class="btn btn-danger btnwidh" id="btnremoveallrole" onclick="RemoveRoleInList(this.id);"> << </button>
+                                            <div class="col-md-1 text-center">
+                                                <div class="custom-top-margin">
+                                                    <button type="button" class="btn btn-success btnwidh" id="btnaddrole" onclick="AddRoleInList(this.id);"> > </button>
+                                                    <br />
+                                                    <button type="button" class="btn btn-success btnwidh" id="btnaddallrole" onclick="AddRoleInList(this.id);"> >> </button>
+                                                    <br />
+                                                    <button type="button" class="btn btn-danger btnwidh" id="btnremoverole" onclick="RemoveRoleInList(this.id);"> < </button>
+                                                    <br />
+                                                    <button type="button" class="btn btn-danger btnwidh" id="btnremoveallrole" onclick="RemoveRoleInList(this.id);"> << </button>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="col-md-3">
-                                            <div class="col-md-12">
-                                                <h3> Access Roles</h3>
+                                            <div class="col-md-3">
+                                                <div class="col-md-12">
+                                                    <h3> Access Roles</h3>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <select name="listReportAccessRoles" id="listReportAccessRoles" size="5" class="form-control" style="width: 411px; height: 200px;"></select>
+                                                </div>
                                             </div>
-                                            <div class="panel-body">
-                                                <select name="listReportAccessRoles" id="listReportAccessRoles" size="5" class="form-control" style="width: 411px; height: 200px;"></select>
-                                            </div>
-                                        </div>
 
-                                        <div class="col-md-5">
-                                            <h3 class="check-space"> Permissions</h3>
-                                            <div class="checkbox-inline">
-                                                <input type="checkbox" value="4" name="View" class="ByRoles" id="ByRoleReportView" />
-                                                <label>View</label>
-                                            </div>
-                                            <div class="checkbox-inline">
-                                                <input type="checkbox" value="5" name="Edit" class="ByRoles" id="ByRoleReportEdit" />
-                                                <label>Edit</label>
-                                            </div>
-                                            <div class="checkbox-inline">
-                                                <input type="checkbox" value="6" name="Delete" class="ByRoles" id="ByRoleReportDelete" />
-                                                <label>Delete</label>
+                                            <div class="col-md-5">
+                                                <h3 class="check-space"> Permissions</h3>
+                                                <div class="checkbox-inline">
+                                                    <input type="checkbox" value="4" name="View" class="ByRoles" id="ByRoleReportView" />
+                                                    <label>View</label>
+                                                </div>
+                                                <div class="checkbox-inline">
+                                                    <input type="checkbox" value="5" name="Edit" class="ByRoles" id="ByRoleReportEdit" />
+                                                    <label>Edit</label>
+                                                </div>
+                                                <div class="checkbox-inline">
+                                                    <input type="checkbox" value="6" name="Delete" class="ByRoles" id="ByRoleReportDelete" />
+                                                    <label>Delete</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                </div>
+                    </div>
                 }
             </div>
         </div>
@@ -1223,7 +1244,7 @@
             }
             else
             {
-                if ('@Model.EmployeeID' > 0) 
+                if ('@Model.EmployeeID' > 0)
                 {
                     $('#myTab a[href="' + activeTab + '"]').tab('show');
                 }
@@ -1803,6 +1824,8 @@
                 success: function (data) {
                     if (data == "success") {
                         alert('Image Assign successfuly!!');
+                        location.reload();
+                        $(document).scrollTop(0);
                     }
                     else {
                         alert(' Error in Request!!');
@@ -2418,7 +2441,7 @@
     /* -------- Remove Users in List ---------- */
     function RemoveUsersInList(btnid) {
 
-        
+
         var x = DeleteConfirm('@ViewBag.Action');
         if (x) {
             var values = [];
@@ -2589,7 +2612,7 @@
     /* -------- Reports Access Permission By User ---------- */
     function ReportsAccessPermission(id)
     {
-        
+
         $.ajax({
             url: '@Url.Content("~/Employee/Employees/EmployeeAccessPermission_ByUser")',
             data: JSON.stringify({ 'ID': id, 'EmployeeID': '@Model.EmployeeID' }),
@@ -2921,7 +2944,6 @@
     .btnwidh {
         width: 44px;
     }
-    
 </style>
 @*<script src="~/assets/js/jquery.form.js"></script>
     <script>

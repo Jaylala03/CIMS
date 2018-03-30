@@ -129,3 +129,35 @@ D:\CIMS\CIMS\bin\CIMS.DbServices.pdb
 D:\CIMS\CIMS\obj\Debug\CIMS.csprojResolveAssemblyReference.cache
 D:\CIMS\CIMS\obj\Debug\CIMS.dll
 D:\CIMS\CIMS\obj\Debug\CIMS.pdb
+G:\Jay Bhai\CIMSWorking\CIMS\obj\Debug\CIMS.csprojResolveAssemblyReference.cache
+G:\Jay Bhai\CIMSWorking\CIMS\bin\ApplicationInsights.config
+G:\Jay Bhai\CIMSWorking\CIMS\bin\roslyn\csc.exe
+G:\Jay Bhai\CIMSWorking\CIMS\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+G:\Jay Bhai\CIMSWorking\CIMS\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+G:\Jay Bhai\CIMSWorking\CIMS\bin\roslyn\Microsoft.CodeAnalysis.dll
+G:\Jay Bhai\CIMSWorking\CIMS\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+G:\Jay Bhai\CIMSWorking\CIMS\bin\roslyn\Microsoft.CSharp.Core.targets
+G:\Jay Bhai\CIMSWorking\CIMS\bin\roslyn\Microsoft.VisualBasic.Core.targets
+G:\Jay Bhai\CIMSWorking\CIMS\bin\roslyn\System.Collections.Immutable.dll
+G:\Jay Bhai\CIMSWorking\CIMS\bin\roslyn\System.Reflection.Metadata.dll
+G:\Jay Bhai\CIMSWorking\CIMS\bin\roslyn\vbc.exe
+G:\Jay Bhai\CIMSWorking\CIMS\bin\roslyn\VBCSCompiler.exe
+G:\Jay Bhai\CIMSWorking\CIMS\bin\roslyn\VBCSCompiler.exe.config
+G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.dll.config
+G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.dll
+G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.pdb
+G:\Jay Bhai\CIMSWorking\CIMS\bin\ASPNetSpell.dll
+G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.ActionLayer.dll
+G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.BaseLayer.dll
+G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.Utility.dll
+G:\Jay Bhai\CIMSWorking\CIMS\bin\EntityFramework.SqlServer.dll
+G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.DataLayer.dll
+G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.DbServices.dll
+G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.ActionLayer.pdb
+G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.BaseLayer.pdb
+G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.Utility.pdb
+G:\Jay Bhai\CIMSWorking\CIMS\bin\EntityFramework.SqlServer.xml
+G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.DataLayer.pdb
+G:\Jay Bhai\CIMSWorking\CIMS\bin\CIMS.DbServices.pdb
+G:\Jay Bhai\CIMSWorking\CIMS\obj\Debug\CIMS.dll
+G:\Jay Bhai\CIMSWorking\CIMS\obj\Debug\CIMS.pdb

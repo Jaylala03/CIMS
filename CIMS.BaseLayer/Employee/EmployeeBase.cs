@@ -12,6 +12,7 @@ namespace CIMS.BaseLayer.Employee
         public int EmpID { get; set; }
         public int UserID { get; set; }
         public string EmpNumber { get; set; }
+        public string EmployeeNumber { get; set; }
         public Decimal Age { get; set; }
         public string Sex { get; set; }
         public string Race { get; set; }
@@ -89,6 +90,10 @@ namespace CIMS.BaseLayer.Employee
         public int CreatedBy { get; set; }
         public string SubjectVIP { get; set; }
         public int RoleID { get; set; }
+
+        public string EmployeeDepartment { get; set; }
+
+        public string SubjectStatus { get; set; }
     }
 
 

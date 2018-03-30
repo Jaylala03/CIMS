@@ -28,6 +28,21 @@ namespace CIMS.Areas.Setting.Controllers
         // GET: /Setting/Setting/
         public ActionResult Index()
         {
+            #region Bind Template Category DropDown
+            CIMS.ActionLayer.Employee.EmployeeAction employeeAction = new CIMS.ActionLayer.Employee.EmployeeAction();
+            List<SelectListItem> lstTemplateCategory = new List<SelectListItem>();
+            actionResult = employeeAction.MasterTemplateCategory_Load();
+            if (actionResult.IsSuccess)
+            {
+                lstTemplateCategory = (from DataRow row in actionResult.dtResult.Rows
+                             select new SelectListItem
+                             {
+                                 Text = row["CategoryName"] != DBNull.Value ? row["CategoryName"].ToString() : "",
+                                 Value = row["Id"] != DBNull.Value ? row["Id"].ToString() : ""
+                             }).ToList();
+            }
+            ViewBag.TemplateCategory = lstTemplateCategory;
+            #endregion
 
             return View();
         }
@@ -118,6 +133,340 @@ namespace CIMS.Areas.Setting.Controllers
             return Json(jsonString, JsonRequestBehavior.AllowGet);
         }
         #endregion
+        //
+
+        //Chirag Employee Department Start
+        #region Bind Employee Department
+        public JsonResult EmployeeDepartment_Load()
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                CIMS.ActionLayer.Employee.EmployeeAction employeeAction = new CIMS.ActionLayer.Employee.EmployeeAction();
+                actionResult = employeeAction.MasterEmployeeDepartment_Load();
+                if (actionResult.IsSuccess && actionResult.dtResult.Rows.Count > 0)
+                {
+                    for (int i = 0; i < actionResult.dtResult.Rows.Count; i++)
+                    {
+                        jsonString += "<tr class='tableRow' data-id=" + actionResult.dtResult.Rows[i]["id"].ToString() + " style='cursor: pointer'>";
+                        jsonString += "<td class='tableCell'>" + actionResult.dtResult.Rows[i]["DepartmentType"].ToString() + " </td>";
+                        jsonString += "<td class='removefromtable'>";
+                        jsonString += "<a href='javascript:;' onclick='EditEmployeeDepartment(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",&#39;" + actionResult.dtResult.Rows[i]["DepartmentType"].ToString() + "&#39;);' class='btn small btn-info btn-sm btn-icon edit' title='Edit'><i class='fa fa-pencil'></i></a>";
+                        jsonString += "<a class='btn btn-danger small btn-sm delete-sm' href='javascript:;' onclick='DeleteEmployeeDepartment(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",this);' title='Delete'><i class='fa fa-trash'></i></a>";
+                        jsonString += "</td></tr>";
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region Employee Department IU
+        public JsonResult EmployeeDepartment_IU(int ID, string Name)
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                EmployeeDepartmentBase employeeDepartmentBase = new EmployeeDepartmentBase();
+                employeeDepartmentBase.EmployeeDepartmentID = ID;
+                employeeDepartmentBase.EmployeeDepartmentName = Name;
+                actionResult = settingAction.EmployeeDepartment_IU(employeeDepartmentBase);
+                if (actionResult.IsSuccess)
+                {
+                    jsonString = "success";
+                }
+                else
+                {
+                    jsonString = "error";
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region Employee Department Delete
+        public JsonResult EmployeeDepartment_Delete(int ID)
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                EmployeeDepartmentBase employeeDepartmentBase = new EmployeeDepartmentBase();
+                employeeDepartmentBase.EmployeeDepartmentID = ID;
+                actionResult = settingAction.EmployeeDepartment_Delete(employeeDepartmentBase);
+                if (actionResult.IsSuccess)
+                {
+                    jsonString = "success";
+                }
+                else
+                {
+                    jsonString = "error";
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+        //End
+
+
+        //Chirag Template Category Start
+        #region Bind Template Category
+        public JsonResult TemplateCategory_Load()
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                CIMS.ActionLayer.Employee.EmployeeAction employeeAction = new CIMS.ActionLayer.Employee.EmployeeAction();
+                actionResult = employeeAction.MasterTemplateCategory_Load();
+                if (actionResult.IsSuccess && actionResult.dtResult.Rows.Count > 0)
+                {
+                    for (int i = 0; i < actionResult.dtResult.Rows.Count; i++)
+                    {
+                        jsonString += "<tr class='tableRow' data-id=" + actionResult.dtResult.Rows[i]["id"].ToString() + " style='cursor: pointer'>";
+                        jsonString += "<td class='tableCell'>" + actionResult.dtResult.Rows[i]["CategoryName"].ToString() + " </td>";
+                        jsonString += "<td class='removefromtable'>";
+                        jsonString += "<a href='javascript:;' onclick='EditTemplateCategory(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",&#39;" + actionResult.dtResult.Rows[i]["CategoryName"].ToString() + "&#39;);' class='btn small btn-info btn-sm btn-icon edit' title='Edit'><i class='fa fa-pencil'></i></a>";
+                        jsonString += "<a class='btn btn-danger small btn-sm delete-sm' href='javascript:;' onclick='DeleteTemplateCategory(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",this);' title='Delete'><i class='fa fa-trash'></i></a>";
+                        jsonString += "</td></tr>";
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region Template Category IU
+        public JsonResult TemplateCategory_IU(int ID, string Name)
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                TemplateCategoryBase templateCategoryBase = new TemplateCategoryBase();
+                templateCategoryBase.TemplateCategoryID = ID;
+                templateCategoryBase.TemplateCategoryName = Name;
+                actionResult = settingAction.TemplateCategory_IU(templateCategoryBase);
+                if (actionResult.IsSuccess)
+                {
+                    jsonString = "success";
+                }
+                else
+                {
+                    jsonString = "error";
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region Template Category Delete
+        public JsonResult TemplateCategory_Delete(int ID)
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                TemplateCategoryBase templateCategoryBase = new TemplateCategoryBase();
+                templateCategoryBase.TemplateCategoryID = ID;
+                actionResult = settingAction.TemplateCategory_Delete(templateCategoryBase);
+                if (actionResult.IsSuccess)
+                {
+                    jsonString = "success";
+                }
+                else
+                {
+                    jsonString = "error";
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+        //End
+
+        //Chirag Template Category Type Start
+        #region Bind Template Category Type
+        public JsonResult TemplateCategoryType_Load()
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                CIMS.ActionLayer.Employee.EmployeeAction employeeAction = new CIMS.ActionLayer.Employee.EmployeeAction();
+                actionResult = employeeAction.MasterTemplateCategoryType_Load();
+                if (actionResult.IsSuccess && actionResult.dtResult.Rows.Count > 0)
+                {
+                    for (int i = 0; i < actionResult.dtResult.Rows.Count; i++)
+                    {
+                        System.Text.RegularExpressions.Regex rx = new System.Text.RegularExpressions.Regex("<[^>]*>");
+                        string con, repCon;
+                        con = actionResult.dtResult.Rows[i]["Content"].ToString();
+                        repCon = rx.Replace(con, "").Replace("\n","");
+
+                        jsonString += "<tr class='tableRow' data-id=" + actionResult.dtResult.Rows[i]["id"].ToString() + " style='cursor: pointer'>";
+                        jsonString += "<td class='tableCell'>" + actionResult.dtResult.Rows[i]["CategoryName"].ToString() + " </td>";
+                        jsonString += "<td class='tableCell'>" + actionResult.dtResult.Rows[i]["TemplateName"].ToString() + " </td>";
+                        jsonString += "<td class='tableCell'>" + actionResult.dtResult.Rows[i]["Content"].ToString() + " </td>";
+                        jsonString += "<td class='removefromtable'>";
+                        jsonString += "<a href='javascript:;' onclick='EditTemplateCategoryType(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",&#39;" + actionResult.dtResult.Rows[i]["TemplateName"].ToString() + "&#39;," + actionResult.dtResult.Rows[i]["MasterTemplateCategoryid"].ToString() + ",&#39;" + repCon.ToString() + "&#39;);' class='btn small btn-info btn-sm btn-icon edit' title='Edit'><i class='fa fa-pencil'></i></a>";
+                        jsonString += "<a class='btn btn-danger small btn-sm delete-sm' href='javascript:;' onclick='DeleteTemplateCategoryType(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",this);' title='Delete'><i class='fa fa-trash'></i></a>";
+                        jsonString += "</td></tr>";
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region Template Category Type IU
+        public JsonResult TemplateCategoryType_IU(int ID, int CategoryID, string Name, string Content)
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                TemplateCategoryTypeBase templateCategoryTypeBase = new TemplateCategoryTypeBase();
+                templateCategoryTypeBase.TemplateCategoryTypeID = ID;
+                templateCategoryTypeBase.TemplateCategoryID = CategoryID;
+                templateCategoryTypeBase.TemplateCategoryTypeName = Name;
+                templateCategoryTypeBase.TemplateCategoryTypeContent = Content;
+                templateCategoryTypeBase.CreatedBy = 0;
+
+                actionResult = settingAction.TemplateCategoryType_IU(templateCategoryTypeBase);
+                if (actionResult.IsSuccess)
+                {
+                    jsonString = "success";
+                }
+                else
+                {
+                    jsonString = "error";
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+        //End
+
+        //Chirag Subject Status Start
+        #region Bind Subject Status
+        public JsonResult SubjectStatus_Load()
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                CIMS.ActionLayer.Employee.EmployeeAction employeeAction = new CIMS.ActionLayer.Employee.EmployeeAction();
+                actionResult = employeeAction.SubjectStatus_Load();
+                if (actionResult.IsSuccess && actionResult.dtResult.Rows.Count > 0)
+                {
+                    for (int i = 0; i < actionResult.dtResult.Rows.Count; i++)
+                    {
+                        jsonString += "<tr class='tableRow' data-id=" + actionResult.dtResult.Rows[i]["id"].ToString() + " style='cursor: pointer'>";
+                        jsonString += "<td class='tableCell'>" + actionResult.dtResult.Rows[i]["Status"].ToString() + " </td>";
+                        jsonString += "<td class='removefromtable'>";
+                        jsonString += "<a href='javascript:;' onclick='EditSubjectStatus(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",&#39;" + actionResult.dtResult.Rows[i]["Status"].ToString() + "&#39;);' class='btn small btn-info btn-sm btn-icon edit' title='Edit'><i class='fa fa-pencil'></i></a>";
+                        jsonString += "<a class='btn btn-danger small btn-sm delete-sm' href='javascript:;' onclick='DeleteSubjectStatus(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",this);' title='Delete'><i class='fa fa-trash'></i></a>";
+                        jsonString += "</td></tr>";
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region Subject Status IU
+        public JsonResult SubjectStatus_IU(int ID, string Name)
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                SubjectStatusBase subjectStatusBase = new SubjectStatusBase();
+                subjectStatusBase.SubjectStatusID = ID;
+                subjectStatusBase.SubjectStatusName = Name;
+                actionResult = settingAction.SubjectStatus_IU(subjectStatusBase);
+                if (actionResult.IsSuccess)
+                {
+                    jsonString = "success";
+                }
+                else
+                {
+                    jsonString = "error";
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region Subject Status Delete
+        public JsonResult SubjectStatus_Delete(int ID)
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                SubjectStatusBase subjectStatusBase = new SubjectStatusBase();
+                subjectStatusBase.SubjectStatusID = ID;
+                actionResult = settingAction.SubjectStatus_Delete(subjectStatusBase);
+                if (actionResult.IsSuccess)
+                {
+                    jsonString = "success";
+                }
+                else
+                {
+                    jsonString = "error";
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+        //End
 
         // License Type
         #region Bind License Type

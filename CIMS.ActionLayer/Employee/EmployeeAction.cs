@@ -1029,6 +1029,126 @@ namespace CIMS.ActionLayer.Employee
         }
         #endregion
 
+        #region Method MasterEmployeeDepartment_Load
+        public ActionResult MasterEmployeeDepartment_Load()
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = employeeDL.MasterEmployeeDepartment_Load();
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+        #endregion
+
+        #region Method MasterTemplateCategory_Load
+        public ActionResult MasterTemplateCategory_Load()
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = employeeDL.MasterTemplateCategory_Load();
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+        #endregion
+
+        #region Method MasterTemplateCategoryType_Load
+        public ActionResult MasterTemplateCategoryType_Load()
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = employeeDL.MasterTemplateCategoryType_Load();
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+        #endregion
+
+        #region Method TemplateCategoryTypeByID_Load
+        public ActionResult TemplateCategoryTypeByID_Load(int CategoryID)
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = employeeDL.TemplateCategoryTypeByID_Load(CategoryID);
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+        #endregion
+
+        #region Method TemplateCategoryTypeByID_ContentLoad
+        public ActionResult TemplateCategoryTypeByID_ContentLoad(int CategoryTypeID)
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = employeeDL.TemplateCategoryTypeByID_ContentLoad(CategoryTypeID);
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+        #endregion
+
+        #region Method SubjectStatus_Load
+        public ActionResult SubjectStatus_Load()
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = employeeDL.SubjectStatus_Load();
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+        #endregion
+
         #region Method MasterLicenseType_Load
         public ActionResult MasterLicenseType_Load()
         {

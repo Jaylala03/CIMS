@@ -77,6 +77,13 @@
                             </div>
                         </div>
 
+                        <div class="form-group clearfix">                            
+                            @Html.Label("Subject number", new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">                                
+                                @Html.TextBox("SubjectNumber", null, new { @class = "form-control", @maxlength = "6" })
+                            </div>
+                        </div>
+
                         <div class="form-group clearfix">
                             @Html.Label("FirstName", new { @class = "control-label col-md-12" })
                             <div class="col-md-12">
@@ -177,6 +184,13 @@
                             @Html.Label("FacialHair", new { @class = "control-label col-md-12" })
                             <div class="col-md-12">
                                 @Html.DropDownList("FacialHair", ViewBag.lstFacial as List<SelectListItem>, "Unknown", new { @class = "form-control" })
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            @Html.Label("SubjectStatus", new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">
+                                @Html.DropDownList("SubjectStatus", ViewBag.lstSubjectStatus as List<SelectListItem>, "Unknown", new { @class = "form-control" })
                             </div>
                         </div>
 
@@ -444,7 +458,8 @@
                 '&DateOfBirth=' + encodeURIComponent($('#DateOfBirth').val()) +
                 '&HairLength=' + encodeURIComponent($('#HairLength').val()) +
                 '&HairColor=' + encodeURIComponent($('#HairColor').val()) +
-                '&FacialHair=' + encodeURIComponent($('#FacialHair').val())
+                '&FacialHair=' + encodeURIComponent($('#FacialHair').val()) +
+                '&SubjectStatus=' + encodeURIComponent($('#SubjectStatus').val())
             ;
         }
     });

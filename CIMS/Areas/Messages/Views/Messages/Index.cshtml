@@ -1,10 +1,8 @@
 ﻿@model CIMS.Models.MessagesModel
-
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_InternalLayout.cshtml";
 }
-
 @*<h2>Index</h2>*@
 <style>
     .groupOfTexbox {
@@ -13,7 +11,6 @@
     .groupOfTexbox1 {
     }
 </style>
-
 
 <div class="row bg-title">
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
@@ -25,9 +22,7 @@
             <li class="active">Messages</li>
         </ol>
     </div>
-
 </div>
-
 <div id="msgDiv">
     @if (TempData["SuccessMessage"] != null)
     {
@@ -38,43 +33,71 @@
         <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
     }
 </div>
-
 <div class="row">
     <div class="col-md-12">
         <div class="col-md-3">
+
             <div class="white-box clearfix" style="min-height: 690px;">
                 <div class="row">
-                    <div class="col-md-12">
-                        <label class="control-label">Group </label>
+                    Individual @Html.RadioButton("Messages", "Individual", new { @id = "optIndividual" })
+                    Group @Html.RadioButton("Messages", "Group", new { @id = "optGroup", @checked = "checked" })
+                </div>
+                <div id="GroupDiv">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="control-label">Group </label>
+                        </div>
+                        <div class="col-md-12">
+                            @Html.ListBox("MessageGroupTable", new MultiSelectList(Model.msgGroupList, "GroupName", "GroupName"), new { @class = "form-control" })
+                            @*<select name="MessageGroupTable" id="MessageGroupTable" size="5" class="form-control" style="width: 411px; height: 200px;"></select>*@
+                        </div>
                     </div>
                     <div class="col-md-12">
-                        @Html.ListBox("MessageGroupTable", new MultiSelectList(Model.msgGroupList, "GroupName", "GroupName"), new { @class = "form-control" })
-                        @*<select name="MessageGroupTable" id="MessageGroupTable" size="5" class="form-control" style="width: 411px; height: 200px;"></select>*@
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    &nbsp;
-                </div>
-                <div class="col-md-12">
-                    <center>
-                        <a href='@Url.Content("~/Messages/Messages/MessageDistribution")' class="btn btn-primary btn-mini add"><i class="fa fa-pencil"></i> Edit</a>
-                    </center>
-                </div>
-                <div class="col-md-12">
-                    &nbsp;
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <label class="control-label">Reciptense</label>
+                        &nbsp;
                     </div>
                     <div class="col-md-12">
-                        <select name="ReciptenseUserTable" id="ReciptenseUserTable" size="5" class="form-control" style="width: 411px; height: 200px;"></select>
+                        <center>
+                            <a href='@Url.Content("~/Messages/Messages/MessageDistribution")' class="btn btn-primary btn-mini add"><i class="fa fa-pencil"></i> Edit</a>
+                        </center>
+                    </div>
+                    <div class="col-md-12">
+                        &nbsp;
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="control-label">Reciptense</label>
+                        </div>
+                        <div class="col-md-12">
+                            <select name="ReciptenseUserTable" id="ReciptenseUserTable" size="5" class="form-control" style="width: 411px; height: 200px;"></select>
+                        </div>
+                    </div>
+                </div>
+                <div id="IndividualDiv">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="clearfix"></div>
+                            <label class="control-label">Reciptense</label>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="clearfix"></div>
+                        <table class="table-striped border">
+                            @foreach (var uName in Model.userList)
+                            {
+                                <tr>
+                                    <td align="center">
+                                        <input type="checkbox" id="SelectedNames" value="@uName.UserID" /> &nbsp;&nbsp;&nbsp;
+                                    </td>
+                                    <td>
+                                        &nbsp;&nbsp;@uName.FullName
+                                    </td>
+                                </tr>
+                            }
+                        </table>         
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-md-9">
-
             @using (Html.BeginForm("MessageInsert", "Messages", new { Area = "Messages" }, FormMethod.Post, new { enctype = "multipart/form-data", autocomplete = "off" }))
             {
                 <input type="hidden" id="hdfDraftValue" name="hdfDraftValue" />
@@ -83,35 +106,28 @@
                 @Html.HiddenFor(p => p.MessageID)
 
                 <div class="white-box">
-
                     <div class="form-group">
                         <label class="control-label">Message Description </label>
                         @Html.TextBoxFor(m => m.Description, null, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
-
                     </div>
-
                     <div class="form-group">
                         <label class="control-label">Message Details </label>
                         @Html.TextAreaFor(m => m.MessageText, new { @class = "form-control ckeditor" })
-
                     </div>
-
                     <div class="form-group">
                         <button type="submit" class="btn btn-success add" value="Send" onclick="return Draftvalue(0);">Send</button>
-
                         <button type="submit" class="btn btn-primary add" onclick="return Draftvalue(1);" value="Save">Save as Draft </button>
                     </div>
-
                 </div>
             }
         </div>
     </div>
 </div>
-
 <script>
 
     $(document).ready(function () {
+        $("#IndividualDiv").hide();
         $('#MessageGroupTable>option').on('click', function () {
             var value = $(this).val();
             Fillgroup(value);
@@ -121,16 +137,47 @@
             CKEDITOR.instances['MessageText'].setData('@HttpUtility.JavaScriptStringEncode(Model.MessageText)');
         }*@
 
+
+        $("input[name='Messages']").click(function () {
+            if ($("#optIndividual").is(":checked")) {
+                $("#IndividualDiv").show();
+                $("#GroupDiv").hide();
+            } else {
+                $("#IndividualDiv").hide();
+                $("#GroupDiv").show();
+            }
+        });
+
+
     });
 
 
     function Draftvalue(Draftvalue) {
-        $("#hdfDraftValue").val(Draftvalue);
-        var UserId = $("#ReciptenseUserTable").val();
-        var values = [];
-        values.push(UserId);
-        var datacolumn = values.join(',');
-        $("#hdnMembers").val(datacolumn);
+        if ($("input[type=checkbox]:checked").prop('checked') == true) {
+            $("#hdfDraftValue").val(Draftvalue);
+            var selectedUser = [];
+            $('input[type=checkbox]:checked').each(function () {
+                selectedUser.push($(this).attr("value"));
+            });
+
+            $("#hdnMembers").val(selectedUser);
+
+            
+            
+        }
+        else {
+            $("#hdfDraftValue").val(Draftvalue);
+            var UserId = $("#ReciptenseUserTable").val();
+            var values = [];
+            values.push(UserId);
+            var datacolumn = values.join(',');
+            $("#hdnMembers").val(datacolumn);
+
+            
+            
+        }
+
+        
     }
 
     //function CKupdate() {

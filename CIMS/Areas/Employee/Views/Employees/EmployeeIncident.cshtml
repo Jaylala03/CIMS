@@ -289,6 +289,19 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="white-box clearfix">
+                                    
+                                    <div class="form-group">
+                                        <label class="control-label">Template Category</label>
+                                        @Html.DropDownListFor(m => m.TemplateCategory, Model.TemplateCategoryList as List<SelectListItem>, "Select Template Category", new { @class = "form-control", @id = "TemplateCategoryId" })                                        
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Template Category Type</label>
+                                        @*@Html.DropDownListFor(m => m.TemplateCategoryType, ViewBag.TemplateCategoryTypeList as List<SelectListItem>, "Select Template Category Type", new { @class = "form-control" })*@                                        
+                                        @*@Html.DropDownList("TemplateCategoryType", ViewBag.TemplateCategoryTypeList as List<SelectListItem>, "Select Template Category Type", new { @class = "form-control", @id = "TemplateCategoryTypeID" })*@
+
+                                        <select id="ddlTemplateCategoryType" class = "form-control"><option>Template Category Type</option></select>
+                                    </div>
+
                                     <div class="form-group">
                                         <label class="control-label">Description</label>
 
@@ -1448,6 +1461,48 @@
 
     $(document).ready(function ()
     {
+        $('#TemplateCategoryId').on('change', function () {
+            var selectedtemplatecatid = $('#TemplateCategoryId').val();
+            var ddlTemplateCategoryType = $("#ddlTemplateCategoryType");
+            
+            ddlTemplateCategoryType.val('');            
+           
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/TemplateCategoryTypeByID_Load")',
+                data: JSON.stringify({ 'CategoryID': selectedtemplatecatid }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {                 
+                    ddlTemplateCategoryType.empty().append('<option selected="selected">Template Category Type</option>');
+                    $.each(data, function () {                        
+                        ddlTemplateCategoryType.append($("<option></option>").val(this['Value']).html(this['Text']));
+                    });
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        })
+
+        $('#ddlTemplateCategoryType').on('change', function () {            
+            var selectedtemplatecattypeid = $('#ddlTemplateCategoryType').val();
+            
+            $.ajax({
+                url: '@Url.Content("~/Employee/Employees/TemplateCategoryTypeByID_ContentLoad")',
+                data: JSON.stringify({ 'CategoryTypeID': selectedtemplatecattypeid }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    CKEDITOR.instances.Description.setData(data);
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        })
+
         if (@Model.IncidentID > 0 && '@Model.EditPermission' == 'False') {
             $(".form-control").attr("disabled", "disabled");
             $(".btn").attr("disabled", "disabled");
@@ -3435,7 +3490,7 @@
             }
         }
     });
-    function ReportCreatorPermission(RepId, type, permission) 
+    function ReportCreatorPermission(RepId, type, permission)
     {
         $.ajax({
             url: '@Url.Content("~/Employee/Employees/EmpReportCreatorPermission")',
