@@ -210,18 +210,18 @@ namespace CIMS.Areas.Employee.Controllers
             }
             ViewBag.EmployeeDepartmentList = EmployeeDepartmentList;
 
-            List<SelectListItem> SubjectStatusList = new List<SelectListItem>();
-            actionResult = employeeAction.SubjectStatus_Load();
+            List<SelectListItem> EmployeeStatusList = new List<SelectListItem>();
+            actionResult = employeeAction.EmployeeStatus_Load();
             if (actionResult.IsSuccess)
             {
-                SubjectStatusList = (from DataRow row in actionResult.dtResult.Rows
+                EmployeeStatusList = (from DataRow row in actionResult.dtResult.Rows
                                           select new SelectListItem
                                           {
                                               Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
                                               Value = row["id"] != DBNull.Value ? row["id"].ToString() : ""
                                           }).ToList();
             }
-            ViewBag.SubjectStatusList = SubjectStatusList;
+            ViewBag.EmployeeStatusList = EmployeeStatusList;
 
             ViewBag.BuildList = buildList;
             ViewBag.GenderList = genderList;
@@ -258,7 +258,7 @@ namespace CIMS.Areas.Employee.Controllers
                     model.StaffPosition = dr["StaffPosition"] != DBNull.Value ? dr["StaffPosition"].ToString() : "";
                     model.Glasses = dr["Glasses"] != DBNull.Value ? dr["Glasses"].ToString() : "";
                     model.EmployeeDepartment = dr["Department"] != DBNull.Value ? dr["Department"].ToString() : "";
-                    model.SubjectStatus = dr["SubjectStatusID"] != DBNull.Value ? dr["SubjectStatusID"].ToString() : "";
+                    model.EmployeeStatusID = dr["EmployeeStatusID"] != DBNull.Value ? Convert.ToInt32(dr["EmployeeStatusID"]) : 0;
                     model.ConvertSubject = dr["ConvertSubject"] != DBNull.Value ? Convert.ToBoolean(dr["ConvertSubject"]) : false;
                     if (dr["DateOfBirth"] != DBNull.Value)
                     {
@@ -579,18 +579,18 @@ namespace CIMS.Areas.Employee.Controllers
             }
             ViewBag.EmployeeDepartmentList = EmployeeDepartmentList;
 
-            List<SelectListItem> SubjectStatusList = new List<SelectListItem>();
-            actionResult = employeeAction.SubjectStatus_Load();
+            List<SelectListItem> EmployeeStatusList = new List<SelectListItem>();
+            actionResult = employeeAction.EmployeeStatus_Load();
             if (actionResult.IsSuccess)
             {
-                SubjectStatusList = (from DataRow row in actionResult.dtResult.Rows
-                                     select new SelectListItem
-                                     {
-                                         Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
-                                         Value = row["id"] != DBNull.Value ? row["id"].ToString() : ""
-                                     }).ToList();
+                EmployeeStatusList = (from DataRow row in actionResult.dtResult.Rows
+                                      select new SelectListItem
+                                      {
+                                          Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
+                                          Value = row["id"] != DBNull.Value ? row["id"].ToString() : ""
+                                      }).ToList();
             }
-            ViewBag.SubjectStatusList = SubjectStatusList;
+            ViewBag.EmployeeStatusList = EmployeeStatusList;
 
             ViewBag.BuildList = buildList;
             ViewBag.GenderList = genderList;
@@ -683,7 +683,7 @@ namespace CIMS.Areas.Employee.Controllers
             employee.Sex = model.Sex;
             employee.Race = model.Race;
             employee.EmployeeDepartment = model.EmployeeDepartment;
-            employee.SubjectStatus = model.SubjectStatus;
+            employee.EmployeeStatusID = model.EmployeeStatusID;
 
             if (model.FirstName != null)
             {
@@ -1036,18 +1036,18 @@ namespace CIMS.Areas.Employee.Controllers
             }
             ViewBag.EmployeePosition = empPositionList;
 
-            List<SelectListItem> SubjectStatusList = new List<SelectListItem>();
-            actionResult = employeeAction.SubjectStatus_Load();
+            List<SelectListItem> EmployeeStatusList = new List<SelectListItem>();
+            actionResult = employeeAction.EmployeeStatus_Load();
             if (actionResult.IsSuccess)
             {
-                SubjectStatusList = (from DataRow row in actionResult.dtResult.Rows
-                                     select new SelectListItem
-                                     {
-                                         Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
-                                         Value = row["id"] != DBNull.Value ? row["id"].ToString() : ""
-                                     }).ToList();
+                EmployeeStatusList = (from DataRow row in actionResult.dtResult.Rows
+                                      select new SelectListItem
+                                      {
+                                          Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
+                                          Value = row["id"] != DBNull.Value ? row["id"].ToString() : ""
+                                      }).ToList();
             }
-            ViewBag.SubjectStatusList = SubjectStatusList;
+            ViewBag.EmployeeStatusList = EmployeeStatusList;
 
             ViewBag.BuildList = buildList;
             ViewBag.GenderList = genderList;
@@ -4011,7 +4011,7 @@ namespace CIMS.Areas.Employee.Controllers
                 employee.Height = model.Height;
                 employee.Weight = model.Weight;
                 employee.EmployeeNumber = model.EmployeeNumber;
-                employee.SubjectStatus = model.SubjectStatus;
+                employee.EmployeeStatusID = model.EmployeeStatusID;
 
                 actionResult = employeeAction.AdvancedSearchEmployees(employee);
 
@@ -4036,7 +4036,7 @@ namespace CIMS.Areas.Employee.Controllers
                 employee.Height = model.Height;
                 employee.Weight = model.Weight;
                 employee.EmployeeNumber = model.EmployeeNumber;
-                employee.SubjectStatus = model.SubjectStatus;
+                employee.EmployeeStatusID = model.EmployeeStatusID;
 
                 actionResult = employeeAction.AdvancedSearchEmployees(employee);
                 TempData["EmployeeList"] = actionResult;
@@ -4207,18 +4207,18 @@ namespace CIMS.Areas.Employee.Controllers
             }
             ViewBag.EmployeePosition = empPositionList;
 
-            List<SelectListItem> SubjectStatusList = new List<SelectListItem>();
-            actionResult = employeeAction.SubjectStatus_Load();
+            List<SelectListItem> EmployeeStatusList = new List<SelectListItem>();
+            actionResult = employeeAction.EmployeeStatus_Load();
             if (actionResult.IsSuccess)
             {
-                SubjectStatusList = (from DataRow row in actionResult.dtResult.Rows
-                                     select new SelectListItem
-                                     {
-                                         Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
-                                         Value = row["id"] != DBNull.Value ? row["id"].ToString() : ""
-                                     }).ToList();
+                EmployeeStatusList = (from DataRow row in actionResult.dtResult.Rows
+                                      select new SelectListItem
+                                      {
+                                          Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
+                                          Value = row["id"] != DBNull.Value ? row["id"].ToString() : ""
+                                      }).ToList();
             }
-            ViewBag.SubjectStatusList = SubjectStatusList;
+            ViewBag.EmployeeStatusList = EmployeeStatusList;
 
             ViewBag.BuildList = buildList;
             ViewBag.GenderList = genderList;
@@ -4930,18 +4930,18 @@ namespace CIMS.Areas.Employee.Controllers
             }
             ViewBag.EmployeePosition = empPositionList;
 
-            List<SelectListItem> SubjectStatusList = new List<SelectListItem>();
-            actionResult = employeeAction.SubjectStatus_Load();
+            List<SelectListItem> EmployeeStatusList = new List<SelectListItem>();
+            actionResult = employeeAction.EmployeeStatus_Load();
             if (actionResult.IsSuccess)
             {
-                SubjectStatusList = (from DataRow row in actionResult.dtResult.Rows
-                                     select new SelectListItem
-                                     {
-                                         Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
-                                         Value = row["id"] != DBNull.Value ? row["id"].ToString() : ""
-                                     }).ToList();
+                EmployeeStatusList = (from DataRow row in actionResult.dtResult.Rows
+                                      select new SelectListItem
+                                      {
+                                          Text = row["Status"] != DBNull.Value ? row["Status"].ToString() : "",
+                                          Value = row["id"] != DBNull.Value ? row["id"].ToString() : ""
+                                      }).ToList();
             }
-            ViewBag.SubjectStatusList = SubjectStatusList;
+            ViewBag.EmployeeStatusList = EmployeeStatusList;
 
             ViewBag.BuildList = buildList;
             ViewBag.GenderList = genderList;

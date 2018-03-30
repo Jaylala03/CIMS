@@ -49,6 +49,12 @@ namespace CIMS.BaseLayer.Setting
         public string SubjectStatusName { get; set; }
     }
 
+    public class EmployeeStatusBase
+    {
+        public int EmployeeStatusID { get; set; }
+        public string EmployeeStatusName { get; set; }
+    }
+
     public class LicenseTypeBase
     {
         public int LicenseID { get; set; }

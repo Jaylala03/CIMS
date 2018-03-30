@@ -64,6 +64,12 @@
                 </li>
 
                 <li>
+                    <a href="#EmployeeStatus" data-toggle="tab">
+                        <span>Employee Status</span>
+                    </a>
+                </li>
+
+                <li>
                     <a href="#LicenseType" data-toggle="tab">
                         <span>License Type</span>
                     </a>
@@ -449,6 +455,38 @@
                     </div>
                     <div class="col-md-12">
                         <table id="SubjectStatusTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="EmployeeStatus">
+                    <div class="large-title" style="padding:10px 0px;">Employee Status</div>
+                    <div class="col-md-12">
+
+                        <input type="hidden" id="hdEmployeeStatusID" name="hdEmployeeStatusID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Employee Status</label>
+                            <input type="text" class="form-control" id="EmployeeStatusName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="btnAddSubjectStatus" onclick="submitEmployeeStatus();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetEmployeeStatus();">Reset</button>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <table id="EmployeeStatusTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
                             <thead>
                                 <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
                                     <td class="td-border">
@@ -1428,6 +1466,8 @@
 
         SubjectStatus(); // Bind Subject Status
 
+        EmployeeStatus(); // Bind Employee Status
+
         LicenseType(); // Bind License Type
         LicenseStatus(); // Bind  License Status
         FeatureType(); // Bind Feature Type
@@ -1761,7 +1801,7 @@
     // End Department
 
 
-    //2018-03-21 Chirag Employee Department
+    //Employee Department
     function EmployeeDepartment() {
         $("#EmployeeDepartmentTable").find("tr:not(:first)").remove();
         $.ajax({
@@ -1851,7 +1891,7 @@
     }
     // End Employee Department
 
-    //2018-03-24 Chirag Template Category
+    //Template Category
     function TemplateCategory() {
         $("#TemplateCategoryTable").find("tr:not(:first)").remove();
         $.ajax({
@@ -1941,7 +1981,7 @@
     }
     // End Template Category
 
-    //2018-03-24 Chirag Template Category Type
+    //Template Category Type
     function TemplateCategoryType() {
         $("#TemplateCategoryTypeTable").find("tr:not(:first)").remove();
         $.ajax({
@@ -1963,7 +2003,8 @@
         $('#hdTemplateCategoryTypeID').val(id);
         $('#TemplateCategoryTypeName').val(name);
         $('#TemplateCategoryID').val(cid);
-        CKEDITOR.instances.TemplateCategoryTypeContent.setData(content);
+        //alert();
+        CKEDITOR.instances.TemplateCategoryTypeContent.setData($('#td' + id).html());
     }
 
     function resetTemplateCategoryType() {
@@ -1988,7 +2029,7 @@
             contentType: 'application/json',
             success: function (data) {
                 if (data == "success") {
-                    $('#msgDiv').html('<div class="alert alert-success">Template Category Type save Successfully.</div>');
+                    $('#msgDiv').html('<div class="alert alert-success">Template save Successfully.</div>');
 
                     setTimeout(function () {
                         $('#msgDiv').fadeOut();
@@ -2018,7 +2059,7 @@
                 contentType: 'application/json',
                 success: function (data) {
                     if (data == "success") {
-                        $('#msgDiv').html('<div class="alert alert-success">Template Category Type has been deleted Successfully.</div>');
+                        $('#msgDiv').html('<div class="alert alert-success">Template has been deleted Successfully.</div>');
                         setTimeout(function () {
                             $('#msgDiv').fadeOut();
                         }, 5000);
@@ -2038,7 +2079,7 @@
     }
     // End Template Category Type
 
-    //2018-03-28 Chirag Subject Status
+    //Subject Status
     function SubjectStatus() {
         $("#SubjectStatusTable").find("tr:not(:first)").remove();
         $.ajax({
@@ -2126,7 +2167,97 @@
             });
         }
     }
-    // End Template Category
+    // End Subject Status
+
+    //Employee Status
+    function EmployeeStatus() {
+        $("#EmployeeStatusTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/EmployeeStatus_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#EmployeeStatusTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function EditEmployeeStatus(id, name) {
+        $('#hdEmployeeStatusID').val(id);
+        $('#EmployeeStatusName').val(name);
+    }
+
+    function resetEmployeeStatus() {
+        $('#hdEmployeeStatusID').val(0);
+        $('#EmployeeStatusName').val('');
+    }
+
+    function submitEmployeeStatus() {
+        var id = $('#hdEmployeeStatusID').val();
+        var name = $('#EmployeeStatusName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/EmployeeStatus_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Employee Status save Successfully.</div>');
+
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetEmployeeStatus(); // reset Department value
+                EmployeeStatus(); // Bind Subject Status
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteEmployeeStatus(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/EmployeeStatus_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Employee Status has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetEmployeeStatus(); // reset Template Category value
+                    EmployeeStatus(); // Bind Subject Status
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End Subject Status
 
 
     // License Type

@@ -228,6 +228,53 @@ namespace CIMS.DataLayer
         }
         #endregion
 
+        #region Method EmployeeStatus_IU
+        public DataTable EmployeeStatus_IU(EmployeeStatusBase employeeStatusBase)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", employeeStatusBase.EmployeeStatusID),
+                                           new MyParameter("@Status", employeeStatusBase.EmployeeStatusName)
+                                        };
+                Common.Set_Procedures("MasterEmployeeStatus_IU");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+
+        #region Method EmployeeStatus_Delete
+        public DataTable EmployeeStatus_Delete(EmployeeStatusBase employeeStatusBase)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", employeeStatusBase.EmployeeStatusID)
+                                        };
+                Common.Set_Procedures("MasterEmployeeStatus_Delete");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+
         #region Method LicenseType_IU
         public DataTable LicenseType_IU(LicenseTypeBase licenseBase)
         {

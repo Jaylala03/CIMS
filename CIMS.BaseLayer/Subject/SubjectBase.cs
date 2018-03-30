@@ -41,7 +41,7 @@ namespace CIMS.BaseLayer.Subject
         private string _overallStatus = string.Empty;
         public string _ageRange = string.Empty;
         private string _subjectNumber = string.Empty;
-        private string _subjectStatus = string.Empty;
+        private int _subjectStatusID = 0;
         #endregion
 
         #region Properties
@@ -82,7 +82,7 @@ namespace CIMS.BaseLayer.Subject
 
         public string SubjectNumber { get { return _subjectNumber; } set { _subjectNumber = value; } }
 
-        public string SubjectStatus { get { return _subjectStatus; } set { _subjectStatus = value; } }
+        public int SubjectStatusID { get; set; }
         #endregion
     }
 

@@ -181,6 +181,26 @@ namespace CIMS.ActionLayer.Setting
         }
         #endregion
 
+        #region Method EmployeeStatus_IU
+        public ActionResult EmployeeStatus_IU(EmployeeStatusBase employeeStatusBase)
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = settingDL.EmployeeStatus_IU(employeeStatusBase);
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+        #endregion
+
         #region Method SubjectStatus_Delete
         public ActionResult SubjectStatus_Delete(SubjectStatusBase subjectStatusBase)
         {
@@ -188,6 +208,26 @@ namespace CIMS.ActionLayer.Setting
             try
             {
                 actionResult.dtResult = settingDL.SubjectStatus_Delete(subjectStatusBase);
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+        #endregion
+
+        #region Method EmployeeStatus_Delete
+        public ActionResult EmployeeStatus_Delete(EmployeeStatusBase employeeStatusBase)
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = settingDL.EmployeeStatus_Delete(employeeStatusBase);
                 if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
                 {
                     actionResult.IsSuccess = true;
