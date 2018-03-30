@@ -12,12 +12,12 @@
 </style>
 <div class="row bg-title">
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-        <h4 class="page-title">Vistor Log</h4>
+        <h4 class="page-title">Library Log</h4>
     </div>
     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
         <ol class="breadcrumb">
             <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
-            <li class="active">Visitor</li>
+            <li class="active">Library</li>
         </ol>
     </div>
 </div>
@@ -43,12 +43,12 @@
                 <div class="white-box">
                     <ul class="nav nav-pills custom-tabs" id="myTab">
                         <li class="active">
-                            <a href="#visitorDetails" data-toggle="tab">
+                            <a href="#LibraryDetails" data-toggle="tab">
                                 <span>Detail</span>
                             </a>
                         </li>
                         <li>
-                            <a href="#visitorList" data-toggle="tab">
+                            <a href="#LibraryList" data-toggle="tab">
                                 <span>List</span>
                             </a>
                         </li>
@@ -57,7 +57,7 @@
                 </div>
             </div>
             <div class="tab-content">
-                <div class="tab-pane active" id="visitorDetails">
+                <div class="tab-pane active" id="LibraryDetails">
                     <div class="large-title">Details </div>
                     @using (@Html.BeginForm("Index", "Library", FormMethod.Post, new { area = "Library", @id = "form1", @enctype = "multipart/form-data" }))
                     {
@@ -66,7 +66,7 @@
                         <div class="col-md-6">
                             <div class="white-box" style="min-height: 402px;">
                                 <div class="form-group">
-                                    <label class="control-label">Categiry</label>
+                                    <label class="control-label">Categry</label>
                                     @Html.DropDownListFor(p => p.FileTypeId, ViewBag.FileTypeList as List<SelectListItem>, "Select", new { @class = "form-control" })
                                 </div>
                                 <div class="form-group">
@@ -100,43 +100,14 @@
 
                     }
                 </div>
-                <div class="tab-pane " id="visitorList">
+                <div class="tab-pane " id="LibraryList">
                     <div class="large-title">Library List </div>
                     <div class="col-md-12">
                         <div class="white-box">
-                            <div class="row" style="display:none;">
-
-                                <div style="border: 1px solid #eee; padding-top: 18px; margin-bottom: 30px;" class="clearfix">
-                                    <div class="col-md-2"></div>
-                                    <div class="col-md-3">
-                                        <div class="form-inline">
-                                            <div class="form-group clearfix" style="margin-bottom: 10px;">
-                                                <label class="col-md-5">Start Date:</label>
-                                                <div class="col-md-7">
-                                                    <input type="text" name="startDate" id="startDate" class="form-control" style="height: 31px;">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-inline">
-                                            <div class="form-group clearfix" style="margin-bottom: 10px;">
-                                                <label class="col-md-5">End Date:</label>
-                                                <div class="col-md-7">
-                                                    <input type="text" name="endDate" id="endDate" class="form-control" style="height: 31px;">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group clearfix" style="margin-bottom: 10px;">
-                                        <input type="button" onclick="VisitorFilter();" value="Load Data" class="btn btn-primary">
-                                    </div>
-                                    <div class="col-md-2"></div>
-                                </div>
-                            </div>
+                            
                             <div class="table-responsive">
                                 <div id="printDivData">
-                                    <table id="visitorTable" class="table table-bordered dataTable no-footer Tableview" style="border-collapse:collapse">
+                                    <table id="LibraryTable" class="table table-bordered dataTable no-footer Tableview" style="border-collapse:collapse">
                                         <thead>
                                             <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
                                                 <th class="td-border header headerSortDown">
@@ -169,7 +140,7 @@
 
                                                         <td class="removefromtable">
                                                             <a href='@Url.Content("~/Library/Library/Index?LibraryID="+items.LibraryID+"")' class="btn small btn-info btn-sm btn-icon " title="Edit Library"><i class="fa fa-pencil"></i></a>
-                                                            <a class="btn btn-danger small btn-sm delete-sm" href='javascript:;' onclick='DeleteVisitor(@items.LibraryID,this);' title="Delete Library"><i class='fa fa-trash'></i></a>
+                                                            <a class="btn btn-danger small btn-sm delete-sm" href='javascript:;' onclick='DeleteLibraryFile(@items.LibraryID,this);' title="Delete Library"><i class='fa fa-trash'></i></a>
                                                         </td>
                                                     </tr>
                                                 }
@@ -193,7 +164,7 @@
 <script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#visitorTable').dataTable({
+        $('#LibraryTable').dataTable({
             //dom: 'Bfrtip',
             //"mColumns": [0, 1, 2, 3, 4],
             //buttons: ['pdf', 'print']
@@ -201,18 +172,9 @@
         $(".buttons-print").addClass("btn btn-primary");
         $(".buttons-pdf").addClass("btn btn-primary");
 
-        $(document).on('click', '.empty', function () { $('#visitorTable>tbody tr.alphabet_group').remove(); });
-        $(document).on('click', '.data', function () { $('#visitorTable>tbody tr.alphabet_group').remove(); });
-        $(document).on('click', '.active', function () { $('#visitorTable>tbody tr.alphabet_group').remove(); });
-
-        $('#VisitorDate').datepicker({ autoclose: true });
-        $('#startDate').datepicker();
-        $('#endDate').datepicker();
-        $('#FromHoursMinutes').timepicker({ autoclose: true });
-        $('#ToHoursMinutes').timepicker({ autoclose: true });
-        $('#FromHoursMinutes').val($('#OldFromHoursMinutes').val());
-        $('#ToHoursMinutes').val($('#OldToHoursMinutes').val());
-
+        $(document).on('click', '.empty', function () { $('#LibraryTable>tbody tr.alphabet_group').remove(); });
+        $(document).on('click', '.data', function () { $('#LibraryTable>tbody tr.alphabet_group').remove(); });
+        $(document).on('click', '.active', function () { $('#LibraryTable>tbody tr.alphabet_group').remove(); });
 
     });
     function ClosePdfView()
@@ -272,20 +234,20 @@
         }
 
     });
-    function DeleteVisitor(id, caller) {
+    function DeleteLibraryFile(id, caller) {
         @*var x = DeleteConfirm('@ViewBag.Action');
         if (x) {*@
         $.ajax({
             url: '@Url.Content("~/Library/Library/DeleteLibrary")',
-            data: JSON.stringify({ 'visitorID': id }),
+            data: JSON.stringify({ 'LibraryID': id }),
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             success: function (data) {
                 if (data == "Success") {
-                    if ($('#visitorTable>tbody tr').length == 1) {
-                        $('#visitorTable').remove();
-                        $('#msgDiv').html('<div class="alert alert-success">Visitor Details has been deleted Successfully.</div>');
+                    if ($('#LibraryTable>tbody tr').length == 1) {
+                        $('#LibraryTable').remove();
+                        $('#msgDiv').html('<div class="alert alert-success">File has been deleted Successfully.</div>');
                         setTimeout(function () {
                             $('#msgDiv').fadeOut();
                         }, 5000);
@@ -293,7 +255,7 @@
                     }
                     else {
                         $(caller).parents('tr:first').remove();
-                        $('#msgDiv').html('<div class="alert alert-success">Visitor Details has been deleted Successfully.</div>');
+                        $('#msgDiv').html('<div class="alert alert-success">File has been deleted Successfully.</div>');
 
                         setTimeout(function () {
                             $('#msgDiv').fadeOut();

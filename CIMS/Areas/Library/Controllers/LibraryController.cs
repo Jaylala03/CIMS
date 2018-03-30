@@ -112,12 +112,12 @@ namespace CIMS.Areas.Library.Controllers
             return RedirectToAction("Index");
         }
 
-        public JsonResult DeleteLibrary(int visitorID)
+        public JsonResult DeleteLibrary(int LibraryID)
         {
             string jsonString = string.Empty;
             try
             {
-                library.LibraryID = visitorID;
+                library.LibraryID = LibraryID;
                 actionResult = libraryAction.Library_Delete(library);
 
                 if (actionResult.IsSuccess)

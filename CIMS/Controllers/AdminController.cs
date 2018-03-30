@@ -347,7 +347,10 @@ namespace CIMS.Controllers
 
             actionResult = adminAction.Menus_LoadForSiteAdministrator();
             if (actionResult.IsSuccess)
+            {
                 model.MenusList = CommonMethods.ConvertTo<Menus>(actionResult.dtResult);
+            }
+               //.OrderBy(m => m.ParentId).ToList()
 
             //actionResult = adminAction.SubMenu_LoadAll();
             //if (actionResult.IsSuccess)                

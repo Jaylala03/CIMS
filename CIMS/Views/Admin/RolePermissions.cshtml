@@ -180,31 +180,36 @@
                     @Html.HiddenFor(m => m.RoleId)
                     <div id='cssmenu'>
                         <ul id="div1" ng-model="div">
-                            @foreach (var menu in Model.MenusList.Where(m => m.ParentId == 0))
-                            {
-                                <li class='has-sub' data-id="0">
 
+                            @for (int parent = 0; parent < Model.MenusList.Where(m => m.ParentId == 0).ToList().Count; parent++)
+                            {
+                                //var menusab = Model.MenusList.Where(m => m.Id == Model.MenusList[parent].Id).FirstOrDefault();
+                                
+                                <li class='has-sub' data-id="0">
+                                    
                                     <a href="javascript:;">
-                                        <span class="title1">@menu.MenuName</span>
+                                        @*<span class="title1">@Model.MenusList[parent].MenuName</span>*@
+                                        <span class="title1">@Model.MenusList[parent].MenuName</span>
                                     </a>
-                                    <ul id="CheckAll@(menu.Id)">
-                                        <li class='has-sub' data-id="@menu.Id">
-                                            @Html.HiddenFor(m => m.MenusList[menu.Id-1].Id)
-                                            <input type="checkbox" class="mainCheck" id="ckbCheckAll@(menu.Id)" name="@menu.Id" @(menu.PermissionType > 0 ? "checked='checked'" : "") />
-                                            Allow @menu.MenuName
+
+                                    <ul id="CheckAll@(Model.MenusList[parent].Id)">
+                                        <li class='has-sub' data-id="@Model.MenusList[parent].Id">
+                                            @Html.HiddenFor(m => m.MenusList[parent].Id)
+                                            <input type="checkbox" class="mainCheck" id="ckbCheckAll@(Model.MenusList[parent].Id)" name="@Model.MenusList[parent].Id" @(Model.MenusList[parent].PermissionType > 0 ? "checked='checked'" : "") />
+                                            Allow @Model.MenusList[parent].MenuName
 
                                             <div style="float: right">
-                                                @Html.HiddenFor(m => m.MenusList[menu.Id - 1].PermissionType, new { @class = "permissionType" })
+                                                @Html.HiddenFor(m => m.MenusList[parent].PermissionType, new { @class = "permissionType" })
 
-                                                <input type="checkbox" value="1" name="@(menu.Id)control" class="full" /> Create
-                                                <input type="checkbox" value="2" name="@(menu.Id)control" class="full" /> View
-                                                <input type="checkbox" value="4" name="@(menu.Id)control" class="full" /> Update
-                                                <input type="checkbox" value="8" name="@(menu.Id)control" class="full" /> Delete
+                                                <input type="checkbox" value="1" name="@(Model.MenusList[parent].Id)control" class="full" /> Create
+                                                <input type="checkbox" value="2" name="@(Model.MenusList[parent].Id)control" class="full" /> View
+                                                <input type="checkbox" value="4" name="@(Model.MenusList[parent].Id)control" class="full" /> Update
+                                                <input type="checkbox" value="8" name="@(Model.MenusList[parent].Id)control" class="full" /> Delete
                                             </div>
                                         </li>
-                                        @if (Model.MenusList.Where(m => m.ParentId == menu.Id).ToList().Count > 0)
+                                        @if (Model.MenusList.Where(m => m.ParentId == Model.MenusList[parent].Id).ToList().Count > 0)
                                         {
-                                            var childList = Model.MenusList.Where(m => m.ParentId == menu.Id).ToList();
+                                            var childList = Model.MenusList.Where(m => m.ParentId == Model.MenusList[parent].Id).ToList();
                                             for (int i = 0; i < childList.Count; i++)
                                             {
                                                 <li class='has-sub' data-id="@childList[i].Id">
@@ -229,56 +234,6 @@
                                     </ul>
                                 </li>
                             }
-                            @*@for (int parent = 0; parent < Model.MenusList.Where(m => m.ParentId == 0).ToList().Count; parent++)
-                            {
-                                <li class='has-sub' data-id="0">
-
-                                    <a href="javascript:;">
-                                        <span class="title1">@Model.MenusList[parent].MenuName</span>
-                                    </a>
-
-                                    <ul id="CheckAll@(Model.MenusList[parent].Id)">
-                                        <li class='has-sub' data-id="@Model.MenusList[parent].Id">
-                                            @Html.HiddenFor(m => m.MenusList[parent].Id)
-                                            <input type="checkbox" class="mainCheck" id="ckbCheckAll@(Model.MenusList[parent].Id)" name="@Model.MenusList[parent].Id" @(Model.MenusList[parent].PermissionType > 0 ? "checked='checked'" : "") />
-                                            Allow @Model.MenusList[parent].MenuName
-
-                                            <div style="float: right">
-                                                @Html.HiddenFor(m => m.MenusList[parent].PermissionType, new { @class = "permissionType" })
-
-                                                <input type="checkbox" value="1" name="@(Model.MenusList[parent].Id)control" class="full" /> Create
-                                                <input type="checkbox" value="2" name="@(Model.MenusList[parent].Id)control" class="full" /> View
-                                                <input type="checkbox" value="4" name="@(Model.MenusList[parent].Id)control" class="full" /> Update
-                                                <input type="checkbox" value="8" name="@(Model.MenusList[parent].Id)control" class="full" /> Delete
-                                            </div>
-                                        </li>
-                                        @if (Model.MenusList.Where(m => m.ParentId == Model.MenusList[parent].Id).ToList().Count > 0)
-                                        {
-                                            var childList = Model.MenusList.Where(m => m.ParentId == Model.MenusList[parent].Id).ToList();
-                                            for (int i = 0; i < childList.Count; i++)
-                                            {
-                                        <li class='has-sub' data-id="@childList[i].Id">
-                                            <input data-val="true" data-val-number="The field Id must be a number." data-val-required="The Id field is required." id="MenusList_@(childList[i].Row-1)__Id" name="MenusList[@(childList[i].Row-1)].Id" value="@childList[i].Id" type="hidden">
-
-                                            <input type="checkbox" class="mainCheck" name="@childList[i].Id" @(childList[i].PermissionType > 0 ? "checked='checked'" : "") />
-                                            Allow @childList[i].MenuName
-
-                                            <div style="float: right">
-                                                <input class="permissionType" data-val="true" data-val-number="The field PermissionType must be a number." data-val-required="The PermissionType field is required." id="MenusList_@(childList[i].Row-1)__PermissionType" name="MenusList[@(childList[i].Row-1)].PermissionType" value="@childList[i].PermissionType" type="hidden">
-
-                                                <input type="checkbox" value="1" name="@(childList[i].Id)control" class="full" style="display:none" />
-                                                <input type="checkbox" value="2" name="@(childList[i].Id)control" class="full" style="display:none" />
-                                                <input type="checkbox" value="4" name="@(childList[i].Id)control" class="full" style="display:none" />
-                                                <input type="checkbox" value="8" name="@(childList[i].Id)control" class="full" style="display:none" />
-                                            </div>
-                                        </li>
-                                            }
-                                        }
-
-
-                                    </ul>
-                                </li>
-                            }*@
                         </ul>
                     </div>
                 </div>
@@ -391,7 +346,8 @@
                 $('#saveRole').val('Save');
             }
         }
-        function DeleteRole(id, caller) {
+        function DeleteRole(id, caller)
+        {
             var x = DeleteConfirm('@ViewBag.Action');
             if (x) {
                 $.ajax({
@@ -570,7 +526,8 @@
                 }
             });
 
-            $('#savepermission').click(function () {
+            $('#savepermission').click(function ()
+            {
                 $('li').each(function () {
                     var permissionType = 0;
                     var subPermissionType = 0;
@@ -700,7 +657,7 @@
                 $("#chkYes").prop("checked", true);
                 $("#chkNo").prop("checked", false);
 
-                if (dvImage)
+                if(dvImage)
                     dvImage.style.display = "none";
 
                 if (dvPassport)

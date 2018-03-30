@@ -21,3 +21,4 @@ G:\Jay Bhai\CIMSWorking\CIMS.Utility\bin\Debug\CIMS.Utility.pdb
 G:\Jay Bhai\CIMSWorking\CIMS.Utility\obj\Debug\CIMS.Utility.csprojResolveAssemblyReference.cache
 G:\Jay Bhai\CIMSWorking\CIMS.Utility\obj\Debug\CIMS.Utility.dll
 G:\Jay Bhai\CIMSWorking\CIMS.Utility\obj\Debug\CIMS.Utility.pdb
+D:\CIMS\CIMS.Utility\obj\Debug\CIMS.Utility.csprojResolveAssemblyReference.cache
