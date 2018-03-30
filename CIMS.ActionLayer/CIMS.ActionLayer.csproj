@@ -60,6 +60,7 @@
     <Compile Include="Subject\SubjectAction.cs" />
     <Compile Include="Tools\ToolsAction.cs" />
     <Compile Include="Visitor\VisitorAction.cs" />
+  <Compile Include="Library\LibraryAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CIMS.BaseLayer\CIMS.BaseLayer.csproj">

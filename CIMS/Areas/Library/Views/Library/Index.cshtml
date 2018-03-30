@@ -1,0 +1,331 @@
+﻿@model CIMS.Models.LibraryModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_InternalLayout.cshtml";
+}
+<link href="~/Content/Custom.css" rel="stylesheet" />
+<style>
+    .cmbSub {
+        pointer-events: none;
+        opacity: 0.40;
+    }
+</style>
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Vistor Log</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li><a href='@Url.Content("~/Home/Index")'>Home</a></li>
+            <li class="active">Visitor</li>
+        </ol>
+    </div>
+</div>
+<script src="~/assets/js/Jspdf/FileSaver.js"></script>
+<script src="~/assets/js/Jspdf/jspdf.js"></script>
+<script src="~/assets/js/Jspdf/jspdfplugintable.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+<div id="msgDiv">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="right-tab">
+            <div class="col-md-12">
+                <div class="white-box">
+                    <ul class="nav nav-pills custom-tabs" id="myTab">
+                        <li class="active">
+                            <a href="#visitorDetails" data-toggle="tab">
+                                <span>Detail</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#visitorList" data-toggle="tab">
+                                <span>List</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane active" id="visitorDetails">
+                    <div class="large-title">Details </div>
+                    @using (@Html.BeginForm("Index", "Library", FormMethod.Post, new { area = "Library", @id = "form1", @enctype = "multipart/form-data" }))
+                    {
+                        @Html.HiddenFor(p => p.LibraryID)
+
+                        <div class="col-md-6">
+                            <div class="white-box" style="min-height: 402px;">
+                                <div class="form-group">
+                                    <label class="control-label">Categiry</label>
+                                    @Html.DropDownListFor(p => p.FileTypeId, ViewBag.FileTypeList as List<SelectListItem>, "Select", new { @class = "form-control" })
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">PDF File Selection</label>
+                                    <input type="file" id="pdfFile" name="pdfFile" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Name</label>
+                                    @Html.TextBoxFor(p => p.LibraryName, null, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="white-box" style="min-height: 402px;">
+                                <p>Load Selected PDF File</p>
+                                <div id="divPdf">
+                                    <iframe id="iframe" name="iframe" class="embed-responsive-item" style="min-height: 402px;width:100%;border-style: none;"></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-12">
+                            <div class="white-box">
+                                <button type="submit" onclick="return ValidationCheck();" class="btn btn-success@(Model.LibraryID>0?" edit":" add")">Save</button>
+                                <a href='@Url.Content("~/Library/Library/Index")' class="btn btn-default">Reset</a>
+                            </div>
+
+                        </div>
+
+                    }
+                </div>
+                <div class="tab-pane " id="visitorList">
+                    <div class="large-title">Library List </div>
+                    <div class="col-md-12">
+                        <div class="white-box">
+                            <div class="row" style="display:none;">
+
+                                <div style="border: 1px solid #eee; padding-top: 18px; margin-bottom: 30px;" class="clearfix">
+                                    <div class="col-md-2"></div>
+                                    <div class="col-md-3">
+                                        <div class="form-inline">
+                                            <div class="form-group clearfix" style="margin-bottom: 10px;">
+                                                <label class="col-md-5">Start Date:</label>
+                                                <div class="col-md-7">
+                                                    <input type="text" name="startDate" id="startDate" class="form-control" style="height: 31px;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-inline">
+                                            <div class="form-group clearfix" style="margin-bottom: 10px;">
+                                                <label class="col-md-5">End Date:</label>
+                                                <div class="col-md-7">
+                                                    <input type="text" name="endDate" id="endDate" class="form-control" style="height: 31px;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group clearfix" style="margin-bottom: 10px;">
+                                        <input type="button" onclick="VisitorFilter();" value="Load Data" class="btn btn-primary">
+                                    </div>
+                                    <div class="col-md-2"></div>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <div id="printDivData">
+                                    <table id="visitorTable" class="table table-bordered dataTable no-footer Tableview" style="border-collapse:collapse">
+                                        <thead>
+                                            <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                                <th class="td-border header headerSortDown">
+                                                    Category
+                                                </th>
+                                                <th class="td-border header">
+                                                    Name
+                                                </th>
+                                                <th style="width:220px;" class="td-border header">
+                                                    Existence
+                                                </th>
+                                                <th class="td-border header">
+                                                    File
+                                                </th>
+                                                <th class="removefromtable header" style="width:320px;">
+                                                    Actions
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.LibraryList.Count() > 0)
+                                            {
+                                                foreach (var items in Model.LibraryList)
+                                                {
+                                                    <tr class="empTR tableRow" data-id="@items.LibraryID" style="cursor: pointer">
+                                                        <td class="tableCell" style="width:220px">@items.FileType </td>
+                                                        <td class="tableCell" style="width:220px">@items.LibraryName</td>
+                                                        <td class="tableCell" style="width:220px">@items.FileExistence</td>
+                                                        <td class="tableCell" style="width:220px"><a href="javascript:void(0);" onclick='LoadPdfFile("@items.LibraryName@items.FileExistence");'>View Pdf</a> </td>
+
+                                                        <td class="removefromtable">
+                                                            <a href='@Url.Content("~/Library/Library/Index?LibraryID="+items.LibraryID+"")' class="btn small btn-info btn-sm btn-icon " title="Edit Library"><i class="fa fa-pencil"></i></a>
+                                                            <a class="btn btn-danger small btn-sm delete-sm" href='javascript:;' onclick='DeleteVisitor(@items.LibraryID,this);' title="Delete Library"><i class='fa fa-trash'></i></a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div id="divListShowPdfFile" style="display:none;">
+                                    <a href="javascript:void(0);" onclick="ClosePdfView();">Close PDF View</a>
+                                    <iframe id="iframeShow" name="iframe" class="embed-responsive-item" style="min-height: 800px;width:100%;border-style: none;"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/data-tables/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#visitorTable').dataTable({
+            //dom: 'Bfrtip',
+            //"mColumns": [0, 1, 2, 3, 4],
+            //buttons: ['pdf', 'print']
+        });
+        $(".buttons-print").addClass("btn btn-primary");
+        $(".buttons-pdf").addClass("btn btn-primary");
+
+        $(document).on('click', '.empty', function () { $('#visitorTable>tbody tr.alphabet_group').remove(); });
+        $(document).on('click', '.data', function () { $('#visitorTable>tbody tr.alphabet_group').remove(); });
+        $(document).on('click', '.active', function () { $('#visitorTable>tbody tr.alphabet_group').remove(); });
+
+        $('#VisitorDate').datepicker({ autoclose: true });
+        $('#startDate').datepicker();
+        $('#endDate').datepicker();
+        $('#FromHoursMinutes').timepicker({ autoclose: true });
+        $('#ToHoursMinutes').timepicker({ autoclose: true });
+        $('#FromHoursMinutes').val($('#OldFromHoursMinutes').val());
+        $('#ToHoursMinutes').val($('#OldToHoursMinutes').val());
+
+
+    });
+    function ClosePdfView()
+    {
+        $("#divListShowPdfFile").hide();
+    }
+    function LoadPdfFile(file) {
+        debugger;
+        var path = "../LibraryPDFFiles/" + file;
+        $("#divListShowPdfFile").show();
+        $("#iframeShow").attr("src", path);
+    }
+    function ValidationCheck() {
+        if ($("#FileTypeId").val() != "" && $("#LibraryName").val() != "") {
+            myfile = $('#pdfFile').val();
+            if (myfile != undefined && myfile != "") {
+                var ext = myfile.split('.').pop();
+                //var extension = myfile.substr( (myfile.lastIndexOf('.') +1) );
+
+                if (ext != "pdf") {
+                    $('#msgDiv').html('<div class="alert alert-danger">Upload only PDF File.</div>');
+
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+                    return false;
+                }
+            }
+            else {
+                $('#msgDiv').html('<div class="alert alert-danger">Select PDF File.</div>');
+                setTimeout(function () {
+                    $('#msgDiv').fadeOut();
+                }, 5000);
+                window.scrollTo(0, 0);
+                return false;
+            }
+        }
+    }
+    $('input[type="file"]').change(function (e) {
+        //var fileName = e.target.files[0].name;
+        //$("#LibraryName").val(fileName);
+
+        debugger;
+        myfile = $(this).val();
+        var ext = myfile.split('.').pop();
+        if (ext == "pdf") {
+            $("#iframe").attr("src", URL.createObjectURL(event.target.files[0]));
+            $("#LibraryName").val(e.target.files[0].name);
+        } else {
+            $('#msgDiv').html('<div class="alert alert-danger">Upload only PDF File.</div>');
+
+            setTimeout(function () {
+                $('#msgDiv').fadeOut();
+            }, 5000);
+            window.scrollTo(0, 0);
+        }
+
+    });
+    function DeleteVisitor(id, caller) {
+        @*var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {*@
+        $.ajax({
+            url: '@Url.Content("~/Library/Library/DeleteLibrary")',
+            data: JSON.stringify({ 'visitorID': id }),
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "Success") {
+                    if ($('#visitorTable>tbody tr').length == 1) {
+                        $('#visitorTable').remove();
+                        $('#msgDiv').html('<div class="alert alert-success">Visitor Details has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    }
+                    else {
+                        $(caller).parents('tr:first').remove();
+                        $('#msgDiv').html('<div class="alert alert-success">Visitor Details has been deleted Successfully.</div>');
+
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+                    }
+
+                } else {
+                    alert('error')
+
+                }
+
+            }
+        });
+        //}
+    }
+
+
+
+    function ValidateEmail(email) {
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        return expr.test(email);
+    };
+
+    //if (!ValidateEmail($("#To").val())) {
+    //    alert("Invalid email address.");
+    //}
+    //else {
+    //    alert("Valid email address.");
+    //}
+    //});
+</script>
+<script src="~/Content/Custom.js"></script>
+<table id="newtable" style="display: none;"></table>
+<div id="newdata"><table></table></div>

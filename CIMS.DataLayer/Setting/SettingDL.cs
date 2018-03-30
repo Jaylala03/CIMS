@@ -3592,5 +3592,56 @@ namespace CIMS.DataLayer
             return dtContainer;
         }
         #endregion
+
+
+        
+
+        #region File Type Function
+        #region Method FileType_IU
+        public DataTable FileType_IU(FileType fileType)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", fileType.FileTypeId),
+                                           new MyParameter("@Name", fileType.Name )
+                                        };
+                Common.Set_Procedures("FileType_IU");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+        #region Method FileType
+        public DataTable FileType_Delete(FileType  FileType)
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams ={
+                                           new MyParameter("@id", FileType.FileTypeId)
+                                        };
+                Common.Set_Procedures("FileType_Delete");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
+        #endregion
     }
 }

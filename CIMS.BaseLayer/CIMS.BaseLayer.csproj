@@ -65,6 +65,7 @@
     <Compile Include="Subject\SubjectBase.cs" />
     <Compile Include="Tools\ToolsBase.cs" />
     <Compile Include="Visitor\VisitorBase.cs" />
+    <Compile Include="Library\LibraryBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CIMS.Utility\CIMS.Utility.csproj">

@@ -3216,5 +3216,46 @@ namespace CIMS.ActionLayer.Setting
 
         #endregion
 
+        #region Method File_IU
+        public ActionResult FileType_IU(FileType filetype)
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = settingDL.FileType_IU(filetype);
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+
+        #endregion
+
+        #region Method DepartmentType_Delete
+        public ActionResult FileType_Delete(FileType fileType)
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = settingDL.FileType_Delete(fileType);
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+
+        #endregion
     }
 }

@@ -307,4 +307,11 @@ namespace CIMS.BaseLayer.Setting
         public string HeightUnitName { get; set; }
         public bool IsDefault { get; set; }
     }
+
+    public class FileType
+    {
+        public int FileTypeId { get; set; }
+        public string Name { get; set; }
+      
+    }
 }

@@ -31,7 +31,6 @@ namespace CIMS.Filters
                 int userId = Convert.ToInt32(filterContext.HttpContext.Session["Admin"]);
                 string[] permission = CheckAdminPermissions.permission(controller, userId);
 
-
                 if (permission != null)
                 {
                     action = Convert.ToInt32(permission[1]);

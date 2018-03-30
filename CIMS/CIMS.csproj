@@ -211,6 +211,8 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Areas\Employee\Controllers\EmployeesController.cs" />
     <Compile Include="Areas\Employee\EmployeeAreaRegistration.cs" />
+    <Compile Include="Areas\Library\Controllers\LibraryController.cs" />
+    <Compile Include="Areas\Library\LibraryAreaRegistration.cs" />
     <Compile Include="Areas\Equipment\Controllers\EquipmentController.cs" />
     <Compile Include="Areas\Equipment\EquipmentAreaRegistration.cs" />
     <Compile Include="Areas\Events\Controllers\EventController.cs" />
@@ -241,6 +243,7 @@
     <Compile Include="Models\CheckPermission.cs" />
     <Compile Include="Models\DataTableAjaxPostModel.cs" />
     <Compile Include="Models\EmployeeModel.cs" />
+    <Compile Include="Models\LibraryModel.cs" />
     <Compile Include="Areas\Events\EventsAreaRegistration.cs" />
     <Compile Include="Areas\Subject\Controllers\SubjectController.cs" />
     <Compile Include="Areas\Subject\SubjectAreaRegistration.cs" />
@@ -1749,6 +1752,7 @@
     </Content>
     <Content Include="Areas\Subject\Views\web.config" />
     <Content Include="Areas\Employee\Views\web.config" />
+    <Content Include="Areas\Library\Views\web.config" />
     <Content Include="Areas\Events\Views\web.config" />
     <Content Include="assets\css\.DS_Store" />
     <Content Include="assets\css\fonts\.DS_Store" />
@@ -2176,6 +2180,7 @@
     <Content Include="Areas\Employee\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Employee\Views\Employees\EmployeeIncidentList.cshtml" />
     <Content Include="Areas\Employee\Views\Employees\GetQuestionsByAudit.cshtml" />
+    <Content Include="Areas\Library\Views\Library\Index.cshtml" />
     <Content Include="Areas\Media\Views\web.config" />
     <Content Include="Areas\Media\Views\Media\Index.cshtml" />
     <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
@@ -2459,7 +2464,9 @@
     <Folder Include="Areas\Employee\Models\" />
     <Folder Include="Areas\Equipment\Models\" />
     <Folder Include="Areas\Equipment\Views\Shared\" />
+    <Folder Include="Areas\Library\Views\Shared\" />
     <Folder Include="Areas\Events\Models\" />
+    <Folder Include="Areas\Library\Models\" />
     <Folder Include="Areas\Events\Views\Shared\" />
     <Folder Include="Areas\GeneralReports\Models\" />
     <Folder Include="Areas\GeneralReports\Views\Shared\" />

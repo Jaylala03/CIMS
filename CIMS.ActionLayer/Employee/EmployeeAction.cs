@@ -1954,6 +1954,7 @@ namespace CIMS.ActionLayer.Employee
             return actionResult;
         }
         #endregion
+
         #region Method Event_EmployeeReportLink
         public ActionResult EmployeeReportEventsLink_Delete(int EmployeeID, int IncidentID)
         {
@@ -1961,6 +1962,26 @@ namespace CIMS.ActionLayer.Employee
             try
             {
                 actionResult.dtResult = employeeDL.EmployeeReportEventsLink_Delete(EmployeeID, IncidentID);
+                if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
+                {
+                    actionResult.IsSuccess = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return actionResult;
+        }
+        #endregion
+
+        #region Method MasterFileType_Load
+        public ActionResult FileType_Load()
+        {
+            actionResult = new ActionResult();
+            try
+            {
+                actionResult.dtResult = employeeDL.FileType_Load();
                 if (actionResult.dtResult != null && actionResult.dtResult.Rows.Count > 0)
                 {
                     actionResult.IsSuccess = true;

@@ -49,8 +49,8 @@ namespace CIMS.Areas.Setting.Controllers
                         jsonString += "<tr class='tableRow' data-id=" + actionResult.dtResult.Rows[i]["id"].ToString() + " style='cursor: pointer'>";
                         jsonString += "<td class='tableCell'>" + actionResult.dtResult.Rows[i]["DepartmentType"].ToString() + " </td>";
                         jsonString += "<td class='removefromtable'>";
-                        jsonString += "<a href='javascript:;' onclick='EditDepartmentType(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",&#39;" + actionResult.dtResult.Rows[i]["DepartmentType"].ToString() + "&#39;);' class='btn small btn-info btn-sm btn-icon edit' title='Edit'><i class='fa fa-pencil'></i></a>";
-                        jsonString += "<a class='btn btn-danger small btn-sm delete-sm' href='javascript:;' onclick='DeleteDepartmentType(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",this);' title='Delete'><i class='fa fa-trash'></i></a>";
+                        jsonString += "<a href='javascript:;' onclick='EditFileType(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",&#39;" + actionResult.dtResult.Rows[i]["DepartmentType"].ToString() + "&#39;);' class='btn small btn-info btn-sm btn-icon edit' title='Edit'><i class='fa fa-pencil'></i></a>";
+                        jsonString += "<a class='btn btn-danger small btn-sm delete-sm' href='javascript:;' onclick='DeleteFileType(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",this);' title='Delete'><i class='fa fa-trash'></i></a>";
                         jsonString += "</td></tr>";
                     }
                 }
@@ -63,9 +63,9 @@ namespace CIMS.Areas.Setting.Controllers
             return Json(jsonString, JsonRequestBehavior.AllowGet);
         }
         #endregion
-        
+
         #region Department Type IU
-        public JsonResult DepartmentType_IU(int ID,string Name)
+        public JsonResult DepartmentType_IU(int ID, string Name)
         {
             string jsonString = string.Empty;
             try
@@ -76,11 +76,11 @@ namespace CIMS.Areas.Setting.Controllers
                 actionResult = settingAction.DepartmentType_IU(departmentBase);
                 if (actionResult.IsSuccess)
                 {
-                    jsonString="success";
+                    jsonString = "success";
                 }
                 else
                 {
-                    jsonString="error";
+                    jsonString = "error";
                 }
             }
             catch (Exception)
@@ -299,7 +299,7 @@ namespace CIMS.Areas.Setting.Controllers
         {
             string jsonString = string.Empty;
             try
-            {                
+            {
                 actionResult = settingAction.FeatureType_Load();
                 if (actionResult.IsSuccess && actionResult.dtResult.Rows.Count > 0)
                 {
@@ -646,7 +646,7 @@ namespace CIMS.Areas.Setting.Controllers
                         jsonString += "<tr class='tableRow' data-id=" + actionResult.dtResult.Rows[i]["Id"].ToString() + " style='cursor: pointer'>";
                         jsonString += "<td class='tableCell'>" + actionResult.dtResult.Rows[i]["Value"].ToString() + " </td>";
                         jsonString += "<td class='removefromtable'>";
-                        jsonString += "<a href='javascript:;' onclick='EditTypeID(" + actionResult.dtResult.Rows[i]["Id"].ToString() + ",&#39;" + actionResult.dtResult.Rows[i]["Value"].ToString() + ",&#39;" +"1" + "&#39;);' class='btn small btn-info btn-sm btn-icon edit' title='Edit'><i class='fa fa-pencil'></i></a>";
+                        jsonString += "<a href='javascript:;' onclick='EditTypeID(" + actionResult.dtResult.Rows[i]["Id"].ToString() + ",&#39;" + actionResult.dtResult.Rows[i]["Value"].ToString() + ",&#39;" + "1" + "&#39;);' class='btn small btn-info btn-sm btn-icon edit' title='Edit'><i class='fa fa-pencil'></i></a>";
                         jsonString += "<a class='btn btn-danger small btn-sm delete-sm ' href='javascript:;' onclick='DelecteTypeid1(" + actionResult.dtResult.Rows[i]["Id"].ToString() + ",this);' title='Delete'><i class='fa fa-trash'></i></a>";
                         jsonString += "</td></tr>";
                     }
@@ -1718,7 +1718,7 @@ namespace CIMS.Areas.Setting.Controllers
         //    if (file != null && file.ContentLength > 0)
         //        try
         //        {
-                    
+
         //            string path = Path.Combine(Server.MapPath("~/Images"),Path.GetFileName(file.FileName));
         //            string ImageName = Path.GetFileName(file.FileName);
         //            ShortDescriptorBase shortBase = new ShortDescriptorBase();
@@ -1754,7 +1754,7 @@ namespace CIMS.Areas.Setting.Controllers
         //Ankur New 1
         public ActionResult InsertUpdatePreferenceValue(HttpPostedFileBase file)
         {
-            
+
             if (file != null && file.ContentLength > 0)
             {
                 try
@@ -1766,7 +1766,7 @@ namespace CIMS.Areas.Setting.Controllers
                     incedentpref.pref_Value = ImageName;
                     actionResult = settingAction.InsertUpdatePreferenceValue(incedentpref);
                     file.SaveAs(path);
-                    TempData["message"]="Success";
+                    TempData["message"] = "Success";
                     return RedirectToAction("ReportSetting");
                 }
                 catch (Exception ex)
@@ -1868,7 +1868,7 @@ namespace CIMS.Areas.Setting.Controllers
         }
         #endregion
 
-        public JsonResult GetNatureImage(int ID,string Name)
+        public JsonResult GetNatureImage(int ID, string Name)
         {
             string jsonString = string.Empty;
             try
@@ -1896,7 +1896,7 @@ namespace CIMS.Areas.Setting.Controllers
         }
 
         #region Nature of Incident IU
-        public ActionResult MasterNatureofIncident_IU(int hdNatureofIncidentID, string NatureofIncidentName, int Radio1, HttpPostedFileBase file,string hdNatureimage)
+        public ActionResult MasterNatureofIncident_IU(int hdNatureofIncidentID, string NatureofIncidentName, int Radio1, HttpPostedFileBase file, string hdNatureimage)
         {
             //string jsonString = string.Empty;
             string path = "";
@@ -1921,7 +1921,7 @@ namespace CIMS.Areas.Setting.Controllers
                 natureBase.Nature = NatureofIncidentName;
                 natureBase.NatureType = Radio1;
                 natureBase.NatureImage = ImageName;
-                
+
                 actionResult = settingAction.MasterNatureofIncident_IU(natureBase);
                 if (actionResult.IsSuccess)
                 {
@@ -3365,8 +3365,8 @@ namespace CIMS.Areas.Setting.Controllers
                 if (actionResult.IsSuccess)
                 {
                     //jsonString = "success";
-                    if(AuditID ==0)
-                        AuditID =  Convert.ToInt32(actionResult.dtResult.Rows[0][0]);
+                    if (AuditID == 0)
+                        AuditID = Convert.ToInt32(actionResult.dtResult.Rows[0][0]);
                     return RedirectToAction("AddAuditQuestion", new { @AuditID = AuditID, @AuditName = AuditName });
 
                     //ManageAuditsQuestionsModel model = new ManageAuditsQuestionsModel();
@@ -3445,7 +3445,7 @@ namespace CIMS.Areas.Setting.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddAuditQuestion(ManageAuditsQuestionsModel model )
+        public ActionResult AddAuditQuestion(ManageAuditsQuestionsModel model)
         {
             AuditsQuestionsVM aq = new AuditsQuestionsVM();
 
@@ -3528,7 +3528,8 @@ namespace CIMS.Areas.Setting.Controllers
                     {
                         json = "success";
                     }
-                    else {
+                    else
+                    {
                         json = "fail";
                     }
                 }
@@ -3716,7 +3717,7 @@ namespace CIMS.Areas.Setting.Controllers
         #endregion
 
         #region Foreign Exchange Rates IU
-        public JsonResult ForeignExchangeRates_IU(int ID, string Country,string Rate)
+        public JsonResult ForeignExchangeRates_IU(int ID, string Country, string Rate)
         {
             string jsonString = string.Empty;
             try
@@ -4136,7 +4137,7 @@ namespace CIMS.Areas.Setting.Controllers
         #endregion
 
         #region ActiveMetrics
-        public JsonResult ActiveMetrics(int ID,string Type)
+        public JsonResult ActiveMetrics(int ID, string Type)
         {
             string jsonString = string.Empty;
             try
@@ -4208,7 +4209,7 @@ namespace CIMS.Areas.Setting.Controllers
         [HttpPost]
         public void Visitor_Add()
         {
-           // string jsonString = string.Empty; 
+            // string jsonString = string.Empty; 
             try
             {
                 LogoImageBase logoImageBase = new LogoImageBase();
@@ -4225,7 +4226,7 @@ namespace CIMS.Areas.Setting.Controllers
                     string fileName = Convert.ToString(Guid.NewGuid()).Substring(0, 5) + Path.GetFileName(file.FileName);
                     fullpath = "/Content/VisitorLogo/" + fileName;
                     string path = Path.Combine(directory, fileName);
-                    file.SaveAs(path);                    
+                    file.SaveAs(path);
 
                     logoImageBase.ImagePath = fullpath;
                     logoImageBase.SetImage = false;
@@ -4246,7 +4247,7 @@ namespace CIMS.Areas.Setting.Controllers
                 //jsonString = "-1";
                 //return Json(jsonString, JsonRequestBehavior.AllowGet);
             }
-           // return Json(jsonString, JsonRequestBehavior.AllowGet);
+            // return Json(jsonString, JsonRequestBehavior.AllowGet);
         }
         #endregion
 
@@ -4748,7 +4749,7 @@ namespace CIMS.Areas.Setting.Controllers
                     {
                         jsonString += "<tr class='tableRow' data-id=" + actionResult.dtResult.Rows[i]["id"].ToString() + " style='cursor: pointer'>";
                         jsonString += "<td class='tableCell'>" + actionResult.dtResult.Rows[i]["HeightUnitName"].ToString() + " </td>";
-                        jsonString += "<td class='tableCell'>" + (Convert.ToBoolean(actionResult.dtResult.Rows[i]["IsDefault"]) == true ? "Yes" : "No")  + " </td>";
+                        jsonString += "<td class='tableCell'>" + (Convert.ToBoolean(actionResult.dtResult.Rows[i]["IsDefault"]) == true ? "Yes" : "No") + " </td>";
                         jsonString += "<td class='removefromtable'>";
                         jsonString += "<a href='javascript:;' onclick='EditHeightUnit(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",&#39;" + actionResult.dtResult.Rows[i]["HeightUnitName"].ToString() + "&#39;" + Convert.ToBoolean(actionResult.dtResult.Rows[i]["IsDefault"]).ToString() + "&#39;); ' class='btn small btn-info btn-sm btn-icon edit' title='Edit'><i class='fa fa-pencil'></i></a>";
                         jsonString += "<a class='btn btn-danger small btn-sm delete-sm' href='javascript:;' onclick='DeleteHeightUnit(" + actionResult.dtResult.Rows[i]["id"].ToString() + ",this);' title='Delete'><i class='fa fa-trash'></i></a>";
@@ -4821,5 +4822,96 @@ namespace CIMS.Areas.Setting.Controllers
         }
         #endregion
 
+
+
+
+
+
+        #region FileType
+        #region File Type Load
+        public JsonResult FileType_Load()
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                CIMS.ActionLayer.Employee.EmployeeAction employeeAction = new CIMS.ActionLayer.Employee.EmployeeAction();
+                actionResult = employeeAction.FileType_Load();
+                if (actionResult.IsSuccess && actionResult.dtResult.Rows.Count > 0)
+                {
+                    for (int i = 0; i < actionResult.dtResult.Rows.Count; i++)
+                    {
+                        jsonString += "<tr class='tableRow' data-id=" + actionResult.dtResult.Rows[i]["FileTypeID"].ToString() + " style='cursor: pointer'>";
+                        jsonString += "<td class='tableCell'>" + actionResult.dtResult.Rows[i]["Name"].ToString() + " </td>";
+                        jsonString += "<td class='removefromtable'>";
+                        jsonString += "<a href='javascript:;' onclick='EditFileType(" + actionResult.dtResult.Rows[i]["FileTypeID"].ToString() + ",&#39;" + actionResult.dtResult.Rows[i]["Name"].ToString() + "&#39;);' class='btn small btn-info btn-sm btn-icon edit' title='Edit'><i class='fa fa-pencil'></i></a>";
+                        jsonString += "<a class='btn btn-danger small btn-sm delete-sm ' href='javascript:;' onclick='DeleteFileType(" + actionResult.dtResult.Rows[i]["FileTypeID"].ToString() + ",this);' title='Delete'><i class='fa fa-trash'></i></a>";
+                        jsonString += "</td></tr>";
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region Department Type IU
+        public JsonResult File_IU(int ID, string Name)
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                FileType fileBase = new FileType();
+                fileBase.FileTypeId = ID;
+                fileBase.Name = Name;
+                actionResult = settingAction.FileType_IU(fileBase);
+                if (actionResult.IsSuccess)
+                {
+                    jsonString = "success";
+                }
+                else
+                {
+                    jsonString = "error";
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        #region File Type Delete
+        public JsonResult FileType_Delete(int ID)
+        {
+            string jsonString = string.Empty;
+            try
+            {
+                FileType fileBase = new FileType();
+                fileBase.FileTypeId = ID;
+                actionResult = settingAction.FileType_Delete(fileBase);
+                if (actionResult.IsSuccess)
+                {
+                    jsonString = "success";
+                }
+                else
+                {
+                    jsonString = "error";
+                }
+            }
+            catch (Exception)
+            {
+                jsonString = "-1";
+                return Json(jsonString, JsonRequestBehavior.AllowGet);
+            }
+            return Json(jsonString, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+        #endregion
     }
 }

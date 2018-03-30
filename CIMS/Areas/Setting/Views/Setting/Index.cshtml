@@ -164,6 +164,11 @@
                         <span>Report Logo</span>
                     </a>
                 </li>
+                <li>
+                    <a href="#FileType" data-toggle="tab">
+                        <span>File Type</span>
+                    </a>
+                </li>
                 @*<li>
                     <a href="#WeightUnit" data-toggle="tab">
                         <span>Weight Unit</span>
@@ -568,6 +573,7 @@
                         </table>
                     </div>
                 </div>
+
                 <div class="tab-pane" id="TypeID1">
                     <div class="large-title" style="padding:10px 0px;">Type ID#1</div>
                     <div class="col-md-12">
@@ -600,6 +606,7 @@
                     </div>
 
                 </div>
+
                 <div class="tab-pane" id="TypeID2">
                     <div class="large-title" style="padding:10px 0px;">Type ID#2</div>
                     <div class="col-md-12">
@@ -632,6 +639,7 @@
                     </div>
 
                 </div>
+
                 <div class="tab-pane" id="TypeID3">
                     <div class="large-title" style="padding:10px 0px;">Type ID#3</div>
                     <div class="col-md-12">
@@ -664,6 +672,7 @@
                     </div>
 
                 </div>
+
                 <div class="tab-pane" id="FacialHair">
                     <div class="large-title" style="padding:10px 0px;">FacialHair</div>
                     <div class="col-md-12">
@@ -1159,6 +1168,36 @@
                     </div>
                 </div>
 
+                <div class="tab-pane" id="FileType">
+                    <div class="large-title" style="padding:10px 0px;">File Type</div>
+                    <div class="col-md-12">
+                        <input type="hidden" id="hdFileTypeID" name="hdFileTypeID" value="0" />
+                        <div class="form-group">
+                            <label class="control-label">Type</label>
+                            <input type="text" class="form-control" id="FileTypeName" />
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="btnAddFileType" onclick="submitFileType();" class="btn btn-success add">Save</button>
+                            <button type="reset" class="btn btn-white" onclick="resetDepartment();">Reset</button>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <table id="FileTypeTable" class="table table-bordered dataTable no-footer" style="border-collapse:collapse">
+                            <thead>
+                                <tr class="tableRow" style="width:100%;background-color:#f2f2f2;">
+                                    <td class="td-border">
+                                        Name
+                                    </td>
+                                    <td class="removefromtable td-border">
+                                        Actions
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div class="tab-pane" id="VisitorEmailLog">
                     <div class="large-title">Sex</div>
                     <div class="col-md-12">
@@ -1240,7 +1279,7 @@
         // VisitorEmailLog(); // Bind Visitor Email Log
         WeightUnit(); // BInd Weight Unint
         HeightUnit();// Bind Height Unit
-
+        FileTypeAllLoad(); // Bind File Type
         $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
             localStorage.setItem('activeTab', $(e.target).attr('href'));
         });
@@ -3900,5 +3939,91 @@
         }
     }
     // End License Status
+    // 23-03-2018 File Type start
+    function FileTypeAllLoad() {
+        $("#FileTypeTable").find("tr:not(:first)").remove();
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/FileType_Load")',
+            data: JSON.stringify({}),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                $('#FileTypeTable tbody').append(data);
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function EditFileType(id, name) {
+        $('#hdFileTypeID').val(id);
+        $('#FileTypeName').val(name);
+    }
 
+    function resetFileType() {
+        $('#hdFileTypeID').val(0);
+        $('#FileTypeName').val('');
+    }
+    function submitFileType() {
+        var id = $('#hdFileTypeID').val();
+        var name = $('#FileTypeName').val();
+
+        $.ajax({
+            url: '@Url.Content("~/Setting/Setting/File_IU")',
+            data: JSON.stringify({ 'ID': id, 'Name': name }),
+            type: 'Post',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (data) {
+                if (data == "success") {
+                    $('#msgDiv').html('<div class="alert alert-success">Department save Successfully.</div>');
+
+                    setTimeout(function () {
+                        $('#msgDiv').fadeOut();
+                    }, 5000);
+                    window.scrollTo(0, 0);
+
+                } else {
+                    $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                }
+                resetFileType(); // reset Department value
+                FileTypeAllLoad(); // Bind Department Type
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+
+    function DeleteFileType(id) {
+        var x = DeleteConfirm('@ViewBag.Action');
+        if (x) {
+            $.ajax({
+                url: '@Url.Content("~/Setting/Setting/FileType_Delete")',
+                data: JSON.stringify({ 'ID': id }),
+                type: 'Post',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data == "success") {
+                        $('#msgDiv').html('<div class="alert alert-success">Department Type has been deleted Successfully.</div>');
+                        setTimeout(function () {
+                            $('#msgDiv').fadeOut();
+                        }, 5000);
+                        window.scrollTo(0, 0);
+
+                    } else {
+                        $('#msgDiv').html('<div class="alert alert-danger">Some error Occurred, please try again later.</div>');
+                    }
+                    resetFileType(); // reset Department value
+                    FileTypeAllLoad(); // Bind Department Type
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    // End File Type
 </script>

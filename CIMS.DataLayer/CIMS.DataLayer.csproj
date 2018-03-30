@@ -60,6 +60,8 @@
     <Compile Include="Subject\SubjectDL.cs" />
     <Compile Include="Tools\ToolsDL.cs" />
     <Compile Include="Visitor\VisitorDL.cs" />
+    <Compile Include="Library\LibraryDL.cs" />
+    
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CIMS.BaseLayer\CIMS.BaseLayer.csproj">

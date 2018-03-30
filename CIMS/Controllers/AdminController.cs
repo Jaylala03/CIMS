@@ -693,6 +693,7 @@ namespace CIMS.Controllers
             List<Roles> roleList = new List<Roles>();
             model.RolesList = roleList;
             model.RoleId = Convert.ToInt32(Id);
+
             RoleBase roleBase = new RoleBase();
             roleBase.ID = model.RoleId;
             actionResult = adminAction.Menus_LoadByRoleId(roleBase);

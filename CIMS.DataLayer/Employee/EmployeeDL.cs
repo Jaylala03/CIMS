@@ -2471,5 +2471,25 @@ namespace CIMS.DataLayer.Employee
             return dtContainer;
         }
         #endregion
+        #region Method FileType_Load
+        public DataTable FileType_Load()
+        {
+            dtContainer = new DataTable();
+            dsContainer = new DataSet();
+            try
+            {
+                MyParameter[] myParams = { };
+                Common.Set_Procedures("MasterFileTpes_Load");
+                Common.Set_ParameterLength(myParams.Length);
+                Common.Set_Parameters(myParams);
+                dtContainer = Common.Execute_Procedures_LoadData();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return dtContainer;
+        }
+        #endregion
     }
 }

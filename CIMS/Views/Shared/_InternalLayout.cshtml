@@ -312,6 +312,10 @@
                         {
                             <li><a href='@Url.Content("~/GeneralReports/GeneralReports/GeneralReportsList")' class="waves-effect"><i data-icon="P" class="ti-files  fa-fw"></i><span class="hide-menu">General Reports</span></a> </li>
                         }
+                        if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Library", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Library")))
+                        {
+                            <li><a href='@Url.Content("~/Library/Library/Index")' class="waves-effect"><i data-icon="P" class="ti-files  fa-fw"></i><span class="hide-menu">Library</span></a> </li>
+                        }
                         if ((Session["Admin"] == null ? CIMS.Models.CheckPermissions.permissionMenu("Setting", Convert.ToInt32(Session["UserId"])) : CIMS.Models.CheckAdminPermissions.permissionMenu("Setting")))
                         {
                              <li><a href="javascript:;" class="waves-effect"><i data-icon=")" class="linea-icon linea-basic fa-fw"></i> <span class="hide-menu">Setting <span class="fa arrow"></span></span></a>
@@ -451,6 +455,7 @@
 
             ImageCount();
             $('.add').click(function () {
+                debugger
                 return AddConfirm('@ViewBag.Action');
             });
             $('.edit').click(function () {
@@ -485,14 +490,12 @@
         $('#helloNew').click(function () {
             var $ = jQuery.noConflict();
             $('input[type=text], textarea').spellCheckInDialog({ popUpStyle: 'fancybox', theme: 'clean' })
-
         });
 
     </script>
 
     <script language="JavaScript">
         $(document).ready(function () {
-
 
             $.ajax({
                 url: '@Url.Content("~/Home/GetAction")',
@@ -528,15 +531,9 @@
 
                 var backValue = Corporate_background;
                 var back_type = Corporate_back_type;
-
-
                 var chkYes = document.getElementById("chkYes");
-
                 var dvPassport = document.getElementById("palette");
-
                 var dvImage = document.getElementById("Image");
-
-
 
                 if (back_type == "palette") {
 
@@ -552,8 +549,6 @@
                         dvPassport.style.display = "block";
 
                     $('.evo-colorind').attr("style", "background-color:" + backValue);
-
-
 
                 } else {
 
