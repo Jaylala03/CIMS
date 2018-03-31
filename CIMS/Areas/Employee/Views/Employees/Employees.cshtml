@@ -196,15 +196,12 @@
                                     </div>
                                     <div class="col-sm-5">
                                         @*<img src="/Content/Media/d87e3EmployeeMedia1.png" class="ImgClass" style="height:100%;width:100%;">*@
-                                        <img src="@(!String.IsNullOrEmpty(Model.FilePath) ? Model.FilePath : Url.Content("~/asset/plugins/images/no-image.jpg"))" alt="Employee" style="height:100%;width:100%;" />
+                                        <img id="imgassignedtop" src="@(!String.IsNullOrEmpty(Model.FilePath) ? Model.FilePath : Url.Content("~/asset/plugins/images/no-image.jpg"))" alt="Employee" style="height:100%;width:100%;" />
                                     </div>
                                 </div>
 
-
-
                                 <div class="form-group">
                                     <label class="control-label">First Name </label>
-
                                     @Html.TextBoxFor(m => m.FirstName, null, new { @class = "form-control" })
                                     @*@Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })*@
                                 </div>
@@ -1788,7 +1785,7 @@
                     var jsonData = JSON.parse(data);
                     for (i = 0; i < jsonData.length; i++) {
                         temphtml += ' <div class="col-md-2"> <div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
-                        temphtml += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                        temphtml += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" Id="Img' + jsonData[i].MediaID + '"/>';
                         temphtml += '<div class="btn-show">';
                         temphtml += '<input type="button" value="Assign Picture" id="AssignPicture" class="btn btn-success add" onclick="AssignPictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
                         temphtml += '<input type="button" value="Edit" id="EditPicture" class="btn btn-primary add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="EditPictur(&#39;' + jsonData[i].FilePath + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
@@ -1824,7 +1821,9 @@
                 success: function (data) {
                     if (data == "success") {
                         alert('Image Assign successfuly!!');
-                        location.reload();
+                        //location.reload();
+                        var assignedsrc = $('#Img' + mediaId).attr('src');
+                        $("#imgassignedtop").attr("src",assignedsrc);
                         $(document).scrollTop(0);
                     }
                     else {
@@ -1845,6 +1844,15 @@
                 success: function (data) {
                     if (data == 'success') {
                         BindPictureList(type, id, subFeatureid)
+                        var assignedsrc = $('#Img' + mediaId).attr('src');
+                        var currentsrc = $("#imgassignedtop").attr("src");
+                        if(assignedsrc == currentsrc)
+                        {
+                            $("#imgassignedtop").attr("src","@Url.Content("~/asset/plugins/images/no-image.jpg")");
+                            $(document).scrollTop(0);
+                        }
+                        @*$("#imgassignedtop").attr("src","@Url.Content("~/asset/plugins/images/no-image.jpg")");
+                        $(document).scrollTop(0);*@
                     }
                     else {
                         alert(' Error in Request!!');

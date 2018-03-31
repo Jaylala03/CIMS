@@ -90,6 +90,7 @@ namespace CIMS.Models
         public string AgeRange { get; set; }
         public bool EditPermission { get; set; }
         public bool DeletePermission { get; set; }
+
     }
 
     public class SubjectAddressModel

@@ -135,8 +135,8 @@
                             </li>
                         }
                         @if ((Session["Admin"] == null ?
-                                (CIMS.Models.CheckPermissions.permissionMenu("Subject Permission", Convert.ToInt32(Session["UserId"])) && Model.SubjectID > 0 && (Model.CreatedBy == Convert.ToInt32(Session["UserID"])))
-                                : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
+                        (CIMS.Models.CheckPermissions.permissionMenu("Subject Permission", Convert.ToInt32(Session["UserId"])) && Model.SubjectID > 0 && (Model.CreatedBy == Convert.ToInt32(Session["UserID"])))
+                        : CIMS.Models.CheckAdminPermissions.permissionMenu("Subject")))
                         {
                             <li class="">
                                 <a href='@Url.Content("~/Subject/Subject/SubjectPermission?" + (Request.QueryString["Show"] == "View" ? "Show=View&" : "") + "Type=Subject&id=" + Model.SubjectID + "")'>
@@ -250,19 +250,20 @@
                                     @Html.TextBoxFor(m => m.VIP, new { @class = "form-control", @readonly = "readonly" })
                                     @Html.HiddenFor(m => m.SubjectID)
                                 </div>
-                            
+
                                 @Html.LabelFor(m => m.SubjectNumber, new { @class = "control-label col-md-12" })
                                 <div class="col-md-7">
                                     @Html.TextBoxFor(m => m.SubjectNumber, new { @class = "form-control", @maxlength = "6" })
                                 </div>
                             </div>
                             <div class="col-sm-4">
-                                <img src="@(!String.IsNullOrEmpty(ViewBag.FilePath) ? ViewBag.FilePath : Url.Content("~/asset/plugins/images/no-image.jpg"))" alt="Subject" style="height:100%;width:100%;" />
+                                @*<img id="imgassignedtop" src="@(!String.IsNullOrEmpty(ViewBag.FilePath) ? ViewBag.FilePath : Url.Content("~/asset/plugins/images/no-image.jpg"))" alt="Subject" style="height:100%;width:100%;" />*@
+                                <img id="imgassignedtop" src="@(!String.IsNullOrEmpty(Model.FilePath) ? Model.FilePath : Url.Content("~/asset/plugins/images/no-image.jpg"))" alt="Subject" style="height:100%;width:100%;" />
                             </div>
                         </div>
 
                         <div class="form-group clearfix">
-                            @Html.LabelFor(m => m.FirstName, new { @class = "control-label col-md-12" })    
+                            @Html.LabelFor(m => m.FirstName, new { @class = "control-label col-md-12" })
                             <div class="col-md-12">
                                 @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
 
@@ -411,7 +412,7 @@
 
                         <div class="form-group clearfix">
                             @Html.LabelFor(m => m.SubjectStatus, new { @class = "control-label col-md-12" })
-                            <div class="col-md-12">                                
+                            <div class="col-md-12">
                                 @Html.DropDownListFor(m => m.SubjectStatus, ViewBag.lstSubjectStatus as List<SelectListItem>, "Select Status", new { @class = "form-control" })
                             </div>
                         </div>
@@ -923,7 +924,7 @@
                     var jsonData = JSON.parse(data);
                     for (i = 0; i < jsonData.length; i++) {
                         temphtml += ' <div class="col-md-2"> <div class="upload-img pictureTr" data-id="' + jsonData[i].MediaID + '" style="cursor:pointer;" ImgId="Img' + jsonData[i].MediaID + '">';
-                        temphtml += '<img  src="' + jsonData[i].FilePath + '" class="ImgClass" />';
+                        temphtml += '<img src="' + jsonData[i].FilePath + '" class="ImgClass" Id="Img' + jsonData[i].MediaID + '"/>';
                         temphtml += '<div class="btn-show">';
                         temphtml += '<input type="button" value="Assign Picture" id="AssignPicture" class="btn btn-success add" onclick="AssignPictures(&#39;' + type + '&#39;,&#39;' + id + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
                         temphtml += '<input type="button" value="Edit" id="EditPicture" class="btn btn-primary add" style="display: @(Request.QueryString["Show"] == "View" ? "none" : "show")" onclick="EditPictur(&#39;' + jsonData[i].FilePath + '&#39;,&#39;' + jsonData[i].MediaID + '&#39;);">';
@@ -958,6 +959,9 @@
                 success: function (data) {
                     if (data == "success") {
                         alert('Image Assign successfuly!!');
+                        var assignedsrc = $('#Img' + mediaId).attr('src');
+                        $("#imgassignedtop").attr("src",assignedsrc);
+                        $(document).scrollTop(0);
                     }
                     else {
                         alert(' Error in Request!!');
@@ -976,7 +980,14 @@
                 contenttype: 'application/json',
                 success: function (data) {
                     if (data == 'success') {
-                        BindPictureList(type, id, subFeatureid)
+                        BindPictureList(type, id, subFeatureid);
+                        var assignedsrc = $('#Img' + mediaId).attr('src');
+                        var currentsrc = $("#imgassignedtop").attr("src");
+                        if(assignedsrc == currentsrc)
+                        {
+                            $("#imgassignedtop").attr("src","@Url.Content("~/asset/plugins/images/no-image.jpg")");
+                            $(document).scrollTop(0);
+                        }
                     }
                     else {
                         alert(' Error in Request!!');
