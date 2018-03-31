@@ -205,23 +205,44 @@ namespace CIMS.DataLayer.Admin
             dtContainer = new DataTable();
             try
             {
-                MyParameter[] myParams = {
-                                            new MyParameter("@ID", userBase.ID),
-                                            new MyParameter("@FirstName", userBase.FirstName),
-                                            new MyParameter("@LastName", userBase.LastName),
-                                            new MyParameter("@Password", userBase.Password),
-                                            new MyParameter("@PasswordDate", userBase.PasswordDate),
-                                            new MyParameter("@UserCanChangePassword", userBase.UserCanChangePassword),
-                                            new MyParameter("@Skills", userBase.Skills),
-                                            new MyParameter("@UnitID", userBase.UnitID),
-                                            new MyParameter("@RegNumber", userBase.RegNumber),
-                                            new MyParameter("@IsDispatchable", userBase.IsDispatchable),
-                                            new MyParameter("@Initials", userBase.Initials),
-                                            new MyParameter("@EMail", userBase.EMail) ,
-                                             new MyParameter("@UserName", userBase.UserName),
-                                             new MyParameter("@UserGuid ", userBase.UserGuid),
-                                              new MyParameter("@Roles", userBase.Roles)
-                                         };
+                List<MyParameter> myparamslist = new List<MyParameter>();
+                myparamslist.Add(new MyParameter("@ID", userBase.ID));
+                myparamslist.Add(new MyParameter("@FirstName", userBase.FirstName));
+                myparamslist.Add(new MyParameter("@LastName", userBase.LastName));
+                if (userBase.ID == 0)
+                {
+                    myparamslist.Add(new MyParameter("@Password", userBase.Password));
+                    myparamslist.Add(new MyParameter("@PasswordDate", userBase.PasswordDate));
+                }
+                myparamslist.Add(new MyParameter("@UserCanChangePassword", userBase.UserCanChangePassword));
+                myparamslist.Add(new MyParameter("@Skills", userBase.Skills));
+                myparamslist.Add(new MyParameter("@UnitID", userBase.UnitID));
+                myparamslist.Add(new MyParameter("@RegNumber", userBase.RegNumber));
+                myparamslist.Add(new MyParameter("@IsDispatchable", userBase.IsDispatchable));
+                myparamslist.Add(new MyParameter("@Initials", userBase.Initials));
+                myparamslist.Add(new MyParameter("@EMail", userBase.EMail));
+                myparamslist.Add(new MyParameter("@UserName", userBase.UserName));
+                myparamslist.Add(new MyParameter("@UserGuid ", userBase.UserGuid));
+                myparamslist.Add(new MyParameter("@Roles", userBase.Roles));
+
+                MyParameter[] myParams = myparamslist.ToArray();
+                //MyParameter[] myParams = {
+                //                            new MyParameter("@ID", userBase.ID),
+                //                            new MyParameter("@FirstName", userBase.FirstName),
+                //                            new MyParameter("@LastName", userBase.LastName),
+                //                            //new MyParameter("@Password", userBase.Password),
+                //                            //new MyParameter("@PasswordDate", userBase.PasswordDate),
+                //                            new MyParameter("@UserCanChangePassword", userBase.UserCanChangePassword),
+                //                            new MyParameter("@Skills", userBase.Skills),
+                //                            new MyParameter("@UnitID", userBase.UnitID),
+                //                            new MyParameter("@RegNumber", userBase.RegNumber),
+                //                            new MyParameter("@IsDispatchable", userBase.IsDispatchable),
+                //                            new MyParameter("@Initials", userBase.Initials),
+                //                            new MyParameter("@EMail", userBase.EMail) ,
+                //                             new MyParameter("@UserName", userBase.UserName),
+                //                             new MyParameter("@UserGuid ", userBase.UserGuid),
+                //                              new MyParameter("@Roles", userBase.Roles)
+                //                         };
                 Common.Set_Procedures("Users_IU");
                 Common.Set_ParameterLength(myParams.Length);
                 Common.Set_Parameters(myParams);

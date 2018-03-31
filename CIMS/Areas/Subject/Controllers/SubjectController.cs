@@ -984,7 +984,8 @@ namespace CIMS.Areas.Subject.Controllers
                 subjectBase.RoleName = model.RoleName;
                 subjectBase.CIDSubject = model.CIDSubject;
                 subjectBase.CIDPersonID = model.CIDPersonID;
-                subjectBase.SubjectStatusID = model.SubjectStatusID;
+                if(model.SubjectStatusID.HasValue)
+                    subjectBase.SubjectStatusID = Convert.ToInt32(model.SubjectStatusID);
                 subjectBase.CreatedBy = Convert.ToInt32(Session["UserId"]);
                 actionResult = subjectAction.Subject_IU(subjectBase);
                 if (actionResult.IsSuccess)
@@ -5572,7 +5573,8 @@ namespace CIMS.Areas.Subject.Controllers
                 subjectBase.Complexion = Request.Params["Complexion"];//model.Complexion;
                 subjectBase.AgeRange = Request.Params["AgeRange"];//model.AgeRange;
                 subjectBase.SubjectNumber = Request.Params["SubjectNumber"];//model.SubjectNumber;
-                subjectBase.SubjectStatusID = Convert.ToInt32(Request.Params["SubjectStatus"]);//model.SubjectStatusID;
+                if(!string.IsNullOrEmpty(Request.Params["SubjectStatus"]))
+                    subjectBase.SubjectStatusID = Convert.ToInt32(Request.Params["SubjectStatus"]);//model.SubjectStatusID;
                 actionResult = subjectAction.Subjects_AdvancedSearch(subjectBase);
                 if (actionResult.IsSuccess == true)
                 {
@@ -5615,7 +5617,8 @@ namespace CIMS.Areas.Subject.Controllers
                 subjectBase.HairLength = model.HairLength;
                 subjectBase.Complexion = model.Complexion;
                 subjectBase.SubjectNumber = model.SubjectNumber;
-                subjectBase.SubjectStatusID = model.SubjectStatusID;
+                if (model.SubjectStatusID.HasValue)
+                    subjectBase.SubjectStatusID = Convert.ToInt32(model.SubjectStatusID);
 
                 actionResult = subjectAction.Subjects_AdvancedSearch(subjectBase);
                 if (actionResult.IsSuccess)

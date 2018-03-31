@@ -84,7 +84,7 @@ namespace CIMS.Models
         public string LicenseExpirationDate { get; set; }
         public string Department { get; set; }
         public string EmployeeDepartment { get; set; }
-        public int EmployeeStatusID { get; set; }
+        public int? EmployeeStatusID { get; set; }
         public string LicenseType { get; set; }
         public string LicenseStatus { get; set; }
         public string ReasonForLeaving { get; set; }

@@ -16,4 +16,3 @@ D:\CIMS\CIMS.DbServices\bin\Debug\CIMS.DbServices.dll
 D:\CIMS\CIMS.DbServices\bin\Debug\CIMS.DbServices.pdb
 D:\CIMS\CIMS.DbServices\obj\Debug\CIMS.DbServices.dll
 D:\CIMS\CIMS.DbServices\obj\Debug\CIMS.DbServices.pdb
-D:\CIMS\CIMS.DbServices\obj\Debug\CIMS.DbServices.csprojResolveAssemblyReference.cache

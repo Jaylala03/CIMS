@@ -2464,9 +2464,7 @@
     <Folder Include="Areas\Employee\Models\" />
     <Folder Include="Areas\Equipment\Models\" />
     <Folder Include="Areas\Equipment\Views\Shared\" />
-    <Folder Include="Areas\Library\Views\Shared\" />
     <Folder Include="Areas\Events\Models\" />
-    <Folder Include="Areas\Library\Models\" />
     <Folder Include="Areas\Events\Views\Shared\" />
     <Folder Include="Areas\GeneralReports\Models\" />
     <Folder Include="Areas\GeneralReports\Views\Shared\" />
@@ -2475,6 +2473,8 @@
     <Folder Include="Areas\Help\Views\Shared\" />
     <Folder Include="Areas\IncidentList\Models\" />
     <Folder Include="Areas\IncidentList\Views\Shared\" />
+    <Folder Include="Areas\Library\Models\" />
+    <Folder Include="Areas\Library\Views\Shared\" />
     <Folder Include="Areas\Media\Models\" />
     <Folder Include="Areas\Media\Views\Shared\" />
     <Folder Include="Areas\Messages\Models\" />
@@ -2509,6 +2509,10 @@
     <ProjectReference Include="..\CIMS.BaseLayer\CIMS.BaseLayer.csproj">
       <Project>{06c86030-2f13-459e-a790-5fb089ae95c8}</Project>
       <Name>CIMS.BaseLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CIMS.DataLayer\CIMS.DataLayer.csproj">
+      <Project>{4e3ae85e-9a69-4139-8c73-740d80e72d7f}</Project>
+      <Name>CIMS.DataLayer</Name>
     </ProjectReference>
     <ProjectReference Include="..\CIMS.Utility\CIMS.Utility.csproj">
       <Project>{a93b3ab8-d7df-4eee-ba5d-bb48a9bdf6ba}</Project>

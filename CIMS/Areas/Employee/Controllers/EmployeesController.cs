@@ -683,7 +683,9 @@ namespace CIMS.Areas.Employee.Controllers
             employee.Sex = model.Sex;
             employee.Race = model.Race;
             employee.EmployeeDepartment = model.EmployeeDepartment;
-            employee.EmployeeStatusID = model.EmployeeStatusID;
+
+            if (model.EmployeeStatusID.HasValue)
+                employee.EmployeeStatusID = Convert.ToInt32(model.EmployeeStatusID);
 
             if (model.FirstName != null)
             {
@@ -4011,7 +4013,8 @@ namespace CIMS.Areas.Employee.Controllers
                 employee.Height = model.Height;
                 employee.Weight = model.Weight;
                 employee.EmployeeNumber = model.EmployeeNumber;
-                employee.EmployeeStatusID = model.EmployeeStatusID;
+                if (model.EmployeeStatusID.HasValue)
+                    employee.EmployeeStatusID = Convert.ToInt32(model.EmployeeStatusID);
 
                 actionResult = employeeAction.AdvancedSearchEmployees(employee);
 
@@ -4036,7 +4039,8 @@ namespace CIMS.Areas.Employee.Controllers
                 employee.Height = model.Height;
                 employee.Weight = model.Weight;
                 employee.EmployeeNumber = model.EmployeeNumber;
-                employee.EmployeeStatusID = model.EmployeeStatusID;
+                if (model.EmployeeStatusID.HasValue)
+                    employee.EmployeeStatusID = Convert.ToInt32(model.EmployeeStatusID);
 
                 actionResult = employeeAction.AdvancedSearchEmployees(employee);
                 TempData["EmployeeList"] = actionResult;

@@ -44,7 +44,7 @@ namespace CIMS.Models
         public string FacialHair { get; set; }
 
         [Display(Name = "Subject Status")]
-        public int SubjectStatusID { get; set; }
+        public int? SubjectStatusID { get; set; }
 
         [Display(Name = "Hair Length")]
         public string HairLength { get; set; }

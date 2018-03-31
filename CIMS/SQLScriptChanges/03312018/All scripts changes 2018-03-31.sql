@@ -5,7 +5,7 @@ ALTER COLUMN SubjectStatusID int
 GO
 --------------------------------------------------------------------------------------------
 ALTER TABLE Employees
-ALTER COLUMN EmployeeStatusID int
+ADD  EmployeeStatusID int
 GO
 --------------------------------------------------------------------------------------------
 SET ANSI_NULLS ON
@@ -337,8 +337,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
 ALTER Procedure [dbo].[Employees_Insert]
 (   @UserID int,
 	@EmpNumber nvarchar(25)=NULL,
@@ -496,3 +494,7 @@ Set @SQL='Select FirstName,LastName,EmployeeID,MiddleName,EmpNumber,EmployeeNumb
  END
 GO
 --------------------------------------------------------------------------------------------
+
+Insert into ManageMenus
+values('Show Media Column',(Select Id FROM ManageMenus where MenuName = 'Event'))
+GO
