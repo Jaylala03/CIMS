@@ -253,7 +253,7 @@
 
                                 @Html.LabelFor(m => m.SubjectNumber, new { @class = "control-label col-md-12" })
                                 <div class="col-md-7">
-                                    @Html.TextBoxFor(m => m.SubjectNumber, new { @class = "form-control", @maxlength = "6" })
+                                    @Html.TextBoxFor(m => m.SubjectNumber, new { @class = "form-control", @maxlength = "25" })
                                 </div>
                             </div>
                             <div class="col-sm-4">
@@ -411,9 +411,15 @@
                         </div>
 
                         <div class="form-group clearfix">
+<<<<<<< HEAD
                             @Html.LabelFor(m => m.SubjectStatus, new { @class = "control-label col-md-12" })
                             <div class="col-md-12">
                                 @Html.DropDownListFor(m => m.SubjectStatus, ViewBag.lstSubjectStatus as List<SelectListItem>, "Select Status", new { @class = "form-control" })
+=======
+                            @Html.LabelFor(m => m.SubjectStatusID, new { @class = "control-label col-md-12" })
+                            <div class="col-md-12">                                
+                                @Html.DropDownListFor(m => m.SubjectStatusID, ViewBag.lstSubjectStatus as List<SelectListItem>, "Select Status", new { @class = "form-control" })
+>>>>>>> refs/remotes/origin/EmployeeStatus
                             </div>
                         </div>
 
@@ -725,7 +731,7 @@
             $('#HairLength').val('@Model.HairLength');
             $('#HairColor').val('@Model.HairColor');
             $('#FacialHair').val('@Model.FacialHair');
-            $('#SubjectStatus').val('@Model.SubjectStatus');
+            $('#SubjectStatus').val('@Model.SubjectStatusID');
         }
 
         $('#clearBtn').on('click', function () {

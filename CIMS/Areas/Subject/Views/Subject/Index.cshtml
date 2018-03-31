@@ -80,7 +80,7 @@
                         <div class="form-group clearfix">                            
                             @Html.Label("Subject number", new { @class = "control-label col-md-12" })
                             <div class="col-md-12">                                
-                                @Html.TextBox("SubjectNumber", null, new { @class = "form-control", @maxlength = "6" })
+                                @Html.TextBox("SubjectNumber", null, new { @class = "form-control", @maxlength = "25" })
                             </div>
                         </div>
 
@@ -188,7 +188,7 @@
                         </div>
 
                         <div class="form-group clearfix">
-                            @Html.Label("SubjectStatus", new { @class = "control-label col-md-12" })
+                            @Html.Label("Subject Status", new { @class = "control-label col-md-12" })
                             <div class="col-md-12">
                                 @Html.DropDownList("SubjectStatus", ViewBag.lstSubjectStatus as List<SelectListItem>, "Unknown", new { @class = "form-control" })
                             </div>

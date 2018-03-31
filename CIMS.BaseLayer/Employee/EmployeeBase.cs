@@ -93,7 +93,7 @@ namespace CIMS.BaseLayer.Employee
 
         public string EmployeeDepartment { get; set; }
 
-        public string SubjectStatus { get; set; }
+        public int EmployeeStatusID { get; set; }
     }
 
 

@@ -52,7 +52,7 @@ namespace CIMS.DataLayer.Subject
                                             new MyParameter("@CIDPersonID", subjectBase.CIDPersonID),
                                             new MyParameter("@CreatedBy", subjectBase.CreatedBy),
                                             new MyParameter("@SubjectNumber", subjectBase.SubjectNumber),
-                                            new MyParameter("@SubjectStatus", subjectBase.SubjectStatus)
+                                            new MyParameter("@SubjectStatusID", subjectBase.SubjectStatusID)
                                          };
                 Common.Set_Procedures("Subject_IU");
                 Common.Set_ParameterLength(myParams.Length);
@@ -2533,7 +2533,7 @@ namespace CIMS.DataLayer.Subject
                                             new MyParameter("@FacialHair", subject.FacialHair),
                                             new MyParameter("@AgeRange", subject.AgeRange),
                                             new MyParameter("@SubjectNumber", subject.SubjectNumber),
-                                            new MyParameter("@SubjectStatus", subject.SubjectStatus)
+                                            new MyParameter("@SubjectStatusID", subject.SubjectStatusID)
                                             //, new MyParameter("@FromAge", FromAge)
                                             //, new MyParameter("@ToAge", ToAge)
                                         };

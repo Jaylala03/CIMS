@@ -76,7 +76,7 @@ namespace CIMS.Models
 
         public List<SelectListItem> EmployeeDepartmentList = new List<SelectListItem>();
 
-        public List<SelectListItem> SubjectStatusList = new List<SelectListItem>();
+        public List<SelectListItem> EmployeeStatusList = new List<SelectListItem>();
 
         // license
         public string DateOfHire { get; set; }
@@ -84,7 +84,7 @@ namespace CIMS.Models
         public string LicenseExpirationDate { get; set; }
         public string Department { get; set; }
         public string EmployeeDepartment { get; set; }
-        public string SubjectStatus { get; set; }
+        public int EmployeeStatusID { get; set; }
         public string LicenseType { get; set; }
         public string LicenseStatus { get; set; }
         public string ReasonForLeaving { get; set; }
